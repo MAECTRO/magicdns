@@ -293,6 +293,13 @@ html_content = f'''<!DOCTYPE html>
       box-shadow: 0 0 16px rgba(255, 94, 126, 0.25);
     }}
 
+    .social-btn-donate .donate-heart,
+    .btn-support-header .donate-heart {{
+      fill: #ff5e7e !important;
+      width: 15px;
+      height: 15px;
+    }}
+
     .social-btn-donate:hover .donate-heart {{
       transform: scale(1.15);
       filter: drop-shadow(0 0 10px rgba(255, 94, 126, 0.85));
@@ -351,6 +358,10 @@ html_content = f'''<!DOCTYPE html>
       80%, 100% {{ transform: scale(2.4); opacity: 0; }}
     }}
 
+    .status-label {{
+      display: inline;
+    }}
+
     .status-text {{
       color: #ffffff;
       font-weight: 600;
@@ -361,7 +372,7 @@ html_content = f'''<!DOCTYPE html>
        ========================================================================== */
     .hero,
     .hero-section {{
-      padding: 32px 0 16px;
+      padding: 24px 0 12px;
       text-align: center;
     }}
 
@@ -374,9 +385,9 @@ html_content = f'''<!DOCTYPE html>
       color: var(--neon-mint);
       background: rgba(0, 255, 157, 0.08);
       border: 1px solid rgba(0, 255, 157, 0.28);
-      padding: 6px 14px;
+      padding: 5px 13px;
       border-radius: var(--radius-pill);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       letter-spacing: 0.02em;
       box-shadow: 0 0 16px rgba(0, 255, 157, 0.08);
     }}
@@ -386,7 +397,7 @@ html_content = f'''<!DOCTYPE html>
       font-weight: 800;
       line-height: 1.15;
       letter-spacing: -0.03em;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       background: linear-gradient(135deg, #ffffff 30%, #00ff9d 75%, #06b6d4 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -399,14 +410,14 @@ html_content = f'''<!DOCTYPE html>
       font-size: clamp(1rem, 2vw, 1.15rem);
       color: var(--text-muted);
       max-width: 740px;
-      margin: 0 auto 20px;
+      margin: 0 auto 16px;
       line-height: 1.6;
     }}
 
     /* Unified Harmonious Services Ribbon (Single Line / No Awkward Breaks) */
     .services-ribbon-container {{
       width: 100%;
-      margin: 0 auto 8px;
+      margin: 0 auto 6px;
       overflow-x: auto;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
@@ -467,13 +478,13 @@ html_content = f'''<!DOCTYPE html>
        ========================================================================== */
     .configurator-section,
     .tabs-section {{
-      padding: 12px 0 36px;
+      padding: 8px 0 32px;
     }}
 
     .segmented-bar-wrapper {{
       display: flex;
       justify-content: center;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       overflow-x: auto;
       scrollbar-width: none;
       padding: 4px;
@@ -566,6 +577,10 @@ html_content = f'''<!DOCTYPE html>
     .card-left-column {{
       min-width: 0;
       width: 100%;
+    }}
+
+    .card-left-column > :last-child {{
+      margin-bottom: 0;
     }}
 
     /* Card Header Row */
@@ -1178,7 +1193,7 @@ html_content = f'''<!DOCTYPE html>
       .header-content {{
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: 10px;
       }}
       .header-right {{
         width: 100%;
@@ -1186,14 +1201,20 @@ html_content = f'''<!DOCTYPE html>
         justify-content: space-between;
         align-items: center;
         gap: 8px;
+        flex-wrap: nowrap;
       }}
       .btn-support-header {{
         padding: 6px 12px;
         font-size: 0.78rem;
+        flex-shrink: 0;
       }}
       .status-badge {{
         padding: 6px 12px;
         font-size: 0.78rem;
+        flex-shrink: 0;
+      }}
+      .status-label {{
+        display: none;
       }}
       .hero h1 {{
         font-size: 1.85rem;
@@ -1248,7 +1269,7 @@ html_content = f'''<!DOCTYPE html>
             <div class="status-ping"></div>
             <div class="status-dot"></div>
           </div>
-          <span>Статус сети: <span class="status-text">Работает стабильно</span></span>
+          <span><span class="status-label">Статус сети: </span><span class="status-text">Работает стабильно</span></span>
         </div>
       </div>
     </div>
