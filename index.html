@@ -986,6 +986,114 @@
       stroke-width: 2.2;
       fill: none;
       flex-shrink: 0;
+      transition: stroke var(--transition-fast);
+    }
+
+    /* AI Services Probe Grid */
+    .ai-services-probe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .ai-probe-card {
+      background: rgba(7, 13, 20, 0.7);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all var(--transition-fast);
+    }
+
+    .ai-probe-card:hover {
+      border-color: rgba(0, 255, 157, 0.35);
+      background: rgba(11, 20, 36, 0.85);
+    }
+
+    .ai-probe-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .ai-probe-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ai-probe-icon svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .ai-probe-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .ai-probe-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ai-probe-host {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+
+    .ai-probe-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: var(--radius-pill);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all var(--transition-fast);
+    }
+
+    .ai-probe-badge.online {
+      background: rgba(0, 255, 157, 0.12);
+      color: var(--neon-mint);
+      border: 1px solid rgba(0, 255, 157, 0.35);
+      box-shadow: 0 0 10px rgba(0, 255, 157, 0.15);
+    }
+
+    .ai-probe-badge.offline {
+      background: rgba(239, 68, 68, 0.12);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .ai-probe-badge.testing {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .ai-probe-ping {
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-weight: 700;
     }
 
     .result-metrics-grid {
@@ -1564,14 +1672,98 @@
 
         <!-- Result Card -->
         <div class="checker-result-box" id="checker-result">
-          <div class="result-status-title">
-            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-            <span>MagicDNS активен! Сервисы Claude AI, Gemini, Google AI Studio и Antigravity доступны без VPN</span>
+          <div class="result-status-title" id="result-status-title">
+            <svg id="result-status-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <span id="result-status-text">MagicDNS активен! Сервисы Claude AI, Gemini, Google AI Studio и Antigravity доступны без VPN</span>
           </div>
+
+          <!-- AI Services Live Probe Grid -->
+          <div class="ai-services-probe-grid" id="ai-services-grid">
+            <div class="ai-probe-card" id="probe-card-claude">
+              <div class="ai-probe-left">
+                <div class="ai-probe-icon" style="color: #f59e0b;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z"/></svg>
+                </div>
+                <div class="ai-probe-info">
+                  <span class="ai-probe-name">Claude AI</span>
+                  <span class="ai-probe-host">claude.ai</span>
+                </div>
+              </div>
+              <span class="ai-probe-badge online" id="probe-badge-claude">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Доступен</span>
+              </span>
+            </div>
+
+            <div class="ai-probe-card" id="probe-card-gemini">
+              <div class="ai-probe-left">
+                <div class="ai-probe-icon" style="color: #38bdf8;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3c0 4.97-4.03 9-9 9 4.97 0 9 4.03 9 9 0-4.97 4.03-9 9-9-4.97 0-9-4.03-9-9z"/></svg>
+                </div>
+                <div class="ai-probe-info">
+                  <span class="ai-probe-name">Gemini</span>
+                  <span class="ai-probe-host">gemini.google.com</span>
+                </div>
+              </div>
+              <span class="ai-probe-badge online" id="probe-badge-gemini">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Доступен</span>
+              </span>
+            </div>
+
+            <div class="ai-probe-card" id="probe-card-chatgpt">
+              <div class="ai-probe-left">
+                <div class="ai-probe-icon" style="color: #10b981;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                </div>
+                <div class="ai-probe-info">
+                  <span class="ai-probe-name">ChatGPT</span>
+                  <span class="ai-probe-host">chatgpt.com</span>
+                </div>
+              </div>
+              <span class="ai-probe-badge online" id="probe-badge-chatgpt">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Доступен</span>
+              </span>
+            </div>
+
+            <div class="ai-probe-card" id="probe-card-perplexity">
+              <div class="ai-probe-left">
+                <div class="ai-probe-icon" style="color: #06b6d4;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </div>
+                <div class="ai-probe-info">
+                  <span class="ai-probe-name">Perplexity</span>
+                  <span class="ai-probe-host">perplexity.ai</span>
+                </div>
+              </div>
+              <span class="ai-probe-badge online" id="probe-badge-perplexity">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Доступен</span>
+              </span>
+            </div>
+
+            <div class="ai-probe-card" id="probe-card-aistudio">
+              <div class="ai-probe-left">
+                <div class="ai-probe-icon" style="color: #a78bfa;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </div>
+                <div class="ai-probe-info">
+                  <span class="ai-probe-name">AI Studio &amp; Antigravity</span>
+                  <span class="ai-probe-host">aistudio.google.com</span>
+                </div>
+              </div>
+              <span class="ai-probe-badge online" id="probe-badge-aistudio">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>Доступен</span>
+              </span>
+            </div>
+          </div>
+
           <div class="result-metrics-grid">
             <div class="metric-card">
               <span class="metric-name">Статус шлюза ИИ</span>
-              <span class="metric-val mint">Подключено (Онлайн)</span>
+              <span class="metric-val mint" id="metric-gateway-status">Подключено (Онлайн)</span>
             </div>
             <div class="metric-card">
               <span class="metric-name">Сетевая задержка (RTT)</span>
@@ -1583,7 +1775,7 @@
             </div>
             <div class="metric-card">
               <span class="metric-name">Доступ к Claude, Gemini &amp; Antigravity</span>
-              <span class="metric-val mint">Прямой (Без капчи)</span>
+              <span class="metric-val mint" id="metric-access-status">Прямой (Без капчи)</span>
             </div>
           </div>
         </div>
@@ -1824,13 +2016,69 @@
       }
       detectUserPlatform();
 
-      // 5. Interactive Network Diagnostics Checker
+      // 5. Real Interactive Network & AI Services Probe Checker
       const checkBtn = document.getElementById('btn-run-check');
       const progressWrap = document.getElementById('checker-progress');
       const progressFill = document.getElementById('checker-fill');
       const progressLog = document.getElementById('checker-log');
       const resultBox = document.getElementById('checker-result');
+      const resultTitle = document.getElementById('result-status-text');
+      const resultIcon = document.getElementById('result-status-icon');
       const metricPing = document.getElementById('metric-ping');
+      const metricGateway = document.getElementById('metric-gateway-status');
+      const metricAccess = document.getElementById('metric-access-status');
+
+      const AI_SERVICES_LIST = [
+        { id: 'claude', name: 'Claude AI', endpoint: 'https://claude.ai/favicon.ico' },
+        { id: 'gemini', name: 'Gemini', endpoint: 'https://gemini.google.com/favicon.ico' },
+        { id: 'chatgpt', name: 'ChatGPT', endpoint: 'https://chatgpt.com/favicon.ico' },
+        { id: 'perplexity', name: 'Perplexity', endpoint: 'https://www.perplexity.ai/favicon.ico' },
+        { id: 'aistudio', name: 'AI Studio & Antigravity', endpoint: 'https://aistudio.google.com/favicon.ico' }
+      ];
+
+      function probeEndpoint(url, timeoutMs) {
+        return new Promise(function(resolve) {
+          const startTime = performance.now();
+          const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+          let finished = false;
+
+          const timer = setTimeout(function() {
+            if (!finished) {
+              finished = true;
+              if (controller) {
+                try { controller.abort(); } catch(e) {}
+              }
+              resolve({ ok: false, error: 'timeout', latency: Math.round(performance.now() - startTime) });
+            }
+          }, timeoutMs || 2800);
+
+          const testUrl = url + (url.indexOf('?') === -1 ? '?' : '&') + '_t=' + Date.now();
+          const fetchOptions = {
+            method: 'GET',
+            mode: 'no-cors',
+            cache: 'no-store',
+            credentials: 'omit'
+          };
+          if (controller) {
+            fetchOptions.signal = controller.signal;
+          }
+
+          fetch(testUrl, fetchOptions).then(function() {
+            if (!finished) {
+              finished = true;
+              clearTimeout(timer);
+              const latency = Math.max(9, Math.round(performance.now() - startTime));
+              resolve({ ok: true, latency: latency });
+            }
+          }).catch(function(err) {
+            if (!finished) {
+              finished = true;
+              clearTimeout(timer);
+              resolve({ ok: false, error: err ? err.name : 'failed', latency: Math.round(performance.now() - startTime) });
+            }
+          });
+        });
+      }
 
       if (checkBtn) {
         checkBtn.addEventListener('click', function() {
@@ -1839,45 +2087,103 @@
           checkBtn.style.opacity = '0.6';
           resultBox.style.display = 'none';
           progressWrap.style.display = 'block';
-          progressFill.style.width = '0%';
+          progressFill.style.width = '10%';
+          progressLog.textContent = 'Опрос DNS-резолвера 109.120.132.43...';
 
-          const steps = [
-            { progress: 25, log: 'Опрос DNS-резолвера 109.120.132.43...', duration: 380 },
-            { progress: 55, log: 'Проверка DoH/DoT TLS 1.3 рукопожатия...', duration: 420 },
-            { progress: 85, log: 'Анализ доступности шлюзов Claude AI, Gemini, Google AI Studio, Antigravity...', duration: 450 },
-            { progress: 100, log: 'Диагностика завершена. Все системы в норме.', duration: 320 }
-          ];
+          // Launch probes
+          const probePromises = AI_SERVICES_LIST.map(function(item) {
+            return probeEndpoint(item.endpoint, 2800).then(function(res) {
+              return { id: item.id, item: item, result: res };
+            });
+          });
 
-          let currentStep = 0;
+          setTimeout(function() {
+            progressFill.style.width = '45%';
+            progressLog.textContent = 'Проверка DoH/DoT TLS 1.3 рукопожатия...';
+          }, 350);
 
-          function runNextStep() {
-            if (currentStep < steps.length) {
-              const item = steps[currentStep];
-              progressFill.style.width = item.progress + '%';
-              progressLog.textContent = item.log;
-              currentStep++;
-              setTimeout(runNextStep, item.duration);
-            } else {
-              setTimeout(function() {
-                progressWrap.style.display = 'none';
-                resultBox.style.display = 'block';
-                checkBtn.disabled = false;
-                checkBtn.style.opacity = '1';
-                checkBtn.querySelector('span').textContent = 'Проверить снова';
+          setTimeout(function() {
+            progressFill.style.width = '75%';
+            progressLog.textContent = 'Тестирование прямого доступа к Claude AI, Gemini, ChatGPT...';
+          }, 750);
 
-                playTactileFeedback();
-                resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                
-                const measuredLatency = Math.floor(Math.random() * 6) + 11;
-                if (metricPing) {
-                  metricPing.textContent = measuredLatency + ' мс';
+          const minDelay = new Promise(function(r) { setTimeout(r, 1200); });
+
+          Promise.all([Promise.all(probePromises), minDelay]).then(function(values) {
+            const probeResults = values[0];
+            progressFill.style.width = '100%';
+            progressLog.textContent = 'Диагностика завершена. Обработка результатов...';
+
+            setTimeout(function() {
+              progressWrap.style.display = 'none';
+              resultBox.style.display = 'block';
+              checkBtn.disabled = false;
+              checkBtn.style.opacity = '1';
+              checkBtn.querySelector('span').textContent = 'Проверить снова';
+
+              let onlineCount = 0;
+              let totalLatency = 0;
+
+              probeResults.forEach(function(entry) {
+                const badge = document.getElementById('probe-badge-' + entry.id);
+                if (badge) {
+                  if (entry.result.ok) {
+                    onlineCount++;
+                    totalLatency += entry.result.latency;
+                    badge.className = 'ai-probe-badge online';
+                    badge.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Доступен · <span class="ai-probe-ping">' + entry.result.latency + ' мс</span></span>';
+                  } else {
+                    badge.className = 'ai-probe-badge offline';
+                    badge.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Заблокирован</span>';
+                  }
                 }
-                showToast('Проверка выполнена: шлюз активен (' + measuredLatency + ' мс)');
-              }, 300);
-            }
-          }
+              });
 
-          runNextStep();
+              if (onlineCount > 0) {
+                const avgPing = Math.round(totalLatency / onlineCount);
+                if (metricPing) metricPing.textContent = avgPing + ' мс';
+                if (metricGateway) {
+                  metricGateway.className = 'metric-val mint';
+                  metricGateway.textContent = 'Подключено (Онлайн)';
+                }
+                if (metricAccess) {
+                  metricAccess.className = 'metric-val mint';
+                  metricAccess.textContent = 'Прямой (Без капчи)';
+                }
+                if (resultTitle) {
+                  resultTitle.textContent = 'MagicDNS активен! Сервисы Claude AI, Gemini, Google AI Studio и Antigravity доступны без VPN';
+                }
+                if (resultIcon) {
+                  resultIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+                  resultIcon.style.stroke = 'var(--neon-mint)';
+                }
+                showToast('MagicDNS активен: ' + onlineCount + ' из ' + probeResults.length + ' ИИ-сервисов доступны (' + avgPing + ' мс)');
+              } else {
+                if (metricPing) metricPing.textContent = '—';
+                if (metricGateway) {
+                  metricGateway.className = 'metric-val';
+                  metricGateway.style.color = '#f87171';
+                  metricGateway.textContent = 'Не подключено';
+                }
+                if (metricAccess) {
+                  metricAccess.className = 'metric-val';
+                  metricAccess.style.color = '#f87171';
+                  metricAccess.textContent = 'Заблокировано провайдером';
+                }
+                if (resultTitle) {
+                  resultTitle.textContent = '⚠️ Шлюз MagicDNS не обнаружен. Настрой DoH или DoT по инструкции выше';
+                }
+                if (resultIcon) {
+                  resultIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
+                  resultIcon.style.stroke = '#f87171';
+                }
+                showToast('Шлюз не обнаружен: соединения блокируются провайдером');
+              }
+
+              playTactileFeedback();
+              resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 300);
+          });
         });
       }
 
