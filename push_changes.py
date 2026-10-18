@@ -32,12 +32,12 @@ res = CredReadW('git:https://github.com', 1, 0, ctypes.byref(pcred))
 if res:
     cred = pcred.contents
     raw_bytes = bytes(cred.CredentialBlob[:cred.CredentialBlobSize])
-    try:
-        token = raw_bytes.decode('utf-8')
-    except Exception:
-        token = raw_bytes.decode('utf-16le', errors='ignore')
-    user = cred.UserName or 'PersonalAccessToken'
-    print(f"Read credential for {cred.UserName}")
+    if b'\x00' in raw_bytes:
+        token = raw_bytes.decode('utf-16le').strip('\x00')
+    else:
+        token = raw_bytes.decode('utf-8').strip('\x00')
+    user = cred.UserName or 'x-access-token'
+    print(f"Read credential for {cred.UserName}, token length: {len(token)}")
     auth = base64.b64encode(f"{user}:{token}".encode('utf-8')).decode('utf-8')
     
     subprocess.run(['git', 'add', '-A'], check=True)
