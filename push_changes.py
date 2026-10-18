@@ -44,7 +44,12 @@ if res:
     commit_res = subprocess.run(['git', 'commit', '-m', 'feat: add live AI accessibility probe and per-service latency checker'], capture_output=True, text=True)
     print("COMMIT:", commit_res.stdout or commit_res.stderr)
     
-    p = subprocess.run(['git', '-c', f'http.extraheader=Authorization: Basic {auth}', 'push', 'origin', 'main'], capture_output=True, text=True)
+    import os
+    env = os.environ.copy()
+    for k in ['HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY', 'http_proxy', 'https_proxy', 'all_proxy']:
+        env.pop(k, None)
+
+    p = subprocess.run(['git', '-c', 'http.proxy=', '-c', 'https.proxy=', '-c', f'http.extraheader=Authorization: Basic {auth}', 'push', 'origin', 'main'], capture_output=True, text=True, env=env)
     print("PUSH STDOUT:", p.stdout)
     print("PUSH STDERR:", p.stderr)
     CredFree(pcred)
