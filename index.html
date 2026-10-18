@@ -967,6 +967,9 @@
       text-align: left;
       animation: fadeIn var(--transition-smooth);
       box-shadow: 0 0 24px rgba(0, 255, 157, 0.08);
+      overflow: hidden;
+      box-sizing: border-box;
+      width: 100%;
     }
 
     .result-status-title {
@@ -989,24 +992,47 @@
       transition: stroke var(--transition-fast);
     }
 
-    /* AI Services Probe Grid */
+    /* AI Services Probe Grid - 5 Equal Columns with Zero Overflow */
     .ai-services-probe-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
       margin-bottom: 22px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 860px) {
+      .ai-services-probe-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 540px) {
+      .ai-services-probe-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 360px) {
+      .ai-services-probe-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .ai-probe-card {
       background: rgba(11, 20, 36, 0.7);
       border: 1px solid var(--border-hairline);
       border-radius: var(--radius-sm);
-      padding: 14px 14px 12px;
+      padding: 12px 10px 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 12px;
-      min-height: 104px;
+      gap: 10px;
+      min-height: 96px;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
       transition: all var(--transition-fast);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
@@ -1020,13 +1046,15 @@
     .ai-probe-top {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      min-width: 0;
+      width: 100%;
     }
 
     .ai-probe-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
@@ -1036,26 +1064,30 @@
     }
 
     .ai-probe-icon svg {
-      width: 17px;
-      height: 17px;
+      width: 15px;
+      height: 15px;
     }
 
     .ai-probe-titles {
       display: flex;
       flex-direction: column;
       min-width: 0;
-      gap: 2px;
+      flex: 1;
+      gap: 1px;
+      overflow: hidden;
     }
 
     .ai-probe-name {
-      font-size: 0.88rem;
+      font-size: 0.82rem;
       font-weight: 700;
       color: #ffffff;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .ai-probe-host {
-      font-size: 0.71rem;
+      font-size: 0.67rem;
       color: var(--text-dim);
       font-family: ui-monospace, SFMono-Regular, monospace;
       white-space: nowrap;
@@ -1067,10 +1099,10 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
-      font-size: 0.74rem;
+      gap: 4px;
+      font-size: 0.72rem;
       font-weight: 600;
-      padding: 5px 8px;
+      padding: 4px 6px;
       border-radius: var(--radius-pill);
       width: 100%;
       box-sizing: border-box;
@@ -1755,7 +1787,7 @@
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
                 </div>
                 <div class="ai-probe-titles">
-                  <span class="ai-probe-name">AI Studio &amp; Antigravity</span>
+                  <span class="ai-probe-name">Google AI Studio</span>
                   <span class="ai-probe-host">aistudio.google.com</span>
                 </div>
               </div>
@@ -2035,11 +2067,11 @@
       const metricAccess = document.getElementById('metric-access-status');
 
       const AI_SERVICES_LIST = [
-        { id: 'claude', name: 'Claude AI', endpoint: 'https://api.anthropic.com', fallback: 'https://claude.ai/favicon.ico' },
+        { id: 'claude', name: 'Claude AI', endpoint: 'https://www.anthropic.com/favicon.ico', fallback: 'https://claude.ai/favicon.ico' },
         { id: 'gemini', name: 'Gemini', endpoint: 'https://gemini.google.com/favicon.ico' },
         { id: 'chatgpt', name: 'ChatGPT', endpoint: 'https://chatgpt.com/favicon.ico' },
         { id: 'perplexity', name: 'Perplexity', endpoint: 'https://www.perplexity.ai/favicon.ico' },
-        { id: 'aistudio', name: 'AI Studio & Antigravity', endpoint: 'https://aistudio.google.com/favicon.ico' }
+        { id: 'aistudio', name: 'Google AI Studio', endpoint: 'https://aistudio.google.com/favicon.ico' }
       ];
 
       function probeSingle(url, timeoutMs) {
