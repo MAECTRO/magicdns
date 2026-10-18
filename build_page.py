@@ -26,14 +26,63 @@ html_content = f'''<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#070d14">
-  <meta name="description" content="MagicDNS — высокоскоростной DNS-шлюз для прямого доступа к Claude AI, Gemini, Google AI Studio, ChatGPT и Antigravity без VPN. Быстрая настройка DoH и DoT.">
+  <title>MagicDNS — Быстрый DNS для Claude AI, Gemini и ChatGPT без VPN</title>
+  <meta name="description" content="Высокоскоростной защищённый DNS-шлюз (DoH/DoT) для прямого доступа к Claude AI, Gemini, ChatGPT и Antigravity без VPN на Windows, iOS и Android.">
+  <meta name="keywords" content="MagicDNS, DNS для Claude, DNS для Gemini, ChatGPT без VPN, Claude AI без VPN, DoH, DoT, быстрый DNS, Google AI Studio, Antigravity, приватный DNS, smart DNS, обход блокировок без впн, private DNS">
   <link rel="canonical" href="https://magicdns.ru/">
-  <meta property="og:title" content="MagicDNS — Быстрый DNS для Claude AI, Gemini, Google AI Studio и Antigravity">
-  <meta property="og:description" content="Прямой DNS-шлюз без VPN, сторонних приложений и потери скорости. Работает на Windows, iOS, Android и роутерах.">
-  <meta property="og:url" content="https://magicdns.ru/">
+
+  <!-- Search Engine Verification Placeholders -->
+  <!-- <meta name="google-site-verification" content="PASTE_YOUR_GOOGLE_CODE_HERE" /> -->
+  <!-- <meta name="yandex-verification" content="PASTE_YOUR_YANDEX_CODE_HERE" /> -->
+
+  <!-- Open Graph / Facebook / Telegram / WhatsApp -->
   <meta property="og:site_name" content="MagicDNS">
+  <meta property="og:url" content="https://magicdns.ru/">
+  <meta property="og:title" content="MagicDNS — Быстрый DNS для Claude, Gemini и ChatGPT без VPN">
+  <meta property="og:description" content="Высокоскоростной защищённый DNS-шлюз для прямого доступа к Claude AI, Gemini, ChatGPT и Antigravity без VPN и сторонних программ.">
   <meta property="og:type" content="website">
-  <title>MagicDNS — Быстрый DNS для Claude AI, Gemini, Google AI Studio и Antigravity</title>
+  <meta property="og:locale" content="ru_RU">
+  <meta property="og:image" content="https://magicdns.ru/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://magicdns.ru/">
+  <meta name="twitter:title" content="MagicDNS — Быстрый DNS для Claude, Gemini и ChatGPT без VPN">
+  <meta name="twitter:description" content="Высокоскоростной защищённый DNS-шлюз для прямого доступа к Claude AI, Gemini, ChatGPT и Antigravity без VPN.">
+  <meta name="twitter:image" content="https://magicdns.ru/og-image.png">
+
+  <!-- Schema.org Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {{
+    "@context": "https://schema.org",
+    "@graph": [
+      {{
+        "@type": "WebSite",
+        "@id": "https://magicdns.ru/#website",
+        "url": "https://magicdns.ru/",
+        "name": "MagicDNS",
+        "description": "Высокоскоростной DNS-шлюз для доступа к ИИ-сервисам без VPN",
+        "inLanguage": "ru-RU"
+      }},
+      {{
+        "@type": "WebApplication",
+        "@id": "https://magicdns.ru/#app",
+        "name": "MagicDNS",
+        "url": "https://magicdns.ru/",
+        "description": "Высокоскоростной защищённый DNS-шлюз (DoH/DoT) для прямого доступа к Claude AI, Gemini, Google AI Studio, ChatGPT и Antigravity без VPN.",
+        "applicationCategory": "NetworkingApplication",
+        "operatingSystem": "Windows, iOS, macOS, Android, Linux",
+        "offers": {{
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "RUB"
+        }}
+      }}
+    ]
+  }}
+  </script>
   <style>
     /* ==========================================================================
        Design System: Cyber-Minimalism & Futuristic Dark Palette
@@ -1797,4 +1846,35 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
 with open('profile.mobileconfig', 'w', encoding='utf-8') as f:
     f.write(mobileconfig_content)
 
-print('SUCCESS: index.html and profile.mobileconfig built successfully with Swedish server IP!')
+# SEO files: robots.txt and sitemap.xml in root and public/
+import os
+
+os.makedirs('public', exist_ok=True)
+
+robots_content = """User-agent: *
+Allow: /
+Disallow: /*?*
+
+Sitemap: https://magicdns.ru/sitemap.xml
+"""
+
+for path in ['robots.txt', os.path.join('public', 'robots.txt')]:
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(robots_content)
+
+sitemap_content = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://magicdns.ru/</loc>
+    <lastmod>2026-10-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+"""
+
+for path in ['sitemap.xml', os.path.join('public', 'sitemap.xml')]:
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(sitemap_content)
+
+print('SUCCESS: index.html, profile.mobileconfig, robots.txt, and sitemap.xml built successfully!')

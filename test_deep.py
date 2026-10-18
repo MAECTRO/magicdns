@@ -155,6 +155,80 @@ banned_words = [
 found_banned = [w for w in banned_words if w.lower() in html.lower()]
 test("Anti-AI writing rule compliance (no forbidden clichés)", len(found_banned) == 0, f"Found: {found_banned}")
 
+# 16. SEO & Search Engine Optimization Suite
+import json
+from PIL import Image
+
+# Robots.txt
+robots_root = r'C:\Users\GreenFest\.gemini\antigravity\scratch\magicdns\robots.txt'
+robots_pub = r'C:\Users\GreenFest\.gemini\antigravity\scratch\magicdns\public\robots.txt'
+test("robots.txt exists in root", os.path.exists(robots_root))
+test("robots.txt exists in public/", os.path.exists(robots_pub))
+if os.path.exists(robots_root):
+    with open(robots_root, 'r', encoding='utf-8') as f:
+        rc = f.read()
+    test("robots.txt has User-agent: * and Allow: /", 'User-agent: *' in rc and 'Allow: /' in rc)
+    test("robots.txt blocks query parameters", 'Disallow: /*?*' in rc)
+    test("robots.txt has Sitemap directive", 'Sitemap: https://magicdns.ru/sitemap.xml' in rc)
+
+# Sitemap.xml
+sitemap_root = r'C:\Users\GreenFest\.gemini\antigravity\scratch\magicdns\sitemap.xml'
+sitemap_pub = r'C:\Users\GreenFest\.gemini\antigravity\scratch\magicdns\public\sitemap.xml'
+test("sitemap.xml exists in root", os.path.exists(sitemap_root))
+test("sitemap.xml exists in public/", os.path.exists(sitemap_pub))
+if os.path.exists(sitemap_root):
+    try:
+        st = ET.parse(sitemap_root)
+        s_root = st.getroot()
+        test("sitemap.xml is valid XML with correct namespace", 'sitemaps.org' in s_root.tag)
+        test("sitemap.xml contains https://magicdns.ru/", 'https://magicdns.ru/' in open(sitemap_root).read())
+        test("sitemap.xml has priority 1.0", '<priority>1.0</priority>' in open(sitemap_root).read())
+    except Exception as e:
+        test("sitemap.xml is valid XML", False, str(e))
+
+# OG Image
+og_root = r'C:\Users\GreenFest\.gemini\antigravity\scratch\magicdns\og-image.png'
+og_pub = r'C:\Users\GreenFest\.gemini\antigravity\scratch\magicdns\public\og-image.png'
+test("og-image.png exists in root", os.path.exists(og_root))
+test("og-image.png exists in public/", os.path.exists(og_pub))
+if os.path.exists(og_root):
+    with Image.open(og_root) as im:
+        test("og-image.png has standard 1200x630 dimensions", im.size == (1200, 630))
+
+# HTML Head Meta Tags
+title_match = re.search(r'<title>(.*?)</title>', html)
+test("Title tag present and optimal length (30-70 chars)", bool(title_match and 30 <= len(title_match.group(1)) <= 70), f"Len: {len(title_match.group(1)) if title_match else 0}")
+
+desc_match = re.search(r'<meta\s+name=["\']description["\']\s+content=["\'](.*?)["\']', html)
+test("Description meta tag present and optimal length (50-160 chars)", bool(desc_match and 50 <= len(desc_match.group(1)) <= 160), f"Len: {len(desc_match.group(1)) if desc_match else 0}")
+
+test("Keywords meta tag present", '<meta name="keywords"' in html)
+test("Canonical link present", '<link rel="canonical" href="https://magicdns.ru/">' in html)
+
+# Open Graph Tags
+test("Open Graph site_name, url, title, description, image present",
+     all(f'property="og:{prop}"' in html for prop in ['site_name', 'url', 'title', 'description', 'type', 'locale', 'image', 'image:width', 'image:height']))
+
+# Twitter Cards
+test("Twitter Cards card, url, title, description, image present",
+     all(f'name="twitter:{prop}"' in html for prop in ['card', 'url', 'title', 'description', 'image']))
+
+# Verification placeholders
+test("Google Search Console verification placeholder present", 'google-site-verification' in html)
+test("Yandex Webmaster verification placeholder present", 'yandex-verification' in html)
+
+# Schema.org JSON-LD
+jsonld_match = re.search(r'<script type=["\']application/ld\+json["\']>(.*?)</script>', html, re.DOTALL)
+test("Schema.org JSON-LD script present", bool(jsonld_match))
+if jsonld_match:
+    try:
+        ld_data = json.loads(jsonld_match.group(1))
+        test("Schema.org JSON-LD is valid JSON", True)
+        types = [item.get('@type') for item in ld_data.get('@graph', [])] if '@graph' in ld_data else [ld_data.get('@type')]
+        test("Schema.org includes WebApplication or WebSite", 'WebApplication' in types or 'WebSite' in types)
+    except Exception as e:
+        test("Schema.org JSON-LD is valid JSON", False, str(e))
+
 # Summary
 print("\n" + "="*50)
 print("DEEP VERIFICATION SUITE RESULTS")
