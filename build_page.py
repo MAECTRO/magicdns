@@ -2798,7 +2798,7 @@ html_content = f'''<!DOCTYPE html>
           </svg>
           <span>MagicDNS</span>
         </div>
-        <div class="footer-copy">© 2026 MagicDNS. Архитектура CascadeDNS. Домен <a href="https://magicdns.ru" style="color:var(--neon-mint);">magicdns.ru</a></div>
+        <div class="footer-copy">© 2026 MagicDNS. Архитектура CascadeDNS.</div>
       </div>
 
       <div class="footer-center">
