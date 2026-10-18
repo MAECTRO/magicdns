@@ -936,7 +936,6 @@ html_content = f'''<!DOCTYPE html>
         </div>
         <div class="logo-titles">
           <span class="brand-title">MagicDNS</span>
-          <span class="brand-badge">CascadeDNS</span>
         </div>
       </a>
 
@@ -960,7 +959,7 @@ html_content = f'''<!DOCTYPE html>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
         </svg>
-        <span>Суверенный шлюз SmartDNS для ИИ-сервисов</span>
+        <span>Архитектура CascadeDNS • Шлюз для ИИ-сервисов</span>
       </div>
       <h1>Быстрый DNS для Claude AI, Gemini, Google AI Studio и Antigravity</h1>
       <p>Без сторонних приложений, падения скорости и сложной настройки. Прямой доступ к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT на смартфонах, ПК и консолях. Выбери устройство и подключись за 1 минуту.</p>
