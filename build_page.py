@@ -1780,6 +1780,8 @@ html_content = f'''<!DOCTYPE html>
         bottom: 80px;
         right: 18px;
       }}
+    }}
+
     /* ==========================================================================
        4.5. Community Reviews & Suggestions Section
        ========================================================================== */
@@ -1812,8 +1814,19 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     .btn-feedback-trigger {{
-      padding: 10px 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
       font-size: 0.88rem;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }}
+
+    .btn-feedback-trigger svg {{
+      width: 18px;
+      height: 18px;
       flex-shrink: 0;
     }}
 
@@ -2631,7 +2644,7 @@ html_content = f'''<!DOCTYPE html>
           <p class="reviews-subtitle">Реальный опыт использования для работы с Claude AI, Gemini и кодинга без VPN</p>
         </div>
         <button type="button" class="btn-neon-action btn-feedback-trigger" id="open-feedback-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
           <span>Оставить отзыв или идею</span>
         </button>
       </div>
@@ -2652,7 +2665,7 @@ html_content = f'''<!DOCTYPE html>
             Настроил профиль на Mac и iPhone за пару минут. Claude AI и Google AI Studio открываются мгновенно, без задержек и без вечной капчи от Cloudflare. Огромный плюс — банки и локальные сервисы идут напрямую через провайдера на полной скорости.
           </p>
           <div class="review-badge-verified">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             <span>Проверено · Apple Profile</span>
           </div>
         </div>
@@ -2672,7 +2685,7 @@ html_content = f'''<!DOCTYPE html>
             Прописал DoH адрес в Keenetic. Теперь у всех устройств в домашней сети ChatGPT, Gemini и Perplexity работают прозрачно, не нужно каждому настраивать отдельные клиенты. Скорость не режется вообще, пинг до Стокгольма отличный.
           </p>
           <div class="review-badge-verified">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             <span>Проверено · Router DoH</span>
           </div>
         </div>
@@ -2692,7 +2705,7 @@ html_content = f'''<!DOCTYPE html>
             Раньше VPN постоянно отваливался и жрал батарею на ноутбуке. С MagicDNS просто включила шифрованный DNS в Windows — всё летает, как будто никаких блокировок нет. Очень удобно для работы в нейросетях целыми днями.
           </p>
           <div class="review-badge-verified">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             <span>Проверено · Windows 11 DoH</span>
           </div>
         </div>
