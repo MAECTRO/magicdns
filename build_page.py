@@ -767,6 +767,15 @@ html_content = f'''<!DOCTYPE html>
       min-width: 150px;
     }}
 
+    .btn-neon-action svg,
+    .btn-action-green svg,
+    .btn-dark-action svg,
+    .feedback-submit-btn svg {{
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }}
+
     .btn-neon-action:hover,
     .btn-action-green:hover {{
       transform: translateY(-2px);
@@ -1830,6 +1839,88 @@ html_content = f'''<!DOCTYPE html>
       flex-shrink: 0;
     }}
 
+    .reviews-container {{
+      width: 100%;
+    }}
+
+    .reviews-empty-state {{
+      background: rgba(13, 23, 40, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px dashed rgba(0, 255, 157, 0.25);
+      border-radius: var(--radius-md);
+      padding: 44px 28px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      max-width: 640px;
+      margin: 0 auto;
+      transition: all var(--transition-normal);
+    }}
+
+    .reviews-empty-state:hover {{
+      border-color: rgba(0, 255, 157, 0.45);
+      box-shadow: 0 0 30px rgba(0, 255, 157, 0.1);
+    }}
+
+    .empty-state-icon {{
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: rgba(0, 255, 157, 0.08);
+      border: 1px solid rgba(0, 255, 157, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      color: var(--neon-mint);
+    }}
+
+    .empty-state-icon svg {{
+      width: 26px;
+      height: 26px;
+    }}
+
+    .empty-state-badge {{
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(0, 255, 157, 0.08);
+      border: 1px solid rgba(0, 255, 157, 0.2);
+      color: var(--neon-mint);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }}
+
+    .empty-state-title {{
+      font-size: 1.22rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 8px 0;
+    }}
+
+    .empty-state-desc {{
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 0 22px 0;
+    }}
+
+    .btn-open-feedback-empty {{
+      padding: 11px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }}
+
     .reviews-grid {{
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
@@ -2168,6 +2259,16 @@ html_content = f'''<!DOCTYPE html>
       margin-top: 4px;
       padding: 12px 20px;
       font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }}
+
+    .feedback-submit-btn svg {{
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
     }}
   </style>
 </head>
@@ -2640,8 +2741,8 @@ html_content = f'''<!DOCTYPE html>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <span>ОТЗЫВЫ И ПРЕДЛОЖЕНИЯ</span>
           </div>
-          <h2>Что говорят пользователи MagicDNS</h2>
-          <p class="reviews-subtitle">Реальный опыт использования для работы с Claude AI, Gemini и кодинга без VPN</p>
+          <h2>Отзывы пользователей</h2>
+          <p class="reviews-subtitle">Честный опыт работы с Claude AI, Gemini, ChatGPT и кодингом без VPN</p>
         </div>
         <button type="button" class="btn-neon-action btn-feedback-trigger" id="open-feedback-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -2649,66 +2750,24 @@ html_content = f'''<!DOCTYPE html>
         </button>
       </div>
 
-      <div class="reviews-grid">
-        <div class="review-card">
-          <div class="review-card-top">
-            <div class="review-author-info">
-              <div class="review-avatar">АР</div>
-              <div>
-                <div class="review-author-name">Алексей Романов</div>
-                <div class="review-author-role">Senior Frontend • macOS / Safari</div>
-              </div>
-            </div>
-            <div class="review-stars" aria-label="Оценка 5 из 5">★★★★★</div>
+      <div class="reviews-container" id="reviews-container">
+        <div class="reviews-empty-state" id="reviews-empty-state">
+          <div class="empty-state-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+            </svg>
           </div>
-          <p class="review-body">
-            Настроил профиль на Mac и iPhone за пару минут. Claude AI и Google AI Studio открываются мгновенно, без задержек и без вечной капчи от Cloudflare. Огромный плюс — банки и локальные сервисы идут напрямую через провайдера на полной скорости.
+          <div class="empty-state-badge">0 отзывов</div>
+          <h3 class="empty-state-title">Здесь пока нет отзывов</h3>
+          <p class="empty-state-desc">
+            Мы не публикуем выдуманные отзывы. Начнем с чистого листа: протестируйте MagicDNS в деле и станьте первым, кто поделится реальным впечатлением или предложит идею!
           </p>
-          <div class="review-badge-verified">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Проверено · Apple Profile</span>
-          </div>
+          <button type="button" class="btn-neon-action btn-open-feedback-empty" id="btn-empty-feedback">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            <span>Написать первый отзыв</span>
+          </button>
         </div>
-
-        <div class="review-card">
-          <div class="review-card-top">
-            <div class="review-author-info">
-              <div class="review-avatar dev">МВ</div>
-              <div>
-                <div class="review-author-name">Михаил Васильев</div>
-                <div class="review-author-role">DevOps &amp; HomeLab • Keenetic Giga</div>
-              </div>
-            </div>
-            <div class="review-stars" aria-label="Оценка 5 из 5">★★★★★</div>
-          </div>
-          <p class="review-body">
-            Прописал DoH адрес в Keenetic. Теперь у всех устройств в домашней сети ChatGPT, Gemini и Perplexity работают прозрачно, не нужно каждому настраивать отдельные клиенты. Скорость не режется вообще, пинг до Стокгольма отличный.
-          </p>
-          <div class="review-badge-verified">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Проверено · Router DoH</span>
-          </div>
-        </div>
-
-        <div class="review-card">
-          <div class="review-card-top">
-            <div class="review-author-info">
-              <div class="review-avatar des">ЕК</div>
-              <div>
-                <div class="review-author-name">Екатерина Ковалева</div>
-                <div class="review-author-role">UI/UX Designer • Windows 11</div>
-              </div>
-            </div>
-            <div class="review-stars" aria-label="Оценка 5 из 5">★★★★★</div>
-          </div>
-          <p class="review-body">
-            Раньше VPN постоянно отваливался и жрал батарею на ноутбуке. С MagicDNS просто включила шифрованный DNS в Windows — всё летает, как будто никаких блокировок нет. Очень удобно для работы в нейросетях целыми днями.
-          </p>
-          <div class="review-badge-verified">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Проверено · Windows 11 DoH</span>
-          </div>
-        </div>
+        <div class="reviews-grid" id="reviews-grid" style="display: none;"></div>
       </div>
     </section>
 
@@ -2904,7 +2963,7 @@ html_content = f'''<!DOCTYPE html>
 
         <!-- Submit Button -->
         <button type="submit" id="feedback-submit-btn" class="btn-neon-action feedback-submit-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
           <span>Отправить отзыв</span>
         </button>
       </form>
@@ -3583,6 +3642,87 @@ html_content = f'''<!DOCTYPE html>
         }});
       }});
 
+      const emptyFeedbackBtn = document.getElementById('btn-empty-feedback');
+      if (emptyFeedbackBtn) {{
+        emptyFeedbackBtn.addEventListener('click', function() {{
+          toggleFeedbackModal(true);
+        }});
+      }}
+
+      function escapeHtml(str) {{
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }}
+
+      function getSavedReviews() {{
+        try {{
+          const raw = localStorage.getItem('magicdns_user_reviews');
+          return raw ? JSON.parse(raw) : [];
+        }} catch(e) {{
+          return [];
+        }}
+      }}
+
+      function saveReview(review) {{
+        try {{
+          const reviews = getSavedReviews();
+          reviews.unshift(review);
+          localStorage.setItem('magicdns_user_reviews', JSON.stringify(reviews.slice(0, 50)));
+        }} catch(e) {{}}
+      }}
+
+      function renderReviews() {{
+        const emptyState = document.getElementById('reviews-empty-state');
+        const grid = document.getElementById('reviews-grid');
+        if (!grid || !emptyState) return;
+
+        const reviews = getSavedReviews();
+        if (!reviews || reviews.length === 0) {{
+          emptyState.style.display = 'flex';
+          grid.style.display = 'none';
+          grid.innerHTML = '';
+          return;
+        }}
+
+        emptyState.style.display = 'none';
+        grid.style.display = 'grid';
+        grid.innerHTML = '';
+
+        reviews.forEach(function(item) {{
+          const card = document.createElement('div');
+          card.className = 'review-card';
+          
+          const ratingVal = Math.max(1, Math.min(5, Number(item.rating) || 5));
+          const ratingStars = '★'.repeat(ratingVal);
+          const authorName = item.author ? escapeHtml(item.author) : 'Пользователь MagicDNS';
+          const platform = item.platform ? escapeHtml(item.platform) : 'DNS';
+          const initials = authorName.substring(0, 2).toUpperCase();
+          const message = escapeHtml(item.message);
+
+          card.innerHTML = 
+            '<div class="review-card-top">' +
+              '<div class="review-author-info">' +
+                '<div class="review-avatar">' + initials + '</div>' +
+                '<div>' +
+                  '<div class="review-author-name">' + authorName + '</div>' +
+                  '<div class="review-author-role">' + platform + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="review-stars" aria-label="Оценка ' + ratingVal + ' из 5">' + ratingStars + '</div>' +
+            '</div>' +
+            '<p class="review-body">' + message + '</p>' +
+            '<div class="review-badge-verified">' +
+              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' +
+              '<span>Проверено · ' + platform + '</span>' +
+            '</div>';
+          grid.appendChild(card);
+        }});
+      }}
+
       // Feedback Form Submission
       if (feedbackForm) {{
         feedbackForm.addEventListener('submit', function(e) {{
@@ -3625,6 +3765,16 @@ html_content = f'''<!DOCTYPE html>
               submitBtn.style.opacity = '1';
               submitBtn.querySelector('span').textContent = 'Отправить отзыв';
             }}
+            if (currentType === 'review') {{
+              saveReview({{
+                author: contact ? contact.replace(/^@/, '') : 'Пользователь MagicDNS',
+                platform: currentPlatform,
+                rating: currentRating,
+                message: message,
+                date: new Date().toISOString()
+              }});
+              renderReviews();
+            }}
             if (textInput) textInput.value = '';
             if (contactInput) contactInput.value = '';
             toggleFeedbackModal(false);
@@ -3632,6 +3782,8 @@ html_content = f'''<!DOCTYPE html>
           }});
         }});
       }}
+
+      renderReviews();
 
     }})();
   </script>
