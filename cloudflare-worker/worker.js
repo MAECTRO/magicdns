@@ -1,11 +1,9 @@
 /**
- * MagicDNS Support Bot — Cloudflare Worker
+ * MagicDNS Support Bot — Cloudflare Workers AI
  * 
- * 100 000 free requests/day on Cloudflare Free Tier.
- * Proxies user questions to Google Gemini Flash API securely.
- * 
- * Environment variables (Secrets):
- * - GEMINI_API_KEY: Your free Gemini API key from https://aistudio.google.com/
+ * Powered natively by Cloudflare Workers AI (@cf/meta/llama-3.1-8b-instruct-fast).
+ * 10,000 Neurons/day free.
+ * ZERO API keys required — no external services or secrets!
  */
 
 const SYSTEM_INSTRUCTION = `Ты — официальный технический AI-ассистент сервиса MagicDNS (сайт: magicdns.ru).
@@ -67,69 +65,45 @@ export default {
       if (!userMessage) {
         return new Response(JSON.stringify({ error: 'Empty message' }), {
           status: 400,
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        });
-      }
-
-      // Check API Key
-      const apiKey = env.GEMINI_API_KEY;
-      if (!apiKey) {
-        return new Response(JSON.stringify({
-          reply: 'Воркер активен, но переменная GEMINI_API_KEY еще не настроена в Cloudflare Dashboard -> Settings -> Variables.'
-        }), {
-          status: 200,
           headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
         });
       }
 
-      // Build conversation history (up to last 6 turns)
-      const contents = [];
+      // Build conversation messages for Cloudflare Workers AI
+      const messages = [
+        { role: 'system', content: SYSTEM_INSTRUCTION }
+      ];
+
       if (Array.isArray(body.history)) {
         for (const item of body.history.slice(-6)) {
           if (item.role && item.text) {
-            contents.push({
-              role: item.role === 'user' ? 'user' : 'model',
-              parts: [{ text: item.text }],
+            messages.push({
+              role: item.role === 'user' ? 'user' : 'assistant',
+              content: item.text,
             });
           }
         }
       }
-      contents.push({
-        role: 'user',
-        parts: [{ text: userMessage }],
-      });
 
-      // Query Gemini 1.5 Flash API (15 RPM / 1500 RPD free tier)
-      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      messages.push({ role: 'user', content: userMessage });
 
-      const payload = {
-        system_instruction: {
-          parts: [{ text: SYSTEM_INSTRUCTION }],
-        },
-        contents: contents,
-        generationConfig: {
+      // Run Cloudflare Workers AI natively (no API keys required!)
+      let aiResponse;
+      try {
+        aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
+          messages: messages,
+          max_tokens: 500,
           temperature: 0.3,
-          maxOutputTokens: 600,
-        },
-      };
-
-      const geminiRes = await fetch(geminiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (!geminiRes.ok) {
-        return new Response(JSON.stringify({
-          reply: 'Шлюз Gemini временно недоступен или превышена квота. Вы можете воспользоваться готовыми ответами FAQ в меню чата.'
-        }), {
-          status: 200,
-          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+        });
+      } catch (errFast) {
+        aiResponse = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
+          messages: messages,
+          max_tokens: 500,
+          temperature: 0.3,
         });
       }
 
-      const data = await geminiRes.json();
-      const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Не удалось сформировать ответ. Попробуйте еще раз.';
+      const replyText = aiResponse?.response || 'Не удалось сформировать ответ. Попробуйте еще раз.';
 
       return new Response(JSON.stringify({ reply: replyText }), {
         status: 200,

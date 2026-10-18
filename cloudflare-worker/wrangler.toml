@@ -1,6 +1,6 @@
-name = "magicdns-support-bot"
+name = "magicdns"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 
-# To set your secret:
-# npx wrangler secret put GEMINI_API_KEY
+[ai]
+binding = "AI"

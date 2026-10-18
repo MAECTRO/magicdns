@@ -35,8 +35,8 @@ test("cloudflare-worker/README.md exists", os.path.exists(readme_path))
 if os.path.exists(worker_path):
     worker_js = open(worker_path, encoding='utf-8').read()
     test("Worker handles OPTIONS CORS preflight", "request.method === 'OPTIONS'" in worker_js)
-    test("Worker checks GEMINI_API_KEY", "env.GEMINI_API_KEY" in worker_js)
-    test("Worker queries Gemini Flash endpoint", "generativelanguage.googleapis.com" in worker_js and "gemini-1.5-flash" in worker_js)
+    test("Worker uses native Cloudflare Workers AI env.AI.run", "env.AI.run" in worker_js)
+    test("Worker uses Llama 3.1 model", "@cf/meta/llama-3.1" in worker_js)
     test("Worker contains Swedish IP 109.120.132.43", "109.120.132.43" in worker_js)
     test("Worker contains DoH URL https://dns.magicdns.ru/dns-query", "https://dns.magicdns.ru/dns-query" in worker_js)
 
