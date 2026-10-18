@@ -1014,33 +1014,35 @@ html_content = f'''<!DOCTYPE html>
     /* AI Services Probe Grid */
     .ai-services-probe-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }}
 
     .ai-probe-card {{
-      background: rgba(7, 13, 20, 0.7);
+      background: rgba(11, 20, 36, 0.7);
       border: 1px solid var(--border-hairline);
       border-radius: var(--radius-sm);
-      padding: 12px 14px;
+      padding: 14px 14px 12px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
+      min-height: 104px;
       transition: all var(--transition-fast);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }}
 
     .ai-probe-card:hover {{
       border-color: rgba(0, 255, 157, 0.35);
-      background: rgba(11, 20, 36, 0.85);
+      background: rgba(15, 27, 48, 0.85);
+      transform: translateY(-2px);
     }}
 
-    .ai-probe-left {{
+    .ai-probe-top {{
       display: flex;
       align-items: center;
       gap: 10px;
-      min-width: 0;
     }}
 
     .ai-probe-icon {{
@@ -1060,10 +1062,11 @@ html_content = f'''<!DOCTYPE html>
       height: 17px;
     }}
 
-    .ai-probe-info {{
+    .ai-probe-titles {{
       display: flex;
       flex-direction: column;
       min-width: 0;
+      gap: 2px;
     }}
 
     .ai-probe-name {{
@@ -1071,38 +1074,41 @@ html_content = f'''<!DOCTYPE html>
       font-weight: 700;
       color: #ffffff;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }}
 
     .ai-probe-host {{
-      font-size: 0.72rem;
+      font-size: 0.71rem;
       color: var(--text-dim);
       font-family: ui-monospace, SFMono-Regular, monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }}
 
     .ai-probe-badge {{
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 5px;
       font-size: 0.74rem;
       font-weight: 600;
-      padding: 4px 9px;
+      padding: 5px 8px;
       border-radius: var(--radius-pill);
+      width: 100%;
+      box-sizing: border-box;
       white-space: nowrap;
-      flex-shrink: 0;
       transition: all var(--transition-fast);
     }}
 
     .ai-probe-badge.online {{
-      background: rgba(0, 255, 157, 0.12);
+      background: rgba(0, 255, 157, 0.1);
       color: var(--neon-mint);
-      border: 1px solid rgba(0, 255, 157, 0.35);
-      box-shadow: 0 0 10px rgba(0, 255, 157, 0.15);
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      box-shadow: 0 0 10px rgba(0, 255, 157, 0.1);
     }}
 
     .ai-probe-badge.offline {{
-      background: rgba(239, 68, 68, 0.12);
+      background: rgba(239, 68, 68, 0.1);
       color: #f87171;
       border: 1px solid rgba(239, 68, 68, 0.3);
     }}
@@ -1702,81 +1708,81 @@ html_content = f'''<!DOCTYPE html>
           <!-- AI Services Live Probe Grid -->
           <div class="ai-services-probe-grid" id="ai-services-grid">
             <div class="ai-probe-card" id="probe-card-claude">
-              <div class="ai-probe-left">
+              <div class="ai-probe-top">
                 <div class="ai-probe-icon" style="color: #f59e0b;">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z"/></svg>
                 </div>
-                <div class="ai-probe-info">
+                <div class="ai-probe-titles">
                   <span class="ai-probe-name">Claude AI</span>
                   <span class="ai-probe-host">claude.ai</span>
                 </div>
               </div>
               <span class="ai-probe-badge online" id="probe-badge-claude">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 <span>Доступен</span>
               </span>
             </div>
 
             <div class="ai-probe-card" id="probe-card-gemini">
-              <div class="ai-probe-left">
+              <div class="ai-probe-top">
                 <div class="ai-probe-icon" style="color: #38bdf8;">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3c0 4.97-4.03 9-9 9 4.97 0 9 4.03 9 9 0-4.97 4.03-9 9-9-4.97 0-9-4.03-9-9z"/></svg>
                 </div>
-                <div class="ai-probe-info">
+                <div class="ai-probe-titles">
                   <span class="ai-probe-name">Gemini</span>
                   <span class="ai-probe-host">gemini.google.com</span>
                 </div>
               </div>
               <span class="ai-probe-badge online" id="probe-badge-gemini">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 <span>Доступен</span>
               </span>
             </div>
 
             <div class="ai-probe-card" id="probe-card-chatgpt">
-              <div class="ai-probe-left">
+              <div class="ai-probe-top">
                 <div class="ai-probe-icon" style="color: #10b981;">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
                 </div>
-                <div class="ai-probe-info">
+                <div class="ai-probe-titles">
                   <span class="ai-probe-name">ChatGPT</span>
                   <span class="ai-probe-host">chatgpt.com</span>
                 </div>
               </div>
               <span class="ai-probe-badge online" id="probe-badge-chatgpt">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 <span>Доступен</span>
               </span>
             </div>
 
             <div class="ai-probe-card" id="probe-card-perplexity">
-              <div class="ai-probe-left">
+              <div class="ai-probe-top">
                 <div class="ai-probe-icon" style="color: #06b6d4;">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 </div>
-                <div class="ai-probe-info">
+                <div class="ai-probe-titles">
                   <span class="ai-probe-name">Perplexity</span>
                   <span class="ai-probe-host">perplexity.ai</span>
                 </div>
               </div>
               <span class="ai-probe-badge online" id="probe-badge-perplexity">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 <span>Доступен</span>
               </span>
             </div>
 
             <div class="ai-probe-card" id="probe-card-aistudio">
-              <div class="ai-probe-left">
+              <div class="ai-probe-top">
                 <div class="ai-probe-icon" style="color: #a78bfa;">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
                 </div>
-                <div class="ai-probe-info">
+                <div class="ai-probe-titles">
                   <span class="ai-probe-name">AI Studio &amp; Antigravity</span>
                   <span class="ai-probe-host">aistudio.google.com</span>
                 </div>
               </div>
               <span class="ai-probe-badge online" id="probe-badge-aistudio">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
                 <span>Доступен</span>
               </span>
             </div>
@@ -2051,14 +2057,14 @@ html_content = f'''<!DOCTYPE html>
       const metricAccess = document.getElementById('metric-access-status');
 
       const AI_SERVICES_LIST = [
-        {{ id: 'claude', name: 'Claude AI', endpoint: 'https://claude.ai/favicon.ico' }},
+        {{ id: 'claude', name: 'Claude AI', endpoint: 'https://api.anthropic.com', fallback: 'https://claude.ai/favicon.ico' }},
         {{ id: 'gemini', name: 'Gemini', endpoint: 'https://gemini.google.com/favicon.ico' }},
         {{ id: 'chatgpt', name: 'ChatGPT', endpoint: 'https://chatgpt.com/favicon.ico' }},
         {{ id: 'perplexity', name: 'Perplexity', endpoint: 'https://www.perplexity.ai/favicon.ico' }},
         {{ id: 'aistudio', name: 'AI Studio & Antigravity', endpoint: 'https://aistudio.google.com/favicon.ico' }}
       ];
 
-      function probeEndpoint(url, timeoutMs) {{
+      function probeSingle(url, timeoutMs) {{
         return new Promise(function(resolve) {{
           const startTime = performance.now();
           const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
@@ -2072,7 +2078,7 @@ html_content = f'''<!DOCTYPE html>
               }}
               resolve({{ ok: false, error: 'timeout', latency: Math.round(performance.now() - startTime) }});
             }}
-          }}, timeoutMs || 2800);
+          }}, timeoutMs || 3500);
 
           const testUrl = url + (url.indexOf('?') === -1 ? '?' : '&') + '_t=' + Date.now();
           const fetchOptions = {{
@@ -2102,6 +2108,16 @@ html_content = f'''<!DOCTYPE html>
         }});
       }}
 
+      function probeEndpoint(item, timeoutMs) {{
+        return probeSingle(item.endpoint, timeoutMs).then(function(res) {{
+          if (res.ok) return res;
+          if (item.fallback) {{
+            return probeSingle(item.fallback, timeoutMs);
+          }}
+          return res;
+        }});
+      }}
+
       if (checkBtn) {{
         checkBtn.addEventListener('click', function() {{
           playTactileFeedback();
@@ -2114,7 +2130,7 @@ html_content = f'''<!DOCTYPE html>
 
           // Launch probes
           const probePromises = AI_SERVICES_LIST.map(function(item) {{
-            return probeEndpoint(item.endpoint, 2800).then(function(res) {{
+            return probeEndpoint(item, 3500).then(function(res) {{
               return {{ id: item.id, item: item, result: res }};
             }});
           }});
@@ -2153,10 +2169,10 @@ html_content = f'''<!DOCTYPE html>
                     onlineCount++;
                     totalLatency += entry.result.latency;
                     badge.className = 'ai-probe-badge online';
-                    badge.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Доступен · <span class="ai-probe-ping">' + entry.result.latency + ' мс</span></span>';
+                    badge.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Доступен · <span class="ai-probe-ping">' + entry.result.latency + ' мс</span></span>';
                   }} else {{
                     badge.className = 'ai-probe-badge offline';
-                    badge.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Заблокирован</span>';
+                    badge.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Заблокирован</span>';
                   }}
                 }}
               }});
