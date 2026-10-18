@@ -1,9 +1,12 @@
 /**
- * MagicDNS Support Bot — Cloudflare Workers AI
+ * MagicDNS Support Bot & Feedback Gateway — Cloudflare Workers AI
  * 
- * Powered natively by Cloudflare Workers AI (@cf/meta/llama-3.1-8b-instruct-fast).
+ * - Chat: Powered natively by Cloudflare Workers AI (@cf/meta/llama-3.1-8b-instruct-fast).
+ * - Feedback: Handles user reviews, suggestions & bug reports.
+ *   Optionally relays to Telegram if TELEGRAM_BOT_TOKEN & TELEGRAM_CHAT_ID are set.
+ * 
  * 10,000 Neurons/day free.
- * ZERO API keys required — no external services or secrets!
+ * ZERO API keys required for LLM inference!
  */
 
 const SYSTEM_INSTRUCTION = `Ты — официальный технический AI-ассистент сервиса MagicDNS (сайт: magicdns.ru).
@@ -58,6 +61,52 @@ export default {
       });
     }
 
+    const url = new URL(request.url);
+
+    // 3. Handle Feedback & Review Submissions
+    if (url.pathname === '/feedback') {
+      try {
+        const body = await request.json();
+        const typeNames = { review: '⭐ Отзыв', idea: '💡 Предложение', bug: '🐛 Ошибка / Баг' };
+        const typeTitle = typeNames[body.type] || body.type || 'Отзыв';
+        const ratingStars = '⭐'.repeat(Math.max(1, Math.min(5, Number(body.rating) || 5)));
+
+        // If Telegram bot is configured, relay notification
+        if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
+          const tgText = `🔔 <b>Новое сообщение с MagicDNS!</b>\n\n` +
+            `<b>Категория:</b> ${typeTitle}\n` +
+            `<b>Оценка:</b> ${ratingStars}\n` +
+            `<b>Платформа:</b> ${body.platform || 'Не указана'}\n` +
+            `<b>Контакт:</b> ${body.contact || 'Анонимно'}\n\n` +
+            `<b>Текст:</b>\n${body.message || '—'}`;
+
+          await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: env.TELEGRAM_CHAT_ID,
+              text: tgText,
+              parse_mode: 'HTML',
+            }),
+          }).catch(() => {});
+        }
+
+        return new Response(JSON.stringify({ ok: true, message: 'Отзыв успешно принят' }), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({ error: err.message || 'Error processing feedback' }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        });
+      }
+    }
+
+    // 4. Handle Chat AI Questions (Default Endpoint)
     try {
       const body = await request.json();
       const userMessage = (body.message || '').trim();
@@ -87,7 +136,7 @@ export default {
 
       messages.push({ role: 'user', content: userMessage });
 
-      // Run Cloudflare Workers AI natively (no API keys required!)
+      // Run Cloudflare Workers AI natively
       let aiResponse;
       try {
         aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {

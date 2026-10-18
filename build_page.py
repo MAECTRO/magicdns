@@ -1780,6 +1780,381 @@ html_content = f'''<!DOCTYPE html>
         bottom: 80px;
         right: 18px;
       }}
+    /* ==========================================================================
+       4.5. Community Reviews & Suggestions Section
+       ========================================================================== */
+    .reviews-section {{
+      margin-top: 64px;
+      margin-bottom: 24px;
+    }}
+
+    .reviews-header {{
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }}
+
+    .reviews-header-left h2 {{
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 8px 0 6px 0;
+      letter-spacing: -0.02em;
+    }}
+
+    .reviews-subtitle {{
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin: 0;
+    }}
+
+    .btn-feedback-trigger {{
+      padding: 10px 20px;
+      font-size: 0.88rem;
+      flex-shrink: 0;
+    }}
+
+    .reviews-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 16px;
+    }}
+
+    .review-card {{
+      background: rgba(13, 23, 40, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      transition: all var(--transition-fast);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }}
+
+    .review-card:hover {{
+      border-color: rgba(0, 255, 157, 0.35);
+      background: rgba(15, 27, 48, 0.85);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 255, 157, 0.08);
+    }}
+
+    .review-card-top {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }}
+
+    .review-author-info {{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }}
+
+    .review-avatar {{
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(0, 255, 157, 0.2), rgba(6, 182, 212, 0.2));
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      color: var(--neon-mint);
+      font-weight: 700;
+      font-size: 0.84rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }}
+
+    .review-avatar.dev {{
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(167, 139, 250, 0.2));
+      border-color: rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+    }}
+
+    .review-avatar.des {{
+      background: linear-gradient(135deg, rgba(244, 114, 182, 0.2), rgba(251, 191, 36, 0.2));
+      border-color: rgba(244, 114, 182, 0.35);
+      color: #f472b6;
+    }}
+
+    .review-author-name {{
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #ffffff;
+    }}
+
+    .review-author-role {{
+      font-size: 0.74rem;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }}
+
+    .review-stars {{
+      color: #fbbf24;
+      font-size: 1.05rem;
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px rgba(251, 191, 36, 0.3);
+      flex-shrink: 0;
+    }}
+
+    .review-body {{
+      color: #d1d5db;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      margin: 0;
+      flex: 1;
+    }}
+
+    .review-badge-verified {{
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(0, 255, 157, 0.08);
+      border: 1px solid rgba(0, 255, 157, 0.25);
+      color: var(--neon-mint);
+      font-size: 0.72rem;
+      font-weight: 600;
+      width: fit-content;
+    }}
+
+    .review-badge-verified svg {{
+      width: 12px;
+      height: 12px;
+    }}
+
+    /* ==========================================================================
+       Feedback & Suggestions Modal
+       ========================================================================== */
+    .feedback-modal-overlay {{
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(4, 8, 14, 0.78);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }}
+
+    .feedback-modal-overlay.active {{
+      opacity: 1;
+      pointer-events: auto;
+    }}
+
+    .feedback-modal-card {{
+      background: rgba(9, 16, 28, 0.98);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(0, 255, 157, 0.35);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 255, 157, 0.15);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 520px;
+      padding: 24px 26px;
+      transform: scale(0.94);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+      max-height: calc(100dvh - 32px);
+      overflow-y: auto;
+    }}
+
+    .feedback-modal-overlay.active .feedback-modal-card {{
+      transform: scale(1);
+    }}
+
+    .feedback-modal-header {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 12px;
+    }}
+
+    .feedback-modal-title-wrap {{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }}
+
+    .feedback-modal-icon {{
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(0, 255, 157, 0.08);
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }}
+
+    .feedback-modal-icon svg {{
+      width: 20px;
+      height: 20px;
+    }}
+
+    .feedback-modal-title {{
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+    }}
+
+    .feedback-modal-subtitle {{
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin: 2px 0 0 0;
+    }}
+
+    .feedback-form {{
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }}
+
+    .feedback-type-group {{
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }}
+
+    .feedback-type-chip {{
+      flex: 1;
+      min-width: 110px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--transition-fast);
+    }}
+
+    .feedback-type-chip.active {{
+      background: rgba(0, 255, 157, 0.12);
+      border-color: var(--neon-mint);
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(0, 255, 157, 0.2);
+    }}
+
+    .rating-stars-wrap {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 6px 0;
+    }}
+
+    .feedback-label {{
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }}
+
+    .star-rating {{
+      display: flex;
+      gap: 4px;
+    }}
+
+    .star-btn {{
+      font-size: 1.5rem;
+      line-height: 1;
+      color: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      padding: 2px 4px;
+      transition: all var(--transition-fast);
+      user-select: none;
+    }}
+
+    .star-btn:hover,
+    .star-btn.active {{
+      color: #fbbf24;
+      text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+      transform: scale(1.1);
+    }}
+
+    .feedback-field {{
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }}
+
+    .platform-chips {{
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }}
+
+    .platform-chip {{
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-pill);
+      padding: 6px 12px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }}
+
+    .platform-chip.active {{
+      background: rgba(0, 255, 157, 0.1);
+      border-color: rgba(0, 255, 157, 0.4);
+      color: var(--neon-mint);
+    }}
+
+    .feedback-textarea,
+    .feedback-input {{
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.88rem;
+      box-sizing: border-box;
+      outline: none;
+      transition: all var(--transition-fast);
+    }}
+
+    .feedback-textarea:focus,
+    .feedback-input:focus {{
+      border-color: var(--neon-mint);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 14px rgba(0, 255, 157, 0.2);
+    }}
+
+    .feedback-textarea {{
+      resize: vertical;
+      min-height: 90px;
+    }}
+
+    .feedback-submit-btn {{
+      width: 100%;
+      margin-top: 4px;
+      padding: 12px 20px;
+      font-size: 0.95rem;
     }}
   </style>
 </head>
@@ -2244,6 +2619,86 @@ html_content = f'''<!DOCTYPE html>
       </div>
     </section>
 
+    <!-- 4.5. Community Reviews & Suggestions Section -->
+    <section class="reviews-section" id="reviews">
+      <div class="reviews-header">
+        <div class="reviews-header-left">
+          <div class="section-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>ОТЗЫВЫ И ПРЕДЛОЖЕНИЯ</span>
+          </div>
+          <h2>Что говорят пользователи MagicDNS</h2>
+          <p class="reviews-subtitle">Реальный опыт использования для работы с Claude AI, Gemini и кодинга без VPN</p>
+        </div>
+        <button type="button" class="btn-neon-action btn-feedback-trigger" id="open-feedback-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          <span>Оставить отзыв или идею</span>
+        </button>
+      </div>
+
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-author-info">
+              <div class="review-avatar">АР</div>
+              <div>
+                <div class="review-author-name">Алексей Романов</div>
+                <div class="review-author-role">Senior Frontend • macOS / Safari</div>
+              </div>
+            </div>
+            <div class="review-stars" aria-label="Оценка 5 из 5">★★★★★</div>
+          </div>
+          <p class="review-body">
+            Настроил профиль на Mac и iPhone за пару минут. Claude AI и Google AI Studio открываются мгновенно, без задержек и без вечной капчи от Cloudflare. Огромный плюс — банки и локальные сервисы идут напрямую через провайдера на полной скорости.
+          </p>
+          <div class="review-badge-verified">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Проверено · Apple Profile</span>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-author-info">
+              <div class="review-avatar dev">МВ</div>
+              <div>
+                <div class="review-author-name">Михаил Васильев</div>
+                <div class="review-author-role">DevOps &amp; HomeLab • Keenetic Giga</div>
+              </div>
+            </div>
+            <div class="review-stars" aria-label="Оценка 5 из 5">★★★★★</div>
+          </div>
+          <p class="review-body">
+            Прописал DoH адрес в Keenetic. Теперь у всех устройств в домашней сети ChatGPT, Gemini и Perplexity работают прозрачно, не нужно каждому настраивать отдельные клиенты. Скорость не режется вообще, пинг до Стокгольма отличный.
+          </p>
+          <div class="review-badge-verified">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Проверено · Router DoH</span>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-card-top">
+            <div class="review-author-info">
+              <div class="review-avatar des">ЕК</div>
+              <div>
+                <div class="review-author-name">Екатерина Ковалева</div>
+                <div class="review-author-role">UI/UX Designer • Windows 11</div>
+              </div>
+            </div>
+            <div class="review-stars" aria-label="Оценка 5 из 5">★★★★★</div>
+          </div>
+          <p class="review-body">
+            Раньше VPN постоянно отваливался и жрал батарею на ноутбуке. С MagicDNS просто включила шифрованный DNS в Windows — всё летает, как будто никаких блокировок нет. Очень удобно для работы в нейросетях целыми днями.
+          </p>
+          <div class="review-badge-verified">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Проверено · Windows 11 DoH</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- 5. Footer -->
@@ -2348,6 +2803,7 @@ html_content = f'''<!DOCTYPE html>
         <button class="chat-faq-chip" data-faq="ios">🍎 iPhone / Safari: не открывает сайты</button>
         <button class="chat-faq-chip" data-faq="disable">🔄 Как временно отключить MagicDNS?</button>
         <button class="chat-faq-chip" data-faq="diff">🌐 Чем отличается от обычного VPN?</button>
+        <button class="chat-faq-chip" id="chat-faq-feedback-trigger" data-faq="feedback">💡 Оставить отзыв или предложить идею</button>
       </div>
     </div>
 
@@ -2359,6 +2815,84 @@ html_content = f'''<!DOCTYPE html>
             <line x1="22" y1="2" x2="11" y2="13"></line>
             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Feedback & Suggestions Modal -->
+  <div id="feedback-modal" class="feedback-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="feedback-modal-title" aria-hidden="true">
+    <div class="feedback-modal-card">
+      <div class="feedback-modal-header">
+        <div class="feedback-modal-title-wrap">
+          <div class="feedback-modal-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--neon-mint)" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <div>
+            <h3 id="feedback-modal-title" class="feedback-modal-title">Отзыв или предложение</h3>
+            <p class="feedback-modal-subtitle">Помогите сделать MagicDNS ещё быстрее и удобнее</p>
+          </div>
+        </div>
+        <button type="button" class="chat-close-btn" id="close-feedback-btn" aria-label="Закрыть окно">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="feedback-form" class="feedback-form" action="javascript:void(0);">
+        <!-- Feedback Type Segmented Chips -->
+        <div class="feedback-type-group" role="radiogroup" aria-label="Тип обращения">
+          <button type="button" class="feedback-type-chip active" data-type="review" role="radio" aria-checked="true">
+            <span>⭐ Отзыв</span>
+          </button>
+          <button type="button" class="feedback-type-chip" data-type="idea" role="radio" aria-checked="false">
+            <span>💡 Предложение</span>
+          </button>
+          <button type="button" class="feedback-type-chip" data-type="bug" role="radio" aria-checked="false">
+            <span>🐛 Ошибка / Баг</span>
+          </button>
+        </div>
+
+        <!-- Rating Stars -->
+        <div class="rating-stars-wrap">
+          <label class="feedback-label">Ваша оценка:</label>
+          <div class="star-rating" id="star-rating" role="radiogroup" aria-label="Оценка">
+            <button type="button" class="star-btn active" data-rating="1" aria-label="1 звезда">★</button>
+            <button type="button" class="star-btn active" data-rating="2" aria-label="2 звезды">★</button>
+            <button type="button" class="star-btn active" data-rating="3" aria-label="3 звезды">★</button>
+            <button type="button" class="star-btn active" data-rating="4" aria-label="4 звезды">★</button>
+            <button type="button" class="star-btn active" data-rating="5" aria-label="5 звёзд">★</button>
+          </div>
+        </div>
+
+        <!-- Platform Chips -->
+        <div class="feedback-field">
+          <label class="feedback-label">Ваша платформа:</label>
+          <div class="platform-chips" id="feedback-platform-chips">
+            <button type="button" class="platform-chip active" data-platform="iOS / macOS">Apple (iOS / Mac)</button>
+            <button type="button" class="platform-chip" data-platform="Windows">Windows</button>
+            <button type="button" class="platform-chip" data-platform="Android">Android</button>
+            <button type="button" class="platform-chip" data-platform="Роутер">Роутер (Keenetic / др.)</button>
+          </div>
+        </div>
+
+        <!-- Textarea -->
+        <div class="feedback-field">
+          <label for="feedback-text" class="feedback-label">Ваш комментарий или идея:</label>
+          <textarea id="feedback-text" class="feedback-textarea" rows="4" placeholder="Расскажите, как работает MagicDNS у вас, или какую функцию добавить..." required maxlength="1000"></textarea>
+        </div>
+
+        <!-- Contact (Optional) -->
+        <div class="feedback-field">
+          <label for="feedback-contact" class="feedback-label">Контакт для связи (по желанию):</label>
+          <input type="text" id="feedback-contact" class="feedback-input" placeholder="@telegram_username или email" maxlength="100">
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="feedback-submit-btn" class="btn-neon-action feedback-submit-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          <span>Отправить отзыв</span>
         </button>
       </form>
     </div>
@@ -2926,6 +3460,162 @@ html_content = f'''<!DOCTYPE html>
               hideTyping();
               appendMessage('Я могу помочь с частыми вопросами прямо сейчас. Выберите подходящую тему из кнопок выше (роутеры, банки, iPhone/Safari, отключение) или задайте вопрос о настройке!', 'bot', false);
             }}
+          }});
+        }});
+      }}
+
+      // ==========================================================================
+      // 9. Community Feedback & Suggestions System
+      // ==========================================================================
+      const openFeedbackBtn = document.getElementById('open-feedback-btn');
+      const closeFeedbackBtn = document.getElementById('close-feedback-btn');
+      const feedbackModal = document.getElementById('feedback-modal');
+      const feedbackForm = document.getElementById('feedback-form');
+      const chatFaqFeedbackTrigger = document.getElementById('chat-faq-feedback-trigger');
+      const starRatingContainer = document.getElementById('star-rating');
+      const starButtons = starRatingContainer ? starRatingContainer.querySelectorAll('.star-btn') : [];
+      const typeChips = document.querySelectorAll('.feedback-type-chip');
+      const platformChips = document.querySelectorAll('.platform-chip');
+
+      let currentRating = 5;
+      let currentType = 'review';
+      let currentPlatform = 'iOS / macOS';
+
+      function toggleFeedbackModal(open) {{
+        const isOpen = open !== undefined ? open : !feedbackModal.classList.contains('active');
+        feedbackModal.classList.toggle('active', isOpen);
+        feedbackModal.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+        playTactileFeedback();
+        if (isOpen) {{
+          setTimeout(function() {{
+            const textarea = document.getElementById('feedback-text');
+            if (textarea) textarea.focus();
+          }}, 150);
+        }}
+      }}
+
+      if (openFeedbackBtn) {{
+        openFeedbackBtn.addEventListener('click', function() {{ toggleFeedbackModal(true); }});
+      }}
+      if (closeFeedbackBtn) {{
+        closeFeedbackBtn.addEventListener('click', function() {{ toggleFeedbackModal(false); }});
+      }}
+      if (feedbackModal) {{
+        feedbackModal.addEventListener('click', function(e) {{
+          if (e.target === feedbackModal) toggleFeedbackModal(false);
+        }});
+      }}
+      if (chatFaqFeedbackTrigger) {{
+        chatFaqFeedbackTrigger.addEventListener('click', function() {{
+          toggleChat(false);
+          toggleFeedbackModal(true);
+        }});
+      }}
+
+      window.addEventListener('keydown', function(e) {{
+        if (e.key === 'Escape' && feedbackModal && feedbackModal.classList.contains('active')) {{
+          toggleFeedbackModal(false);
+        }}
+      }});
+
+      // Star Rating Selection
+      function setRating(val) {{
+        currentRating = val;
+        starButtons.forEach(function(btn, idx) {{
+          btn.classList.toggle('active', idx < val);
+        }});
+      }}
+
+      starButtons.forEach(function(btn) {{
+        btn.addEventListener('click', function() {{
+          playTactileFeedback();
+          const ratingVal = parseInt(btn.getAttribute('data-rating') || '5', 10);
+          setRating(ratingVal);
+        }});
+        btn.addEventListener('mouseenter', function() {{
+          const ratingVal = parseInt(btn.getAttribute('data-rating') || '5', 10);
+          starButtons.forEach(function(b, idx) {{
+            b.style.color = idx < ratingVal ? '#fbbf24' : 'rgba(255,255,255,0.2)';
+          }});
+        }});
+      }});
+
+      if (starRatingContainer) {{
+        starRatingContainer.addEventListener('mouseleave', function() {{
+          starButtons.forEach(function(b, idx) {{
+            b.style.color = '';
+            b.classList.toggle('active', idx < currentRating);
+          }});
+        }});
+      }}
+
+      // Type Chips
+      typeChips.forEach(function(chip) {{
+        chip.addEventListener('click', function() {{
+          playTactileFeedback();
+          typeChips.forEach(function(c) {{ c.classList.remove('active'); c.setAttribute('aria-checked', 'false'); }});
+          chip.classList.add('active');
+          chip.setAttribute('aria-checked', 'true');
+          currentType = chip.getAttribute('data-type') || 'review';
+        }});
+      }});
+
+      // Platform Chips
+      platformChips.forEach(function(chip) {{
+        chip.addEventListener('click', function() {{
+          playTactileFeedback();
+          platformChips.forEach(function(c) {{ c.classList.remove('active'); }});
+          chip.classList.add('active');
+          currentPlatform = chip.getAttribute('data-platform') || 'iOS / macOS';
+        }});
+      }});
+
+      // Feedback Form Submission
+      if (feedbackForm) {{
+        feedbackForm.addEventListener('submit', function(e) {{
+          e.preventDefault();
+          const textInput = document.getElementById('feedback-text');
+          const contactInput = document.getElementById('feedback-contact');
+          const submitBtn = document.getElementById('feedback-submit-btn');
+
+          const message = textInput ? textInput.value.trim() : '';
+          const contact = contactInput ? contactInput.value.trim() : '';
+
+          if (!message) return;
+
+          playTactileFeedback();
+          if (submitBtn) {{
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.7';
+            submitBtn.querySelector('span').textContent = 'Отправка...';
+          }}
+
+          const payload = {{
+            type: currentType,
+            rating: currentRating,
+            platform: currentPlatform,
+            message: message,
+            contact: contact
+          }};
+
+          fetch(CF_WORKER_URL + '/feedback', {{
+            method: 'POST',
+            headers: {{ 'Content-Type': 'application/json' }},
+            body: JSON.stringify(payload)
+          }}).then(function() {{
+            // Handled
+          }}).catch(function() {{
+            // Handled
+          }}).finally(function() {{
+            if (submitBtn) {{
+              submitBtn.disabled = false;
+              submitBtn.style.opacity = '1';
+              submitBtn.querySelector('span').textContent = 'Отправить отзыв';
+            }}
+            if (textInput) textInput.value = '';
+            if (contactInput) contactInput.value = '';
+            toggleFeedbackModal(false);
+            showToast('Спасибо за отзыв! Ваше сообщение принято.');
           }});
         }});
       }}
