@@ -31,9 +31,9 @@ html_content = f'''<!DOCTYPE html>
   <meta name="keywords" content="MagicDNS, DNS для Claude, DNS для Gemini, ChatGPT без VPN, Claude AI без VPN, DoH, DoT, быстрый DNS, Google AI Studio, Antigravity, приватный DNS, smart DNS, обход блокировок без впн, private DNS">
   <link rel="canonical" href="https://magicdns.ru/">
 
-  <!-- Search Engine Verification Placeholders -->
+  <!-- Search Engine Verification -->
   <!-- <meta name="google-site-verification" content="PASTE_YOUR_GOOGLE_CODE_HERE" /> -->
-  <!-- <meta name="yandex-verification" content="PASTE_YOUR_YANDEX_CODE_HERE" /> -->
+  <meta name="yandex-verification" content="51263b81b36e7cca">
 
   <!-- Open Graph / Facebook / Telegram / WhatsApp -->
   <meta property="og:site_name" content="MagicDNS">
@@ -1996,4 +1996,16 @@ for path in ['sitemap.xml', os.path.join('public', 'sitemap.xml')]:
     with open(path, 'w', encoding='utf-8') as f:
         f.write(sitemap_content)
 
-print('SUCCESS: index.html, profile.mobileconfig, robots.txt, and sitemap.xml built successfully!')
+yandex_content = """<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>Verification: 51263b81b36e7cca</body>
+</html>
+"""
+
+for path in ['yandex_51263b81b36e7cca.html', os.path.join('public', 'yandex_51263b81b36e7cca.html')]:
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(yandex_content)
+
+print('SUCCESS: index.html, profile.mobileconfig, robots.txt, sitemap.xml, and Yandex verification files built successfully!')
