@@ -53,8 +53,8 @@ test("Unified services ribbon chips",
      all(chip in html for chip in ['Claude AI', 'Gemini', 'ChatGPT', 'Perplexity', 'Antigravity', 'Без VPN и сторонних программ'])
      and 'Claude AI &amp; Sonnet' not in html
      and 'Google AI Studio' not in html[html.find('class="services-ribbon"'):html.find('class="configurator-section tabs-section')])
-test("Support button in header", 'https://pay.cloudtips.ru/p/fa11ea81' in html.split('</header>')[0] and 'target="_blank"' in html.split('</header>')[0] and 'rel="noopener noreferrer"' in html.split('</header>')[0])
-test("Support button in footer", 'https://pay.cloudtips.ru/p/fa11ea81' in html.split('<footer>')[1] and 'target="_blank"' in html.split('<footer>')[1] and 'rel="noopener noreferrer"' in html.split('<footer>')[1])
+test("Support button in header", 'https://pay.cloudtips.ru/p/596a95a5' in html.split('</header>')[0] and 'target="_blank"' in html.split('</header>')[0] and 'rel="noopener noreferrer"' in html.split('</header>')[0])
+test("Support button in footer", 'https://pay.cloudtips.ru/p/596a95a5' in html.split('<footer>')[1] and 'target="_blank"' in html.split('<footer>')[1] and 'rel="noopener noreferrer"' in html.split('<footer>')[1])
 test("Support button heart has proper fill color", '.social-btn-donate .donate-heart' in html and 'fill: #ff5e7e !important;' in html)
 test("No duplicate copy button in Android tab", '<button class="btn-neon-action" data-clipboard="dns.magicdns.ru">Скопировать хост</button>' not in html)
 
@@ -88,8 +88,7 @@ test("Result card with metrics", 'checker-result' in html and 'metric-ping' in h
 
 # 9. Footer
 test("Footer Uptime 99.9%", '99.9%' in html)
-test("Footer Telegram link", 'https://t.me/magicdns' in html)
-test("Footer Discord link", 'https://discord.gg/magicdns' in html)
+test("Telegram and Discord removed from footer", 'https://t.me/magicdns' not in html and 'https://discord.gg/magicdns' not in html)
 
 # 10. Controller & Accessibility (Xbox / Keyboard)
 test("Active tab has tabindex 0", 'id="tab-windows"' in html and 'tabindex="0"' in html)
