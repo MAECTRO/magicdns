@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>DNSSettings</key>
+            <dict>
+                <key>DNSProtocol</key>
+                <string>HTTPS</string>
+                <key>ServerURL</key>
+                <string>https://greenflow.duckdns.org/dns-query</string>
+                <key>ServerAddresses</key>
+                <array>
+                    <string>2.56.179.170</string>
+                    <string>109.120.132.43</string>
+                </array>
+            </dict>
+            <key>PayloadDescription</key>
+            <string>Настройка зашифрованного DoH MagicDNS для прямого доступа к ChatGPT, Claude и ИИ-сервисам без VPN</string>
+            <key>PayloadDisplayName</key>
+            <string>MagicDNS (AI Services DoH)</string>
+            <key>PayloadIdentifier</key>
+            <string>org.duckdns.greenflow.magicdns.profile</string>
+            <key>PayloadType</key>
+            <string>com.apple.dnsSettings.managed</string>
+            <key>PayloadUUID</key>
+            <string>76D07A5E-4B14-4B7C-906D-63851E9526C8</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+        </dict>
+    </array>
+    <key>PayloadDisplayName</key>
+    <string>MagicDNS Профиль для нейросетей</string>
+    <key>PayloadIdentifier</key>
+    <string>org.duckdns.greenflow.magicdns</string>
+    <key>PayloadOrganization</key>
+    <string>MagicDNS (CascadeDNS)</string>
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadUUID</key>
+    <string>B41926D8-1971-477F-9F27-46328A6D884C</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+</dict>
+</plist>
