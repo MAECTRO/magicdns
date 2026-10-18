@@ -50,7 +50,10 @@ test("Hero heading for Claude, Gemini, Google AI Studio, Antigravity",
 test("Hero subtitle direct access without VPN",
      'Прямой доступ к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN' in html)
 test("Unified services ribbon chips",
-     all(chip in html for chip in ['Claude AI &amp; Sonnet', 'Gemini', 'Google AI Studio', 'Antigravity', 'ChatGPT', 'Perplexity', 'Без VPN и сторонних программ']))
+     all(chip in html for chip in ['Claude AI', 'Gemini', 'ChatGPT', 'Perplexity', 'Antigravity', 'Без VPN и сторонних программ']) and 'Claude AI &amp; Sonnet' not in html)
+test("Support button in header", 'https://pay.cloudtips.ru/p/fa11ea81' in html.split('</header>')[0])
+test("Support button in footer", 'https://pay.cloudtips.ru/p/fa11ea81' in html.split('<footer>')[1])
+test("No duplicate copy button in Android tab", '<button class="btn-neon-action" data-clipboard="dns.magicdns.ru">Скопировать хост</button>' not in html)
 
 # 5. Segmented Tab Bar & Device Configurator
 test("Segmented bar present", 'class="segmented-bar"' in html)

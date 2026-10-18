@@ -29,8 +29,11 @@ checks = {
     'Pulsing dot animation in status badge': 'status-ping' in content and 'radar-ping' in content,
     'Hero heading with AI services': 'Быстрый DNS для Claude AI, Gemini, Google AI Studio и Antigravity' in content,
     'Unified services ribbon with tags': all(tag in content for tag in [
-        'Claude AI &amp; Sonnet', 'Gemini', 'Google AI Studio', 'Antigravity', 'ChatGPT', 'Perplexity', 'Без VPN и сторонних программ'
-    ]),
+        'Claude AI', 'Gemini', 'ChatGPT', 'Perplexity', 'Antigravity', 'Без VPN и сторонних программ'
+    ]) and 'Claude AI &amp; Sonnet' not in content,
+    'Support button in header': 'https://pay.cloudtips.ru/p/fa11ea81' in content.split('</header>')[0],
+    'Support button in footer': 'https://pay.cloudtips.ru/p/fa11ea81' in content.split('<footer>')[1],
+    'No duplicate copy button in Android tab': '<button class="btn-neon-action" data-clipboard="dns.magicdns.ru">Скопировать хост</button>' not in content,
     'Segmented tab bar for 4 platforms': all(tab in content for tab in [
         'Windows (DoH)', 'Apple iOS / macOS', 'Android (DoT)', 'Прокси приложений'
     ]),

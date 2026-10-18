@@ -213,6 +213,69 @@
       text-shadow: 0 0 14px var(--mint-glow);
     }
 
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-support-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      background: rgba(0, 255, 157, 0.08);
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      color: #ffffff;
+      font-size: 0.84rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.3);
+      transition: all var(--transition-smooth);
+      white-space: nowrap;
+    }
+
+    .btn-support-header:hover {
+      background: rgba(0, 255, 157, 0.18);
+      border-color: var(--neon-mint);
+      color: var(--neon-mint);
+      transform: translateY(-1px);
+      box-shadow: 0 0 18px rgba(0, 255, 157, 0.25);
+    }
+
+    .donate-heart {
+      width: 15px;
+      height: 15px;
+      fill: #ff5e7e;
+      filter: drop-shadow(0 0 6px rgba(255, 94, 126, 0.5));
+      transition: transform var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .btn-support-header:hover .donate-heart {
+      transform: scale(1.18);
+      filter: drop-shadow(0 0 10px rgba(255, 94, 126, 0.85));
+    }
+
+    .social-btn-donate {
+      border-color: rgba(255, 94, 126, 0.3);
+      color: #ffffff;
+    }
+
+    .social-btn-donate:hover {
+      border-color: #ff5e7e;
+      background: rgba(255, 94, 126, 0.12);
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(255, 94, 126, 0.25);
+    }
+
+    .social-btn-donate:hover .donate-heart {
+      transform: scale(1.15);
+      filter: drop-shadow(0 0 10px rgba(255, 94, 126, 0.85));
+    }
+
     /* Live Network Status Badge */
     .status-badge {
       display: inline-flex;
@@ -274,8 +337,9 @@
     /* ==========================================================================
        2. Hero Section
        ========================================================================== */
-    .hero {
-      padding: 56px 0 32px;
+    .hero,
+    .hero-section {
+      padding: 32px 0 16px;
       text-align: center;
     }
 
@@ -290,7 +354,7 @@
       border: 1px solid rgba(0, 255, 157, 0.28);
       padding: 6px 14px;
       border-radius: var(--radius-pill);
-      margin-bottom: 22px;
+      margin-bottom: 14px;
       letter-spacing: 0.02em;
       box-shadow: 0 0 16px rgba(0, 255, 157, 0.08);
     }
@@ -300,7 +364,7 @@
       font-weight: 800;
       line-height: 1.15;
       letter-spacing: -0.03em;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
       background: linear-gradient(135deg, #ffffff 30%, #00ff9d 75%, #06b6d4 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -313,14 +377,14 @@
       font-size: clamp(1rem, 2vw, 1.15rem);
       color: var(--text-muted);
       max-width: 740px;
-      margin: 0 auto 30px;
+      margin: 0 auto 20px;
       line-height: 1.6;
     }
 
     /* Unified Harmonious Services Ribbon (Single Line / No Awkward Breaks) */
     .services-ribbon-container {
       width: 100%;
-      margin: 0 auto 12px;
+      margin: 0 auto 8px;
       overflow-x: auto;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
@@ -379,14 +443,15 @@
     /* ==========================================================================
        3. Device Configurator (Segmented Bar + Two-Column Glassmorphism Cards)
        ========================================================================== */
-    .configurator-section {
-      padding: 20px 0 40px;
+    .configurator-section,
+    .tabs-section {
+      padding: 12px 0 36px;
     }
 
     .segmented-bar-wrapper {
       display: flex;
       justify-content: center;
-      margin-bottom: 24px;
+      margin-bottom: 18px;
       overflow-x: auto;
       scrollbar-width: none;
       padding: 4px;
@@ -478,6 +543,7 @@
 
     .card-left-column {
       min-width: 0;
+      width: 100%;
     }
 
     /* Card Header Row */
@@ -518,6 +584,7 @@
     /* Input Field & Parameters */
     .input-field-group {
       margin-bottom: 14px;
+      width: 100%;
     }
 
     .input-field-label {
@@ -539,6 +606,8 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      width: 100%;
+      box-sizing: border-box;
       transition: var(--transition-fast);
     }
 
@@ -553,6 +622,8 @@
       font-weight: 700;
       color: var(--neon-mint);
       word-break: break-all;
+      flex: 1;
+      min-width: 0;
     }
 
     .btn-inline-copy {
@@ -634,6 +705,11 @@
       gap: 12px;
       flex-wrap: wrap;
       margin-top: 16px;
+    }
+
+    .card-actions-row:empty {
+      display: none;
+      margin: 0;
     }
 
     .btn-neon-action,
@@ -1077,6 +1153,26 @@
     }
 
     @media (max-width: 600px) {
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .header-right {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-support-header {
+        padding: 6px 12px;
+        font-size: 0.78rem;
+      }
+      .status-badge {
+        padding: 6px 12px;
+        font-size: 0.78rem;
+      }
       .hero h1 {
         font-size: 1.85rem;
       }
@@ -1087,6 +1183,11 @@
       .footer-content {
         flex-direction: column;
         align-items: flex-start;
+        gap: 16px;
+      }
+      .footer-links {
+        flex-wrap: wrap;
+        gap: 8px;
       }
     }
   </style>
@@ -1110,13 +1211,23 @@
         <span class="brand-title">Magic<span class="accent">DNS</span></span>
       </a>
 
-      <!-- Status Badge -->
-      <div class="status-badge" role="status" aria-live="polite">
-        <div class="status-dot-wrapper">
-          <div class="status-ping"></div>
-          <div class="status-dot"></div>
+      <!-- Header Right: Support & Status -->
+      <div class="header-right">
+        <a href="https://pay.cloudtips.ru/p/fa11ea81" target="_blank" rel="noopener noreferrer" class="btn-support-header" aria-label="Поддержать автора">
+          <svg viewBox="0 0 24 24" class="donate-heart" aria-hidden="true">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span>Поддержать автора</span>
+        </a>
+
+        <!-- Status Badge -->
+        <div class="status-badge" role="status" aria-live="polite">
+          <div class="status-dot-wrapper">
+            <div class="status-ping"></div>
+            <div class="status-dot"></div>
+          </div>
+          <span>Статус сети: <span class="status-text">Работает стабильно</span></span>
         </div>
-        <span>Статус сети: <span class="status-text">Работает стабильно</span></span>
       </div>
     </div>
   </header>
@@ -1125,7 +1236,7 @@
   <main class="container">
     
     <!-- 2. Hero Section -->
-    <section class="hero">
+    <section class="hero hero-section">
       <div class="hero-eyebrow">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
@@ -1140,19 +1251,11 @@
         <div class="services-ribbon">
           <div class="service-chip">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Claude AI &amp; Sonnet</span>
+            <span>Claude AI</span>
           </div>
           <div class="service-chip">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             <span>Gemini</span>
-          </div>
-          <div class="service-chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Google AI Studio</span>
-          </div>
-          <div class="service-chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Antigravity</span>
           </div>
           <div class="service-chip">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -1161,6 +1264,10 @@
           <div class="service-chip">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             <span>Perplexity</span>
+          </div>
+          <div class="service-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Antigravity</span>
           </div>
           <div class="service-chip highlight">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -1171,7 +1278,7 @@
     </section>
 
     <!-- 3. Device Configurator -->
-    <section class="configurator-section">
+    <section class="configurator-section tabs-section">
       <!-- Segmented Tab Bar -->
       <div class="segmented-bar-wrapper">
         <nav class="segmented-bar" role="tablist" aria-label="Конфигурация устройств">
@@ -1305,9 +1412,7 @@
                 </button>
               </div>
             </div>
-            <div class="card-actions-row">
-              <button class="btn-neon-action" data-clipboard="dns.magicdns.ru">Скопировать хост</button>
-            </div>
+            <div class="card-actions-row"></div>
           </div>
           <div class="card-right-column">
             <div class="qr-pod">
@@ -1489,6 +1594,13 @@
       </div>
 
       <div class="footer-links">
+        <a href="https://pay.cloudtips.ru/p/fa11ea81" class="social-btn social-btn-donate" target="_blank" rel="noopener noreferrer" aria-label="Поддержать автора">
+          <svg viewBox="0 0 24 24" class="donate-heart" aria-hidden="true">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span>Поддержать автора</span>
+        </a>
+
         <a href="https://t.me/magicdns" class="social-btn" target="_blank" rel="noopener noreferrer" aria-label="Telegram канал">
           <svg viewBox="0 0 24 24">
             <path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-1.92 9.04c-.14.65-.53.81-1.07.5l-2.94-2.17-1.42 1.37c-.16.16-.29.29-.6.29l.21-3.01 5.48-4.95c.24-.21-.05-.33-.37-.12l-6.78 4.27-2.92-.91c-.63-.2-.64-.63.13-.93l11.4-4.39c.53-.19.99.13.8 1.07z"/>
