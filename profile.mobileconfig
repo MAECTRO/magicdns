@@ -10,18 +10,18 @@
                 <key>DNSProtocol</key>
                 <string>HTTPS</string>
                 <key>ServerURL</key>
-                <string>https://greenflow.duckdns.org/dns-query</string>
+                <string>https://dns.magicdns.ru/dns-query</string>
                 <key>ServerAddresses</key>
                 <array>
                     <string>2.56.179.170</string>
                 </array>
             </dict>
             <key>PayloadDescription</key>
-            <string>Настройка зашифрованного DoH MagicDNS для прямого доступа к ChatGPT, Claude и ИИ-сервисам без VPN</string>
+            <string>Настройка зашифрованного DoH MagicDNS для прямого доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN</string>
             <key>PayloadDisplayName</key>
             <string>MagicDNS (AI Services DoH)</string>
             <key>PayloadIdentifier</key>
-            <string>org.duckdns.greenflow.magicdns.profile</string>
+            <string>ru.magicdns.profile</string>
             <key>PayloadType</key>
             <string>com.apple.dnsSettings.managed</string>
             <key>PayloadUUID</key>
@@ -33,9 +33,9 @@
     <key>PayloadDisplayName</key>
     <string>MagicDNS Профиль для нейросетей</string>
     <key>PayloadIdentifier</key>
-    <string>org.duckdns.greenflow.magicdns</string>
+    <string>ru.magicdns</string>
     <key>PayloadOrganization</key>
-    <string>MagicDNS (CascadeDNS)</string>
+    <string>MagicDNS</string>
     <key>PayloadRemovalDisallowed</key>
     <false/>
     <key>PayloadType</key>

@@ -11,13 +11,11 @@ def get_svg_qr(data):
     svg = svg.replace('<svg ', '<svg class="qr-svg" ')
     return svg
 
-# Generate QR codes for the 6 tabs (Strictly Non-Finnish: 2.56.179.170 & greenflow.duckdns.org)
-qr_windows = get_svg_qr('https://greenflow.duckdns.org/dns-query')
-qr_ios = get_svg_qr('https://greenflow.duckdns.org/profile.mobileconfig')
-qr_android = get_svg_qr('dot.greenflow.duckdns.org')
-qr_tg = get_svg_qr('tg://proxy?server=2.56.179.170&port=443&secret=dd00000000000000000000000000000000')
+# Generate QR codes for the tabs (Updated to dns.magicdns.ru)
+qr_windows = get_svg_qr('https://dns.magicdns.ru/dns-query')
+qr_ios = get_svg_qr('https://dns.magicdns.ru/profile.mobileconfig')
+qr_android = get_svg_qr('dns.magicdns.ru')
 qr_proxy = get_svg_qr('http://admin:Px94kM8vQ7wZb2Rt@2.56.179.170:8085')
-qr_consoles = get_svg_qr('2.56.179.170')
 
 html_content = f'''<!DOCTYPE html>
 <html lang="ru">
@@ -998,7 +996,7 @@ html_content = f'''<!DOCTYPE html>
 
     <!-- Tabs Section -->
     <section class="tabs-section">
-      <!-- Tabs Nav Bar (Matches Screenshot 2) -->
+      <!-- Tabs Nav Bar -->
       <nav class="tabs-nav-bar" role="tablist" aria-label="Платформы подключения">
         <button class="tab-item-btn active" role="tab" id="tab-windows" aria-controls="panel-windows" aria-selected="true" tabindex="0" data-target="panel-windows">
           <span>🖥️ Windows (DoH)</span>
@@ -1009,18 +1007,12 @@ html_content = f'''<!DOCTYPE html>
         <button class="tab-item-btn" role="tab" id="tab-android" aria-controls="panel-android" aria-selected="false" tabindex="-1" data-target="panel-android">
           <span>🤖 Android (DoT)</span>
         </button>
-        <button class="tab-item-btn" role="tab" id="tab-tg" aria-controls="panel-tg" aria-selected="false" tabindex="-1" data-target="panel-tg">
-          <span>✈️ Telegram MTProto</span>
-        </button>
         <button class="tab-item-btn" role="tab" id="tab-proxy" aria-controls="panel-proxy" aria-selected="false" tabindex="-1" data-target="panel-proxy">
           <span>⚡ Прокси приложений</span>
         </button>
-        <button class="tab-item-btn" role="tab" id="tab-consoles" aria-controls="panel-consoles" aria-selected="false" tabindex="-1" data-target="panel-consoles">
-          <span>🎮 Консоли (Xbox / PS)</span>
-        </button>
       </nav>
 
-      <!-- Panel 1: Windows (DoH) [Matches Screenshot 1 - NO FINNISH IP] -->
+      <!-- Panel 1: Windows (DoH) -->
       <div class="tab-panel active" id="panel-windows" role="tabpanel" aria-labelledby="tab-windows">
         <div class="format-card">
           <div class="format-card-left">
@@ -1040,14 +1032,14 @@ html_content = f'''<!DOCTYPE html>
               </div>
               <div class="param-group">
                 <span class="param-label">Шаблон DoH:</span>
-                <span class="param-code-box" id="val-win-doh">https://greenflow.duckdns.org/dns-query</span>
-                <button class="btn-inline-copy" data-clipboard="https://greenflow.duckdns.org/dns-query" title="Скопировать DoH" aria-label="Скопировать DoH">📋</button>
+                <span class="param-code-box" id="val-win-doh">https://dns.magicdns.ru/dns-query</span>
+                <button class="btn-inline-copy" data-clipboard="https://dns.magicdns.ru/dns-query" title="Скопировать DoH" aria-label="Скопировать DoH">📋</button>
               </div>
             </div>
           </div>
           <div class="format-card-right">
             <div class="card-action-stack">
-              <button class="btn-action-green" data-clipboard="https://greenflow.duckdns.org/dns-query">Скопировать DoH</button>
+              <button class="btn-action-green" data-clipboard="https://dns.magicdns.ru/dns-query">Скопировать DoH</button>
               <button class="btn-action-dark" data-clipboard="2.56.179.170">Скопировать IPv4</button>
             </div>
             <div class="qr-container-box" title="QR-код ссылки DoH">
@@ -1057,7 +1049,7 @@ html_content = f'''<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- Panel 2: Apple iOS / macOS [Matches Screenshot 2] -->
+      <!-- Panel 2: Apple iOS / macOS -->
       <div class="tab-panel" id="panel-ios" role="tabpanel" aria-labelledby="tab-ios">
         <div class="format-card">
           <div class="format-card-left">
@@ -1072,15 +1064,15 @@ html_content = f'''<!DOCTYPE html>
             <div class="card-params-row">
               <div class="param-group">
                 <span class="param-label">Ссылка на профиль:</span>
-                <span class="param-code-box" id="val-ios-url">https://greenflow.duckdns.org/profile.mobileconfig</span>
-                <button class="btn-inline-copy" data-clipboard="https://greenflow.duckdns.org/profile.mobileconfig" title="Скопировать ссылку" aria-label="Скопировать ссылку">📋</button>
+                <span class="param-code-box" id="val-ios-url">https://dns.magicdns.ru/profile.mobileconfig</span>
+                <button class="btn-inline-copy" data-clipboard="https://dns.magicdns.ru/profile.mobileconfig" title="Скопировать ссылку" aria-label="Скопировать ссылку">📋</button>
               </div>
             </div>
           </div>
           <div class="format-card-right">
             <div class="card-action-stack">
               <button class="btn-action-green" id="btn-download-profile">Скачать профиль</button>
-              <button class="btn-action-dark" data-clipboard="https://greenflow.duckdns.org/profile.mobileconfig">Скопировать ссылку</button>
+              <button class="btn-action-dark" data-clipboard="https://dns.magicdns.ru/profile.mobileconfig">Скопировать ссылку</button>
             </div>
             <div class="qr-container-box" title="QR-код профиля iOS">
               {qr_ios}
@@ -1089,7 +1081,7 @@ html_content = f'''<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- Panel 3: Android (DoT) [Matches Screenshot 3] -->
+      <!-- Panel 3: Android (DoT) -->
       <div class="tab-panel" id="panel-android" role="tabpanel" aria-labelledby="tab-android">
         <div class="format-card">
           <div class="format-card-left">
@@ -1104,14 +1096,14 @@ html_content = f'''<!DOCTYPE html>
             <div class="card-params-row">
               <div class="param-group">
                 <span class="param-label">Имя хоста провайдера частного DNS:</span>
-                <span class="param-code-box" id="val-android-host">dot.greenflow.duckdns.org</span>
-                <button class="btn-inline-copy" data-clipboard="dot.greenflow.duckdns.org" title="Скопировать хост" aria-label="Скопировать хост">📋</button>
+                <span class="param-code-box" id="val-android-host">dns.magicdns.ru</span>
+                <button class="btn-inline-copy" data-clipboard="dns.magicdns.ru" title="Скопировать хост" aria-label="Скопировать хост">📋</button>
               </div>
             </div>
           </div>
           <div class="format-card-right">
             <div class="card-action-stack">
-              <button class="btn-action-green" data-clipboard="dot.greenflow.duckdns.org">Скопировать хост</button>
+              <button class="btn-action-green" data-clipboard="dns.magicdns.ru">Скопировать хост</button>
             </div>
             <div class="qr-container-box" title="QR-код хоста Android DoT">
               {qr_android}
@@ -1120,47 +1112,7 @@ html_content = f'''<!DOCTYPE html>
         </div>
       </div>
 
-      <!-- Panel 4: Telegram MTProto [Matches Format] -->
-      <div class="tab-panel" id="panel-tg" role="tabpanel" aria-labelledby="tab-tg">
-        <div class="format-card">
-          <div class="format-card-left">
-            <div class="card-title-row">
-              <span class="card-title-icon">✈️</span>
-              <span class="card-main-title">Telegram MTProto Proxy</span>
-              <span class="card-badge-pill">Порт 443 TLS • В один клик</span>
-            </div>
-            <div class="card-desc-text">
-              Встроенный скоростной прокси для Telegram без сторонних приложений и VPN.
-            </div>
-            <div class="card-params-row">
-              <div class="param-group">
-                <span class="param-label">Сервер:</span>
-                <span class="param-val">2.56.179.170</span>
-                <button class="btn-inline-copy" data-clipboard="2.56.179.170" title="Скопировать IP">📋</button>
-              </div>
-              <div class="param-group">
-                <span class="param-label">Порт:</span>
-                <span class="param-val">443</span>
-              </div>
-              <div class="param-group">
-                <span class="param-label">Ссылка подключения:</span>
-                <span class="param-code-box">tg://proxy?server=2.56.179.170&amp;port=443&amp;secret=dd00000000000000000000000000000000</span>
-              </div>
-            </div>
-          </div>
-          <div class="format-card-right">
-            <div class="card-action-stack">
-              <a href="tg://proxy?server=2.56.179.170&amp;port=443&amp;secret=dd00000000000000000000000000000000" class="btn-action-green" style="display:inline-flex;align-items:center;justify-content:center;">Подключить в Telegram</a>
-              <button class="btn-action-dark" data-clipboard="tg://proxy?server=2.56.179.170&amp;port=443&amp;secret=dd00000000000000000000000000000000">Скопировать ссылку</button>
-            </div>
-            <div class="qr-container-box" title="QR-код подключения Telegram">
-              {qr_tg}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Panel 5: Персональный прокси приложений [Matches Screenshot 4 - NO FINNISH IP] -->
+      <!-- Panel 4: Персональный прокси приложений -->
       <div class="tab-panel" id="panel-proxy" role="tabpanel" aria-labelledby="tab-proxy">
         <div class="format-card">
           <div class="format-card-left">
@@ -1204,41 +1156,6 @@ html_content = f'''<!DOCTYPE html>
             </div>
             <div class="qr-container-box" title="QR-код адреса прокси">
               {qr_proxy}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Panel 6: Консоли (Xbox / PlayStation) [Matches Format - NO FINNISH IP] -->
-      <div class="tab-panel" id="panel-consoles" role="tabpanel" aria-labelledby="tab-consoles">
-        <div class="format-card">
-          <div class="format-card-left">
-            <div class="card-title-row">
-              <span class="card-title-icon">🎮</span>
-              <span class="card-main-title">Игровые консоли: Xbox &amp; PlayStation</span>
-              <span class="card-badge-pill">Xbox Series X|S, One, PS5, PS4</span>
-            </div>
-            <div class="card-desc-text">
-              Прямой доступ к ChatGPT, Claude и веб-сервисам через встроенный браузер консоли без задержек и без VPN.
-            </div>
-            <div class="card-params-row">
-              <div class="param-group">
-                <span class="param-label">Основной DNS (IPv4):</span>
-                <span class="param-val">2.56.179.170</span>
-                <button class="btn-inline-copy" data-clipboard="2.56.179.170" title="Скопировать DNS">📋</button>
-              </div>
-              <div class="param-group">
-                <span class="param-label">Быстрый путь:</span>
-                <span class="param-code-box">Настройки сети → Дополнительно → Параметры DNS → Вручную</span>
-              </div>
-            </div>
-          </div>
-          <div class="format-card-right">
-            <div class="card-action-stack">
-              <button class="btn-action-green" data-clipboard="2.56.179.170">Скопировать DNS</button>
-            </div>
-            <div class="qr-container-box" title="QR-код адреса DNS">
-              {qr_consoles}
             </div>
           </div>
         </div>
@@ -1533,23 +1450,19 @@ html_content = f'''<!DOCTYPE html>
       function detectUserPlatform() {{
         const ua = navigator.userAgent || '';
         const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-        const isConsole = /Xbox|PlayStation|Nintendo/i.test(ua);
         const isAndroid = /Android/i.test(ua);
-        const isPC = /Windows|Macintosh|Linux/i.test(ua);
 
-        if (isConsole) {{
-          switchTab('panel-consoles');
-        }} else if (isIOS) {{
+        if (isIOS) {{
           switchTab('panel-ios');
         }} else if (isAndroid) {{
           switchTab('panel-android');
-        }} else if (isPC) {{
+        }} else {{
           switchTab('panel-windows');
         }}
       }}
       detectUserPlatform();
 
-      // 5. iOS Mobileconfig Profile Download (Strictly Non-Finnish)
+      // 5. iOS Mobileconfig Profile Download
       const downloadBtn = document.getElementById('btn-download-profile');
       if (downloadBtn) {{
         downloadBtn.addEventListener('click', function(e) {{
@@ -1568,18 +1481,18 @@ html_content = f'''<!DOCTYPE html>
                 <key>DNSProtocol</key>
                 <string>HTTPS</string>
                 <key>ServerURL</key>
-                <string>https://greenflow.duckdns.org/dns-query</string>
+                <string>https://dns.magicdns.ru/dns-query</string>
                 <key>ServerAddresses</key>
                 <array>
                     <string>2.56.179.170</string>
                 </array>
             </dict>
             <key>PayloadDescription</key>
-            <string>Настройка зашифрованного DoH MagicDNS для прямого доступа к ChatGPT, Claude и ИИ-сервисам без VPN</string>
+            <string>Настройка зашифрованного DoH MagicDNS для прямого доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN</string>
             <key>PayloadDisplayName</key>
             <string>MagicDNS (AI Services DoH)</string>
             <key>PayloadIdentifier</key>
-            <string>org.duckdns.greenflow.magicdns.profile</string>
+            <string>ru.magicdns.profile</string>
             <key>PayloadType</key>
             <string>com.apple.dnsSettings.managed</string>
             <key>PayloadUUID</key>
@@ -1591,9 +1504,9 @@ html_content = f'''<!DOCTYPE html>
     <key>PayloadDisplayName</key>
     <string>MagicDNS Профиль для нейросетей</string>
     <key>PayloadIdentifier</key>
-    <string>org.duckdns.greenflow.magicdns</string>
+    <string>ru.magicdns</string>
     <key>PayloadOrganization</key>
-    <string>MagicDNS (CascadeDNS)</string>
+    <string>MagicDNS</string>
     <key>PayloadRemovalDisallowed</key>
     <false/>
     <key>PayloadType</key>
