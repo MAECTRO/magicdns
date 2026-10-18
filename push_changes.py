@@ -41,7 +41,7 @@ if res:
     auth = base64.b64encode(f"{user}:{token}".encode('utf-8')).decode('utf-8')
     
     subprocess.run(['git', 'add', '-A'], check=True)
-    commit_res = subprocess.run(['git', 'commit', '-m', 'fix: remove fake reviews, initialize fresh empty state and fix modal submit button svg size'], capture_output=True, text=True)
+    commit_res = subprocess.run(['git', 'commit', '-m', 'fix: use deepmind.google probe for Gemini to prevent browser Cross-Origin-Resource-Policy false positive'], capture_output=True, text=True)
     print("COMMIT:", commit_res.stdout or commit_res.stderr)
     
     import os
