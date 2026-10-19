@@ -98,6 +98,14 @@ test("ArrowDown does not switch tab (no focus trap)", 'e.key === \'ArrowDown\'' 
 # 11. Interactions, Audio, Haptics & Bug Fixes
 test("Double-click copy bug fixed (dataset.originalHtml check)", 'btn.dataset.originalHtml' in html)
 test("Native iOS mobileconfig download link (no JS blob)", '<a href="https://dns.magicdns.ru/profile.mobileconfig"' in html and 'id="btn-download-profile"' in html and 'createObjectURL' not in html)
+test("Dedicated backup iOS mobileconfig download button", 'id="btn-download-backup-profile"' in html and 'href="https://de.magicdns.ru/api/profile.mobileconfig"' in html)
+test("Router Primary DNS is 109.120.132.43", 'id="val-router-primary">109.120.132.43</code>' in html)
+test("Router Secondary DNS is 94.249.177.102", 'id="val-router-secondary">94.249.177.102</code>' in html)
+test("Windows separate Primary IPv4 field 109.120.132.43", 'id="val-win-ipv4-primary">109.120.132.43</code>' in html)
+test("Windows separate Secondary IPv4 field 94.249.177.102", 'id="val-win-ipv4-secondary">94.249.177.102</code>' in html)
+test("Windows separate IPv4 copy action buttons", 'data-i18n="btnCopyPrimaryIpv4"' in html and 'data-i18n="btnCopySecondaryIpv4"' in html)
+test("Reviews empty state full data-i18n", 'data-i18n="reviewsEmptyBadge"' in html and 'data-i18n="reviewsEmptyTitle"' in html and 'data-i18n="reviewsEmptyDesc"' in html and 'data-i18n="reviewsEmptyBtn"' in html)
+test("Feedback modal platform chips & inputs i18n", 'data-i18n="modalPlatRouter"' in html and 'data-i18n-placeholder="modalContactPlaceholder"' in html)
 test("Procedural tactile feedback audio/haptics present", 'playTactileFeedback' in html and 'navigator.vibrate' in html and 'AudioContext' in html)
 
 # 12. Mobileconfig file validity

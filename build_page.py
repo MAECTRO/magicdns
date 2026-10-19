@@ -1139,7 +1139,8 @@ html_content = f'''<!DOCTYPE html>
       box-shadow: 0 12px 34px rgba(0, 0, 0, 0.45), 0 0 24px rgba(0, 255, 157, 0.06);
     }}
 
-    .router-ips-grid {{
+    .router-ips-grid,
+    .win-ips-grid {{
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
@@ -1148,7 +1149,8 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     @media (max-width: 640px) {{
-      .router-ips-grid {{
+      .router-ips-grid,
+      .win-ips-grid {{
         grid-template-columns: 1fr;
         gap: 12px;
       }}
@@ -2773,19 +2775,33 @@ html_content = f'''<!DOCTYPE html>
                 </button>
               </div>
             </div>
-            <div class="input-field-group">
-              <span class="input-field-label" data-i18n="winIpv4Label">IPv4 DNS Сервер:</span>
-              <div class="code-input-box">
-                <code class="code-input-text" id="val-win-ipv4" data-i18n="winIpv4Val">94.249.177.102 / 109.120.132.43</code>
-                <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Скопировать IPv4" aria-label="Скопировать IPv4">
-                  <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span data-i18n="btnCopy">Копировать</span>
-                </button>
+            <div class="router-ips-grid win-ips-grid">
+              <div class="input-field-group">
+                <span class="input-field-label" data-i18n="winPrimaryIpv4Label">Основной IPv4:</span>
+                <div class="code-input-box">
+                  <code class="code-input-text" id="val-win-ipv4-primary">109.120.132.43</code>
+                  <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Скопировать Основной IPv4" aria-label="Скопировать Основной IPv4">
+                    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <span data-i18n="btnCopy">Копировать</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="input-field-group">
+                <span class="input-field-label" data-i18n="winSecondaryIpv4Label">Резервный IPv4:</span>
+                <div class="code-input-box">
+                  <code class="code-input-text" id="val-win-ipv4-secondary">94.249.177.102</code>
+                  <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Скопировать Резервный IPv4" aria-label="Скопировать Резервный IPv4">
+                    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <span data-i18n="btnCopy">Копировать</span>
+                  </button>
+                </div>
               </div>
             </div>
             <div class="card-actions-row">
               <button class="btn-neon-action" data-clipboard="https://dns.magicdns.ru/dns-query" data-i18n="btnCopyDoH">Скопировать DoH</button>
-              <button class="btn-dark-action" data-clipboard="94.249.177.102" data-i18n="btnCopyIpv4">Скопировать IPv4</button>
+              <button class="btn-dark-action" data-clipboard="109.120.132.43" data-i18n="btnCopyPrimaryIpv4">Скопировать Основной IPv4</button>
+              <button class="btn-dark-action" data-clipboard="94.249.177.102" data-i18n="btnCopySecondaryIpv4">Скопировать Резервный IPv4</button>
             </div>
           </div>
           <div class="card-right-column">
@@ -2832,6 +2848,7 @@ html_content = f'''<!DOCTYPE html>
             </div>
             <div class="card-actions-row">
               <a href="https://dns.magicdns.ru/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfile">Скачать профиль</a>
+              <a href="https://de.magicdns.ru/api/profile.mobileconfig" class="btn-dark-action" id="btn-download-backup-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadBackupProfile">Скачать доп. профиль</a>
               <button class="btn-dark-action" data-clipboard="https://dns.magicdns.ru/profile.mobileconfig" data-i18n="btnCopyLink">Скопировать ссылку</button>
             </div>
           </div>
@@ -3012,8 +3029,8 @@ html_content = f'''<!DOCTYPE html>
               <div class="input-field-group">
                 <span class="input-field-label" data-i18n="routerPrimaryLabel">Основной DNS:</span>
                 <div class="code-input-box">
-                  <code class="code-input-text" id="val-router-primary">94.249.177.102</code>
-                  <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Скопировать Основной DNS" aria-label="Скопировать Основной DNS">
+                  <code class="code-input-text" id="val-router-primary">109.120.132.43</code>
+                  <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Скопировать Основной DNS" aria-label="Скопировать Основной DNS">
                     <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     <span data-i18n="btnCopy">Копировать</span>
                   </button>
@@ -3023,8 +3040,8 @@ html_content = f'''<!DOCTYPE html>
               <div class="input-field-group">
                 <span class="input-field-label" data-i18n="routerSecondaryLabel">Резервный DNS:</span>
                 <div class="code-input-box">
-                  <code class="code-input-text" id="val-router-secondary">109.120.132.43</code>
-                  <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Скопировать Резервный DNS" aria-label="Скопировать Резервный DNS">
+                  <code class="code-input-text" id="val-router-secondary">94.249.177.102</code>
+                  <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Скопировать Резервный DNS" aria-label="Скопировать Резервный DNS">
                     <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     <span data-i18n="btnCopy">Копировать</span>
                   </button>
@@ -3033,9 +3050,9 @@ html_content = f'''<!DOCTYPE html>
             </div>
 
             <div class="card-actions-row router-actions-row">
-              <button class="btn-neon-action" data-clipboard="94.249.177.102" data-i18n="btnCopyPrimary">Скопировать Основной DNS</button>
-              <button class="btn-dark-action" data-clipboard="109.120.132.43" data-i18n="btnCopySecondary">Скопировать Резервный DNS</button>
-              <button class="btn-dark-action" data-clipboard="94.249.177.102&#10;109.120.132.43" data-i18n="btnCopyBoth">Скопировать оба IP</button>
+              <button class="btn-neon-action" data-clipboard="109.120.132.43" data-i18n="btnCopyPrimary">Скопировать Основной DNS</button>
+              <button class="btn-dark-action" data-clipboard="94.249.177.102" data-i18n="btnCopySecondary">Скопировать Резервный DNS</button>
+              <button class="btn-dark-action" data-clipboard="109.120.132.43&#10;94.249.177.102" data-i18n="btnCopyBoth">Скопировать оба IP</button>
             </div>
           </div>
         </div>
@@ -3210,14 +3227,14 @@ html_content = f'''<!DOCTYPE html>
               <path d="M21 15a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
             </svg>
           </div>
-          <div class="empty-state-badge">0 отзывов</div>
-          <h3 class="empty-state-title">Здесь пока нет отзывов</h3>
-          <p class="empty-state-desc">
+          <div class="empty-state-badge" data-i18n="reviewsEmptyBadge">0 отзывов</div>
+          <h3 class="empty-state-title" data-i18n="reviewsEmptyTitle">Здесь пока нет отзывов</h3>
+          <p class="empty-state-desc" data-i18n="reviewsEmptyDesc">
             Мы не публикуем выдуманные отзывы. Начнем с чистого листа: протестируйте MagicDNS в деле и станьте первым, кто поделится реальным впечатлением или предложит идею!
           </p>
           <button type="button" class="btn-neon-action btn-open-feedback-empty" id="btn-empty-feedback">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            <span>Написать первый отзыв</span>
+            <span data-i18n="reviewsEmptyBtn">Написать первый отзыв</span>
           </button>
         </div>
         <div class="reviews-grid" id="reviews-grid" style="display: none;"></div>
@@ -3395,10 +3412,10 @@ html_content = f'''<!DOCTYPE html>
         <div class="feedback-field">
           <label class="feedback-label" data-i18n="modalPlatformLabel">Ваша платформа:</label>
           <div class="platform-chips" id="feedback-platform-chips">
-            <button type="button" class="platform-chip active" data-platform="iOS / macOS">Apple (iOS / Mac)</button>
-            <button type="button" class="platform-chip" data-platform="Windows">Windows</button>
-            <button type="button" class="platform-chip" data-platform="Android">Android</button>
-            <button type="button" class="platform-chip" data-platform="Роутер">Роутер (Keenetic / др.)</button>
+            <button type="button" class="platform-chip active" data-platform="iOS / macOS"><span data-i18n="modalPlatApple">Apple (iOS / Mac)</span></button>
+            <button type="button" class="platform-chip" data-platform="Windows"><span data-i18n="modalPlatWindows">Windows</span></button>
+            <button type="button" class="platform-chip" data-platform="Android"><span data-i18n="modalPlatAndroid">Android</span></button>
+            <button type="button" class="platform-chip" data-platform="Роутер"><span data-i18n="modalPlatRouter">Роутер (Keenetic / др.)</span></button>
           </div>
         </div>
 
@@ -3411,7 +3428,7 @@ html_content = f'''<!DOCTYPE html>
         <!-- Contact (Optional) -->
         <div class="feedback-field">
           <label for="feedback-contact" class="feedback-label" data-i18n="modalContactLabel">Контакт для связи (по желанию):</label>
-          <input type="text" id="feedback-contact" class="feedback-input" placeholder="@telegram_username или email" maxlength="100">
+          <input type="text" id="feedback-contact" class="feedback-input" placeholder="@telegram_username или email" maxlength="100" data-i18n-placeholder="modalContactPlaceholder">
         </div>
 
         <!-- Submit Button -->
@@ -3461,6 +3478,10 @@ html_content = f'''<!DOCTYPE html>
         document.querySelectorAll('.lang-option').forEach(function(opt) {{
           opt.classList.toggle('active', opt.getAttribute('data-lang') === lang);
         }});
+
+        if (typeof renderReviews === 'function') {{
+          renderReviews();
+        }}
 
         try {{
           localStorage.setItem('magicdns_lang', lang);
@@ -4025,7 +4046,7 @@ html_content = f'''<!DOCTYPE html>
           return langAnswers.adblock || faqAnswers.adblock;
         }}
         if (lower.indexOf('ip') !== -1 || lower.indexOf('айпи') !== -1 || lower.indexOf('адрес') !== -1 || lower.indexOf('address') !== -1) {{
-          return 'Адреса MagicDNS:<br>• DoH URL: <code>https://dns.magicdns.ru/dns-query</code><br>• DoT хост: <code>dns.magicdns.ru</code><br>• IPv4 шлюзов: <code>94.249.177.102</code> / <code>109.120.132.43</code><br>• Прокси: <code>http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085</code>';
+          return 'Адреса MagicDNS:<br>• DoH URL: <code>https://dns.magicdns.ru/dns-query</code><br>• DoT хост: <code>dns.magicdns.ru</code><br>• IPv4 шлюзов: <code>109.120.132.43</code> / <code>94.249.177.102</code><br>• Прокси: <code>http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085</code>';
         }}
         return null;
       }}
@@ -4262,13 +4283,16 @@ html_content = f'''<!DOCTYPE html>
         grid.style.display = 'grid';
         grid.innerHTML = '';
 
+        const verifiedWord = (I18N[currentLang] && I18N[currentLang].reviewVerified) ? I18N[currentLang].reviewVerified : 'Проверено';
+        const defaultUser = (I18N[currentLang] && I18N[currentLang].reviewDefaultUser) ? I18N[currentLang].reviewDefaultUser : 'Пользователь MagicDNS';
+
         reviews.forEach(function(item) {{
           const card = document.createElement('div');
           card.className = 'review-card';
           
           const ratingVal = Math.max(1, Math.min(5, Number(item.rating) || 5));
           const ratingStars = '★'.repeat(ratingVal);
-          const authorName = item.author ? escapeHtml(item.author) : 'Пользователь MagicDNS';
+          const authorName = item.author ? escapeHtml(item.author) : defaultUser;
           const platform = item.platform ? escapeHtml(item.platform) : 'DNS';
           const initials = authorName.substring(0, 2).toUpperCase();
           const message = escapeHtml(item.message);
@@ -4287,7 +4311,7 @@ html_content = f'''<!DOCTYPE html>
             '<p class="review-body">' + message + '</p>' +
             '<div class="review-badge-verified">' +
               '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' +
-              '<span>Проверено · ' + platform + '</span>' +
+              '<span>' + verifiedWord + ' · ' + platform + '</span>' +
             '</div>';
           grid.appendChild(card);
         }});
