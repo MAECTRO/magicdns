@@ -478,6 +478,101 @@ html_content = f'''<!DOCTYPE html>
       color: var(--cyber-cyan);
     }}
 
+    .service-chip-more {{
+      cursor: pointer;
+      background: rgba(0, 255, 157, 0.05);
+      border-color: rgba(0, 255, 157, 0.3);
+      color: var(--neon-mint);
+      transition: var(--transition-fast);
+      user-select: none;
+    }}
+
+    .service-chip-more:hover {{
+      background: rgba(0, 255, 157, 0.15);
+      border-color: var(--neon-mint);
+      transform: translateY(-1px);
+      box-shadow: 0 0 14px rgba(0, 255, 157, 0.22);
+    }}
+
+    .service-chip-more.active {{
+      background: rgba(0, 255, 157, 0.22);
+      border-color: var(--neon-mint);
+      box-shadow: 0 0 16px rgba(0, 255, 157, 0.35);
+    }}
+
+    .service-chip-more svg {{
+      transition: transform var(--transition-fast);
+    }}
+
+    .service-chip-more.active svg {{
+      transform: rotate(45deg);
+    }}
+
+    .more-services-drawer {{
+      display: none;
+      max-width: 860px;
+      margin: 14px auto 6px;
+      background: rgba(11, 20, 36, 0.92);
+      border: 1px solid rgba(0, 255, 157, 0.25);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      animation: fadeIn 0.22s ease-out;
+    }}
+
+    .more-services-drawer.active {{
+      display: block;
+    }}
+
+    .more-services-title {{
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--neon-mint);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }}
+
+    .more-services-grid {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      justify-content: center;
+    }}
+
+    .mini-service-tag {{
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 4px 11px;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: var(--transition-fast);
+    }}
+
+    .mini-service-tag:hover {{
+      background: rgba(0, 255, 157, 0.08);
+      border-color: rgba(0, 255, 157, 0.25);
+      color: #ffffff;
+    }}
+
+    .more-services-note {{
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-align: center;
+      margin-top: 10px;
+    }}
+
     /* ==========================================================================
        3. Device Configurator (Segmented Bar + Two-Column Glassmorphism Cards)
        ========================================================================== */
@@ -2343,7 +2438,7 @@ html_content = f'''<!DOCTYPE html>
         <span>Высокоскоростной DNS-шлюз • Прямой доступ к AI • Блокировка рекламы AdGuard</span>
       </div>
       <h1>Быстрый DNS для Claude AI, Gemini, Google AI Studio и Antigravity</h1>
-      <p>Прямой доступ к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN, сторонних приложений и падения скорости. Встроенная защита от рекламы и трекеров AdGuard прямо на уровне DNS. Выбери устройство и подключись за 1 минуту.</p>
+      <p>Прямой доступ к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN, сторонних приложений и падения скорости. Поддерживает Cursor, Midjourney, Grok и ещё десятки нейросетей со встроенной защитой от рекламы AdGuard. Выбери устройство и подключись за 1 минуту.</p>
       
       <!-- Unified Harmonious Services Ribbon -->
       <div class="services-ribbon-container">
@@ -2368,6 +2463,10 @@ html_content = f'''<!DOCTYPE html>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 22 22 22 12 2"/><circle cx="12" cy="15" r="2"/></svg>
             <span>Antigravity</span>
           </div>
+          <button type="button" class="service-chip service-chip-more" id="btn-toggle-more-ai" aria-expanded="false" title="Показать все поддерживаемые нейросети">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>+ ещё 30+ сервисов</span>
+          </button>
           <div class="service-chip highlight">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <span>Без VPN и сторонних программ</span>
@@ -2376,6 +2475,31 @@ html_content = f'''<!DOCTYPE html>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
             <span>Блокировка рекламы (AdGuard)</span>
           </div>
+        </div>
+
+        <!-- Expandable Drawer for Additional AI Services -->
+        <div class="more-services-drawer" id="more-services-drawer" aria-hidden="true">
+          <div class="more-services-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span>Также работают через MagicDNS без ограничений:</span>
+          </div>
+          <div class="more-services-grid">
+            <span class="mini-service-tag">Cursor AI</span>
+            <span class="mini-service-tag">Midjourney</span>
+            <span class="mini-service-tag">xAI Grok</span>
+            <span class="mini-service-tag">v0 by Vercel</span>
+            <span class="mini-service-tag">ElevenLabs</span>
+            <span class="mini-service-tag">Suno &amp; Udio</span>
+            <span class="mini-service-tag">Mistral Le Chat</span>
+            <span class="mini-service-tag">Hugging Face</span>
+            <span class="mini-service-tag">Runway Gen-3</span>
+            <span class="mini-service-tag">Poe by Quora</span>
+            <span class="mini-service-tag">GitHub Copilot</span>
+            <span class="mini-service-tag">Notion AI</span>
+            <span class="mini-service-tag">DeepL Pro</span>
+            <span class="mini-service-tag">Adobe Firefly</span>
+          </div>
+          <div class="more-services-note">DNS-шлюз автоматически маршрутизирует веб-интерфейсы, официальные приложения и REST API</div>
         </div>
       </div>
     </section>
@@ -3185,6 +3309,19 @@ html_content = f'''<!DOCTYPE html>
         }}
       }}
       detectUserPlatform();
+
+      // Expandable Additional AI Services Drawer
+      const moreAiBtn = document.getElementById('btn-toggle-more-ai');
+      const moreAiDrawer = document.getElementById('more-services-drawer');
+      if (moreAiBtn && moreAiDrawer) {{
+        moreAiBtn.addEventListener('click', function() {{
+          const isExpanded = moreAiDrawer.classList.toggle('active');
+          moreAiBtn.classList.toggle('active', isExpanded);
+          moreAiBtn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+          moreAiDrawer.setAttribute('aria-hidden', isExpanded ? 'false' : 'true');
+          playTactileFeedback();
+        }});
+      }}
 
       // 5. Real Interactive Network & AI Services Probe Checker
       const checkBtn = document.getElementById('btn-run-check');
