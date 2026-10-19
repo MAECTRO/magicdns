@@ -32,7 +32,7 @@ html_content = f'''<!DOCTYPE html>
   <link rel="canonical" href="https://magicdns.ru/">
 
   <!-- Search Engine Verification -->
-  <!-- <meta name="google-site-verification" content="PASTE_YOUR_GOOGLE_CODE_HERE" /> -->
+  <meta name="google-site-verification" content="V-LR-OgNY2JECR2l_17IM_vNMcUglPzkEd3CSbcoIHw">
   <meta name="yandex-verification" content="51263b81b36e7cca">
 
   <!-- Open Graph / Facebook / Telegram / WhatsApp -->
