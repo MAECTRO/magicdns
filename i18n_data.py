@@ -83,7 +83,25 @@ i18n = {
         "modalContactLabel": "Контакт для связи (по желанию):",
         "modalSubmitBtn": "Отправить отзыв",
         "btnCopy": "Копировать",
-        "btnCopied": "Скопировано!"
+        "btnCopied": "Скопировано!",
+        "winDohSubtext": "(или немецкий узел: https://de.magicdns.ru/dns-query)",
+        "winIpv4Val": "94.249.177.102 (Германия) / 109.120.132.43 (Швеция)",
+        "iosUrlSubtext": "(или немецкий узел: https://de.magicdns.ru/api/profile.mobileconfig)",
+        "androidHostSubtext": "(или для привязки чисто к Германии: de.magicdns.ru)",
+        "btnCopyHost": "Скопировать хост",
+        "proxyUrlSubtext": "(или Германия: http://admin:Px94kM8vQ7wZb2Rt@94.249.177.102:8085)",
+        "proxyHostLabel": "Хост",
+        "proxyPortLabel": "Порт",
+        "proxyUserLabel": "Логин",
+        "proxyPassLabel": "Пароль",
+        "routerNoDohTitle": "Роутеры без поддержки DoH (Классический IPv4 DNS)",
+        "routerNoDohBadge": "Порт 53 • TP-Link, D-Link, Keenetic, Asus, Zyxel, Tenda",
+        "routerNoDohDesc": "Для любых домашних роутеров без поддержки шифрования DoH/DoT. Укажите Основной и Резервный DNS в настройках WAN/DHCP — защита и доступ к ИИ заработают сразу для всех устройств в домашней сети Wi-Fi (Smart TV, консоли, смартфоны).",
+        "routerPrimaryLabel": "Основной DNS (Германия):",
+        "routerSecondaryLabel": "Резервный DNS (Швеция):",
+        "btnCopyPrimary": "Скопировать Основной DNS",
+        "btnCopySecondary": "Скопировать Резервный DNS",
+        "btnCopyBoth": "Скопировать оба IP"
     },
     "en": {
         "supportBtn": "Support author",
@@ -167,7 +185,25 @@ i18n = {
         "modalContactLabel": "Contact info (optional):",
         "modalSubmitBtn": "Submit feedback",
         "btnCopy": "Copy",
-        "btnCopied": "Copied!"
+        "btnCopied": "Copied!",
+        "winDohSubtext": "(or German node: https://de.magicdns.ru/dns-query)",
+        "winIpv4Val": "94.249.177.102 (Germany) / 109.120.132.43 (Sweden)",
+        "iosUrlSubtext": "(or German node: https://de.magicdns.ru/api/profile.mobileconfig)",
+        "androidHostSubtext": "(or German-only binding: de.magicdns.ru)",
+        "btnCopyHost": "Copy Host",
+        "proxyUrlSubtext": "(or Germany: http://admin:Px94kM8vQ7wZb2Rt@94.249.177.102:8085)",
+        "proxyHostLabel": "Host",
+        "proxyPortLabel": "Port",
+        "proxyUserLabel": "User",
+        "proxyPassLabel": "Pass",
+        "routerNoDohTitle": "Routers without DoH Support (Plain IPv4 DNS)",
+        "routerNoDohBadge": "Port 53 • TP-Link, D-Link, Keenetic, Asus, Zyxel, Tenda",
+        "routerNoDohDesc": "For all home routers lacking encrypted DoH/DoT support. Enter Primary and Secondary DNS in WAN/DHCP settings — AI access and ad blocking will activate for every device on your home Wi-Fi network (Smart TV, consoles, phones).",
+        "routerPrimaryLabel": "Primary DNS (Germany):",
+        "routerSecondaryLabel": "Secondary DNS (Sweden):",
+        "btnCopyPrimary": "Copy Primary DNS",
+        "btnCopySecondary": "Copy Secondary DNS",
+        "btnCopyBoth": "Copy Both IPs"
     },
     "zh": {
         "supportBtn": "支持作者",
@@ -251,7 +287,25 @@ i18n = {
         "modalContactLabel": "联系方式（选填）：",
         "modalSubmitBtn": "提交反馈",
         "btnCopy": "复制",
-        "btnCopied": "已复制！"
+        "btnCopied": "已复制！",
+        "winDohSubtext": "（或德国加速节点：https://de.magicdns.ru/dns-query）",
+        "winIpv4Val": "94.249.177.102（德国）/ 109.120.132.43（瑞典）",
+        "iosUrlSubtext": "（或德国加速节点：https://de.magicdns.ru/api/profile.mobileconfig）",
+        "androidHostSubtext": "（或绑定德国节点：de.magicdns.ru）",
+        "btnCopyHost": "复制主机名",
+        "proxyUrlSubtext": "（或德国节点：http://admin:Px94kM8vQ7wZb2Rt@94.249.177.102:8085）",
+        "proxyHostLabel": "主机",
+        "proxyPortLabel": "端口",
+        "proxyUserLabel": "账号",
+        "proxyPassLabel": "密码",
+        "routerNoDohTitle": "无 DoH 支持的普通路由器 (传统 IPv4 DNS)",
+        "routerNoDohBadge": "53 端口 • TP-Link、D-Link、Keenetic、华硕、Zyxel、腾达",
+        "routerNoDohDesc": "适用于不支持加密 DoH/DoT 的所有家用路由器。在 WAN/DHCP 设置中填入首选与备用 DNS — 家中 Wi-Fi 下的所有设备（智能电视、游戏主机、手机）即可全自动获得加速与广告拦截。",
+        "routerPrimaryLabel": "首选 DNS（德国）：",
+        "routerSecondaryLabel": "备用 DNS（瑞典）：",
+        "btnCopyPrimary": "复制首选 DNS",
+        "btnCopySecondary": "复制备用 DNS",
+        "btnCopyBoth": "同时复制两个 IP"
     },
     "tr": {
         "supportBtn": "Yazarı Destekle",
@@ -335,13 +389,31 @@ i18n = {
         "modalContactLabel": "İletişim (isteğe bağlı):",
         "modalSubmitBtn": "Gönder",
         "btnCopy": "Kopyala",
-        "btnCopied": "Kopyalandı!"
+        "btnCopied": "Kopyalandı!",
+        "winDohSubtext": "(veya Almanya düğümü: https://de.magicdns.ru/dns-query)",
+        "winIpv4Val": "94.249.177.102 (Almanya) / 109.120.132.43 (İsveç)",
+        "iosUrlSubtext": "(veya Almanya düğümü: https://de.magicdns.ru/api/profile.mobileconfig)",
+        "androidHostSubtext": "(veya doğrudan Almanya bağlantısı için: de.magicdns.ru)",
+        "btnCopyHost": "Ana Bilgisayarı Kopyala",
+        "proxyUrlSubtext": "(veya Almanya: http://admin:Px94kM8vQ7wZb2Rt@94.249.177.102:8085)",
+        "proxyHostLabel": "Ana Makine",
+        "proxyPortLabel": "Port",
+        "proxyUserLabel": "Kullanıcı",
+        "proxyPassLabel": "Şifre",
+        "routerNoDohTitle": "DoH Desteği Olmayan Yönlendiriciler (Standart IPv4 DNS)",
+        "routerNoDohBadge": "Port 53 • TP-Link, D-Link, Keenetic, Asus, Zyxel, Tenda",
+        "routerNoDohDesc": "Şifreli DoH/DoT desteği bulunmayan tüm ev tipi yönlendiriciler için. WAN/DHCP ayarlarında Birincil ve İkincil DNS girin — tüm ev Wi-Fi ağındaki cihazlar (Smart TV, konsollar, telefonlar) için koruma ve yapay zeka erişimi hemen başlar.",
+        "routerPrimaryLabel": "Birincil DNS (Almanya):",
+        "routerSecondaryLabel": "İkincil / Yedek DNS (İsveç):",
+        "btnCopyPrimary": "Birincil DNS Kopyala",
+        "btnCopySecondary": "Yedek DNS Kopyala",
+        "btnCopyBoth": "Her İki IP Kopyala"
     }
 }
 
 faq_answers = {
     "ru": {
-        "router": "Настройка на роутере открывает доступ сразу для всех устройств в доме:<br><br>• <b>Keenetic</b>: Сетевые правила → Серверы DNS → Добавить сервер → Адрес: <code>https://dns.magicdns.ru/dns-query</code> (тип DoH).<br>• <b>MikroTik</b>: IP → DNS → в поле DoH Server вставьте <code>https://dns.magicdns.ru/dns-query</code> и нажмите Apply.<br>• <b>TP-Link / Asus</b>: Дополнительные настройки → Сеть → Интернет → Вручную указать DNS: <code>109.120.132.43</code>.<br><br>После сохранения перезагрузите Wi-Fi на устройствах для обновления кэша.",
+        "router": "Настройка на роутере открывает доступ сразу для всех устройств в доме:<br><br>• <b>Роутеры с поддержкой DoH (Keenetic, MikroTik)</b>: укажите адрес <code>https://dns.magicdns.ru/dns-query</code> (или немецкий узел: <code>https://de.magicdns.ru/dns-query</code>).<br>• <b>Обычные роутеры без DoH (TP-Link, Asus, D-Link, Tenda)</b>: в разделе Интернет / WAN укажите два IPv4 DNS сервера:<br>— Основной DNS: <code>94.249.177.102</code> (Германия)<br>— Резервный DNS: <code>109.120.132.43</code> (Швеция)<br><br>После сохранения перезагрузите Wi-Fi на устройствах для обновления кэша.",
         "security": "Полностью безопасно!<br><br>• MagicDNS перенаправляет запросы исключительно к заблокированным ИИ-сервисам (Claude, Gemini, ChatGPT).<br>• Банки (Сбер, Т-Банк, ВТБ), Госуслуги, маркетплейсы и обычные сайты идут напрямую через вашего провайдера без прокси и без замедления.<br>• Мы не ведем логов, весь DNS-трафик защищен шифрованием TLS 1.3.",
         "ios": "На iOS кэш DNS держится дольше обычного. Сделайте 3 простых действия:<br><br>1. Включите режим «В самолёте» на 5 секунд и выключите обратно — это мгновенно сбросит кэш DNS.<br>2. Закройте вкладку с Claude / Gemini в Safari и откройте заново.<br>3. Проверьте в «Настройки → Основные → VPN и управление устройством → DNS», чтобы стоял профиль <b>MagicDNS</b>.",
         "disable": "Отключение занимает 5 секунд:<br><br>• <b>iOS</b>: Настройки → Основные → VPN и управление устройством → DNS → выберите «Автоматически».<br>• <b>Android</b>: Настройки → Сеть и интернет → Персональный DNS → выберите «Отключено».<br>• <b>Windows</b>: Параметры → Сеть и интернет → DNS → переключите на «Автоматически (DHCP)»<br><br>Профиль можно включить обратно в любой момент.",
@@ -349,7 +421,7 @@ faq_answers = {
         "adblock": "В MagicDNS встроен модуль защиты AdGuard:<br><br>• Автоматически блокирует баннеры, всплывающую рекламу и трекеры на уровне DNS.<br>• Защита действует сразу во всех браузерах, приложениях и мобильных играх.<br>• Не требует установки лишних расширений или тяжелых фоновых программ."
     },
     "en": {
-        "router": "Router setup provides instant access for all devices in your home network:<br><br>• <b>Keenetic</b>: Network Rules → DNS Servers → Add Server → Address: <code>https://dns.magicdns.ru/dns-query</code> (DoH type).<br>• <b>MikroTik</b>: IP → DNS → In DoH Server field, paste <code>https://dns.magicdns.ru/dns-query</code> and click Apply.<br>• <b>TP-Link / Asus</b>: Advanced Settings → Network → Internet → Manually set DNS to <code>109.120.132.43</code>.<br><br>After saving, reconnect Wi-Fi on your devices to clear DNS cache.",
+        "router": "Router setup provides instant access for all devices in your home network:<br><br>• <b>Routers with DoH support (Keenetic, MikroTik)</b>: use address <code>https://dns.magicdns.ru/dns-query</code> (or German node: <code>https://de.magicdns.ru/dns-query</code>).<br>• <b>Standard routers without DoH (TP-Link, Asus, D-Link, Tenda)</b>: in WAN/Internet DNS settings enter two IPv4 servers:<br>— Primary DNS: <code>94.249.177.102</code> (Germany)<br>— Secondary DNS: <code>109.120.132.43</code> (Sweden)<br><br>After saving, reconnect Wi-Fi on your devices to clear DNS cache.",
         "security": "Completely secure!<br><br>• MagicDNS redirects requests exclusively to AI services (Claude, Gemini, ChatGPT).<br>• Banking apps, government portals, marketplaces, and everyday websites route directly through your ISP with zero proxying and no slowdown.<br>• Zero logs policy, all DNS traffic is encrypted with TLS 1.3.",
         "ios": "iOS retains DNS cache longer than usual. Follow these 3 simple steps:<br><br>1. Toggle Airplane Mode on for 5 seconds and turn it back off — this instantly clears the DNS cache.<br>2. Close the Claude / Gemini tab in Safari and reopen it.<br>3. Check Settings → General → VPN & Device Management → DNS to confirm the <b>MagicDNS</b> profile is active.",
         "disable": "Disabling takes 5 seconds:<br><br>• <b>iOS</b>: Settings → General → VPN & Device Management → DNS → select «Automatic».<br>• <b>Android</b>: Settings → Network & internet → Private DNS → select «Off».<br>• <b>Windows</b>: Settings → Network & internet → DNS → switch to «Automatic (DHCP)».<br><br>You can re-enable the profile at any time.",
@@ -357,7 +429,7 @@ faq_answers = {
         "adblock": "MagicDNS includes a built-in AdGuard protection module:<br><br>• Automatically blocks banners, pop-ups, and trackers at the DNS layer.<br>• Works across all browsers, desktop apps, and mobile games.<br>• No need to install browser extensions or background software."
     },
     "zh": {
-        "router": "路由器配置可让家中所有设备立即获得加速访问：<br><br>• <b>Keenetic</b>：网络规则 → DNS 服务器 → 添加服务器 → 地址：<code>https://dns.magicdns.ru/dns-query</code>（DoH 类型）。<br>• <b>MikroTik</b>：IP → DNS → 在 DoH Server 栏输入 <code>https://dns.magicdns.ru/dns-query</code> 并点击 Apply。<br>• <b>TP-Link / 华硕</b>：高级设置 → 网络 → 互联网 → 手动指定 DNS：<code>109.120.132.43</code>。<br><br>保存后请重新连接设备 Wi-Fi 以刷新 DNS 缓存。",
+        "router": "路由器配置可让家中所有设备立即获得加速访问：<br><br>• <b>支持 DoH 的路由器（Keenetic、MikroTik 等）</b>：指定地址 <code>https://dns.magicdns.ru/dns-query</code>（或德国节点：<code>https://de.magicdns.ru/dns-query</code>）。<br>• <b>普通无 DoH 路由器（TP-Link、华硕、D-Link、腾达等）</b>：在 WAN / 互联网设置中手动指定两个 IPv4 DNS 服务器：<br>— 首选 DNS：<code>94.249.177.102</code>（德国）<br>— 备用 DNS：<code>109.120.132.43</code>（瑞典）<br><br>保存后请重新连接设备 Wi-Fi 以刷新 DNS 缓存。",
         "security": "完全安全可靠！<br><br>• MagicDNS <b>仅重定向 AI 服务请求</b>（Claude、Gemini、ChatGPT）。<br>• 银行应用、公共政务服务、电商平台与日常网站均由本地宽带直连，不走代理且无延迟。<br>• 零日志记录策略，所有 DNS 流量均受 TLS 1.3 强加密保护。",
         "ios": "iOS 系统的 DNS 缓存时间通常较长。请执行以下 3 个简单步骤：<br><br>1. 开启飞行模式 5 秒钟后关闭 — 这将立即刷新 DNS 缓存。<br>2. 在 Safari 中关闭 Claude / Gemini 标签页并重新打开。<br>3. 前往「设置 → 通用 → VPN 与设备管理 → DNS」，确认已激活 <b>MagicDNS</b> 描述文件。",
         "disable": "关闭仅需 5 秒：<br><br>• <b>iOS</b>：设置 → 通用 → VPN 与设备管理 → DNS → 选择「自动」。<br>• <b>Android</b>：设置 → 网络和互联网 → 私人 DNS → 选择「关闭」。<br>• <b>Windows</b>：设置 → 网络和 Internet → DNS → 切换为「自动 (DHCP)」。<br><br>您可以随时重新开启配置。",
@@ -365,7 +437,7 @@ faq_answers = {
         "adblock": "MagicDNS 内置 AdGuard 安全防护模块：<br><br>• 在 DNS 底层自动拦截横幅、弹窗广告和追踪探针。<br>• 防护自动覆盖所有浏览器、桌面客户端与移动游戏。<br>• 无需额外安装浏览器扩展或后台常驻软件。"
     },
     "tr": {
-        "router": "Yönlendirici kurulumu evinizdeki tüm cihazlar için anında erişim sağlar:<br><br>• <b>Keenetic</b>: Ağ Kuralları → DNS Sunucuları → Sunucu Ekle → Adres: <code>https://dns.magicdns.ru/dns-query</code> (DoH türü).<br>• <b>MikroTik</b>: IP → DNS → DoH Server alanına <code>https://dns.magicdns.ru/dns-query</code> girip Apply'a tıklayın.<br>• <b>TP-Link / Asus</b>: Gelişmiş Ayarlar → Ağ → İnternet → Manuel DNS: <code>109.120.132.43</code> girin.<br><br>Kaydettikten sonra DNS önbelleğini temizlemek için cihazlarınızın Wi-Fi bağlantısını yenileyin.",
+        "router": "Yönlendirici kurulumu evinizdeki tüm cihazlar için anında erişim sağlar:<br><br>• <b>DoH destekleyen yönlendiriciler (Keenetic, MikroTik)</b>: <code>https://dns.magicdns.ru/dns-query</code> (veya Almanya düğümü: <code>https://de.magicdns.ru/dns-query</code>) adresini girin.<br>• <b>DoH desteği olmayan standart yönlendiriciler (TP-Link, Asus, D-Link, Tenda)</b>: WAN / İnternet DNS ayarlarında iki IPv4 sunucu adresi girin:<br>— Birincil DNS: <code>94.249.177.102</code> (Almanya)<br>— İkincil / Yedek DNS: <code>109.120.132.43</code> (İsveç)<br><br>Kaydettikten sonra DNS önbelleğini temizlemek için cihazlarınızın Wi-Fi bağlantısını yenileyin.",
         "security": "Tamamen güvenlidir!<br><br>• MagicDNS yalnızca yapay zeka servislerine yönelik istekleri (Claude, Gemini, ChatGPT) yönlendirir.<br>• Bankacılık uygulamaları, e-Devlet, pazaryerleri ve normal web siteleri vekil sunucu olmadan doğrudan servis sağlayıcınız üzerinden çalışır.<br>• Kayıt (log) tutulmaz, tüm DNS trafiği TLS 1.3 ile şifrelenir.",
         "ios": "iOS DNS önbelleğini normalden daha uzun süre tutar. Şu 3 adımı uygulayın:<br><br>1. Uçak modunu 5 saniyeliğine açıp tekrar kapatın — bu DNS önbelleğini anında sıfırlar.<br>2. Safari'deki Claude / Gemini sekmesini kapatıp yeniden açın.<br>3. «Ayarlar → Genel → VPN ve Aygıt Yönetimi → DNS» bölümünde <b>MagicDNS</b> profilinin seçili olduğunu doğrulayın.",
         "disable": "Kapatmak 5 saniye sürer:<br><br>• <b>iOS</b>: Ayarlar → Genel → VPN ve Aygıt Yönetimi → DNS → «Otomatik»i seçin.<br>• <b>Android</b>: Ayarlar → Ağ ve internet → Özel DNS → «Kapalı»yı seçin.<br>• <b>Windows</b>: Ayarlar → Ağ ve internet → DNS → «Otomatik (DHCP)» olarak değiştirin.<br><br>İstediğiniz zaman tekrar etkinleştirebilirsiniz.",
