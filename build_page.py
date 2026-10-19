@@ -3760,7 +3760,7 @@ html_content = f'''<!DOCTYPE html>
       const chatFaqContainer = document.getElementById('chat-faq-container');
 
       // Configurable Cloudflare Worker Endpoint
-      const CF_WORKER_URL = 'https://magicdns-support.workers.dev';
+      const CF_WORKER_URL = 'https://magicdns.shapovalov-1grisha.workers.dev';
 
       // Conversation history for multi-turn context
       const chatHistory = [];
