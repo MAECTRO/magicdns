@@ -27,8 +27,8 @@ html_content = f'''<!DOCTYPE html>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#070d14">
   <title>MagicDNS — Быстрый DNS для Claude AI, Gemini и ChatGPT без VPN</title>
-  <meta name="description" content="Высокоскоростной защищённый DNS-шлюз (DoH/DoT) для прямого доступа к Claude AI, Gemini, ChatGPT и Antigravity без VPN на Windows, iOS и Android.">
-  <meta name="keywords" content="MagicDNS, DNS для Claude, DNS для Gemini, ChatGPT без VPN, Claude AI без VPN, DoH, DoT, быстрый DNS, Google AI Studio, Antigravity, приватный DNS, smart DNS, обход блокировок без впн, private DNS">
+  <meta name="description" content="Высокоскоростной защищённый DNS-шлюз (DoH/DoT) для прямого доступа к Claude AI, Gemini, ChatGPT и Antigravity без VPN со встроенной блокировкой рекламы AdGuard.">
+  <meta name="keywords" content="MagicDNS, DNS для Claude, DNS для Gemini, блокировка рекламы AdGuard, AdGuard DNS, блокировщик рекламы без программ, ChatGPT без VPN, Claude AI без VPN, DoH, DoT, быстрый DNS, Google AI Studio, Antigravity, приватный DNS, smart DNS, обход блокировок без впн, private DNS">
   <link rel="canonical" href="https://magicdns.ru/">
 
   <!-- Search Engine Verification -->
@@ -39,7 +39,7 @@ html_content = f'''<!DOCTYPE html>
   <meta property="og:site_name" content="MagicDNS">
   <meta property="og:url" content="https://magicdns.ru/">
   <meta property="og:title" content="MagicDNS — Быстрый DNS для Claude, Gemini и ChatGPT без VPN">
-  <meta property="og:description" content="Высокоскоростной защищённый DNS-шлюз для прямого доступа к Claude AI, Gemini, ChatGPT и Antigravity без VPN и сторонних программ.">
+  <meta property="og:description" content="Высокоскоростной защищённый DNS-шлюз для прямого доступа к Claude AI, Gemini, ChatGPT без VPN со встроенной защитой от рекламы AdGuard.">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
   <meta property="og:image" content="https://magicdns.ru/og-image.png">
@@ -50,7 +50,7 @@ html_content = f'''<!DOCTYPE html>
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://magicdns.ru/">
   <meta name="twitter:title" content="MagicDNS — Быстрый DNS для Claude, Gemini и ChatGPT без VPN">
-  <meta name="twitter:description" content="Высокоскоростной защищённый DNS-шлюз для прямого доступа к Claude AI, Gemini, ChatGPT и Antigravity без VPN.">
+  <meta name="twitter:description" content="Высокоскоростной защищённый DNS-шлюз для прямого доступа к Claude AI, Gemini, ChatGPT без VPN со встроенной блокировкой рекламы AdGuard.">
   <meta name="twitter:image" content="https://magicdns.ru/og-image.png">
 
   <!-- Schema.org Structured Data (JSON-LD) -->
@@ -471,6 +471,17 @@ html_content = f'''<!DOCTYPE html>
       border-color: rgba(0, 255, 157, 0.35);
       color: #ffffff;
       box-shadow: 0 0 12px rgba(0, 255, 157, 0.1);
+    }}
+
+    .service-chip.highlight-adblock {{
+      background: rgba(6, 182, 212, 0.12);
+      border-color: rgba(6, 182, 212, 0.4);
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.15);
+    }}
+
+    .service-chip.highlight-adblock svg {{
+      color: var(--cyber-cyan);
     }}
 
     /* ==========================================================================
@@ -2335,10 +2346,10 @@ html_content = f'''<!DOCTYPE html>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
         </svg>
-        <span>Высокоскоростной DNS-шлюз • Прямой доступ к AI</span>
+        <span>Высокоскоростной DNS-шлюз • Прямой доступ к AI • Блокировка рекламы AdGuard</span>
       </div>
       <h1>Быстрый DNS для Claude AI, Gemini, Google AI Studio и Antigravity</h1>
-      <p>Прямой доступ к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN, сторонних приложений и падения скорости. Выбери устройство и подключись за 1 минуту.</p>
+      <p>Прямой доступ к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN, сторонних приложений и падения скорости. Встроенная защита от рекламы и трекеров AdGuard прямо на уровне DNS. Выбери устройство и подключись за 1 минуту.</p>
       
       <!-- Unified Harmonious Services Ribbon -->
       <div class="services-ribbon-container">
@@ -2366,6 +2377,10 @@ html_content = f'''<!DOCTYPE html>
           <div class="service-chip highlight">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <span>Без VPN и сторонних программ</span>
+          </div>
+          <div class="service-chip highlight-adblock">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Блокировка рекламы (AdGuard)</span>
           </div>
         </div>
       </div>
@@ -3380,7 +3395,8 @@ html_content = f'''<!DOCTYPE html>
         security: 'Полностью безопасно!<br><br>• MagicDNS перенаправляет <b>только запросы к заблокированным ИИ-сервисам</b> (Claude, Gemini, ChatGPT).<br>• Банки (Сбер, Т-Банк, ВТБ), Госуслуги, маркетплейсы и обычные сайты идут напрямую через вашего провайдера без прокси и без замедления.<br>• Мы не ведем логов, весь DNS-трафик защищен шифрованием TLS 1.3.',
         ios: 'На iOS кэш DNS держится дольше обычного. Сделайте 3 простых действия:<br><br>1. Включите режим «В самолёте» на 5 секунд и выключите обратно — это мгновенно сбросит кэш DNS.<br>2. Закройте вкладку с Claude / Gemini в Safari и откройте заново.<br>3. Проверьте в «Настройки → Основные → VPN и управление устройством → DNS», чтобы стоял профиль <b>MagicDNS</b>.',
         disable: 'Отключение занимает 5 секунд:<br><br>• <b>iOS</b>: Настройки → Основные → VPN и управление устройством → DNS → выберите «Автоматически».<br>• <b>Android</b>: Настройки → Сеть и интернет → Персональный DNS → выберите «Отключено».<br>• <b>Windows</b>: Параметры → Сеть и интернет → DNS → переключите на «Автоматически (DHCP)»<br><br>Профиль можно включить обратно в любой момент.',
-        diff: 'Главные отличия от обычного VPN:<br><br>• <b>Скорость</b>: VPN режет скорость до 10-30 Мбит/с. MagicDNS маршрутизирует только ИИ-сервисы, остальной интернет работает на максимальной скорости вашего провайдера.<br>• <b>Без капчи</b>: Шведский шлюз в Стокгольме не внесен в спам-базы Cloudflare.<br>• <b>Не сажает батарею</b>: Не требует запущенного приложения в фоне.'
+        diff: 'Главные отличия от обычного VPN:<br><br>• <b>Скорость</b>: VPN режет скорость до 10-30 Мбит/с. MagicDNS маршрутизирует только ИИ-сервисы, остальной интернет работает на максимальной скорости вашего провайдера.<br>• <b>Блокировка рекламы</b>: Встроенный модуль AdGuard режет баннеры, трекеры и рекламу на уровне DNS.<br>• <b>Без капчи</b>: Шведский шлюз в Стокгольме не внесен в спам-базы Cloudflare.<br>• <b>Не сажает батарею</b>: Не требует запущенного приложения в фоне.',
+        adblock: 'В MagicDNS встроен модуль защиты AdGuard:<br><br>• Автоматически блокирует баннеры, всплывающую рекламу и трекеры на уровне DNS.<br>• Защита действует сразу во всех браузерах, приложениях и мобильных играх.<br>• Не требует установки лишних расширений или тяжелых фоновых программ.'
       }};
 
       function toggleChat(open) {{
@@ -3475,6 +3491,9 @@ html_content = f'''<!DOCTYPE html>
         }}
         if (lower.indexOf('впн') !== -1 || lower.indexOf('vpn') !== -1 || lower.indexOf('отличие') !== -1 || lower.indexOf('скорост') !== -1) {{
           return faqAnswers.diff;
+        }}
+        if (lower.indexOf('реклам') !== -1 || lower.indexOf('adguard') !== -1 || lower.indexOf('адгуард') !== -1 || lower.indexOf('баннер') !== -1) {{
+          return faqAnswers.adblock;
         }}
         if (lower.indexOf('швеци') !== -1 || lower.indexOf('ip') !== -1 || lower.indexOf('айпи') !== -1 || lower.indexOf('стокгольм') !== -1 || lower.indexOf('адрес') !== -1) {{
           return 'Адреса MagicDNS:<br>• DoH URL: <code>https://dns.magicdns.ru/dns-query</code><br>• DoT хост: <code>dns.magicdns.ru</code><br>• IPv4 шлюза: <code>109.120.132.43</code> (Стокгольм, Швеция)<br>• Прокси: <code>http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085</code>';
