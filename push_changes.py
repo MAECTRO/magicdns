@@ -41,7 +41,7 @@ if res:
     auth = base64.b64encode(f"{user}:{token}".encode('utf-8')).decode('utf-8')
     
     subprocess.run(['git', 'add', '-A'], check=True)
-    commit_res = subprocess.run(['git', 'commit', '-m', 'fix: optimize mobile layout and eliminate horizontal overflow across small viewports'], capture_output=True, text=True)
+    commit_res = subprocess.run(['git', 'commit', '-m', 'fix: symmetrical 2x2 tabs grid, mobile navbar layout, centered pulse icon and clean review empty state'], capture_output=True, text=True)
     print("COMMIT:", commit_res.stdout or commit_res.stderr)
     
     import os

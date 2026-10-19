@@ -126,7 +126,7 @@ html_content = f'''<!DOCTYPE html>
       scroll-behavior: smooth;
       overflow-x: hidden;
       width: 100%;
-      max-width: 100vw;
+      max-width: 100%;
     }}
 
     *, *::before, *::after {{
@@ -146,7 +146,7 @@ html_content = f'''<!DOCTYPE html>
       flex-direction: column;
       overflow-x: hidden;
       width: 100%;
-      max-width: 100vw;
+      max-width: 100%;
       position: relative;
       line-height: 1.5;
       background-image: 
@@ -2033,49 +2033,130 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     @media (max-width: 600px) {{
+      header {{
+        padding: 10px 0;
+      }}
       .header-content {{
-        flex-direction: row;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
         align-items: center;
-        justify-content: space-between;
-        gap: 10px;
+        gap: 8px 6px;
       }}
       .logo-container {{
+        grid-column: 1 / 2;
+        grid-row: 1;
+        gap: 8px;
         flex-shrink: 0;
+      }}
+      .logo-icon {{
+        width: 32px;
+        height: 32px;
+      }}
+      .logo-icon svg {{
+        width: 18px;
+        height: 18px;
+      }}
+      .brand-title {{
+        font-size: 1.15rem;
       }}
       .header-right {{
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-        max-width: 100%;
+        display: contents;
+      }}
+      .lang-selector-wrapper {{
+        grid-column: 2 / 3;
+        grid-row: 1;
+      }}
+      .lang-btn {{
+        padding: 5px 10px;
+        font-size: 0.78rem;
       }}
       .btn-support-header {{
-        padding: 6px 12px;
+        grid-column: 3 / 4;
+        grid-row: 1;
+        padding: 6px 9px;
         font-size: 0.78rem;
         flex-shrink: 0;
       }}
+      .btn-support-header span {{
+        display: none;
+      }}
       .status-badge {{
-        padding: 6px 12px;
-        font-size: 0.78rem;
-        flex-shrink: 0;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-self: center;
+        margin: 2px auto 0;
+        padding: 5px 12px;
+        font-size: 0.76rem;
         max-width: 100%;
       }}
       .status-label {{
-        display: none;
+        display: inline;
+      }}
+
+      /* Hero */
+      .hero {{
+        padding: 18px 0 10px;
+      }}
+      .hero-eyebrow {{
+        font-size: 0.75rem;
+        padding: 4px 10px;
       }}
       .hero h1 {{
-        font-size: clamp(1.45rem, 6vw, 1.85rem);
+        font-size: clamp(1.4rem, 6vw, 1.8rem);
+        line-height: 1.2;
+        margin-bottom: 8px;
+      }}
+      .hero p {{
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+      }}
+
+      /* 2x2 Segmented Tabs Grid (No Cutoffs, No Scrolling) */
+      .segmented-bar-wrapper {{
+        overflow-x: visible;
+        padding: 0;
+        margin-bottom: 18px;
+        width: 100%;
+        justify-content: stretch;
+      }}
+      .segmented-bar {{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        width: 100%;
+        min-width: 0;
+        margin: 0;
+        padding: 5px;
+        box-sizing: border-box;
+        border-radius: var(--radius-md);
       }}
       .segmented-tab {{
-        padding: 8px 12px;
-        font-size: 0.82rem;
+        width: 100%;
+        min-width: 0;
+        padding: 9px 6px;
+        font-size: 0.8rem;
         gap: 6px;
+        justify-content: center;
+        box-sizing: border-box;
+        text-align: center;
+        white-space: nowrap;
       }}
       .tab-icon {{
-        width: 15px;
-        height: 15px;
+        width: 14px;
+        height: 14px;
+      }}
+
+      /* Cards & Badges */
+      .glass-config-card {{
+        padding: 18px 14px;
+        border-radius: var(--radius-md);
+      }}
+      .card-badge {{
+        border-radius: var(--radius-sm);
+        padding: 4px 8px;
+        font-size: 0.72rem;
+        line-height: 1.4;
+        display: inline-block;
       }}
       .card-actions-row,
       .router-actions-row {{
@@ -2091,13 +2172,47 @@ html_content = f'''<!DOCTYPE html>
         min-width: 0;
         box-sizing: border-box;
       }}
+
+      /* Compact QR Pod */
+      .card-right-column {{
+        width: 100%;
+        border-top: 1px solid var(--border-hairline);
+        padding-top: 14px;
+        margin-top: 14px;
+      }}
+      .qr-pod {{
+        padding: 10px;
+        max-width: 150px;
+        margin: 0 auto;
+      }}
+      .qr-pod svg,
+      .qr-pod canvas,
+      .qr-pod img {{
+        max-width: 120px;
+        height: auto;
+      }}
+      .qr-caption {{
+        font-size: 0.72rem;
+        margin-top: 6px;
+      }}
+
+      /* Checker Card with Centered Pulse Icon */
       .checker-card {{
         padding: 22px 14px;
         border-radius: var(--radius-md);
         box-sizing: border-box;
       }}
       .checker-header h2 {{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        text-align: center;
         font-size: 1.15rem;
+        line-height: 1.35;
+      }}
+      .checker-header h2 svg {{
+        margin: 0 auto;
       }}
       .btn-run-check {{
         width: 100%;
@@ -2113,15 +2228,28 @@ html_content = f'''<!DOCTYPE html>
       .result-metrics-grid {{
         grid-template-columns: 1fr;
       }}
+
+      /* Reviews Section */
+      .reviews-section {{
+        margin-top: 40px;
+        margin-bottom: 20px;
+      }}
       .reviews-header {{
         flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+      }}
+      .reviews-header-left h2 {{
+        font-size: 1.45rem;
       }}
       .btn-feedback-trigger {{
         width: 100%;
         justify-content: center;
         box-sizing: border-box;
+      }}
+      .btn-feedback-trigger.hide-when-empty {{
+        display: none !important;
       }}
       .reviews-empty-state {{
         padding: 28px 16px;
@@ -2130,6 +2258,8 @@ html_content = f'''<!DOCTYPE html>
       .reviews-grid {{
         grid-template-columns: 1fr;
       }}
+
+      /* Footer & Chat FAB */
       .footer-content {{
         flex-direction: column;
         align-items: flex-start;
@@ -2145,23 +2275,32 @@ html_content = f'''<!DOCTYPE html>
         justify-content: center;
         box-sizing: border-box;
       }}
+      footer {{
+        padding-bottom: 76px;
+      }}
       .chat-window {{
-        bottom: 84px;
-        right: 12px;
-        left: 12px;
+        bottom: 76px;
+        right: 10px;
+        left: 10px;
         width: auto;
         max-width: none;
-        height: calc(100dvh - 100px);
+        height: calc(100dvh - 90px);
         max-height: 520px;
       }}
       .chat-fab {{
-        bottom: 18px;
-        right: 18px;
+        bottom: 16px;
+        right: 14px;
+        width: 44px;
+        height: 44px;
+      }}
+      .chat-fab-icon svg {{
+        width: 20px;
+        height: 20px;
       }}
       .toast {{
-        bottom: 80px;
-        right: 18px;
-        left: 18px;
+        bottom: 76px;
+        right: 14px;
+        left: 14px;
         max-width: none;
         box-sizing: border-box;
         justify-content: center;
@@ -2171,28 +2310,6 @@ html_content = f'''<!DOCTYPE html>
     @media (max-width: 480px) {{
       .container {{
         padding: 0 12px;
-      }}
-      .glass-config-card {{
-        padding: 16px 12px;
-        border-radius: var(--radius-md);
-      }}
-      .card-header-title {{
-        font-size: 1.08rem;
-      }}
-      .card-instruction {{
-        font-size: 0.84rem;
-        margin-bottom: 12px;
-      }}
-      .code-input-box {{
-        padding: 8px 10px;
-        gap: 8px;
-      }}
-      .code-input-text {{
-        font-size: 0.82rem;
-      }}
-      .btn-inline-copy {{
-        padding: 5px 7px;
-        font-size: 0.74rem;
       }}
       .params-subgrid {{
         grid-template-columns: 1fr;
@@ -2216,32 +2333,31 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     @media (max-width: 420px) {{
-      header {{
-        padding: 10px 0;
+      .container {{
+        padding: 0 10px;
       }}
-      .header-content {{
-        gap: 8px;
+      .glass-config-card {{
+        padding: 14px 10px;
       }}
-      .brand-title {{
-        font-size: 1.15rem;
+      .code-input-box {{
+        padding: 7px 8px;
+        gap: 6px;
       }}
-      .logo-icon {{
-        width: 32px;
-        height: 32px;
+      .code-input-text {{
+        font-size: 0.8rem;
       }}
-      .logo-icon svg {{
-        width: 18px;
-        height: 18px;
+      .btn-inline-copy {{
+        padding: 4px 6px;
+        font-size: 0.72rem;
       }}
-      .btn-support-header span {{
-        display: none;
+      .segmented-tab {{
+        padding: 8px 4px;
+        font-size: 0.76rem;
+        gap: 4px;
       }}
-      .btn-support-header {{
-        padding: 6px 9px;
-      }}
-      .status-badge {{
-        padding: 6px 9px;
-        font-size: 0.74rem;
+      .tab-icon {{
+        width: 13px;
+        height: 13px;
       }}
       .ai-services-probe-grid {{
         grid-template-columns: 1fr;
@@ -4420,16 +4536,19 @@ html_content = f'''<!DOCTYPE html>
         if (!grid || !emptyState) return;
 
         const reviews = getSavedReviews();
+        const headerBtn = document.getElementById('open-feedback-btn');
         if (!reviews || reviews.length === 0) {{
           emptyState.style.display = 'flex';
           grid.style.display = 'none';
           grid.innerHTML = '';
+          if (headerBtn) headerBtn.classList.add('hide-when-empty');
           return;
         }}
 
         emptyState.style.display = 'none';
         grid.style.display = 'grid';
         grid.innerHTML = '';
+        if (headerBtn) headerBtn.classList.remove('hide-when-empty');
 
         const verifiedWord = (I18N[currentLang] && I18N[currentLang].reviewVerified) ? I18N[currentLang].reviewVerified : 'Проверено';
         const defaultUser = (I18N[currentLang] && I18N[currentLang].reviewDefaultUser) ? I18N[currentLang].reviewDefaultUser : 'Пользователь MagicDNS';
