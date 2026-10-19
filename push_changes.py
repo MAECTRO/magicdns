@@ -41,7 +41,7 @@ if res:
     auth = base64.b64encode(f"{user}:{token}".encode('utf-8')).decode('utf-8')
     
     subprocess.run(['git', 'add', '-A'], check=True)
-    commit_res = subprocess.run(['git', 'commit', '-m', 'fix: dynamically localize review platforms and default author, swap mobileconfig DNS priority, and bind download haptics'], capture_output=True, text=True)
+    commit_res = subprocess.run(['git', 'commit', '-m', 'refactor: remove redundant alternative DoH url, single config now handles dual servers'], capture_output=True, text=True)
     print("COMMIT:", commit_res.stdout or commit_res.stderr)
     
     import os

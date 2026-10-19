@@ -2767,13 +2767,6 @@ html_content = f'''<!DOCTYPE html>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
-              <div class="field-alt-note">
-                <span data-i18n="winDohSubtext">(или https://de.magicdns.ru/dns-query)</span>
-                <button class="btn-subtext-copy" data-clipboard="https://de.magicdns.ru/dns-query" title="Скопировать DoH" aria-label="Скопировать DoH">
-                  <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
-                  <span data-i18n="btnCopy">Копировать</span>
-                </button>
-              </div>
             </div>
             <div class="router-ips-grid win-ips-grid">
               <div class="input-field-group">
