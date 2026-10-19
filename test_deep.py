@@ -71,7 +71,7 @@ test("Glassmorphism two-column configuration card layout",
 test("Swedish IPv4 109.120.132.43 present", '109.120.132.43' in html and '2.56.179.170' not in html)
 test("No duckdns hosts present", 'greenfest.duckdns.org' not in html and 'greenflow.duckdns.org' not in html)
 test("Windows DoH URL", 'https://dns.magicdns.ru/dns-query' in html)
-test("iOS profile URL", 'https://dns.magicdns.ru/profile.mobileconfig' in html)
+test("iOS profile URL", 'https://magicdns.ru/profile.mobileconfig' in html)
 test("Android Private DNS host", 'dns.magicdns.ru' in html)
 test("Proxy complete address and parameters",
      'http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085' in html and '8085' in html and 'Px94kM8vQ7wZb2Rt' in html)
@@ -97,7 +97,7 @@ test("ArrowDown does not switch tab (no focus trap)", 'e.key === \'ArrowDown\'' 
 
 # 11. Interactions, Audio, Haptics & Bug Fixes
 test("Double-click copy bug fixed (dataset.originalHtml check)", 'btn.dataset.originalHtml' in html)
-test("Native iOS mobileconfig download link (no JS blob)", '<a href="https://dns.magicdns.ru/profile.mobileconfig"' in html and 'id="btn-download-profile"' in html and 'createObjectURL' not in html)
+test("Native iOS mobileconfig download link (no JS blob)", '<a href="https://magicdns.ru/profile.mobileconfig"' in html and 'id="btn-download-profile"' in html and 'createObjectURL' not in html)
 test("No redundant de.magicdns.ru links", 'de.magicdns.ru' not in html)
 test("Router Primary DNS is 109.120.132.43", 'id="val-router-primary">109.120.132.43</code>' in html)
 test("Router Secondary DNS is 94.249.177.102", 'id="val-router-secondary">94.249.177.102</code>' in html)
@@ -145,7 +145,7 @@ if script_match:
 detector = cv2.QRCodeDetector()
 qr_targets = [
     'https://dns.magicdns.ru/dns-query',
-    'https://dns.magicdns.ru/profile.mobileconfig',
+    'https://magicdns.ru/profile.mobileconfig',
     'dns.magicdns.ru',
     'http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085'
 ]

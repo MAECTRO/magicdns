@@ -21,12 +21,12 @@ const SYSTEM_INSTRUCTION = `Ты — официальный технически
    - Обычный IPv4 DNS (для роутеров и ПК без DoH/DoT):
      * Основной DNS: 109.120.132.43
      * Резервный DNS: 94.249.177.102
-   - Профиль iOS / macOS (.mobileconfig): https://dns.magicdns.ru/profile.mobileconfig
+   - Профиль iOS / macOS (.mobileconfig): https://magicdns.ru/profile.mobileconfig
    - Персональный HTTP/SOCKS5 прокси (порт 8085):
      * 109.120.132.43: http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085
      * 94.249.177.102: http://admin:Px94kM8vQ7wZb2Rt@94.249.177.102:8085
 4. Настройка устройств:
-   - iOS / iPadOS / macOS: Скачать профиль с сайта (https://dns.magicdns.ru/profile.mobileconfig), разрешить в «Настройки -> Основные -> VPN и управление устройством» и нажать «Установить». Если не открывает — передернуть авиарежим на 5 секунд (сброс кэша DNS).
+   - iOS / iPadOS / macOS: Скачать профиль с сайта (https://magicdns.ru/profile.mobileconfig), разрешить в «Настройки -> Основные -> VPN и управление устройством» и нажать «Установить». Если не открывает — передернуть авиарежим на 5 секунд (сброс кэша DNS).
    - Android: Настройки -> Сеть и интернет -> Персональный DNS-сервер (Private DNS) -> ввести: dns.magicdns.ru.
    - Windows 11: Параметры -> Сеть и интернет -> Wi-Fi / Ethernet -> Назначение DNS -> Вручную -> IPv4: Вкл -> Предпочитаемый DNS: 109.120.132.43 (или 94.249.177.102) -> Шифрование DNS: Только шифрованный (DNS через HTTPS) -> Шаблон DoH: https://dns.magicdns.ru/dns-query
    - Роутеры без DoH (Keenetic, TP-Link, D-Link, Asus, MikroTik, Tenda, Zyxel): В веб-интерфейсе роутера в настройках WAN/DHCP прописать Основной DNS: 109.120.132.43, Резервный DNS: 94.249.177.102. Все устройства в домашней сети Wi-Fi автоматически получат доступ к ИИ.

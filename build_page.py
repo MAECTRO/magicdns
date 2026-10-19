@@ -21,7 +21,7 @@ def get_svg_qr(data):
 
 # Generate QR codes for the 4 platform configurations
 qr_windows = get_svg_qr('https://dns.magicdns.ru/dns-query')
-qr_ios = get_svg_qr('https://dns.magicdns.ru/profile.mobileconfig')
+qr_ios = get_svg_qr('https://magicdns.ru/profile.mobileconfig')
 qr_android = get_svg_qr('dns.magicdns.ru')
 qr_proxy = get_svg_qr('http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085')
 
@@ -3112,16 +3112,16 @@ html_content = f'''<!DOCTYPE html>
             <div class="input-field-group">
               <span class="input-field-label" data-i18n="iosUrlLabel">Ссылка на профиль:</span>
               <div class="code-input-box">
-                <code class="code-input-text" id="val-ios-url">https://dns.magicdns.ru/profile.mobileconfig</code>
-                <button class="btn-inline-copy" data-clipboard="https://dns.magicdns.ru/profile.mobileconfig" title="Скопировать ссылку" aria-label="Скопировать ссылку">
+                <code class="code-input-text" id="val-ios-url">https://magicdns.ru/profile.mobileconfig</code>
+                <button class="btn-inline-copy" data-clipboard="https://magicdns.ru/profile.mobileconfig" title="Скопировать ссылку" aria-label="Скопировать ссылку">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
             </div>
             <div class="card-actions-row">
-              <a href="https://dns.magicdns.ru/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfile">Скачать профиль</a>
-              <button class="btn-dark-action" data-clipboard="https://dns.magicdns.ru/profile.mobileconfig" data-i18n="btnCopyLink">Скопировать ссылку</button>
+              <a href="https://magicdns.ru/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfile">Скачать профиль</a>
+              <button class="btn-dark-action" data-clipboard="https://magicdns.ru/profile.mobileconfig" data-i18n="btnCopyLink">Скопировать ссылку</button>
             </div>
           </div>
           <div class="card-right-column">
@@ -4732,13 +4732,14 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
 </plist>
 '''
 
-with open('profile.mobileconfig', 'w', encoding='utf-8') as f:
-    f.write(mobileconfig_content)
-
 # SEO files: robots.txt and sitemap.xml in root and public/
 import os
 
 os.makedirs('public', exist_ok=True)
+
+for path in ['profile.mobileconfig', os.path.join('public', 'profile.mobileconfig')]:
+    with open(path, 'w', encoding='utf-8') as f:
+        f.write(mobileconfig_content)
 
 robots_content = """User-agent: *
 Allow: /
