@@ -414,39 +414,33 @@ html_content = f'''<!DOCTYPE html>
       line-height: 1.6;
     }}
 
-    /* Unified Harmonious Services Ribbon (Single Line / No Awkward Breaks) */
+    /* Unified Harmonious Services Ribbon (Clean Multi-Row / Never Overflows) */
     .services-ribbon-container {{
       width: 100%;
-      margin: 0 auto 6px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      padding: 4px 0;
-    }}
-    .services-ribbon-container::-webkit-scrollbar {{
-      display: none;
+      max-width: 900px;
+      margin: 0 auto 14px;
+      padding: 0 12px;
     }}
 
     .services-ribbon {{
-      display: inline-flex;
+      display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      white-space: nowrap;
-      min-width: 100%;
-      padding: 4px 10px;
+      gap: 8px 10px;
+      padding: 2px 0;
     }}
 
     .service-chip {{
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      font-size: 0.84rem;
+      gap: 6px;
+      font-size: 0.81rem;
       font-weight: 600;
       color: #e2e8f0;
       background: rgba(11, 20, 36, 0.65);
       border: 1px solid var(--border-hairline);
-      padding: 7px 15px;
+      padding: 6px 13px;
       border-radius: var(--radius-pill);
       backdrop-filter: blur(8px);
       transition: var(--transition-fast);
@@ -2355,31 +2349,31 @@ html_content = f'''<!DOCTYPE html>
       <div class="services-ribbon-container">
         <div class="services-ribbon">
           <div class="service-chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2v4m0 12v4M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
             <span>Claude AI</span>
           </div>
           <div class="service-chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.2 9.8L22 12L14.2 14.2L12 22L9.8 14.2L2 12L9.8 9.8L12 2Z"/></svg>
             <span>Gemini</span>
           </div>
           <div class="service-chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M9.5 15a3.5 3.5 0 0 0 5 0"/></svg>
             <span>ChatGPT</span>
           </div>
           <div class="service-chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <span>Perplexity</span>
           </div>
           <div class="service-chip">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 22 22 22 12 2"/><circle cx="12" cy="15" r="2"/></svg>
             <span>Antigravity</span>
           </div>
           <div class="service-chip highlight">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <span>Без VPN и сторонних программ</span>
           </div>
           <div class="service-chip highlight-adblock">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
             <span>Блокировка рекламы (AdGuard)</span>
           </div>
         </div>
