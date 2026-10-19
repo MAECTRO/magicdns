@@ -124,6 +124,9 @@ html_content = f'''<!DOCTYPE html>
 
     html {{
       scroll-behavior: smooth;
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
     }}
 
     *, *::before, *::after {{
@@ -142,6 +145,9 @@ html_content = f'''<!DOCTYPE html>
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
+      position: relative;
       line-height: 1.5;
       background-image: 
         radial-gradient(circle at 50% -10%, rgba(0, 255, 157, 0.12), transparent 55%),
@@ -698,11 +704,15 @@ html_content = f'''<!DOCTYPE html>
 
     .segmented-bar-wrapper {{
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       margin-bottom: 16px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
-      padding: 4px;
+      padding: 4px 12px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }}
     .segmented-bar-wrapper::-webkit-scrollbar {{
       display: none;
@@ -718,6 +728,9 @@ html_content = f'''<!DOCTYPE html>
       padding: 5px;
       backdrop-filter: blur(16px);
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      margin: 0 auto;
+      min-width: max-content;
+      box-sizing: border-box;
     }}
 
     .segmented-tab {{
@@ -733,6 +746,7 @@ html_content = f'''<!DOCTYPE html>
       white-space: nowrap;
       transition: all var(--transition-fast);
       cursor: pointer;
+      flex-shrink: 0;
     }}
 
     .segmented-tab:hover {{
@@ -822,7 +836,10 @@ html_content = f'''<!DOCTYPE html>
       border: 1px solid rgba(0, 255, 157, 0.35);
       padding: 4px 10px;
       border-radius: var(--radius-pill);
-      white-space: nowrap;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.4;
+      max-width: 100%;
       letter-spacing: 0.02em;
     }}
 
@@ -2017,17 +2034,22 @@ html_content = f'''<!DOCTYPE html>
 
     @media (max-width: 600px) {{
       .header-content {{
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
         gap: 10px;
       }}
+      .logo-container {{
+        flex-shrink: 0;
+      }}
       .header-right {{
-        width: 100%;
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
         gap: 8px;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
+        max-width: 100%;
       }}
       .btn-support-header {{
         padding: 6px 12px;
@@ -2038,16 +2060,75 @@ html_content = f'''<!DOCTYPE html>
         padding: 6px 12px;
         font-size: 0.78rem;
         flex-shrink: 0;
+        max-width: 100%;
       }}
       .status-label {{
         display: none;
       }}
       .hero h1 {{
-        font-size: 1.85rem;
+        font-size: clamp(1.45rem, 6vw, 1.85rem);
       }}
       .segmented-tab {{
-        padding: 8px 14px;
-        font-size: 0.84rem;
+        padding: 8px 12px;
+        font-size: 0.82rem;
+        gap: 6px;
+      }}
+      .tab-icon {{
+        width: 15px;
+        height: 15px;
+      }}
+      .card-actions-row,
+      .router-actions-row {{
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        gap: 8px;
+      }}
+      .btn-neon-action,
+      .btn-action-green,
+      .btn-dark-action {{
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+      }}
+      .checker-card {{
+        padding: 22px 14px;
+        border-radius: var(--radius-md);
+        box-sizing: border-box;
+      }}
+      .checker-header h2 {{
+        font-size: 1.15rem;
+      }}
+      .btn-run-check {{
+        width: 100%;
+        padding: 12px 18px;
+        font-size: 0.94rem;
+        justify-content: center;
+        box-sizing: border-box;
+      }}
+      .checker-result-box {{
+        padding: 16px 12px;
+        box-sizing: border-box;
+      }}
+      .result-metrics-grid {{
+        grid-template-columns: 1fr;
+      }}
+      .reviews-header {{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }}
+      .btn-feedback-trigger {{
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+      }}
+      .reviews-empty-state {{
+        padding: 28px 16px;
+        box-sizing: border-box;
+      }}
+      .reviews-grid {{
+        grid-template-columns: 1fr;
       }}
       .footer-content {{
         flex-direction: column;
@@ -2055,8 +2136,14 @@ html_content = f'''<!DOCTYPE html>
         gap: 16px;
       }}
       .footer-links {{
-        flex-wrap: wrap;
+        width: 100%;
+        flex-direction: column;
         gap: 8px;
+      }}
+      .social-btn {{
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
       }}
       .chat-window {{
         bottom: 84px;
@@ -2074,6 +2161,90 @@ html_content = f'''<!DOCTYPE html>
       .toast {{
         bottom: 80px;
         right: 18px;
+        left: 18px;
+        max-width: none;
+        box-sizing: border-box;
+        justify-content: center;
+      }}
+    }}
+
+    @media (max-width: 480px) {{
+      .container {{
+        padding: 0 12px;
+      }}
+      .glass-config-card {{
+        padding: 16px 12px;
+        border-radius: var(--radius-md);
+      }}
+      .card-header-title {{
+        font-size: 1.08rem;
+      }}
+      .card-instruction {{
+        font-size: 0.84rem;
+        margin-bottom: 12px;
+      }}
+      .code-input-box {{
+        padding: 8px 10px;
+        gap: 8px;
+      }}
+      .code-input-text {{
+        font-size: 0.82rem;
+      }}
+      .btn-inline-copy {{
+        padding: 5px 7px;
+        font-size: 0.74rem;
+      }}
+      .params-subgrid {{
+        grid-template-columns: 1fr;
+      }}
+      .feedback-modal-overlay {{
+        padding: 8px;
+      }}
+      .feedback-modal-card {{
+        padding: 18px 14px;
+        border-radius: var(--radius-md);
+        max-height: calc(100dvh - 16px);
+      }}
+      .feedback-modal-title {{
+        font-size: 1.02rem;
+      }}
+      .feedback-type-chip {{
+        min-width: 80px;
+        padding: 8px 6px;
+        font-size: 0.78rem;
+      }}
+    }}
+
+    @media (max-width: 420px) {{
+      header {{
+        padding: 10px 0;
+      }}
+      .header-content {{
+        gap: 8px;
+      }}
+      .brand-title {{
+        font-size: 1.15rem;
+      }}
+      .logo-icon {{
+        width: 32px;
+        height: 32px;
+      }}
+      .logo-icon svg {{
+        width: 18px;
+        height: 18px;
+      }}
+      .btn-support-header span {{
+        display: none;
+      }}
+      .btn-support-header {{
+        padding: 6px 9px;
+      }}
+      .status-badge {{
+        padding: 6px 9px;
+        font-size: 0.74rem;
+      }}
+      .ai-services-probe-grid {{
+        grid-template-columns: 1fr;
       }}
     }}
 
