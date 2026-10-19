@@ -41,7 +41,7 @@ if res:
     auth = base64.b64encode(f"{user}:{token}".encode('utf-8')).decode('utf-8')
     
     subprocess.run(['git', 'add', '-A'], check=True)
-    commit_res = subprocess.run(['git', 'commit', '-m', 'refactor: clean up footer copy, remove redundant domain mention'], capture_output=True, text=True)
+    commit_res = subprocess.run(['git', 'commit', '-m', 'feat: add multilingual support (RU, EN, ZH, TR) with responsive language switcher'], capture_output=True, text=True)
     print("COMMIT:", commit_res.stdout or commit_res.stderr)
     
     import os

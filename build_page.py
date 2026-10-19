@@ -1,6 +1,10 @@
 import qrcode
 import qrcode.image.svg
 import re
+import json
+from i18n_data import i18n
+
+i18n_json = json.dumps(i18n, ensure_ascii=False)
 
 def get_svg_qr(data):
     factory = qrcode.image.svg.SvgPathImage
@@ -240,6 +244,116 @@ html_content = f'''<!DOCTYPE html>
       align-items: center;
       gap: 12px;
       flex-wrap: wrap;
+    }}
+
+    /* Language Selector */
+    .lang-selector-wrapper {{
+      position: relative;
+      display: inline-block;
+    }}
+
+    .lang-btn {{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }}
+
+    .lang-btn:hover,
+    .lang-btn:focus-visible {{
+      background: rgba(0, 255, 157, 0.1);
+      border-color: rgba(0, 255, 157, 0.35);
+      color: var(--neon-mint);
+    }}
+
+    .lang-globe-icon {{
+      width: 14px;
+      height: 14px;
+      color: var(--neon-mint);
+      flex-shrink: 0;
+    }}
+
+    .lang-arrow-icon {{
+      width: 12px;
+      height: 12px;
+      color: var(--text-dim);
+      transition: transform var(--transition-fast);
+      flex-shrink: 0;
+    }}
+
+    .lang-selector-wrapper.open .lang-arrow-icon {{
+      transform: rotate(180deg);
+    }}
+
+    .lang-dropdown {{
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 155px;
+      background: rgba(11, 20, 36, 0.96);
+      border: 1px solid rgba(0, 255, 157, 0.25);
+      border-radius: var(--radius-md);
+      padding: 6px;
+      list-style: none;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.65), 0 0 16px rgba(0, 255, 157, 0.1);
+      display: none;
+      z-index: 1000;
+      animation: fadeIn 0.15s ease-out;
+    }}
+
+    .lang-selector-wrapper.open .lang-dropdown {{
+      display: block;
+    }}
+
+    .lang-option {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      user-select: none;
+    }}
+
+    .lang-option:hover,
+    .lang-option:focus-visible {{
+      background: rgba(0, 255, 157, 0.1);
+      color: #ffffff;
+    }}
+
+    .lang-option.active {{
+      background: rgba(0, 255, 157, 0.15);
+      color: var(--neon-mint);
+      font-weight: 700;
+    }}
+
+    .lang-option .lang-code {{
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+    }}
+
+    .lang-option.active .lang-code {{
+      background: rgba(0, 255, 157, 0.2);
+      color: var(--neon-mint);
     }}
 
     .btn-support-header {{
@@ -2405,13 +2519,46 @@ html_content = f'''<!DOCTYPE html>
         <span class="brand-title">Magic<span class="accent">DNS</span></span>
       </a>
 
-      <!-- Header Right: Support & Status -->
+      <!-- Header Right: Language, Support & Status -->
       <div class="header-right">
+        <!-- Language Selector -->
+        <div class="lang-selector-wrapper" id="lang-selector-wrapper">
+          <button type="button" class="lang-btn" id="lang-menu-btn" aria-expanded="false" aria-haspopup="true" aria-label="Выбрать язык / Select language">
+            <svg class="lang-globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span id="current-lang-text">RU</span>
+            <svg class="lang-arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <ul class="lang-dropdown" id="lang-dropdown" role="menu" aria-label="Языки">
+            <li class="lang-option active" role="menuitem" data-lang="ru" tabindex="0">
+              <span>Русский</span>
+              <span class="lang-code">RU</span>
+            </li>
+            <li class="lang-option" role="menuitem" data-lang="en" tabindex="0">
+              <span>English</span>
+              <span class="lang-code">EN</span>
+            </li>
+            <li class="lang-option" role="menuitem" data-lang="zh" tabindex="0">
+              <span>中文 (简体)</span>
+              <span class="lang-code">ZH</span>
+            </li>
+            <li class="lang-option" role="menuitem" data-lang="tr" tabindex="0">
+              <span>Türkçe</span>
+              <span class="lang-code">TR</span>
+            </li>
+          </ul>
+        </div>
+
         <a href="https://pay.cloudtips.ru/p/596a95a5" target="_blank" rel="noopener noreferrer" class="btn-support-header" aria-label="Поддержать автора">
           <svg viewBox="0 0 24 24" class="donate-heart" aria-hidden="true">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
           </svg>
-          <span>Поддержать автора</span>
+          <span data-i18n="supportBtn">Поддержать автора</span>
         </a>
 
         <!-- Status Badge -->
@@ -2420,7 +2567,7 @@ html_content = f'''<!DOCTYPE html>
             <div class="status-ping"></div>
             <div class="status-dot"></div>
           </div>
-          <span><span class="status-label">Статус сети: </span><span class="status-text">Работает стабильно</span></span>
+          <span><span class="status-label" data-i18n="statusLabel">Статус сети: </span><span class="status-text" data-i18n="statusText">Работает стабильно</span></span>
         </div>
       </div>
     </div>
@@ -2435,10 +2582,10 @@ html_content = f'''<!DOCTYPE html>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
         </svg>
-        <span>Высокоскоростной DNS-шлюз • Прямой доступ к AI • Блокировка рекламы AdGuard</span>
+        <span data-i18n="heroEyebrow">Высокоскоростной DNS-шлюз • Прямой доступ к AI • Блокировка рекламы AdGuard</span>
       </div>
-      <h1>Быстрый DNS для Claude AI, Gemini, Google AI Studio и Antigravity</h1>
-      <p>Прямой доступ к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN, сторонних приложений и падения скорости. Поддерживает Cursor, Midjourney, Grok и ещё десятки нейросетей со встроенной защитой от рекламы AdGuard. Выбери устройство и подключись за 1 минуту.</p>
+      <h1 data-i18n="heroHeading">Быстрый DNS для Claude AI, Gemini, Google AI Studio и Antigravity</h1>
+      <p data-i18n="heroSubtitle">Прямой доступ к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN, сторонних приложений и падения скорости. Поддерживает Cursor, Midjourney, Grok и ещё десятки нейросетей со встроенной защитой от рекламы AdGuard. Выбери устройство и подключись за 1 минуту.</p>
       
       <!-- Unified Harmonious Services Ribbon -->
       <div class="services-ribbon-container">
@@ -2465,15 +2612,15 @@ html_content = f'''<!DOCTYPE html>
           </div>
           <button type="button" class="service-chip service-chip-more" id="btn-toggle-more-ai" aria-expanded="false" title="Показать все поддерживаемые нейросети">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <span>+ ещё 30+ сервисов</span>
+            <span data-i18n="chipMore">+ ещё 30+ сервисов</span>
           </button>
           <div class="service-chip highlight">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span>Без VPN и сторонних программ</span>
+            <span data-i18n="chipNoVpn">Без VPN и сторонних программ</span>
           </div>
           <div class="service-chip highlight-adblock">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-            <span>Блокировка рекламы (AdGuard)</span>
+            <span data-i18n="chipAdblock">Блокировка рекламы (AdGuard)</span>
           </div>
         </div>
 
@@ -2481,7 +2628,7 @@ html_content = f'''<!DOCTYPE html>
         <div class="more-services-drawer" id="more-services-drawer" aria-hidden="true">
           <div class="more-services-title">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            <span>Также работают через MagicDNS без ограничений:</span>
+            <span data-i18n="drawerTitle">Также работают через MagicDNS без ограничений:</span>
           </div>
           <div class="more-services-grid">
             <span class="mini-service-tag">Cursor AI</span>
@@ -2499,7 +2646,7 @@ html_content = f'''<!DOCTYPE html>
             <span class="mini-service-tag">DeepL Pro</span>
             <span class="mini-service-tag">Adobe Firefly</span>
           </div>
-          <div class="more-services-note">DNS-шлюз автоматически маршрутизирует веб-интерфейсы, официальные приложения и REST API</div>
+          <div class="more-services-note" data-i18n="drawerNote">DNS-шлюз автоматически маршрутизирует веб-интерфейсы, официальные приложения и REST API</div>
         </div>
       </div>
     </section>
@@ -2511,19 +2658,19 @@ html_content = f'''<!DOCTYPE html>
         <nav class="segmented-bar" role="tablist" aria-label="Конфигурация устройств">
           <button class="segmented-tab active" role="tab" id="tab-windows" aria-controls="panel-windows" aria-selected="true" tabindex="0" data-target="panel-windows">
             <svg viewBox="0 0 24 24" class="tab-icon"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801" fill="currentColor"/></svg>
-            <span>Windows (DoH)</span>
+            <span data-i18n="tabWindows">Windows (DoH)</span>
           </button>
           <button class="segmented-tab" role="tab" id="tab-ios" aria-controls="panel-ios" aria-selected="false" tabindex="-1" data-target="panel-ios">
             <svg viewBox="0 0 24 24" class="tab-icon"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.61-.75 1.04-1.8 0.92-2.87-.9.04-2 .6-2.63 1.34-.56.64-.99 1.68-.86 2.73 1.01.08 2-.45 2.57-1.2" fill="currentColor"/></svg>
-            <span>Apple iOS / macOS</span>
+            <span data-i18n="tabIos">Apple iOS / macOS</span>
           </button>
           <button class="segmented-tab" role="tab" id="tab-android" aria-controls="panel-android" aria-selected="false" tabindex="-1" data-target="panel-android">
             <svg viewBox="0 0 24 24" class="tab-icon"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.411 13.8533 8.1 12 8.1s-3.5902.311-5.1368.8497L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396" fill="currentColor"/></svg>
-            <span>Android (DoT)</span>
+            <span data-i18n="tabAndroid">Android (DoT)</span>
           </button>
           <button class="segmented-tab" role="tab" id="tab-proxy" aria-controls="panel-proxy" aria-selected="false" tabindex="-1" data-target="panel-proxy">
             <svg viewBox="0 0 24 24" class="tab-icon" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <span>Прокси приложений</span>
+            <span data-i18n="tabProxy">Прокси приложений</span>
           </button>
         </nav>
       </div>
@@ -2533,35 +2680,35 @@ html_content = f'''<!DOCTYPE html>
         <div class="glass-config-card">
           <div class="card-left-column">
             <div class="card-header-row">
-              <h2 class="card-header-title">Windows &amp; Браузеры (DoH)</h2>
-              <span class="card-badge">RFC 8484 • Windows 11 &amp; Роутеры</span>
+              <h2 class="card-header-title" data-i18n="winTitle">Windows &amp; Браузеры (DoH)</h2>
+              <span class="card-badge" data-i18n="winBadge">RFC 8484 • Windows 11 &amp; Роутеры</span>
             </div>
-            <p class="card-instruction">
+            <p class="card-instruction" data-i18n="winDesc">
               Шифрует все DNS-запросы под защищённый HTTPS-трафик. Настройка: Параметры → Сеть → Wi-Fi / Ethernet → Назначение DNS → Вручную (Включить DNS через HTTPS) или в настройках браузера.
             </p>
             <div class="input-field-group">
-              <span class="input-field-label">Шаблон DoH:</span>
+              <span class="input-field-label" data-i18n="winDohLabel">Шаблон DoH:</span>
               <div class="code-input-box">
                 <code class="code-input-text" id="val-win-doh">https://dns.magicdns.ru/dns-query</code>
                 <button class="btn-inline-copy" data-clipboard="https://dns.magicdns.ru/dns-query" title="Скопировать DoH" aria-label="Скопировать DoH">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span>Копировать</span>
+                  <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
             </div>
             <div class="input-field-group">
-              <span class="input-field-label">IPv4 DNS Сервер:</span>
+              <span class="input-field-label" data-i18n="winIpv4Label">IPv4 DNS Сервер:</span>
               <div class="code-input-box">
                 <code class="code-input-text" id="val-win-ipv4">109.120.132.43</code>
                 <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Скопировать IPv4" aria-label="Скопировать IPv4">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span>Копировать</span>
+                  <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
             </div>
             <div class="card-actions-row">
-              <button class="btn-neon-action" data-clipboard="https://dns.magicdns.ru/dns-query">Скопировать DoH</button>
-              <button class="btn-dark-action" data-clipboard="109.120.132.43">Скопировать IPv4</button>
+              <button class="btn-neon-action" data-clipboard="https://dns.magicdns.ru/dns-query" data-i18n="btnCopyDoH">Скопировать DoH</button>
+              <button class="btn-dark-action" data-clipboard="109.120.132.43" data-i18n="btnCopyIpv4">Скопировать IPv4</button>
             </div>
           </div>
           <div class="card-right-column">
@@ -2571,7 +2718,7 @@ html_content = f'''<!DOCTYPE html>
               </div>
               <div class="qr-caption">
                 <svg viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2"></path><path d="M4 16v2a2 2 0 0 0 2 2h2"></path><path d="M16 4h2a2 2 0 0 1 2 2v2"></path><path d="M16 20h2a2 2 0 0 0 2-2v-2"></path></svg>
-                <span>QR-код адреса DoH</span>
+                <span data-i18n="qrWinCaption">QR-код адреса DoH</span>
               </div>
             </div>
           </div>
@@ -2583,25 +2730,25 @@ html_content = f'''<!DOCTYPE html>
         <div class="glass-config-card">
           <div class="card-left-column">
             <div class="card-header-row">
-              <h2 class="card-header-title">Apple iOS &amp; macOS (.mobileconfig)</h2>
-              <span class="card-badge">В 1 клик • iOS 14+ / macOS 11+</span>
+              <h2 class="card-header-title" data-i18n="iosTitle">Apple iOS &amp; macOS (.mobileconfig)</h2>
+              <span class="card-badge" data-i18n="iosBadge">В 1 клик • iOS 14+ / macOS 11+</span>
             </div>
-            <p class="card-instruction">
+            <p class="card-instruction" data-i18n="iosDesc">
               Устанавливает зашифрованный профиль SmartDNS. В Настройках открой «Профиль загружен» и нажми «Установить». Активируется в Wi-Fi и сотовых сетях.
             </p>
             <div class="input-field-group">
-              <span class="input-field-label">Ссылка на профиль:</span>
+              <span class="input-field-label" data-i18n="iosUrlLabel">Ссылка на профиль:</span>
               <div class="code-input-box">
                 <code class="code-input-text" id="val-ios-url">https://dns.magicdns.ru/profile.mobileconfig</code>
                 <button class="btn-inline-copy" data-clipboard="https://dns.magicdns.ru/profile.mobileconfig" title="Скопировать ссылку" aria-label="Скопировать ссылку">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span>Копировать</span>
+                  <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
             </div>
             <div class="card-actions-row">
-              <a href="https://dns.magicdns.ru/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Скачать профиль</a>
-              <button class="btn-dark-action" data-clipboard="https://dns.magicdns.ru/profile.mobileconfig">Скопировать ссылку</button>
+              <a href="https://dns.magicdns.ru/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfile">Скачать профиль</a>
+              <button class="btn-dark-action" data-clipboard="https://dns.magicdns.ru/profile.mobileconfig" data-i18n="btnCopyLink">Скопировать ссылку</button>
             </div>
           </div>
           <div class="card-right-column">
@@ -2611,7 +2758,7 @@ html_content = f'''<!DOCTYPE html>
               </div>
               <div class="qr-caption">
                 <svg viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2"></path><path d="M4 16v2a2 2 0 0 0 2 2h2"></path><path d="M16 4h2a2 2 0 0 1 2 2v2"></path><path d="M16 20h2a2 2 0 0 0 2-2v-2"></path></svg>
-                <span>Сканируй с iPhone / iPad</span>
+                <span data-i18n="qrIosCaption">Сканируй с iPhone / iPad</span>
               </div>
             </div>
           </div>
@@ -2623,19 +2770,19 @@ html_content = f'''<!DOCTYPE html>
         <div class="glass-config-card">
           <div class="card-left-column">
             <div class="card-header-row">
-              <h2 class="card-header-title">Android Частный DNS (DoT)</h2>
-              <span class="card-badge">Порт 853 TLS • Android 9+</span>
+              <h2 class="card-header-title" data-i18n="androidTitle">Android Частный DNS (DoT)</h2>
+              <span class="card-badge" data-i18n="androidBadge">Порт 853 TLS • Android 9+</span>
             </div>
-            <p class="card-instruction">
+            <p class="card-instruction" data-i18n="androidDesc">
               Открой Настройки → Подключения (или Сеть и интернет) → Персональный DNS → Введи имя хоста и нажми Сохранить.
             </p>
             <div class="input-field-group">
-              <span class="input-field-label">Имя хоста провайдера частного DNS:</span>
+              <span class="input-field-label" data-i18n="androidHostLabel">Имя хоста провайдера частного DNS:</span>
               <div class="code-input-box">
                 <code class="code-input-text" id="val-android-host">dns.magicdns.ru</code>
                 <button class="btn-inline-copy" data-clipboard="dns.magicdns.ru" title="Скопировать хост" aria-label="Скопировать хост">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span>Копировать</span>
+                  <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
             </div>
@@ -2648,7 +2795,7 @@ html_content = f'''<!DOCTYPE html>
               </div>
               <div class="qr-caption">
                 <svg viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2"></path><path d="M4 16v2a2 2 0 0 0 2 2h2"></path><path d="M16 4h2a2 2 0 0 1 2 2v2"></path><path d="M16 20h2a2 2 0 0 0 2-2v-2"></path></svg>
-                <span>QR-код хоста Android DoT</span>
+                <span data-i18n="qrAndroidCaption">QR-код хоста Android DoT</span>
               </div>
             </div>
           </div>
@@ -2660,19 +2807,19 @@ html_content = f'''<!DOCTYPE html>
         <div class="glass-config-card">
           <div class="card-left-column">
             <div class="card-header-row">
-              <h2 class="card-header-title">Персональный прокси для приложений</h2>
-              <span class="card-badge">Порт 8085 • HTTP CONNECT</span>
+              <h2 class="card-header-title" data-i18n="proxyTitle">Персональный прокси для приложений</h2>
+              <span class="card-badge" data-i18n="proxyBadge">Порт 8085 • HTTP CONNECT</span>
             </div>
-            <p class="card-instruction">
+            <p class="card-instruction" data-i18n="proxyDesc">
               Для прямого ввода в Telegram, нейросетевые клиенты, браузерные расширения и IDE. Авторизация по логину и паролю.
             </p>
             <div class="input-field-group">
-              <span class="input-field-label">Адрес персонального прокси:</span>
+              <span class="input-field-label" data-i18n="proxyUrlLabel">Адрес персонального прокси:</span>
               <div class="code-input-box">
                 <code class="code-input-text">http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085</code>
                 <button class="btn-inline-copy" data-clipboard="http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085" title="Скопировать URL" aria-label="Скопировать URL">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span>Копировать</span>
+                  <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
             </div>
@@ -2718,7 +2865,7 @@ html_content = f'''<!DOCTYPE html>
             </div>
 
             <div class="card-actions-row">
-              <button class="btn-neon-action" data-clipboard="http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085">Скопировать прокси</button>
+              <button class="btn-neon-action" data-clipboard="http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085" data-i18n="btnCopyProxy">Скопировать прокси</button>
             </div>
           </div>
           <div class="card-right-column">
@@ -2728,7 +2875,7 @@ html_content = f'''<!DOCTYPE html>
               </div>
               <div class="qr-caption">
                 <svg viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2"></path><path d="M4 16v2a2 2 0 0 0 2 2h2"></path><path d="M16 4h2a2 2 0 0 1 2 2v2"></path><path d="M16 20h2a2 2 0 0 0 2-2v-2"></path></svg>
-                <span>QR-код настроек прокси</span>
+                <span data-i18n="qrProxyCaption">QR-код настроек прокси</span>
               </div>
             </div>
           </div>
@@ -2745,9 +2892,9 @@ html_content = f'''<!DOCTYPE html>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyber-cyan)" stroke-width="2.2">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
             </svg>
-            <span>Интерактивная проверка подключения к ИИ-шлюзу</span>
+            <span data-i18n="checkerTitle">Интерактивная проверка подключения к ИИ-шлюзу</span>
           </h2>
-          <p>Проверь резолвинг DNS и доступность серверов Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT на своём устройстве.</p>
+          <p data-i18n="checkerDesc">Проверь резолвинг DNS и доступность серверов Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT на своём устройстве.</p>
         </div>
 
         <div>
@@ -2756,7 +2903,7 @@ html_content = f'''<!DOCTYPE html>
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <span>Проверить подключение</span>
+            <span data-i18n="checkerBtn">Проверить подключение</span>
           </button>
         </div>
 
@@ -2772,7 +2919,7 @@ html_content = f'''<!DOCTYPE html>
         <div class="checker-result-box" id="checker-result">
           <div class="result-status-title" id="result-status-title">
             <svg id="result-status-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-            <span id="result-status-text">MagicDNS активен! Сервисы Claude AI, Gemini, Google AI Studio и Antigravity доступны без VPN</span>
+            <span id="result-status-text" data-i18n="checkerSuccess">MagicDNS активен! Сервисы Claude AI, Gemini, Google AI Studio и Antigravity доступны без VPN</span>
           </div>
 
           <!-- AI Services Live Probe Grid -->
@@ -2860,20 +3007,20 @@ html_content = f'''<!DOCTYPE html>
 
           <div class="result-metrics-grid">
             <div class="metric-card">
-              <span class="metric-name">Статус шлюза ИИ</span>
-              <span class="metric-val mint" id="metric-gateway-status">Подключено (Онлайн)</span>
+              <span class="metric-name" data-i18n="metricGateway">Статус шлюза ИИ</span>
+              <span class="metric-val mint" id="metric-gateway-status" data-i18n="onlineStatus">Подключено (Онлайн)</span>
             </div>
             <div class="metric-card">
-              <span class="metric-name">Сетевая задержка (RTT)</span>
+              <span class="metric-name" data-i18n="metricPing">Сетевая задержка (RTT)</span>
               <span class="metric-val" id="metric-ping">12 мс</span>
             </div>
             <div class="metric-card">
-              <span class="metric-name">Протокол маршрутизации</span>
+              <span class="metric-name" data-i18n="metricProto">Протокол маршрутизации</span>
               <span class="metric-val">DoH / DoT (TLS 1.3)</span>
             </div>
             <div class="metric-card">
-              <span class="metric-name">Доступ к Claude, Gemini &amp; Antigravity</span>
-              <span class="metric-val mint" id="metric-access-status">Прямой (Без капчи)</span>
+              <span class="metric-name" data-i18n="metricAccess">Доступ к Claude, Gemini &amp; Antigravity</span>
+              <span class="metric-val mint" id="metric-access-status" data-i18n="directAccess">Прямой (Без капчи)</span>
             </div>
           </div>
         </div>
@@ -2886,14 +3033,14 @@ html_content = f'''<!DOCTYPE html>
         <div class="reviews-header-left">
           <div class="section-tag">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span>ОТЗЫВЫ И ПРЕДЛОЖЕНИЯ</span>
+            <span data-i18n="reviewsTag">ОТЗЫВЫ И ПРЕДЛОЖЕНИЯ</span>
           </div>
-          <h2>Отзывы пользователей</h2>
-          <p class="reviews-subtitle">Честный опыт работы с Claude AI, Gemini, ChatGPT и кодингом без VPN</p>
+          <h2 data-i18n="reviewsTitle">Отзывы пользователей</h2>
+          <p class="reviews-subtitle" data-i18n="reviewsSubtitle">Честный опыт работы с Claude AI, Gemini, ChatGPT и кодингом без VPN</p>
         </div>
         <button type="button" class="btn-neon-action btn-feedback-trigger" id="open-feedback-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          <span>Оставить отзыв или идею</span>
+          <span data-i18n="btnOpenFeedback">Оставить отзыв или идею</span>
         </button>
       </div>
 
@@ -2935,10 +3082,10 @@ html_content = f'''<!DOCTYPE html>
       </div>
 
       <div class="footer-center">
-        <span>Статус серверов:</span>
+        <span data-i18n="footerStatus">Статус серверов:</span>
         <div class="uptime-pill">
           <div class="uptime-dot"></div>
-          <span>Аптайм 99.9%</span>
+          <span data-i18n="footerUptime">Аптайм 99.9%</span>
         </div>
       </div>
 
@@ -2947,7 +3094,7 @@ html_content = f'''<!DOCTYPE html>
           <svg viewBox="0 0 24 24" class="donate-heart" aria-hidden="true">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
           </svg>
-          <span>Поддержать автора</span>
+          <span data-i18n="supportBtn">Поддержать автора</span>
         </a>
       </div>
     </div>
@@ -2993,10 +3140,10 @@ html_content = f'''<!DOCTYPE html>
           </svg>
         </div>
         <div class="chat-titles">
-          <div class="chat-title">Ассистент MagicDNS</div>
+          <div class="chat-title" data-i18n="chatTitle">Ассистент MagicDNS</div>
           <div class="chat-status">
             <span class="chat-status-dot"></span>
-            <span>Онлайн · Быстрые ответы</span>
+            <span data-i18n="chatStatus">Онлайн · Быстрые ответы</span>
           </div>
         </div>
       </div>
@@ -3017,18 +3164,18 @@ html_content = f'''<!DOCTYPE html>
 
       <div class="chat-faq-title">Частые вопросы:</div>
       <div class="chat-faq-container" id="chat-faq-container">
-        <button class="chat-faq-chip" data-faq="router">⚡ Настройка роутера (Keenetic, TP-Link, MikroTik)</button>
-        <button class="chat-faq-chip" data-faq="security">🛡️ Безопасность и мобильные банки</button>
-        <button class="chat-faq-chip" data-faq="ios">🍎 iPhone / Safari: не открывает сайты</button>
-        <button class="chat-faq-chip" data-faq="disable">🔄 Как временно отключить MagicDNS?</button>
-        <button class="chat-faq-chip" data-faq="diff">🌐 Чем отличается от обычного VPN?</button>
+        <button class="chat-faq-chip" data-faq="router" data-i18n="chatFaqRouter">⚡ Настройка роутера (Keenetic, TP-Link, MikroTik)</button>
+        <button class="chat-faq-chip" data-faq="security" data-i18n="chatFaqSecurity">🛡️ Безопасность и мобильные банки</button>
+        <button class="chat-faq-chip" data-faq="ios" data-i18n="chatFaqIos">🍎 iPhone / Safari: не открывает сайты</button>
+        <button class="chat-faq-chip" data-faq="disable" data-i18n="chatFaqDisable">🔄 Как временно отключить MagicDNS?</button>
+        <button class="chat-faq-chip" data-faq="diff" data-i18n="chatFaqDiff">🌐 Чем отличается от обычного VPN?</button>
         <button class="chat-faq-chip" id="chat-faq-feedback-trigger" data-faq="feedback">💡 Оставить отзыв или предложить идею</button>
       </div>
     </div>
 
     <div class="chat-input-bar">
       <form id="chat-form" class="chat-form" action="javascript:void(0);">
-        <input type="text" id="chat-input" class="chat-input" placeholder="Задайте свой вопрос..." autocomplete="off" maxlength="300">
+        <input type="text" id="chat-input" class="chat-input" placeholder="Задайте свой вопрос..." autocomplete="off" maxlength="300" data-i18n-placeholder="chatPlaceholder">
         <button type="submit" id="chat-send-btn" class="chat-send-btn" aria-label="Отправить вопрос">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -3122,6 +3269,101 @@ html_content = f'''<!DOCTYPE html>
     (function() {{
       'use strict';
 
+      // 0. Multi-language i18n System (RU, EN, ZH, TR)
+      const I18N = {i18n_json};
+      let currentLang = 'ru';
+
+      function applyLanguage(lang) {{
+        if (!I18N[lang]) return;
+        currentLang = lang;
+        document.documentElement.lang = lang;
+
+        // Update all elements with data-i18n
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {{
+          const key = el.getAttribute('data-i18n');
+          if (I18N[lang] && I18N[lang][key]) {{
+            el.textContent = I18N[lang][key];
+          }}
+        }});
+
+        // Update inputs with placeholder data-i18n-placeholder
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {{
+          const key = el.getAttribute('data-i18n-placeholder');
+          if (I18N[lang] && I18N[lang][key]) {{
+            el.setAttribute('placeholder', I18N[lang][key]);
+          }}
+        }});
+
+        // Update active class in dropdown and header indicator
+        const langIndicator = document.getElementById('current-lang-text');
+        if (langIndicator) {{
+          langIndicator.textContent = lang.toUpperCase();
+        }}
+        document.querySelectorAll('.lang-option').forEach(function(opt) {{
+          opt.classList.toggle('active', opt.getAttribute('data-lang') === lang);
+        }});
+
+        try {{
+          localStorage.setItem('magicdns_lang', lang);
+        }} catch(e) {{}}
+      }}
+
+      // Language Dropdown Event Handlers
+      const langWrapper = document.getElementById('lang-selector-wrapper');
+      const langBtn = document.getElementById('lang-menu-btn');
+      const langOptions = document.querySelectorAll('.lang-option');
+
+      if (langBtn && langWrapper) {{
+        langBtn.addEventListener('click', function(e) {{
+          e.stopPropagation();
+          const isOpen = langWrapper.classList.toggle('open');
+          langBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+          playTactileFeedback();
+        }});
+
+        langOptions.forEach(function(opt) {{
+          function chooseLang() {{
+            const chosen = opt.getAttribute('data-lang');
+            if (chosen) {{
+              applyLanguage(chosen);
+              langWrapper.classList.remove('open');
+              langBtn.setAttribute('aria-expanded', 'false');
+              playTactileFeedback();
+            }}
+          }}
+          opt.addEventListener('click', chooseLang);
+          opt.addEventListener('keydown', function(e) {{
+            if (e.key === 'Enter' || e.key === ' ') {{
+              e.preventDefault();
+              chooseLang();
+            }}
+          }});
+        }});
+
+        document.addEventListener('click', function(e) {{
+          if (!langWrapper.contains(e.target)) {{
+            langWrapper.classList.remove('open');
+            langBtn.setAttribute('aria-expanded', 'false');
+          }}
+        }});
+
+        document.addEventListener('keydown', function(e) {{
+          if (e.key === 'Escape' && langWrapper.classList.contains('open')) {{
+            langWrapper.classList.remove('open');
+            langBtn.setAttribute('aria-expanded', 'false');
+            langBtn.focus();
+          }}
+        }});
+      }}
+
+      // Init saved language preference if present
+      try {{
+        const savedLang = localStorage.getItem('magicdns_lang');
+        if (savedLang && I18N[savedLang] && savedLang !== 'ru') {{
+          applyLanguage(savedLang);
+        }}
+      }} catch(e) {{}}
+
       // 1. Procedural Web Audio API Tactile Feedback & Haptics
       let audioCtx = null;
       function playTactileFeedback() {{
@@ -3176,8 +3418,9 @@ html_content = f'''<!DOCTYPE html>
         }}
         playTactileFeedback();
         btn.classList.add('copied');
-        btn.innerHTML = '<span>Скопировано!</span>';
-        showToast('Скопировано: ' + text);
+        const copiedWord = (I18N[currentLang] && I18N[currentLang].btnCopied) ? I18N[currentLang].btnCopied : 'Скопировано!';
+        btn.innerHTML = '<span>' + copiedWord + '</span>';
+        showToast(copiedWord + ': ' + text);
 
         if (copyTimers.has(btn)) {{
           clearTimeout(copyTimers.get(btn));
@@ -3405,7 +3648,7 @@ html_content = f'''<!DOCTYPE html>
           resultBox.style.display = 'none';
           progressWrap.style.display = 'block';
           progressFill.style.width = '10%';
-          progressLog.textContent = 'Опрос DNS-резолвера 109.120.132.43...';
+          progressLog.textContent = (I18N[currentLang] && I18N[currentLang].checkerRunning) ? I18N[currentLang].checkerRunning : 'Опрос DNS-резолвера 109.120.132.43...';
 
           // Launch probes
           const probePromises = AI_SERVICES_LIST.map(function(item) {{
