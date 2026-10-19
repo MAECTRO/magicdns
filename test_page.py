@@ -65,6 +65,8 @@ checks = {
     'Windows separate IPv4 copy action buttons': 'data-i18n="btnCopyPrimaryIpv4"' in content and 'data-i18n="btnCopySecondaryIpv4"' in content,
     'Reviews empty state full data-i18n': 'data-i18n="reviewsEmptyBadge"' in content and 'data-i18n="reviewsEmptyTitle"' in content and 'data-i18n="reviewsEmptyDesc"' in content and 'data-i18n="reviewsEmptyBtn"' in content,
     'Feedback modal platform chips & inputs i18n': 'data-i18n="modalPlatRouter"' in content and 'data-i18n-placeholder="modalContactPlaceholder"' in content,
+    'Reviews platform & author dynamic localization': 'getLocalizedPlatform' in content and 'isDefaultAuthor' in content,
+    'Download buttons tactile feedback binding': 'dlProfileBtn' in content and 'dlBackupProfileBtn' in content,
     'Valid closing html tag': '</html>' in content
 }
 

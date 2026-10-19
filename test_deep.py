@@ -106,6 +106,8 @@ test("Windows separate Secondary IPv4 field 94.249.177.102", 'id="val-win-ipv4-s
 test("Windows separate IPv4 copy action buttons", 'data-i18n="btnCopyPrimaryIpv4"' in html and 'data-i18n="btnCopySecondaryIpv4"' in html)
 test("Reviews empty state full data-i18n", 'data-i18n="reviewsEmptyBadge"' in html and 'data-i18n="reviewsEmptyTitle"' in html and 'data-i18n="reviewsEmptyDesc"' in html and 'data-i18n="reviewsEmptyBtn"' in html)
 test("Feedback modal platform chips & inputs i18n", 'data-i18n="modalPlatRouter"' in html and 'data-i18n-placeholder="modalContactPlaceholder"' in html)
+test("Reviews platform & default author dynamic localization in JS", 'getLocalizedPlatform' in html and 'isDefaultAuthor' in html)
+test("Download buttons tactile feedback binding in JS", 'dlProfileBtn' in html and 'dlBackupProfileBtn' in html)
 test("Procedural tactile feedback audio/haptics present", 'playTactileFeedback' in html and 'navigator.vibrate' in html and 'AudioContext' in html)
 
 # 12. Mobileconfig file validity
@@ -120,6 +122,7 @@ except Exception as e:
 
 test("profile.mobileconfig has DoH protocol and URL", 'HTTPS' in mc_content and 'https://dns.magicdns.ru/dns-query' in mc_content)
 test("profile.mobileconfig has Swedish DNS IP 109.120.132.43", '109.120.132.43' in mc_content and '2.56.179.170' not in mc_content)
+test("profile.mobileconfig has Primary IP 109.120.132.43 before Secondary IP 94.249.177.102 in ServerAddresses", mc_content.find('<string>109.120.132.43</string>') < mc_content.find('<string>94.249.177.102</string>'))
 
 # 13. Extract JS and validate with Node.js vm
 script_match = re.search(r'<script>(.*?)</script>', html, re.DOTALL)

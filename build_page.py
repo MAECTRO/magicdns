@@ -3459,6 +3459,9 @@ html_content = f'''<!DOCTYPE html>
           const key = el.getAttribute('data-i18n');
           if (I18N[lang] && I18N[lang][key]) {{
             el.textContent = I18N[lang][key];
+            if (el.dataset.originalHtml) {{
+              el.dataset.originalHtml = el.innerHTML;
+            }}
           }}
         }});
 
@@ -3742,6 +3745,20 @@ html_content = f'''<!DOCTYPE html>
           moreAiBtn.classList.toggle('active', isExpanded);
           moreAiBtn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
           moreAiDrawer.setAttribute('aria-hidden', isExpanded ? 'false' : 'true');
+          playTactileFeedback();
+        }});
+      }}
+
+      // iOS Mobileconfig Download Buttons Tactile Feedback
+      const dlProfileBtn = document.getElementById('btn-download-profile');
+      if (dlProfileBtn) {{
+        dlProfileBtn.addEventListener('click', function() {{
+          playTactileFeedback();
+        }});
+      }}
+      const dlBackupProfileBtn = document.getElementById('btn-download-backup-profile');
+      if (dlBackupProfileBtn) {{
+        dlBackupProfileBtn.addEventListener('click', function() {{
           playTactileFeedback();
         }});
       }}
@@ -4286,14 +4303,33 @@ html_content = f'''<!DOCTYPE html>
         const verifiedWord = (I18N[currentLang] && I18N[currentLang].reviewVerified) ? I18N[currentLang].reviewVerified : 'Проверено';
         const defaultUser = (I18N[currentLang] && I18N[currentLang].reviewDefaultUser) ? I18N[currentLang].reviewDefaultUser : 'Пользователь MagicDNS';
 
+        function getLocalizedPlatform(raw) {{
+          if (!raw) return 'DNS';
+          const lower = String(raw).toLowerCase();
+          if (lower.indexOf('ios') !== -1 || lower.indexOf('apple') !== -1 || lower.indexOf('mac') !== -1) {{
+            return (I18N[currentLang] && I18N[currentLang].modalPlatApple) ? I18N[currentLang].modalPlatApple : 'Apple (iOS / Mac)';
+          }}
+          if (lower.indexOf('win') !== -1) {{
+            return (I18N[currentLang] && I18N[currentLang].modalPlatWindows) ? I18N[currentLang].modalPlatWindows : 'Windows';
+          }}
+          if (lower.indexOf('android') !== -1) {{
+            return (I18N[currentLang] && I18N[currentLang].modalPlatAndroid) ? I18N[currentLang].modalPlatAndroid : 'Android';
+          }}
+          if (lower.indexOf('роутер') !== -1 || lower.indexOf('router') !== -1 || lower.indexOf('yönlendirici') !== -1 || lower.indexOf('路由器') !== -1) {{
+            return (I18N[currentLang] && I18N[currentLang].modalPlatRouter) ? I18N[currentLang].modalPlatRouter : 'Роутер (Keenetic / др.)';
+          }}
+          return escapeHtml(raw);
+        }}
+
         reviews.forEach(function(item) {{
           const card = document.createElement('div');
           card.className = 'review-card';
           
           const ratingVal = Math.max(1, Math.min(5, Number(item.rating) || 5));
           const ratingStars = '★'.repeat(ratingVal);
-          const authorName = item.author ? escapeHtml(item.author) : defaultUser;
-          const platform = item.platform ? escapeHtml(item.platform) : 'DNS';
+          const isDefaultAuthor = !item.author || item.author === 'Пользователь MagicDNS' || item.author === 'MagicDNS User' || item.author === 'MagicDNS 用户' || item.author === 'MagicDNS Kullanıcısı';
+          const authorName = isDefaultAuthor ? defaultUser : escapeHtml(item.author);
+          const platform = getLocalizedPlatform(item.platform);
           const initials = authorName.substring(0, 2).toUpperCase();
           const message = escapeHtml(item.message);
 
@@ -4362,7 +4398,7 @@ html_content = f'''<!DOCTYPE html>
             }}
             if (currentType === 'review') {{
               saveReview({{
-                author: contact ? contact.replace(/^@/, '') : 'Пользователь MagicDNS',
+                author: contact ? contact.replace(/^@/, '') : '',
                 platform: currentPlatform,
                 rating: currentRating,
                 message: message,
@@ -4410,8 +4446,8 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
                 <string>https://dns.magicdns.ru/dns-query</string>
                 <key>ServerAddresses</key>
                 <array>
-                    <string>94.249.177.102</string>
                     <string>109.120.132.43</string>
+                    <string>94.249.177.102</string>
                 </array>
             </dict>
             <key>PayloadDescription</key>
