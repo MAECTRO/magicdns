@@ -2766,8 +2766,8 @@ html_content = f'''<!DOCTYPE html>
                 </button>
               </div>
               <div class="field-alt-note">
-                <span data-i18n="winDohSubtext">(или немецкий узел: https://de.magicdns.ru/dns-query)</span>
-                <button class="btn-subtext-copy" data-clipboard="https://de.magicdns.ru/dns-query" title="Скопировать DoH (Германия)" aria-label="Скопировать DoH Германии">
+                <span data-i18n="winDohSubtext">(или https://de.magicdns.ru/dns-query)</span>
+                <button class="btn-subtext-copy" data-clipboard="https://de.magicdns.ru/dns-query" title="Скопировать DoH" aria-label="Скопировать DoH">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
@@ -2776,7 +2776,7 @@ html_content = f'''<!DOCTYPE html>
             <div class="input-field-group">
               <span class="input-field-label" data-i18n="winIpv4Label">IPv4 DNS Сервер:</span>
               <div class="code-input-box">
-                <code class="code-input-text" id="val-win-ipv4" data-i18n="winIpv4Val">94.249.177.102 (Германия) / 109.120.132.43 (Швеция)</code>
+                <code class="code-input-text" id="val-win-ipv4" data-i18n="winIpv4Val">94.249.177.102 / 109.120.132.43</code>
                 <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Скопировать IPv4" aria-label="Скопировать IPv4">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
@@ -2823,8 +2823,8 @@ html_content = f'''<!DOCTYPE html>
                 </button>
               </div>
               <div class="field-alt-note">
-                <span data-i18n="iosUrlSubtext">(или немецкий узел: https://de.magicdns.ru/api/profile.mobileconfig)</span>
-                <button class="btn-subtext-copy" data-clipboard="https://de.magicdns.ru/api/profile.mobileconfig" title="Скопировать ссылку (Германия)" aria-label="Скопировать ссылку Германии">
+                <span data-i18n="iosUrlSubtext">(или https://de.magicdns.ru/api/profile.mobileconfig)</span>
+                <button class="btn-subtext-copy" data-clipboard="https://de.magicdns.ru/api/profile.mobileconfig" title="Скопировать ссылку" aria-label="Скопировать ссылку">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
@@ -2870,8 +2870,8 @@ html_content = f'''<!DOCTYPE html>
                 </button>
               </div>
               <div class="field-alt-note">
-                <span data-i18n="androidHostSubtext">(или для привязки чисто к Германии: de.magicdns.ru)</span>
-                <button class="btn-subtext-copy" data-clipboard="de.magicdns.ru" title="Скопировать хост (Германия)" aria-label="Скопировать хост Германии">
+                <span data-i18n="androidHostSubtext">(или de.magicdns.ru)</span>
+                <button class="btn-subtext-copy" data-clipboard="de.magicdns.ru" title="Скопировать хост" aria-label="Скопировать хост">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
@@ -2914,8 +2914,8 @@ html_content = f'''<!DOCTYPE html>
                 </button>
               </div>
               <div class="field-alt-note">
-                <span data-i18n="proxyUrlSubtext">(или Германия: http://admin:Px94kM8vQ7wZb2Rt@94.249.177.102:8085)</span>
-                <button class="btn-subtext-copy" data-clipboard="http://admin:Px94kM8vQ7wZb2Rt@94.249.177.102:8085" title="Скопировать прокси (Германия)" aria-label="Скопировать прокси Германии">
+                <span data-i18n="proxyUrlSubtext">(или http://admin:Px94kM8vQ7wZb2Rt@94.249.177.102:8085)</span>
+                <button class="btn-subtext-copy" data-clipboard="http://admin:Px94kM8vQ7wZb2Rt@94.249.177.102:8085" title="Скопировать прокси" aria-label="Скопировать прокси">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
@@ -2928,15 +2928,15 @@ html_content = f'''<!DOCTYPE html>
                 <div class="param-subcard-header">
                   <span class="param-subcard-label" data-i18n="proxyHostLabel">Хост</span>
                   <div style="display:flex; gap:4px;">
-                    <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Копировать хост Швеции" aria-label="Копировать хост Швеции">
+                    <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Копировать 109.120.132.43" aria-label="Копировать 109.120.132.43">
                       <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     </button>
-                    <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Копировать хост Германии" aria-label="Копировать хост Германии">
+                    <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Копировать 94.249.177.102" aria-label="Копировать 94.249.177.102">
                       <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     </button>
                   </div>
                 </div>
-                <span class="param-subcard-val" style="font-size:0.78rem;">109.120.132.43 (Швеция) или 94.249.177.102 (Германия)</span>
+                <span class="param-subcard-val" style="font-size:0.78rem;">109.120.132.43 / 94.249.177.102</span>
               </div>
               <div class="param-subcard">
                 <div class="param-subcard-header">
@@ -3010,7 +3010,7 @@ html_content = f'''<!DOCTYPE html>
             
             <div class="router-ips-grid">
               <div class="input-field-group">
-                <span class="input-field-label" data-i18n="routerPrimaryLabel">Основной DNS (Германия):</span>
+                <span class="input-field-label" data-i18n="routerPrimaryLabel">Основной DNS:</span>
                 <div class="code-input-box">
                   <code class="code-input-text" id="val-router-primary">94.249.177.102</code>
                   <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Скопировать Основной DNS" aria-label="Скопировать Основной DNS">
@@ -3021,7 +3021,7 @@ html_content = f'''<!DOCTYPE html>
               </div>
 
               <div class="input-field-group">
-                <span class="input-field-label" data-i18n="routerSecondaryLabel">Резервный DNS (Швеция):</span>
+                <span class="input-field-label" data-i18n="routerSecondaryLabel">Резервный DNS:</span>
                 <div class="code-input-box">
                   <code class="code-input-text" id="val-router-secondary">109.120.132.43</code>
                   <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Скопировать Резервный DNS" aria-label="Скопировать Резервный DNS">
@@ -4024,8 +4024,8 @@ html_content = f'''<!DOCTYPE html>
         if (lower.indexOf('реклам') !== -1 || lower.indexOf('adguard') !== -1 || lower.indexOf('адгуард') !== -1 || lower.indexOf('баннер') !== -1 || lower.indexOf('adblock') !== -1 || lower.indexOf('ads') !== -1 || lower.indexOf('reklam') !== -1 || lower.indexOf('广告') !== -1) {{
           return langAnswers.adblock || faqAnswers.adblock;
         }}
-        if (lower.indexOf('швеци') !== -1 || lower.indexOf('ip') !== -1 || lower.indexOf('айпи') !== -1 || lower.indexOf('стокгольм') !== -1 || lower.indexOf('адрес') !== -1 || lower.indexOf('sweden') !== -1 || lower.indexOf('stockholm') !== -1 || lower.indexOf('address') !== -1) {{
-          return 'Адреса MagicDNS:<br>• DoH URL: <code>https://dns.magicdns.ru/dns-query</code><br>• DoT хост: <code>dns.magicdns.ru</code><br>• IPv4 шлюза: <code>109.120.132.43</code> (Стокгольм, Швеция)<br>• Прокси: <code>http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085</code>';
+        if (lower.indexOf('ip') !== -1 || lower.indexOf('айпи') !== -1 || lower.indexOf('адрес') !== -1 || lower.indexOf('address') !== -1) {{
+          return 'Адреса MagicDNS:<br>• DoH URL: <code>https://dns.magicdns.ru/dns-query</code><br>• DoT хост: <code>dns.magicdns.ru</code><br>• IPv4 шлюзов: <code>94.249.177.102</code> / <code>109.120.132.43</code><br>• Прокси: <code>http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085</code>';
         }}
         return null;
       }}
