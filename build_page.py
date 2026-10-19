@@ -2831,17 +2831,9 @@ html_content = f'''<!DOCTYPE html>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
-              <div class="field-alt-note">
-                <span data-i18n="iosUrlSubtext">(или https://de.magicdns.ru/api/profile.mobileconfig)</span>
-                <button class="btn-subtext-copy" data-clipboard="https://de.magicdns.ru/api/profile.mobileconfig" title="Скопировать ссылку" aria-label="Скопировать ссылку">
-                  <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
-                  <span data-i18n="btnCopy">Копировать</span>
-                </button>
-              </div>
             </div>
             <div class="card-actions-row">
               <a href="https://dns.magicdns.ru/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfile">Скачать профиль</a>
-              <a href="https://de.magicdns.ru/api/profile.mobileconfig" class="btn-dark-action" id="btn-download-backup-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadBackupProfile">Скачать доп. профиль</a>
               <button class="btn-dark-action" data-clipboard="https://dns.magicdns.ru/profile.mobileconfig" data-i18n="btnCopyLink">Скопировать ссылку</button>
             </div>
           </div>
@@ -2876,13 +2868,6 @@ html_content = f'''<!DOCTYPE html>
                 <code class="code-input-text" id="val-android-host">dns.magicdns.ru</code>
                 <button class="btn-inline-copy" data-clipboard="dns.magicdns.ru" title="Скопировать хост" aria-label="Скопировать хост">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span data-i18n="btnCopy">Копировать</span>
-                </button>
-              </div>
-              <div class="field-alt-note">
-                <span data-i18n="androidHostSubtext">(или de.magicdns.ru)</span>
-                <button class="btn-subtext-copy" data-clipboard="de.magicdns.ru" title="Скопировать хост" aria-label="Скопировать хост">
-                  <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
@@ -2923,13 +2908,6 @@ html_content = f'''<!DOCTYPE html>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
-              <div class="field-alt-note">
-                <span data-i18n="proxyUrlSubtext">(или http://admin:Px94kM8vQ7wZb2Rt@94.249.177.102:8085)</span>
-                <button class="btn-subtext-copy" data-clipboard="http://admin:Px94kM8vQ7wZb2Rt@94.249.177.102:8085" title="Скопировать прокси" aria-label="Скопировать прокси">
-                  <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
-                  <span data-i18n="btnCopy">Копировать</span>
-                </button>
-              </div>
             </div>
             
             <!-- Compact Parameter Subgrid -->
@@ -2937,16 +2915,11 @@ html_content = f'''<!DOCTYPE html>
               <div class="param-subcard">
                 <div class="param-subcard-header">
                   <span class="param-subcard-label" data-i18n="proxyHostLabel">Хост</span>
-                  <div style="display:flex; gap:4px;">
-                    <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Копировать 109.120.132.43" aria-label="Копировать 109.120.132.43">
-                      <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    </button>
-                    <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Копировать 94.249.177.102" aria-label="Копировать 94.249.177.102">
-                      <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    </button>
-                  </div>
+                  <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Копировать хост" aria-label="Копировать хост">
+                    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  </button>
                 </div>
-                <span class="param-subcard-val" style="font-size:0.78rem;">109.120.132.43 / 94.249.177.102</span>
+                <span class="param-subcard-val">109.120.132.43</span>
               </div>
               <div class="param-subcard">
                 <div class="param-subcard-header">
@@ -3746,12 +3719,6 @@ html_content = f'''<!DOCTYPE html>
       const dlProfileBtn = document.getElementById('btn-download-profile');
       if (dlProfileBtn) {{
         dlProfileBtn.addEventListener('click', function() {{
-          playTactileFeedback();
-        }});
-      }}
-      const dlBackupProfileBtn = document.getElementById('btn-download-backup-profile');
-      if (dlBackupProfileBtn) {{
-        dlBackupProfileBtn.addEventListener('click', function() {{
           playTactileFeedback();
         }});
       }}

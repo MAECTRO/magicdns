@@ -57,7 +57,7 @@ checks = {
     'Haptic vibration support': 'navigator.vibrate' in content,
     'Clipboard copy with originalHtml protection': 'btn.dataset.originalHtml' in content and 'Скопировано!' in content,
     'Native iOS mobileconfig download link (no JS blob)': '<a href="https://dns.magicdns.ru/profile.mobileconfig"' in content and 'id="btn-download-profile"' in content and 'createObjectURL' not in content,
-    'Dedicated backup iOS mobileconfig download button': 'id="btn-download-backup-profile"' in content and 'href="https://de.magicdns.ru/api/profile.mobileconfig"' in content,
+    'No redundant de.magicdns.ru links': 'de.magicdns.ru' not in content,
     'Router Primary DNS 109.120.132.43': 'id="val-router-primary">109.120.132.43</code>' in content,
     'Router Secondary DNS 94.249.177.102': 'id="val-router-secondary">94.249.177.102</code>' in content,
     'Windows separate Primary IPv4 field': 'id="val-win-ipv4-primary">109.120.132.43</code>' in content,
@@ -66,7 +66,7 @@ checks = {
     'Reviews empty state full data-i18n': 'data-i18n="reviewsEmptyBadge"' in content and 'data-i18n="reviewsEmptyTitle"' in content and 'data-i18n="reviewsEmptyDesc"' in content and 'data-i18n="reviewsEmptyBtn"' in content,
     'Feedback modal platform chips & inputs i18n': 'data-i18n="modalPlatRouter"' in content and 'data-i18n-placeholder="modalContactPlaceholder"' in content,
     'Reviews platform & author dynamic localization': 'getLocalizedPlatform' in content and 'isDefaultAuthor' in content,
-    'Download buttons tactile feedback binding': 'dlProfileBtn' in content and 'dlBackupProfileBtn' in content,
+    'Download buttons tactile feedback binding': 'dlProfileBtn' in content,
     'Valid closing html tag': '</html>' in content
 }
 
