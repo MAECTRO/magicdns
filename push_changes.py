@@ -41,7 +41,7 @@ if res:
     auth = base64.b64encode(f"{user}:{token}".encode('utf-8')).decode('utf-8')
     
     subprocess.run(['git', 'add', '-A'], check=True)
-    commit_res = subprocess.run(['git', 'commit', '-m', 'feat: add multilingual support (RU, EN, ZH, TR) with responsive language switcher'], capture_output=True, text=True)
+    commit_res = subprocess.run(['git', 'commit', '-m', 'fix(i18n): localize chat faq responses, bot welcome bubble, and feedback modal across RU, EN, ZH, TR'], capture_output=True, text=True)
     print("COMMIT:", commit_res.stdout or commit_res.stderr)
     
     import os

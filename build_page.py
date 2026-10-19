@@ -2,9 +2,10 @@ import qrcode
 import qrcode.image.svg
 import re
 import json
-from i18n_data import i18n
+from i18n_data import i18n, faq_answers
 
 i18n_json = json.dumps(i18n, ensure_ascii=False)
+faq_answers_json = json.dumps(faq_answers, ensure_ascii=False)
 
 def get_svg_qr(data):
     factory = qrcode.image.svg.SvgPathImage
@@ -3157,19 +3158,19 @@ html_content = f'''<!DOCTYPE html>
 
     <div class="chat-messages" id="chat-messages">
       <div class="chat-bubble bot">
-        <div class="chat-bubble-text">
+        <div class="chat-bubble-text" data-i18n="chatWelcome">
           Привет! Я бот поддержки MagicDNS. Помогу настроить DNS на любом устройстве и отвечу на вопросы по доступу к Claude, Gemini и ChatGPT.
         </div>
       </div>
 
-      <div class="chat-faq-title">Частые вопросы:</div>
+      <div class="chat-faq-title" data-i18n="chatFaqTitle">Частые вопросы:</div>
       <div class="chat-faq-container" id="chat-faq-container">
         <button class="chat-faq-chip" data-faq="router" data-i18n="chatFaqRouter">⚡ Настройка роутера (Keenetic, TP-Link, MikroTik)</button>
         <button class="chat-faq-chip" data-faq="security" data-i18n="chatFaqSecurity">🛡️ Безопасность и мобильные банки</button>
         <button class="chat-faq-chip" data-faq="ios" data-i18n="chatFaqIos">🍎 iPhone / Safari: не открывает сайты</button>
         <button class="chat-faq-chip" data-faq="disable" data-i18n="chatFaqDisable">🔄 Как временно отключить MagicDNS?</button>
         <button class="chat-faq-chip" data-faq="diff" data-i18n="chatFaqDiff">🌐 Чем отличается от обычного VPN?</button>
-        <button class="chat-faq-chip" id="chat-faq-feedback-trigger" data-faq="feedback">💡 Оставить отзыв или предложить идею</button>
+        <button class="chat-faq-chip" id="chat-faq-feedback-trigger" data-faq="feedback" data-i18n="chatFaqFeedback">💡 Оставить отзыв или предложить идею</button>
       </div>
     </div>
 
@@ -3197,8 +3198,8 @@ html_content = f'''<!DOCTYPE html>
             </svg>
           </div>
           <div>
-            <h3 id="feedback-modal-title" class="feedback-modal-title">Отзыв или предложение</h3>
-            <p class="feedback-modal-subtitle">Помогите сделать MagicDNS ещё быстрее и удобнее</p>
+            <h3 id="feedback-modal-title" class="feedback-modal-title" data-i18n="modalTitle">Отзыв или предложение</h3>
+            <p class="feedback-modal-subtitle" data-i18n="modalSubtitle">Помогите сделать MagicDNS ещё быстрее и удобнее</p>
           </div>
         </div>
         <button type="button" class="chat-close-btn" id="close-feedback-btn" aria-label="Закрыть окно">
@@ -3210,19 +3211,19 @@ html_content = f'''<!DOCTYPE html>
         <!-- Feedback Type Segmented Chips -->
         <div class="feedback-type-group" role="radiogroup" aria-label="Тип обращения">
           <button type="button" class="feedback-type-chip active" data-type="review" role="radio" aria-checked="true">
-            <span>⭐ Отзыв</span>
+            <span data-i18n="modalTypeReview">⭐ Отзыв</span>
           </button>
           <button type="button" class="feedback-type-chip" data-type="idea" role="radio" aria-checked="false">
-            <span>💡 Предложение</span>
+            <span data-i18n="modalTypeIdea">💡 Предложение</span>
           </button>
           <button type="button" class="feedback-type-chip" data-type="bug" role="radio" aria-checked="false">
-            <span>🐛 Ошибка / Баг</span>
+            <span data-i18n="modalTypeBug">🐛 Ошибка / Баг</span>
           </button>
         </div>
 
         <!-- Rating Stars -->
         <div class="rating-stars-wrap">
-          <label class="feedback-label">Ваша оценка:</label>
+          <label class="feedback-label" data-i18n="modalRatingLabel">Ваша оценка:</label>
           <div class="star-rating" id="star-rating" role="radiogroup" aria-label="Оценка">
             <button type="button" class="star-btn active" data-rating="1" aria-label="1 звезда">★</button>
             <button type="button" class="star-btn active" data-rating="2" aria-label="2 звезды">★</button>
@@ -3234,7 +3235,7 @@ html_content = f'''<!DOCTYPE html>
 
         <!-- Platform Chips -->
         <div class="feedback-field">
-          <label class="feedback-label">Ваша платформа:</label>
+          <label class="feedback-label" data-i18n="modalPlatformLabel">Ваша платформа:</label>
           <div class="platform-chips" id="feedback-platform-chips">
             <button type="button" class="platform-chip active" data-platform="iOS / macOS">Apple (iOS / Mac)</button>
             <button type="button" class="platform-chip" data-platform="Windows">Windows</button>
@@ -3245,20 +3246,20 @@ html_content = f'''<!DOCTYPE html>
 
         <!-- Textarea -->
         <div class="feedback-field">
-          <label for="feedback-text" class="feedback-label">Ваш комментарий или идея:</label>
-          <textarea id="feedback-text" class="feedback-textarea" rows="4" placeholder="Расскажите, как работает MagicDNS у вас, или какую функцию добавить..." required maxlength="1000"></textarea>
+          <label for="feedback-text" class="feedback-label" data-i18n="modalCommentLabel">Ваш комментарий или идея:</label>
+          <textarea id="feedback-text" class="feedback-textarea" rows="4" placeholder="Расскажите, как работает MagicDNS у вас, или какую функцию добавить..." required maxlength="1000" data-i18n-placeholder="modalCommentPlaceholder"></textarea>
         </div>
 
         <!-- Contact (Optional) -->
         <div class="feedback-field">
-          <label for="feedback-contact" class="feedback-label">Контакт для связи (по желанию):</label>
+          <label for="feedback-contact" class="feedback-label" data-i18n="modalContactLabel">Контакт для связи (по желанию):</label>
           <input type="text" id="feedback-contact" class="feedback-input" placeholder="@telegram_username или email" maxlength="100">
         </div>
 
         <!-- Submit Button -->
         <button type="submit" id="feedback-submit-btn" class="btn-neon-action feedback-submit-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-          <span>Отправить отзыв</span>
+          <span data-i18n="modalSubmitBtn">Отправить отзыв</span>
         </button>
       </form>
     </div>
@@ -3764,14 +3765,8 @@ html_content = f'''<!DOCTYPE html>
       // Conversation history for multi-turn context
       const chatHistory = [];
 
-      const faqAnswers = {{
-        router: 'Настройка на роутере открывает доступ сразу для всех устройств в доме:<br><br>• <b>Keenetic</b>: Сетевые правила → Серверы DNS → Добавить сервер → Адрес: <code>https://dns.magicdns.ru/dns-query</code> (тип DoH).<br>• <b>MikroTik</b>: IP → DNS → в поле DoH Server вставьте <code>https://dns.magicdns.ru/dns-query</code> и нажмите Apply.<br>• <b>TP-Link / Asus</b>: Дополнительные настройки → Сеть → Интернет → Вручную указать DNS: <code>109.120.132.43</code>.<br><br>После сохранения перезагрузите Wi-Fi на устройствах для обновления кэша.',
-        security: 'Полностью безопасно!<br><br>• MagicDNS перенаправляет <b>только запросы к заблокированным ИИ-сервисам</b> (Claude, Gemini, ChatGPT).<br>• Банки (Сбер, Т-Банк, ВТБ), Госуслуги, маркетплейсы и обычные сайты идут напрямую через вашего провайдера без прокси и без замедления.<br>• Мы не ведем логов, весь DNS-трафик защищен шифрованием TLS 1.3.',
-        ios: 'На iOS кэш DNS держится дольше обычного. Сделайте 3 простых действия:<br><br>1. Включите режим «В самолёте» на 5 секунд и выключите обратно — это мгновенно сбросит кэш DNS.<br>2. Закройте вкладку с Claude / Gemini в Safari и откройте заново.<br>3. Проверьте в «Настройки → Основные → VPN и управление устройством → DNS», чтобы стоял профиль <b>MagicDNS</b>.',
-        disable: 'Отключение занимает 5 секунд:<br><br>• <b>iOS</b>: Настройки → Основные → VPN и управление устройством → DNS → выберите «Автоматически».<br>• <b>Android</b>: Настройки → Сеть и интернет → Персональный DNS → выберите «Отключено».<br>• <b>Windows</b>: Параметры → Сеть и интернет → DNS → переключите на «Автоматически (DHCP)»<br><br>Профиль можно включить обратно в любой момент.',
-        diff: 'Главные отличия от обычного VPN:<br><br>• <b>Скорость</b>: VPN режет скорость до 10-30 Мбит/с. MagicDNS маршрутизирует только ИИ-сервисы, остальной интернет работает на максимальной скорости вашего провайдера.<br>• <b>Блокировка рекламы</b>: Встроенный модуль AdGuard режет баннеры, трекеры и рекламу на уровне DNS.<br>• <b>Без капчи</b>: Шведский шлюз в Стокгольме не внесен в спам-базы Cloudflare.<br>• <b>Не сажает батарею</b>: Не требует запущенного приложения в фоне.',
-        adblock: 'В MagicDNS встроен модуль защиты AdGuard:<br><br>• Автоматически блокирует баннеры, всплывающую рекламу и трекеры на уровне DNS.<br>• Защита действует сразу во всех браузерах, приложениях и мобильных играх.<br>• Не требует установки лишних расширений или тяжелых фоновых программ.'
-      }};
+      const faqAnswersByLang = {faq_answers_json};
+      const faqAnswers = faqAnswersByLang['ru'];
 
       function toggleChat(open) {{
         const isOpen = open !== undefined ? open : !chatWindow.classList.contains('active');
@@ -3837,7 +3832,8 @@ html_content = f'''<!DOCTYPE html>
 
             setTimeout(function() {{
               hideTyping();
-              const answer = faqAnswers[faqKey];
+              const langAnswers = faqAnswersByLang[currentLang] || faqAnswers;
+              const answer = langAnswers[faqKey] || faqAnswers[faqKey];
               if (answer) {{
                 appendMessage(answer, 'bot', true);
                 chatHistory.push({{ role: 'user', text: questionText }});
@@ -3851,25 +3847,26 @@ html_content = f'''<!DOCTYPE html>
       // Local keyword matching fallback if Worker offline / not yet deployed
       function findLocalMatch(text) {{
         const lower = text.toLowerCase();
-        if (lower.indexOf('роутер') !== -1 || lower.indexOf('router') !== -1 || lower.indexOf('кинетик') !== -1 || lower.indexOf('keenetic') !== -1 || lower.indexOf('микротик') !== -1 || lower.indexOf('mikrotik') !== -1 || lower.indexOf('tp-link') !== -1) {{
-          return faqAnswers.router;
+        const langAnswers = faqAnswersByLang[currentLang] || faqAnswers;
+        if (lower.indexOf('роутер') !== -1 || lower.indexOf('router') !== -1 || lower.indexOf('кинетик') !== -1 || lower.indexOf('keenetic') !== -1 || lower.indexOf('микротик') !== -1 || lower.indexOf('mikrotik') !== -1 || lower.indexOf('tp-link') !== -1 || lower.indexOf('路由器') !== -1 || lower.indexOf('yönlendirici') !== -1) {{
+          return langAnswers.router || faqAnswers.router;
         }}
-        if (lower.indexOf('банк') !== -1 || lower.indexOf('тинькофф') !== -1 || lower.indexOf('т-банк') !== -1 || lower.indexOf('сбер') !== -1 || lower.indexOf('безопасн') !== -1 || lower.indexOf('слеж') !== -1) {{
-          return faqAnswers.security;
+        if (lower.indexOf('банк') !== -1 || lower.indexOf('bank') !== -1 || lower.indexOf('тинькофф') !== -1 || lower.indexOf('т-банк') !== -1 || lower.indexOf('сбер') !== -1 || lower.indexOf('безопасн') !== -1 || lower.indexOf('security') !== -1 || lower.indexOf('safe') !== -1 || lower.indexOf('güvenlik') !== -1 || lower.indexOf('安全') !== -1) {{
+          return langAnswers.security || faqAnswers.security;
         }}
         if (lower.indexOf('айфон') !== -1 || lower.indexOf('iphone') !== -1 || lower.indexOf('safari') !== -1 || lower.indexOf('сафари') !== -1 || lower.indexOf('ios') !== -1 || lower.indexOf('apple') !== -1) {{
-          return faqAnswers.ios;
+          return langAnswers.ios || faqAnswers.ios;
         }}
-        if (lower.indexOf('отключ') !== -1 || lower.indexOf('выключ') !== -1 || lower.indexOf('удалить') !== -1 || lower.indexOf('снять') !== -1) {{
-          return faqAnswers.disable;
+        if (lower.indexOf('отключ') !== -1 || lower.indexOf('выключ') !== -1 || lower.indexOf('disable') !== -1 || lower.indexOf('turn off') !== -1 || lower.indexOf('kapat') !== -1 || lower.indexOf('devre dışı') !== -1 || lower.indexOf('关闭') !== -1 || lower.indexOf('禁用') !== -1) {{
+          return langAnswers.disable || faqAnswers.disable;
         }}
-        if (lower.indexOf('впн') !== -1 || lower.indexOf('vpn') !== -1 || lower.indexOf('отличие') !== -1 || lower.indexOf('скорост') !== -1) {{
-          return faqAnswers.diff;
+        if (lower.indexOf('впн') !== -1 || lower.indexOf('vpn') !== -1 || lower.indexOf('difference') !== -1 || lower.indexOf('fark') !== -1 || lower.indexOf('区别') !== -1 || lower.indexOf('отличие') !== -1 || lower.indexOf('скорост') !== -1 || lower.indexOf('speed') !== -1) {{
+          return langAnswers.diff || faqAnswers.diff;
         }}
-        if (lower.indexOf('реклам') !== -1 || lower.indexOf('adguard') !== -1 || lower.indexOf('адгуард') !== -1 || lower.indexOf('баннер') !== -1) {{
-          return faqAnswers.adblock;
+        if (lower.indexOf('реклам') !== -1 || lower.indexOf('adguard') !== -1 || lower.indexOf('адгуард') !== -1 || lower.indexOf('баннер') !== -1 || lower.indexOf('adblock') !== -1 || lower.indexOf('ads') !== -1 || lower.indexOf('reklam') !== -1 || lower.indexOf('广告') !== -1) {{
+          return langAnswers.adblock || faqAnswers.adblock;
         }}
-        if (lower.indexOf('швеци') !== -1 || lower.indexOf('ip') !== -1 || lower.indexOf('айпи') !== -1 || lower.indexOf('стокгольм') !== -1 || lower.indexOf('адрес') !== -1) {{
+        if (lower.indexOf('швеци') !== -1 || lower.indexOf('ip') !== -1 || lower.indexOf('айпи') !== -1 || lower.indexOf('стокгольм') !== -1 || lower.indexOf('адрес') !== -1 || lower.indexOf('sweden') !== -1 || lower.indexOf('stockholm') !== -1 || lower.indexOf('address') !== -1) {{
           return 'Адреса MagicDNS:<br>• DoH URL: <code>https://dns.magicdns.ru/dns-query</code><br>• DoT хост: <code>dns.magicdns.ru</code><br>• IPv4 шлюза: <code>109.120.132.43</code> (Стокгольм, Швеция)<br>• Прокси: <code>http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085</code>';
         }}
         return null;
@@ -3902,19 +3899,27 @@ html_content = f'''<!DOCTYPE html>
           // 2. Query Cloudflare Worker with timeout
           let didRespond = false;
           const controller = window.AbortController ? new AbortController() : null;
+          const fallbackMessages = {{
+            ru: 'Я могу помочь с частыми вопросами прямо сейчас. Выберите подходящую тему из кнопок выше (роутеры, банки, iPhone/Safari, отключение) или задайте вопрос о настройке!',
+            en: 'I can help with frequent questions right now. Choose a topic from the buttons above (routers, banking, iPhone/Safari, disabling) or ask a question about setup!',
+            zh: '我现在可以解答常见问题。请从上方按钮中选择合适的主题（路由器、银行、iPhone/Safari、关闭），或提出关于配置的具体问题！',
+            tr: 'Sık sorulan sorular konusunda hemen yardımcı olabilirim. Yukarıdaki butonlardan uygun bir konu seçin (yönlendiriciler, bankacılık, iPhone/Safari, kapatma) veya kurulum hakkında soru sorun!'
+          }};
+          const fallbackMsg = fallbackMessages[currentLang] || fallbackMessages.ru;
+
           const timeoutId = setTimeout(function() {{
             if (controller) controller.abort();
             if (!didRespond) {{
               didRespond = true;
               hideTyping();
-              appendMessage('Я могу помочь с частыми вопросами прямо сейчас. Выберите подходящую тему из кнопок выше (роутеры, банки, iPhone/Safari, отключение) или задайте вопрос о настройке!', 'bot', false);
+              appendMessage(fallbackMsg, 'bot', false);
             }}
           }}, 7000);
 
           fetch(CF_WORKER_URL, {{
             method: 'POST',
             headers: {{ 'Content-Type': 'application/json' }},
-            body: JSON.stringify({{ message: query, history: chatHistory }}),
+            body: JSON.stringify({{ message: query, history: chatHistory, lang: currentLang }}),
             signal: controller ? controller.signal : undefined
           }}).then(function(res) {{
             clearTimeout(timeoutId);
@@ -3937,7 +3942,7 @@ html_content = f'''<!DOCTYPE html>
             if (!didRespond) {{
               didRespond = true;
               hideTyping();
-              appendMessage('Я могу помочь с частыми вопросами прямо сейчас. Выберите подходящую тему из кнопок выше (роутеры, банки, iPhone/Safari, отключение) или задайте вопрос о настройке!', 'bot', false);
+              appendMessage(fallbackMsg, 'bot', false);
             }}
           }});
         }});
@@ -4144,10 +4149,11 @@ html_content = f'''<!DOCTYPE html>
           if (!message) return;
 
           playTactileFeedback();
+          const sendingTexts = {{ ru: 'Отправка...', en: 'Sending...', zh: '发送中...', tr: 'Gönderiliyor...' }};
           if (submitBtn) {{
             submitBtn.disabled = true;
             submitBtn.style.opacity = '0.7';
-            submitBtn.querySelector('span').textContent = 'Отправка...';
+            submitBtn.querySelector('span').textContent = sendingTexts[currentLang] || 'Отправка...';
           }}
 
           const payload = {{
@@ -4170,7 +4176,7 @@ html_content = f'''<!DOCTYPE html>
             if (submitBtn) {{
               submitBtn.disabled = false;
               submitBtn.style.opacity = '1';
-              submitBtn.querySelector('span').textContent = 'Отправить отзыв';
+              submitBtn.querySelector('span').textContent = (I18N[currentLang] && I18N[currentLang].modalSubmitBtn) ? I18N[currentLang].modalSubmitBtn : 'Отправить отзыв';
             }}
             if (currentType === 'review') {{
               saveReview({{
@@ -4185,7 +4191,13 @@ html_content = f'''<!DOCTYPE html>
             if (textInput) textInput.value = '';
             if (contactInput) contactInput.value = '';
             toggleFeedbackModal(false);
-            showToast('Спасибо за отзыв! Ваше сообщение принято.');
+            const thanksTexts = {{
+              ru: 'Спасибо за отзыв! Ваше сообщение принято.',
+              en: 'Thank you for your feedback! Your message has been received.',
+              zh: '感谢您的反馈！我们已收到您的留言。',
+              tr: 'Geri bildiriminiz için teşekkürler! Mesajınız alındı.'
+            }};
+            showToast(thanksTexts[currentLang] || thanksTexts.ru);
           }});
         }});
       }}
