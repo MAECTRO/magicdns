@@ -72,6 +72,19 @@ checks = {
     'FAQ accordion present': 'class="faq-section"' in content and 'class="faq-item"' in content,
     'Cookie banner present': 'id="cookie-banner"' in content and '152-ФЗ' in content,
     'Legal disclaimer present': 'class="legal-disclaimer"' in content and 'AS IS' in content,
+    'Footer contact link present': 'id="btn-open-contact"' in content and 'data-i18n="footerContact"' in content,
+    'Hero CTA preserves SVG during i18n': 'class="btn-hero-cta" data-i18n="heroCta"' not in content and '<span data-i18n="heroCta">' in content,
+    'Regulatory compliance (no обход)': 'обход' not in content.lower(),
+    'Regulatory compliance (no разблокиров/взлом/анонимайзер)': not any(term in content.lower() for term in ['разблокиров', 'взлом', 'анонимайзер']),
+    'All 18 semantic core keywords present in body': all(kw in content[content.find('<body>'):].lower() for kw in [
+        'смарт днс для ии', 'smart dns для ии', 'днс для искусственного интеллекта', 
+        'частный днс для ии', 'днс для нейросетей', 'быстрый днс без vpn', 'персональный dns сервер',
+        'dns для gemini', 'smart dns google ai studio', 'доступ к google ai studio без vpn', 
+        'как открыть gemini через dns', 'dns для chatgpt', 'доступ к claude ai без vpn', 
+        'dns для midjourney', 'copilot dns',
+        'настройка частного dns на android для gemini', 'профиль doh dot для ios iphone', 
+        'smart dns на роутер keenetic openwrt'
+    ]),
     'Schema.org FAQPage present': '"@type": "FAQPage"' in content,
     'Valid closing html tag': '</html>' in content
 }

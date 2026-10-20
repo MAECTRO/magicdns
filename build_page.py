@@ -93,7 +93,7 @@ html_content = f'''<!DOCTYPE html>
             "name": "Безопасно ли использовать MagicDNS для личных и банковских данных?",
             "acceptedAnswer": {{
               "@type": "Answer",
-              "text": "Да, абсолютно безопасно. DNS-шлюз резолвит только адреса доменов. Весь трафик шифруется сквозным TLS/HTTPS между вашим устройством и банком или Госуслугами. Никто не может перехватить пароли или номера карт. Российский трафик идёт напрямую от вашего провайдера."
+              "text": "Да, абсолютно безопасно. Частный ДНС для ИИ и персональный DNS сервер резолвят только адреса доменов. Весь трафик шифруется сквозным TLS/HTTPS между вашим устройством и банком или Госуслугами. Никто не может перехватить пароли или номера карт. Российский трафик идёт напрямую от вашего провайдера на максимальной скорости."
             }}
           }},
           {{
@@ -109,7 +109,7 @@ html_content = f'''<!DOCTYPE html>
             "name": "Почему при использовании MagicDNS скорость интернета не снижается, в отличие от VPN?",
             "acceptedAnswer": {{
               "@type": "Answer",
-              "text": "Smart DNS не пропускает через себя данные (видео, файлы, страницы). DNS участвует только один раз в момент первого обращения к сайту для получения его IP-адреса (несколько миллисекунд). После этого устройство связывается с сервером напрямую, что гарантирует 100% скорости вашего провайдера."
+              "text": "Быстрый ДНС без VPN не пропускает через себя данные (видео, файлы, страницы). DNS участвует только один раз в момент первого обращения к сайту для получения его IP-адреса (несколько миллисекунд). После этого устройство связывается с сервером напрямую, что гарантирует 100% скорости вашего провайдера."
             }}
           }},
           {{
@@ -122,10 +122,10 @@ html_content = f'''<!DOCTYPE html>
           }},
           {{
             "@type": "Question",
-            "name": "В чем главное отличие Smart DNS от классического VPN?",
+            "name": "В чем главное отличие Smart DNS от классического VPN и как открыть Gemini через DNS?",
             "acceptedAnswer": {{
               "@type": "Answer",
-              "text": "Классический VPN принудительно направляет весь трафик устройства через удаленный зашифрованный сервер, что снижает скорость, увеличивает пинг и блокирует доступ к российским банковским приложениям. Smart DNS направляет в обход региональных фильтров только DNS-маршрутизацию для поддерживаемых AI-платформ, сохраняя прямой доступ ко всем остальным ресурсам."
+              "text": "Классический VPN принудительно направляет весь трафик устройства через удаленный зашифрованный сервер, что снижает скорость, увеличивает пинг и блокирует доступ к российским банковским приложениям. Smart DNS устраняет региональные ограничения зарубежных сервисов (OpenAI, Google) через точечную оптимизацию сетевой маршрутизации к AI-платформам, сохраняя прямой доступ ко всем остальным ресурсам. Чтобы понять, как открыть Gemini через DNS, достаточно один раз указать адрес шлюза в системных настройках вашего устройства."
             }}
           }}
         ]
@@ -3528,10 +3528,10 @@ html_content = f'''<!DOCTYPE html>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
         </svg>
-        <span data-i18n="heroEyebrow">Высокоскоростной DNS-шлюз • Прямой доступ к AI • Блокировка рекламы AdGuard</span>
+        <span data-i18n="heroEyebrow">ДНС для искусственного интеллекта • Быстрый ДНС без VPN • Блокировка рекламы AdGuard</span>
       </div>
       <h1 data-i18n="heroHeading">Smart DNS для ИИ: быстрый доступ к Gemini, ChatGPT и Claude без VPN</h1>
-      <p class="hero-subtitle" data-i18n="heroSubtitle">Оптимизация сетевой маршрутизации к AI-платформам: запросы к международным нейросетям направляются через европейские узлы, а локальный трафик, российские банки и Госуслуги идут напрямую от вашего провайдера на максимальной скорости.</p>
+      <p class="hero-subtitle" data-i18n="heroSubtitle">Оптимизация сетевой маршрутизации к AI-платформам: Смарт ДНС для ИИ и персональный DNS сервер. Прямой доступ к международным нейросетям без посредников, а локальный трафик, российские банки и Госуслуги идут напрямую от вашего провайдера на максимальной скорости.</p>
 
       <!-- 4 Specific Hero Benefits -->
       <div class="hero-benefits-wrapper">
@@ -3540,7 +3540,7 @@ html_content = f'''<!DOCTYPE html>
             <div class="benefit-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
-            <span data-i18n="heroBenefit1">Прямой доступ без посредников: устранение региональных ограничений OpenAI, Anthropic и Google без падения скорости</span>
+            <span data-i18n="heroBenefit1">Прямой доступ без посредников: частный ДНС для ИИ устраняет региональные ограничения зарубежных сервисов (OpenAI, Google) без падения скорости</span>
           </li>
           <li class="hero-benefit-item">
             <div class="benefit-icon">
@@ -3558,14 +3558,14 @@ html_content = f'''<!DOCTYPE html>
             <div class="benefit-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
-            <span data-i18n="heroBenefit4">Минимальный пинг в API: прямое подключение с задержкой 25–45 мс для быстрой генерации и потоковых ответов</span>
+            <span data-i18n="heroBenefit4">ДНС для нейросетей с нулевой задержкой: прямое подключение с задержкой 25–45 мс для быстрой генерации и потоковых ответов</span>
           </li>
         </ul>
       </div>
 
       <!-- Main CTA Button -->
       <div class="hero-cta-wrapper">
-        <a href="#setup" class="btn-hero-cta" data-i18n="heroCta">
+        <a href="#setup" class="btn-hero-cta">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           <span data-i18n="heroCta">Подключить Smart DNS бесплатно</span>
         </a>
@@ -3753,7 +3753,7 @@ html_content = f'''<!DOCTYPE html>
             <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
             <code class="error-code">"Gemini is not available in your country"</code>
           </div>
-          <p class="platform-desc" data-i18n="platGeminiDesc">Устраняет ошибку «Gemini is not available in your country» в веб-версии и мобильных приложениях.</p>
+          <p class="platform-desc" data-i18n="platGeminiDesc">DNS для Gemini: как открыть Gemini через DNS без задержек. Устраняет ошибку «Gemini is not available in your country» в веб-версии и мобильных приложениях.</p>
         </div>
 
         <!-- Card 2: Google AI Studio -->
@@ -3771,7 +3771,7 @@ html_content = f'''<!DOCTYPE html>
             <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
             <code class="error-code">"User location is not supported"</code>
           </div>
-          <p class="platform-desc" data-i18n="platAiStudioDesc">Устраняет ошибку «User location is not supported» при вызове моделей и выпуске API-ключей.</p>
+          <p class="platform-desc" data-i18n="platAiStudioDesc">Smart DNS Google AI Studio: прямой доступ к Google AI Studio без VPN для разработчиков. Устраняет ошибку «User location is not supported» при вызове моделей и выпуске API-ключей.</p>
         </div>
 
         <!-- Card 3: ChatGPT (OpenAI) -->
@@ -3789,7 +3789,7 @@ html_content = f'''<!DOCTYPE html>
             <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
             <code class="error-code">"OpenAI's services are not available in your country"</code>
           </div>
-          <p class="platform-desc" data-i18n="platChatgptDesc">Устраняет сбои сессий «OpenAI's services are not available in your country» и проверки Cloudflare.</p>
+          <p class="platform-desc" data-i18n="platChatgptDesc">DNS для ChatGPT: устраняет сбои сессий «OpenAI's services are not available in your country» и проверки Cloudflare, обеспечивая прямой доступ без посредников.</p>
         </div>
 
         <!-- Card 4: Claude (Anthropic) -->
@@ -3807,7 +3807,7 @@ html_content = f'''<!DOCTYPE html>
             <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
             <code class="error-code">"App unavailable in your region"</code>
           </div>
-          <p class="platform-desc" data-i18n="platClaudeDesc">Устраняет ошибку «App unavailable in your region» в браузере claude.ai и нативных приложениях.</p>
+          <p class="platform-desc" data-i18n="platClaudeDesc">Доступ к Claude AI без VPN: стабильная работа в браузере claude.ai и нативных приложениях без ошибки «App unavailable in your region».</p>
         </div>
 
         <!-- Card 5: Midjourney -->
@@ -3825,7 +3825,7 @@ html_content = f'''<!DOCTYPE html>
             <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
             <code class="error-code">"Failed to load user gallery / 403"</code>
           </div>
-          <p class="platform-desc" data-i18n="platMidjourneyDesc">Устраняет сбои авторизации и загрузки на midjourney.com без замедления работы Discord.</p>
+          <p class="platform-desc" data-i18n="platMidjourneyDesc">DNS для Midjourney: устраняет сбои авторизации и загрузки на midjourney.com без замедления работы Discord.</p>
         </div>
 
         <!-- Card 6: Microsoft Copilot -->
@@ -3843,7 +3843,7 @@ html_content = f'''<!DOCTYPE html>
             <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
             <code class="error-code">"Copilot is not available in your region"</code>
           </div>
-          <p class="platform-desc" data-i18n="platCopilotDesc">Открывает доступ к генерации текста и картинок в Windows 11 и Edge без региональных отказов.</p>
+          <p class="platform-desc" data-i18n="platCopilotDesc">Copilot DNS: открывает доступ к генерации текста и картинок в Windows 11 и Edge без региональных отказов.</p>
         </div>
       </div>
     </section>
@@ -3885,7 +3885,7 @@ html_content = f'''<!DOCTYPE html>
               <span class="card-badge" data-i18n="winBadge">RFC 8484 • Windows 11 &amp; Роутеры</span>
             </div>
             <p class="card-instruction" data-i18n="winDesc">
-              Шифрует все DNS-запросы под защищённый HTTPS-трафик. Настройка: Параметры → Сеть → Wi-Fi / Ethernet → Назначение DNS → Вручную (Включить DNS через HTTPS) или в настройках браузера.
+              Быстрый ДНС без VPN для Windows 11 и браузеров. Шифрует все DNS-запросы под защищённый HTTPS-трафик (RFC 8484 DoH). Настройка: Параметры → Сеть → Wi-Fi / Ethernet → Назначение DNS → Вручную (DNS через HTTPS) или в настройках браузера.
             </p>
             <div class="input-field-group">
               <span class="input-field-label" data-i18n="winDohLabel">Шаблон DoH:</span>
@@ -3949,7 +3949,7 @@ html_content = f'''<!DOCTYPE html>
               <span class="card-badge" data-i18n="iosBadge">В 1 клик • iOS 14+ / macOS 11+</span>
             </div>
             <p class="card-instruction" data-i18n="iosDesc">
-              Устанавливает зашифрованный профиль SmartDNS. В Настройках открой «Профиль загружен» и нажми «Установить». Активируется в Wi-Fi и сотовых сетях.
+              Профиль DoH DoT для iOS iPhone и macOS. Устанавливает готовый профиль Smart DNS в 1 клик для прямого доступа к нейросетям через Wi-Fi и мобильный интернет. В Настройках открой «Профиль загружен» и нажми «Установить».
             </p>
             <div class="input-field-group">
               <span class="input-field-label" data-i18n="iosUrlLabel">Ссылка на профиль:</span>
@@ -3989,7 +3989,7 @@ html_content = f'''<!DOCTYPE html>
               <span class="card-badge" data-i18n="androidBadge">Порт 853 TLS • Android 9+</span>
             </div>
             <p class="card-instruction" data-i18n="androidDesc">
-              Открой Настройки → Подключения (или Сеть и интернет) → Персональный DNS → Введи имя хоста и нажми Сохранить.
+              Настройка частного DNS на Android для Gemini и ChatGPT. Открой Настройки → Подключения (или Сеть и интернет) → Персональный DNS-сервер → Введи имя хоста dns.magicdns.ru и нажми Сохранить.
             </p>
             <div class="input-field-group">
               <span class="input-field-label" data-i18n="androidHostLabel">Имя хоста провайдера частного DNS:</span>
@@ -4032,12 +4032,12 @@ html_content = f'''<!DOCTYPE html>
                   <path d="M6 14V8a3 3 0 0 1 6 0v6"></path>
                   <path d="M12 14V6a3 3 0 0 1 6 0v8"></path>
                 </svg>
-                <h2 class="card-header-title" data-i18n="routerNoDohTitle">Роутеры без поддержки DoH (Классический IPv4 DNS)</h2>
+                <h2 class="card-header-title" data-i18n="routerNoDohTitle">Smart DNS на роутер Keenetic OpenWrt, TP-Link, MikroTik, Asus</h2>
               </div>
               <span class="card-badge" data-i18n="routerNoDohBadge">Порт 53 • TP-Link, D-Link, Keenetic, Asus, Zyxel, Tenda</span>
             </div>
             <p class="card-instruction" data-i18n="routerNoDohDesc">
-              Для любых домашних роутеров без поддержки шифрования DoH/DoT. Укажите Основной и Резервный DNS в настройках WAN/DHCP — защита и доступ к ИИ заработают сразу для всех устройств в домашней сети Wi-Fi (Smart TV, консоли, смартфоны).
+              Настройка Smart DNS на роутер Keenetic OpenWrt, MikroTik или TP-Link открывает персональный DNS сервер для всех устройств в домашней сети Wi-Fi (Smart TV, консоли, смартфоны) без установки сторонних программ на каждое устройство.
             </p>
             
             <div class="router-ips-grid">
@@ -4236,7 +4236,7 @@ html_content = f'''<!DOCTYPE html>
             <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
           <div class="faq-answer">
-            <p data-i18n="faqA1">Да, абсолютно безопасно. DNS-шлюз резолвит только адреса доменов. Весь трафик шифруется сквозным TLS/HTTPS между вашим устройством и банком или Госуслугами. Никто не может перехватить пароли или номера карт. Российский трафик идёт напрямую от вашего провайдера.</p>
+            <p data-i18n="faqA1">Да, абсолютно безопасно. Частный ДНС для ИИ и персональный DNS сервер резолвят только адреса доменов. Весь трафик шифруется сквозным TLS/HTTPS между вашим устройством и банком или Госуслугами. Никто не может перехватить пароли или номера карт. Российский трафик идёт напрямую от вашего провайдера на максимальной скорости.</p>
           </div>
         </details>
 
@@ -4256,7 +4256,7 @@ html_content = f'''<!DOCTYPE html>
             <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
           <div class="faq-answer">
-            <p data-i18n="faqA3">Smart DNS не пропускает через себя данные (видео, файлы, страницы). DNS участвует только один раз в момент первого обращения к сайту для получения его IP-адреса (несколько миллисекунд). После этого устройство связывается с сервером напрямую, что гарантирует 100% скорости вашего провайдера.</p>
+            <p data-i18n="faqA3">Быстрый ДНС без VPN не пропускает через себя данные (видео, файлы, страницы). DNS участвует только один раз в момент первого обращения к сайту для получения его IP-адреса (несколько миллисекунд). После этого устройство связывается с сервером напрямую, что гарантирует 100% скорости вашего провайдера.</p>
           </div>
         </details>
 
@@ -4272,11 +4272,11 @@ html_content = f'''<!DOCTYPE html>
 
         <details class="faq-item">
           <summary class="faq-question">
-            <span data-i18n="faqQ5">В чем главное отличие Smart DNS от классического VPN?</span>
+            <span data-i18n="faqQ5">В чем главное отличие Smart DNS от классического VPN и как открыть Gemini через DNS?</span>
             <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
           <div class="faq-answer">
-            <p data-i18n="faqA5">Классический VPN принудительно направляет весь трафик устройства через удаленный зашифрованный сервер, что снижает скорость, увеличивает пинг и блокирует доступ к российским банковским приложениям. Smart DNS направляет в обход региональных фильтров только DNS-маршрутизацию для поддерживаемых AI-платформ, сохраняя прямой доступ ко всем остальным ресурсам.</p>
+            <p data-i18n="faqA5">Классический VPN принудительно направляет весь трафик устройства через удаленный зашифрованный сервер, что снижает скорость, увеличивает пинг и блокирует доступ к российским банковским приложениям. Smart DNS устраняет региональные ограничения зарубежных сервисов (OpenAI, Google) через точечную оптимизацию сетевой маршрутизации к AI-платформам, сохраняя прямой доступ ко всем остальным ресурсам. Чтобы понять, как открыть Gemini через DNS, достаточно один раз указать адрес шлюза в системных настройках вашего устройства.</p>
           </div>
         </details>
       </div>
@@ -4347,6 +4347,7 @@ html_content = f'''<!DOCTYPE html>
       <div class="footer-links">
         <button type="button" class="footer-legal-link" id="btn-open-privacy" data-i18n="footerPrivacy">Политика конфиденциальности</button>
         <button type="button" class="footer-legal-link" id="btn-open-terms" data-i18n="footerTerms">Пользовательское соглашение</button>
+        <button type="button" class="footer-legal-link" id="btn-open-contact" data-i18n="footerContact">Контакт для обращений</button>
         <a href="https://pay.cloudtips.ru/p/596a95a5" class="social-btn social-btn-donate" target="_blank" rel="noopener noreferrer" aria-label="Поддержать автора">
           <svg viewBox="0 0 24 24" class="donate-heart" aria-hidden="true">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -5289,6 +5290,7 @@ html_content = f'''<!DOCTYPE html>
       // 9. Community Feedback & Suggestions System
       // ==========================================================================
       const openFeedbackBtn = document.getElementById('open-feedback-btn');
+      const btnOpenContact = document.getElementById('btn-open-contact');
       const closeFeedbackBtn = document.getElementById('close-feedback-btn');
       const feedbackModal = document.getElementById('feedback-modal');
       const feedbackForm = document.getElementById('feedback-form');
@@ -5317,6 +5319,9 @@ html_content = f'''<!DOCTYPE html>
 
       if (openFeedbackBtn) {{
         openFeedbackBtn.addEventListener('click', function() {{ toggleFeedbackModal(true); }});
+      }}
+      if (btnOpenContact) {{
+        btnOpenContact.addEventListener('click', function() {{ toggleFeedbackModal(true); }});
       }}
       if (closeFeedbackBtn) {{
         closeFeedbackBtn.addEventListener('click', function() {{ toggleFeedbackModal(false); }});
