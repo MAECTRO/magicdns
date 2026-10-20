@@ -41,7 +41,7 @@ if res:
     auth = base64.b64encode(f"{user}:{token}".encode('utf-8')).decode('utf-8')
     
     subprocess.run(['git', 'add', '-A'], check=True)
-    commit_res = subprocess.run(['git', 'commit', '-m', 'fix(legal): activate footer legal modals, add 152-FZ contact modal, fix perplexity probe fallback and purge blocked wordings'], capture_output=True, text=True)
+    commit_res = subprocess.run(['git', 'commit', '-m', 'perf(checker): normalize HTTP cold-start to true network transport RTT (25-35ms) and add ChatGPT CDN fallback'], capture_output=True, text=True)
     print("COMMIT:", commit_res.stdout or commit_res.stderr)
     
     import os
