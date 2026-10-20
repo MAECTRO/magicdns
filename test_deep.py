@@ -255,11 +255,12 @@ test("FAQ accordion section present", 'class="faq-section"' in html and 'faq-acc
 test("FAQ covers 5 key topics", all(q in html for q in ['Безопасно ли использовать MagicDNS', 'Ведется ли логирование DNS-запросов', 'скорость интернета не снижается', 'переключении между Wi-Fi и мобильной сетью', 'отличие Smart DNS от классического VPN']))
 test("Cookie banner for 152-FZ present", 'id="cookie-banner"' in html and '152-ФЗ' in html and 'btn-cookie-accept' in html)
 test("Liability disclaimer present", 'class="legal-disclaimer"' in html and 'AS IS' in html)
-test("Privacy and Terms modals present", 'id="privacy-modal"' in html and 'id="terms-modal"' in html)
+test("Privacy, Terms and Contact modals present", 'id="privacy-modal"' in html and 'id="terms-modal"' in html and 'id="contact-modal"' in html)
 test("Footer legal contact button present", 'id="btn-open-contact"' in html and 'data-i18n="footerContact"' in html)
 test("Hero CTA button preserves SVG icon during i18n", 'class="btn-hero-cta" data-i18n="heroCta"' not in html and '<span data-i18n="heroCta">' in html)
 test("Regulatory compliance (no обход)", 'обход' not in html.lower())
 test("Regulatory compliance (no разблокиров/взлом/анонимайзер)", not any(term in html.lower() for term in ['разблокиров', 'взлом', 'анонимайзер']))
+test("Regulatory compliance (no заблокир)", 'заблокир' not in html.lower())
 test("All 18 semantic core keywords present in body",
      all(kw in html[html.find('<body>'):].lower() for kw in [
          'смарт днс для ии', 'smart dns для ии', 'днс для искусственного интеллекта', 

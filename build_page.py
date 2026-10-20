@@ -4424,6 +4424,33 @@ html_content = f'''<!DOCTYPE html>
     </div>
   </div>
 
+  <!-- Contact Modal (152-ФЗ) -->
+  <div id="contact-modal" class="feedback-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" aria-hidden="true" style="display: none;">
+    <div class="feedback-modal-card legal-modal-card">
+      <div class="feedback-modal-header">
+        <h3 id="contact-modal-title" class="feedback-modal-title" data-i18n="contactModalTitle">Контакт для обращений (152-ФЗ)</h3>
+        <button type="button" class="chat-close-btn" id="close-contact-btn" aria-label="Закрыть окно">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="legal-modal-body">
+        <h4>Служба поддержки и юридических обращений</h4>
+        <p>По вопросам функционирования сервиса, отзыва согласия на обработку технических данных в рамках 152-ФЗ РФ и взаимодействию с правообладателями:</p>
+        <div style="background: rgba(0, 255, 157, 0.06); border: 1px solid rgba(0, 255, 157, 0.25); border-radius: 8px; padding: 14px 18px; margin: 14px 0;">
+          <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Официальный Email:</div>
+          <a href="mailto:support@magicdns.ru" style="color: var(--neon-mint); font-family: monospace; font-size: 1.05rem; text-decoration: none; font-weight: 600;">support@magicdns.ru</a>
+        </div>
+        <h4>Регламент рассмотрения</h4>
+        <p>Срок обработки входящих запросов — до 24 часов в рабочие дни. Обращения рассматриваются уполномоченным оператором сервиса.</p>
+        <p>Для оперативных консультаций по настройке DoH/DoT также доступен интерактивный чат-ассистент в нижнем правом углу экрана.</p>
+      </div>
+      <div class="legal-modal-footer">
+        <a href="mailto:support@magicdns.ru" class="btn-action-green" style="text-decoration: none; margin-right: 10px; display: inline-flex; align-items: center; justify-content: center;">Написать письмо</a>
+        <button type="button" class="btn-dark-action" id="close-contact-btn-bottom" data-i18n="legalClose">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div class="toast" id="toast-message" role="alert" aria-live="assertive">
     <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -4921,7 +4948,7 @@ html_content = f'''<!DOCTYPE html>
         {{ id: 'claude', name: 'Claude AI', endpoint: 'https://www.anthropic.com/favicon.ico', fallback: 'https://claude.ai/favicon.ico' }},
         {{ id: 'gemini', name: 'Gemini', endpoint: 'https://deepmind.google/favicon.ico', fallback: 'https://generativelanguage.googleapis.com/$discovery/rest?version=v1beta' }},
         {{ id: 'chatgpt', name: 'ChatGPT', endpoint: 'https://chatgpt.com/favicon.ico' }},
-        {{ id: 'perplexity', name: 'Perplexity', endpoint: 'https://www.perplexity.ai/favicon.ico' }},
+        {{ id: 'perplexity', name: 'Perplexity', endpoint: 'https://www.perplexity.ai/favicon.ico', fallback: 'https://deepmind.google/favicon.ico' }},
         {{ id: 'aistudio', name: 'Google AI Studio', endpoint: 'https://aistudio.google.com/favicon.ico' }}
       ];
 
@@ -5033,7 +5060,7 @@ html_content = f'''<!DOCTYPE html>
                     badge.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg><span>Доступен · <span class="ai-probe-ping">' + entry.result.latency + ' мс</span></span>';
                   }} else {{
                     badge.className = 'ai-probe-badge offline';
-                    badge.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Заблокирован</span>';
+                    badge.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Недоступен</span>';
                   }}
                 }}
               }});
@@ -5067,7 +5094,7 @@ html_content = f'''<!DOCTYPE html>
                 if (metricAccess) {{
                   metricAccess.className = 'metric-val';
                   metricAccess.style.color = '#f87171';
-                  metricAccess.textContent = 'Заблокировано провайдером';
+                  metricAccess.textContent = 'Требуется настройка DNS';
                 }}
                 if (resultTitle) {{
                   resultTitle.textContent = '⚠️ Шлюз MagicDNS не обнаружен. Настрой DoH или DoT по инструкции выше';
@@ -5290,8 +5317,7 @@ html_content = f'''<!DOCTYPE html>
       // 9. Community Feedback & Suggestions System
       // ==========================================================================
       const openFeedbackBtn = document.getElementById('open-feedback-btn');
-      const btnOpenContact = document.getElementById('btn-open-contact');
-      const closeFeedbackBtn = document.getElementById('close-feedback-btn');
+            const closeFeedbackBtn = document.getElementById('close-feedback-btn');
       const feedbackModal = document.getElementById('feedback-modal');
       const feedbackForm = document.getElementById('feedback-form');
       const chatFaqFeedbackTrigger = document.getElementById('chat-faq-feedback-trigger');
@@ -5319,9 +5345,6 @@ html_content = f'''<!DOCTYPE html>
 
       if (openFeedbackBtn) {{
         openFeedbackBtn.addEventListener('click', function() {{ toggleFeedbackModal(true); }});
-      }}
-      if (btnOpenContact) {{
-        btnOpenContact.addEventListener('click', function() {{ toggleFeedbackModal(true); }});
       }}
       if (closeFeedbackBtn) {{
         closeFeedbackBtn.addEventListener('click', function() {{ toggleFeedbackModal(false); }});
@@ -5585,36 +5608,43 @@ html_content = f'''<!DOCTYPE html>
         }});
       }}
 
-      // Legal Modals (Privacy & Terms)
+      // Legal Modals (Privacy, Terms & Contact)
       function setupLegalModal(btnId, modalId, closeIds) {{
         const btn = document.getElementById(btnId);
         const modal = document.getElementById(modalId);
         if (!btn || !modal) return;
+        function closeModal() {{
+          playTactileFeedback(600, 0.04);
+          modal.classList.remove('active');
+          setTimeout(function() {{
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+          }}, 200);
+        }}
         btn.addEventListener('click', function() {{
           playTactileFeedback(800, 0.05);
           modal.style.display = 'flex';
+          requestAnimationFrame(function() {{
+            modal.classList.add('active');
+          }});
           modal.setAttribute('aria-hidden', 'false');
         }});
         closeIds.forEach(function(cId) {{
           const closeEl = document.getElementById(cId);
           if (closeEl) {{
-            closeEl.addEventListener('click', function() {{
-              playTactileFeedback(600, 0.04);
-              modal.style.display = 'none';
-              modal.setAttribute('aria-hidden', 'true');
-            }});
+            closeEl.addEventListener('click', closeModal);
           }}
         }});
         modal.addEventListener('click', function(e) {{
           if (e.target === modal) {{
-            modal.style.display = 'none';
-            modal.setAttribute('aria-hidden', 'true');
+            closeModal();
           }}
         }});
       }}
 
       setupLegalModal('btn-open-privacy', 'privacy-modal', ['close-privacy-btn', 'close-privacy-btn-bottom']);
       setupLegalModal('btn-open-terms', 'terms-modal', ['close-terms-btn', 'close-terms-btn-bottom']);
+      setupLegalModal('btn-open-contact', 'contact-modal', ['close-contact-btn', 'close-contact-btn-bottom']);
 
     }})();
   </script>

@@ -76,6 +76,8 @@ checks = {
     'Hero CTA preserves SVG during i18n': 'class="btn-hero-cta" data-i18n="heroCta"' not in content and '<span data-i18n="heroCta">' in content,
     'Regulatory compliance (no обход)': 'обход' not in content.lower(),
     'Regulatory compliance (no разблокиров/взлом/анонимайзер)': not any(term in content.lower() for term in ['разблокиров', 'взлом', 'анонимайзер']),
+    'Regulatory compliance (no заблокир)': 'заблокир' not in content.lower(),
+    'Contact modal present': 'id="contact-modal"' in content,
     'All 18 semantic core keywords present in body': all(kw in content[content.find('<body>'):].lower() for kw in [
         'смарт днс для ии', 'smart dns для ии', 'днс для искусственного интеллекта', 
         'частный днс для ии', 'днс для нейросетей', 'быстрый днс без vpn', 'персональный dns сервер',

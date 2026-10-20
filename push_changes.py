@@ -41,7 +41,7 @@ if res:
     auth = base64.b64encode(f"{user}:{token}".encode('utf-8')).decode('utf-8')
     
     subprocess.run(['git', 'add', '-A'], check=True)
-    commit_res = subprocess.run(['git', 'commit', '-m', 'feat(content): implement full SEO landing structure, legal 152-FZ compliance, and remove app proxy block'], capture_output=True, text=True)
+    commit_res = subprocess.run(['git', 'commit', '-m', 'fix(legal): activate footer legal modals, add 152-FZ contact modal, fix perplexity probe fallback and purge blocked wordings'], capture_output=True, text=True)
     print("COMMIT:", commit_res.stdout or commit_res.stderr)
     
     import os

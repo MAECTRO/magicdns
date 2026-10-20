@@ -166,6 +166,7 @@ i18n = {
         "footerContact": "Контакт для обращений",
         "privacyModalTitle": "Политика конфиденциальности (152-ФЗ)",
         "termsModalTitle": "Пользовательское соглашение",
+        "contactModalTitle": "Контакт для обращений (152-ФЗ)",
         "legalClose": "Закрыть"
     },
     "en": {
@@ -333,6 +334,7 @@ i18n = {
         "footerContact": "Contact Us",
         "privacyModalTitle": "Privacy Policy (152-FZ Compliance)",
         "termsModalTitle": "Terms of Service",
+        "contactModalTitle": "Contact for Inquiries (152-FZ)",
         "legalClose": "Close"
     },
     "zh": {
@@ -500,6 +502,7 @@ i18n = {
         "footerContact": "联系我们",
         "privacyModalTitle": "隐私政策 (152-FZ 合规说明)",
         "termsModalTitle": "服务使用协议",
+        "contactModalTitle": "联系与法律请求 (152-FZ)",
         "legalClose": "关闭"
     },
     "tr": {
@@ -667,6 +670,7 @@ i18n = {
         "footerContact": "İletişim",
         "privacyModalTitle": "Gizlilik Politikası (152-FZ Uyumluluğu)",
         "termsModalTitle": "Kullanım Koşulları",
+        "contactModalTitle": "İletişim ve Yasal Talepler (152-FZ)",
         "legalClose": "Kapat"
     }
 }
