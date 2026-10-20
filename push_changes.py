@@ -3,6 +3,7 @@ from ctypes import wintypes
 import subprocess
 import base64
 import sys
+import os
 
 class CREDENTIAL(ctypes.Structure):
     _fields_ = [
@@ -40,11 +41,11 @@ if res:
     print(f"Read credential for {cred.UserName}, token length: {len(token)}")
     auth = base64.b64encode(f"{user}:{token}".encode('utf-8')).decode('utf-8')
     
+    msg = sys.argv[1] if len(sys.argv) > 1 else 'docs(readme): comprehensive Smart DNS guide, badges, SEO keywords and MIT license'
     subprocess.run(['git', 'add', '-A'], check=True)
-    commit_res = subprocess.run(['git', 'commit', '-m', 'perf(checker): normalize HTTP cold-start to true network transport RTT (25-35ms) and add ChatGPT CDN fallback'], capture_output=True, text=True)
+    commit_res = subprocess.run(['git', 'commit', '-m', msg], capture_output=True, text=True)
     print("COMMIT:", commit_res.stdout or commit_res.stderr)
     
-    import os
     env = os.environ.copy()
     for k in ['HTTP_PROXY', 'HTTPS_PROXY', 'ALL_PROXY', 'http_proxy', 'https_proxy', 'all_proxy']:
         env.pop(k, None)
