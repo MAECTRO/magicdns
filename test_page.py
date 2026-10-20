@@ -24,19 +24,19 @@ checks = {
     'Windows DoH URL https://dns.magicdns.ru/dns-query': 'https://dns.magicdns.ru/dns-query' in content,
     'Apple iOS profile URL https://magicdns.ru/profile.mobileconfig': 'https://magicdns.ru/profile.mobileconfig' in content,
     'Android Private DNS dns.magicdns.ru': 'dns.magicdns.ru' in content,
-    'App Proxy http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085': 'http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085' in content,
+    'No proxy endpoints or credentials present': '8085' not in content and 'tab-proxy' not in content and 'card-proxy' not in content and 'Px94kM8vQ7wZb2Rt' not in content,
     'Dynamic status badge: Статус сети: Работает стабильно': 'Статус сети:' in content and 'Работает стабильно' in content,
     'Pulsing dot animation in status badge': 'status-ping' in content and 'radar-ping' in content,
-    'Hero heading with AI services': 'Быстрый DNS для Claude AI, Gemini, Google AI Studio и Antigravity' in content,
+    'Hero heading with AI services': 'Smart DNS для ИИ' in content and 'Gemini' in content and 'ChatGPT' in content and 'Claude' in content,
     'Unified services ribbon with tags': all(tag in content for tag in [
         'Claude AI', 'Gemini', 'ChatGPT', 'Perplexity', 'Antigravity', 'Без VPN и сторонних программ'
-    ]) and 'Claude AI &amp; Sonnet' not in content and 'Google AI Studio' not in content[content.find('class="services-ribbon"'):content.find('class="configurator-section tabs-section')],
+    ]) and 'Claude AI &amp; Sonnet' not in content and 'Google AI Studio' not in content[content.find('class="services-ribbon"'):content.find('class="more-services-drawer"')],
     'Support button in header': 'https://pay.cloudtips.ru/p/596a95a5' in content.split('</header>')[0] and 'target="_blank"' in content.split('</header>')[0] and 'rel="noopener noreferrer"' in content.split('</header>')[0],
     'Support button in footer': 'https://pay.cloudtips.ru/p/596a95a5' in content.split('<footer>')[1] and 'target="_blank"' in content.split('<footer>')[1] and 'rel="noopener noreferrer"' in content.split('<footer>')[1],
     'No duplicate copy button in Android tab': '<button class="btn-neon-action" data-clipboard="dns.magicdns.ru">Скопировать хост</button>' not in content,
-    'Segmented tab bar for 4 platforms': all(tab in content for tab in [
-        'Windows (DoH)', 'Apple iOS / macOS', 'Android (DoT)', 'Прокси приложений'
-    ]),
+    'Segmented tab bar for 3 platforms': all(tab in content for tab in [
+        'Windows (DoH)', 'Apple iOS / macOS', 'Android (DoT)'
+    ]) and 'Прокси приложений' not in content,
     'Clean vector SVG icons in tabs': 'tab-icon' in content,
     'Two-column glassmorphism cards': 'glass-config-card' in content and 'card-left-column' in content and 'card-right-column' in content,
     'QR pods with captions': 'qr-pod' in content and 'qr-caption' in content and 'qr-canvas-box' in content,
@@ -67,6 +67,12 @@ checks = {
     'Feedback modal platform chips & inputs i18n': 'data-i18n="modalPlatRouter"' in content and 'data-i18n-placeholder="modalContactPlaceholder"' in content,
     'Reviews platform & author dynamic localization': 'getLocalizedPlatform' in content and 'isDefaultAuthor' in content,
     'Download buttons tactile feedback binding': 'dlProfileBtn' in content,
+    'Comparison table present': 'class="comparison-table"' in content and 'MagicDNS (Smart DNS)' in content and 'Стандартный VPN' in content,
+    'AI platforms cards present': all(p in content for p in ['Google Gemini', 'Google AI Studio', 'ChatGPT', 'Claude', 'Midjourney', 'Microsoft Copilot']),
+    'FAQ accordion present': 'class="faq-section"' in content and 'class="faq-item"' in content,
+    'Cookie banner present': 'id="cookie-banner"' in content and '152-ФЗ' in content,
+    'Legal disclaimer present': 'class="legal-disclaimer"' in content and 'AS IS' in content,
+    'Schema.org FAQPage present': '"@type": "FAQPage"' in content,
     'Valid closing html tag': '</html>' in content
 }
 

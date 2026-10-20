@@ -45,14 +45,14 @@ test("Live status badge", 'Статус сети:' in html and 'Работает
 test("Pulsing status dot animation", 'radar-ping' in html and 'status-ping' in html)
 
 # 4. Hero section requirements
-test("Hero heading for Claude, Gemini, Google AI Studio, Antigravity",
-     'Быстрый DNS для Claude AI, Gemini, Google AI Studio и Antigravity' in html)
+test("Hero heading for Smart DNS AI services",
+     'Smart DNS для ИИ' in html and 'Gemini' in html and 'ChatGPT' in html and 'Claude' in html)
 test("Hero subtitle direct access without VPN",
-     'Прямой доступ к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN' in html)
+     'Оптимизация сетевой маршрутизации к AI-платформам' in html and 'на максимальной скорости' in html)
 test("Unified services ribbon chips",
      all(chip in html for chip in ['Claude AI', 'Gemini', 'ChatGPT', 'Perplexity', 'Antigravity', 'Без VPN и сторонних программ'])
      and 'Claude AI &amp; Sonnet' not in html
-     and 'Google AI Studio' not in html[html.find('class="services-ribbon"'):html.find('class="configurator-section tabs-section')])
+     and 'Google AI Studio' not in html[html.find('class="services-ribbon"'):html.find('class="more-services-drawer"')])
 test("Support button in header", 'https://pay.cloudtips.ru/p/596a95a5' in html.split('</header>')[0] and 'target="_blank"' in html.split('</header>')[0] and 'rel="noopener noreferrer"' in html.split('</header>')[0])
 test("Support button in footer", 'https://pay.cloudtips.ru/p/596a95a5' in html.split('<footer>')[1] and 'target="_blank"' in html.split('<footer>')[1] and 'rel="noopener noreferrer"' in html.split('<footer>')[1])
 test("Support button heart has proper fill color", '.social-btn-donate .donate-heart' in html and 'fill: #ff5e7e !important;' in html)
@@ -63,7 +63,8 @@ test("Segmented bar present", 'class="segmented-bar"' in html)
 test("Windows DoH tab with SVG icon", 'id="tab-windows"' in html and 'Windows (DoH)' in html)
 test("Apple iOS/macOS tab with SVG icon", 'id="tab-ios"' in html and 'Apple iOS / macOS' in html)
 test("Android DoT tab with SVG icon", 'id="tab-android"' in html and 'Android (DoT)' in html)
-test("Proxy tab with SVG icon", 'id="tab-proxy"' in html and 'Прокси приложений' in html)
+test("Segmented bar for 3 platforms without proxy",
+     'id="tab-windows"' in html and 'id="tab-ios"' in html and 'id="tab-android"' in html and 'id="tab-proxy"' not in html and 'Прокси приложений' not in html)
 
 # 6. Two-Column Glassmorphism Cards & Endpoints
 test("Glassmorphism two-column configuration card layout",
@@ -73,8 +74,8 @@ test("No duckdns hosts present", 'greenfest.duckdns.org' not in html and 'greenf
 test("Windows DoH URL", 'https://dns.magicdns.ru/dns-query' in html)
 test("iOS profile URL", 'https://magicdns.ru/profile.mobileconfig' in html)
 test("Android Private DNS host", 'dns.magicdns.ru' in html)
-test("Proxy complete address and parameters",
-     'http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085' in html and '8085' in html and 'Px94kM8vQ7wZb2Rt' in html)
+test("No proxy endpoints or credentials present",
+     '8085' not in html and 'Px94kM8vQ7wZb2Rt' not in html and 'card-proxy' not in html)
 
 # 7. QR Code Pods with captions
 test("QR pods with dark backing and caption present",
@@ -146,8 +147,7 @@ detector = cv2.QRCodeDetector()
 qr_targets = [
     'https://dns.magicdns.ru/dns-query',
     'https://magicdns.ru/profile.mobileconfig',
-    'dns.magicdns.ru',
-    'http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085'
+    'dns.magicdns.ru'
 ]
 qr_all_scannable = True
 for target in qr_targets:
@@ -160,7 +160,7 @@ for target in qr_targets:
         qr_all_scannable = False
         break
 
-test("All 4 QR codes are 100% scannable via OpenCV QRCodeDetector", qr_all_scannable)
+test("All 3 QR codes are 100% scannable via OpenCV QRCodeDetector", qr_all_scannable)
 
 # 15. Anti-AI writing compliance (Rule 5)
 banned_words = [
@@ -242,8 +242,20 @@ if jsonld_match:
         test("Schema.org JSON-LD is valid JSON", True)
         types = [item.get('@type') for item in ld_data.get('@graph', [])] if '@graph' in ld_data else [ld_data.get('@type')]
         test("Schema.org includes WebApplication or WebSite", 'WebApplication' in types or 'WebSite' in types)
+        test("Schema.org includes FAQPage", 'FAQPage' in types)
     except Exception as e:
         test("Schema.org JSON-LD is valid JSON", False, str(e))
+
+# 17. Landing Page Content, SEO & Legal Compliance Suite
+test("Comparison table present with parameters", 'class="comparison-table"' in html and 'MagicDNS (Smart DNS)' in html and 'Стандартный VPN' in html)
+test("Comparison table has 5 evaluation rows", all(param in html for param in ['Реальная скорость', 'Пинг в API', 'Влияние на заряд смартфона', 'Доступность банков и Госуслуг', 'Стабильность соединения']))
+test("Supported AI platforms cards present", all(p in html for p in ['Google Gemini', 'Google AI Studio', 'ChatGPT', 'Claude', 'Midjourney', 'Microsoft Copilot']))
+test("AI platforms error codes documented", all(err in html for err in ['Gemini is not available in your country', 'User location is not supported', "OpenAI's services are not available in your country", 'App unavailable in your region']))
+test("FAQ accordion section present", 'class="faq-section"' in html and 'faq-accordion' in html)
+test("FAQ covers 5 key topics", all(q in html for q in ['Безопасно ли использовать MagicDNS', 'Ведется ли логирование DNS-запросов', 'скорость интернета не снижается', 'переключении между Wi-Fi и мобильной сетью', 'отличие Smart DNS от классического VPN']))
+test("Cookie banner for 152-FZ present", 'id="cookie-banner"' in html and '152-ФЗ' in html and 'btn-cookie-accept' in html)
+test("Liability disclaimer present", 'class="legal-disclaimer"' in html and 'AS IS' in html)
+test("Privacy and Terms modals present", 'id="privacy-modal"' in html and 'id="terms-modal"' in html)
 
 # Summary
 print("\n" + "="*50)

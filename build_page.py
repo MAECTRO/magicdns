@@ -23,7 +23,6 @@ def get_svg_qr(data):
 qr_windows = get_svg_qr('https://dns.magicdns.ru/dns-query')
 qr_ios = get_svg_qr('https://magicdns.ru/profile.mobileconfig')
 qr_android = get_svg_qr('dns.magicdns.ru')
-qr_proxy = get_svg_qr('http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085')
 
 html_content = f'''<!DOCTYPE html>
 <html lang="ru">
@@ -31,9 +30,9 @@ html_content = f'''<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#070d14">
-  <title>MagicDNS — Быстрый DNS для Claude AI, Gemini и ChatGPT без VPN</title>
-  <meta name="description" content="Высокоскоростной защищённый DNS-шлюз (DoH/DoT) для прямого доступа к Claude AI, Gemini, ChatGPT и Antigravity без VPN со встроенной блокировкой рекламы AdGuard.">
-  <meta name="keywords" content="MagicDNS, DNS для Claude, DNS для Gemini, блокировка рекламы AdGuard, AdGuard DNS, блокировщик рекламы без программ, ChatGPT без VPN, Claude AI без VPN, DoH, DoT, быстрый DNS, Google AI Studio, Antigravity, приватный DNS, smart DNS, обход блокировок без впн, private DNS">
+  <title>MagicDNS — Smart DNS для Gemini, ChatGPT и Claude без VPN</title>
+  <meta name="description" content="Быстрый персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN, падения скорости и задержек. Настрой бесплатно за 1 минуту!">
+  <meta name="keywords" content="смарт днс для ии, smart dns для ии, днс для искусственного интеллекта, частный днс для ии, днс для нейросетей, быстрый днс без vpn, персональный dns сервер, dns для gemini, smart dns google ai studio, доступ к google ai studio без vpn, как открыть gemini через dns, dns для chatgpt, доступ к claude ai без vpn, dns для midjourney, copilot dns, настройка частного dns на android для gemini, профиль doh dot для ios iphone, smart dns на роутер keenetic openwrt, MagicDNS, Claude AI, Gemini, Google AI Studio, ChatGPT, DoH, DoT">
   <link rel="canonical" href="https://magicdns.ru/">
 
   <!-- Search Engine Verification -->
@@ -43,8 +42,8 @@ html_content = f'''<!DOCTYPE html>
   <!-- Open Graph / Facebook / Telegram / WhatsApp -->
   <meta property="og:site_name" content="MagicDNS">
   <meta property="og:url" content="https://magicdns.ru/">
-  <meta property="og:title" content="MagicDNS — Быстрый DNS для Claude, Gemini и ChatGPT без VPN">
-  <meta property="og:description" content="Высокоскоростной защищённый DNS-шлюз для прямого доступа к Claude AI, Gemini, ChatGPT без VPN со встроенной защитой от рекламы AdGuard.">
+  <meta property="og:title" content="MagicDNS — Smart DNS для Gemini, ChatGPT и Claude без VPN">
+  <meta property="og:description" content="Быстрый персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN, падения скорости и задержек. Настрой бесплатно за 1 минуту!">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
   <meta property="og:image" content="https://magicdns.ru/og-image.png">
@@ -54,8 +53,8 @@ html_content = f'''<!DOCTYPE html>
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://magicdns.ru/">
-  <meta name="twitter:title" content="MagicDNS — Быстрый DNS для Claude, Gemini и ChatGPT без VPN">
-  <meta name="twitter:description" content="Высокоскоростной защищённый DNS-шлюз для прямого доступа к Claude AI, Gemini, ChatGPT без VPN со встроенной блокировкой рекламы AdGuard.">
+  <meta name="twitter:title" content="MagicDNS — Smart DNS для Gemini, ChatGPT и Claude без VPN">
+  <meta name="twitter:description" content="Быстрый персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN, падения скорости и задержек. Настрой бесплатно за 1 минуту!">
   <meta name="twitter:image" content="https://magicdns.ru/og-image.png">
 
   <!-- Schema.org Structured Data (JSON-LD) -->
@@ -68,7 +67,7 @@ html_content = f'''<!DOCTYPE html>
         "@id": "https://magicdns.ru/#website",
         "url": "https://magicdns.ru/",
         "name": "MagicDNS",
-        "description": "Высокоскоростной DNS-шлюз для доступа к ИИ-сервисам без VPN",
+        "description": "Высокоскоростной Smart DNS для доступа к Claude AI, Gemini, ChatGPT без VPN",
         "inLanguage": "ru-RU"
       }},
       {{
@@ -76,14 +75,60 @@ html_content = f'''<!DOCTYPE html>
         "@id": "https://magicdns.ru/#app",
         "name": "MagicDNS",
         "url": "https://magicdns.ru/",
-        "description": "Высокоскоростной защищённый DNS-шлюз (DoH/DoT) для прямого доступа к Claude AI, Gemini, Google AI Studio, ChatGPT и Antigravity без VPN.",
+        "description": "Высокоскоростной защищённый Smart DNS (DoH/DoT) для прямого доступа к Claude AI, Gemini, Google AI Studio и ChatGPT без VPN.",
         "applicationCategory": "NetworkingApplication",
-        "operatingSystem": "Windows, iOS, macOS, Android, Linux",
+        "operatingSystem": "Windows, iOS, macOS, Android, Linux, Keenetic, OpenWrt, MikroTik",
         "offers": {{
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "RUB"
         }}
+      }},
+      {{
+        "@type": "FAQPage",
+        "@id": "https://magicdns.ru/#faq",
+        "mainEntity": [
+          {{
+            "@type": "Question",
+            "name": "Безопасно ли использовать MagicDNS для личных и банковских данных?",
+            "acceptedAnswer": {{
+              "@type": "Answer",
+              "text": "Да, абсолютно безопасно. DNS-шлюз резолвит только адреса доменов. Весь трафик шифруется сквозным TLS/HTTPS между вашим устройством и банком или Госуслугами. Никто не может перехватить пароли или номера карт. Российский трафик идёт напрямую от вашего провайдера."
+            }}
+          }},
+          {{
+            "@type": "Question",
+            "name": "Ведется ли логирование DNS-запросов и истории посещений?",
+            "acceptedAnswer": {{
+              "@type": "Answer",
+              "text": "Сервис работает по строгой политике Zero-Logs. Мы не сохраняем историю DNS-запросов, не регистрируем IP-адреса пользователей и не создаем профилей поведения. Обработка происходит в оперативной памяти сервера с немедленной очисткой после ответа."
+            }}
+          }},
+          {{
+            "@type": "Question",
+            "name": "Почему при использовании MagicDNS скорость интернета не снижается, в отличие от VPN?",
+            "acceptedAnswer": {{
+              "@type": "Answer",
+              "text": "Smart DNS не пропускает через себя данные (видео, файлы, страницы). DNS участвует только один раз в момент первого обращения к сайту для получения его IP-адреса (несколько миллисекунд). После этого устройство связывается с сервером напрямую, что гарантирует 100% скорости вашего провайдера."
+            }}
+          }},
+          {{
+            "@type": "Question",
+            "name": "Будет ли работать Smart DNS при переключении между Wi-Fi и мобильной сетью?",
+            "acceptedAnswer": {{
+              "@type": "Answer",
+              "text": "Да. На Android в режиме «Персональный DNS» и на iOS через конфигурационный профиль DoH/DoT настройки действуют системно. При выходе из дома и переключении с Wi-Fi на мобильную сеть 4G/5G профиль сохраняет активность автоматически."
+            }}
+          }},
+          {{
+            "@type": "Question",
+            "name": "В чем главное отличие Smart DNS от классического VPN?",
+            "acceptedAnswer": {{
+              "@type": "Answer",
+              "text": "Классический VPN принудительно направляет весь трафик устройства через удаленный зашифрованный сервер, что снижает скорость, увеличивает пинг и блокирует доступ к российским банковским приложениям. Smart DNS направляет в обход региональных фильтров только DNS-маршрутизацию для поддерживаемых AI-платформ, сохраняя прямой доступ ко всем остальным ресурсам."
+            }}
+          }}
+        ]
       }}
     ]
   }}
@@ -2843,6 +2888,548 @@ html_content = f'''<!DOCTYPE html>
       height: 18px;
       flex-shrink: 0;
     }}
+
+    /* ==========================================================================
+       New Landing Sections & Components (SEO, Legal, Compliance)
+       ========================================================================== */
+    .section-tag-wrapper {{
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }}
+
+    .section-heading {{
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      text-align: center;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }}
+
+    .section-subtitle {{
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 36px auto;
+      line-height: 1.55;
+    }}
+
+    /* Hero Benefits List & CTA */
+    .hero-benefits-wrapper {{
+      max-width: 840px;
+      margin: 28px auto 28px auto;
+      width: 100%;
+    }}
+
+    .hero-benefits-list {{
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      padding: 0;
+      margin: 0;
+    }}
+
+    @media (max-width: 768px) {{
+      .hero-benefits-list {{
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }}
+    }}
+
+    .hero-benefit-item {{
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(11, 20, 36, 0.65);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(12px);
+      text-align: left;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: #e2e8f0;
+      transition: all var(--transition-fast);
+    }}
+
+    .hero-benefit-item:hover {{
+      border-color: rgba(0, 255, 157, 0.35);
+      background: rgba(15, 27, 48, 0.8);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 255, 157, 0.08);
+    }}
+
+    .benefit-icon {{
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(0, 255, 157, 0.12);
+      border: 1px solid rgba(0, 255, 157, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }}
+
+    .benefit-icon svg {{
+      width: 13px;
+      height: 13px;
+      color: var(--neon-mint);
+    }}
+
+    .hero-cta-wrapper {{
+      display: flex;
+      justify-content: center;
+      margin: 12px auto 32px auto;
+    }}
+
+    .btn-hero-cta {{
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 36px;
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #070d14 !important;
+      background: linear-gradient(135deg, var(--neon-mint) 0%, var(--neon-emerald) 100%);
+      border-radius: var(--radius-pill);
+      box-shadow: 0 0 24px var(--mint-glow), 0 8px 30px rgba(0, 255, 157, 0.25);
+      transition: all var(--transition-smooth);
+      cursor: pointer;
+      text-decoration: none;
+    }}
+
+    .btn-hero-cta:hover {{
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 0 36px rgba(0, 255, 157, 0.5), 0 12px 36px rgba(0, 255, 157, 0.35);
+      color: #070d14 !important;
+    }}
+
+    /* Comparison Section */
+    .comparison-section {{
+      padding: 60px 0 50px 0;
+      position: relative;
+    }}
+
+    .comparison-table-wrapper {{
+      width: 100%;
+      overflow-x: auto;
+      border-radius: var(--radius-lg);
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }}
+
+    .comparison-table {{
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      min-width: 650px;
+    }}
+
+    .comparison-table th,
+    .comparison-table td {{
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-hairline);
+    }}
+
+    .comparison-table thead th {{
+      background: rgba(15, 27, 48, 0.85);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }}
+
+    .comparison-table thead .col-param {{
+      width: 25%;
+      color: var(--text-muted);
+    }}
+
+    .comparison-table thead .col-vpn {{
+      width: 37.5%;
+      color: #94a3b8;
+    }}
+
+    .comparison-table thead .col-magic {{
+      width: 37.5%;
+      color: var(--neon-mint);
+      background: rgba(0, 255, 157, 0.08);
+      border-left: 1px solid rgba(0, 255, 157, 0.2);
+      border-right: 1px solid rgba(0, 255, 157, 0.2);
+    }}
+
+    .comparison-table tbody tr:hover {{
+      background: rgba(255, 255, 255, 0.02);
+    }}
+
+    .comparison-table tbody tr:last-child td {{
+      border-bottom: none;
+    }}
+
+    .cell-param strong {{
+      color: #f1f5f9;
+      font-size: 0.95rem;
+    }}
+
+    .cell-vpn {{
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }}
+
+    .cell-magic {{
+      color: #ffffff;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      background: rgba(0, 255, 157, 0.04);
+      border-left: 1px solid rgba(0, 255, 157, 0.15);
+      border-right: 1px solid rgba(0, 255, 157, 0.15);
+      font-weight: 500;
+    }}
+
+    .status-indicator {{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-right: 8px;
+      flex-shrink: 0;
+      vertical-align: middle;
+    }}
+
+    .status-indicator.bad {{
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+    }}
+
+    .status-indicator.good {{
+      background: rgba(0, 255, 157, 0.18);
+      color: var(--neon-mint);
+      border: 1px solid rgba(0, 255, 157, 0.5);
+    }}
+
+    /* Supported AI Platforms Grid */
+    .ai-platforms-section {{
+      padding: 60px 0 50px 0;
+      position: relative;
+    }}
+
+    .platforms-grid {{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }}
+
+    @media (max-width: 992px) {{
+      .platforms-grid {{
+        grid-template-columns: repeat(2, 1fr);
+      }}
+    }}
+
+    @media (max-width: 640px) {{
+      .platforms-grid {{
+        grid-template-columns: 1fr;
+      }}
+    }}
+
+    .platform-card {{
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      transition: all var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
+    }}
+
+    .platform-card:hover {{
+      border-color: rgba(0, 255, 157, 0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 157, 0.1);
+    }}
+
+    .platform-card-header {{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }}
+
+    .platform-icon-wrap {{
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-hairline);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }}
+
+    .platform-icon-wrap svg {{
+      width: 24px;
+      height: 24px;
+    }}
+
+    .platform-icon-wrap.gemini-icon svg {{ color: #4285f4; }}
+    .platform-icon-wrap.aistudio-icon svg {{ color: var(--cyber-cyan); }}
+    .platform-icon-wrap.chatgpt-icon svg {{ color: var(--neon-mint); }}
+    .platform-icon-wrap.claude-icon svg {{ color: #d97706; }}
+    .platform-icon-wrap.midjourney-icon svg {{ color: #a855f7; }}
+    .platform-icon-wrap.copilot-icon svg {{ color: #06b6d4; }}
+
+    .platform-name {{
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 2px;
+    }}
+
+    .platform-badge {{
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-family: monospace;
+    }}
+
+    .platform-error-box {{
+      background: rgba(6, 182, 212, 0.08);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      margin-bottom: 14px;
+    }}
+
+    .error-label {{
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--cyber-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }}
+
+    .error-code {{
+      display: block;
+      font-size: 0.8rem;
+      font-family: monospace;
+      color: #f87171;
+      word-break: break-word;
+    }}
+
+    .platform-desc {{
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-top: auto;
+    }}
+
+    /* FAQ Section */
+    .faq-section {{
+      padding: 60px 0 50px 0;
+      position: relative;
+    }}
+
+    .faq-accordion {{
+      max-width: 840px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }}
+
+    .faq-item {{
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: all var(--transition-fast);
+      overflow: hidden;
+    }}
+
+    .faq-item[open] {{
+      border-color: rgba(0, 255, 157, 0.35);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 16px rgba(0, 255, 157, 0.08);
+    }}
+
+    .faq-question {{
+      padding: 20px 24px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      list-style: none;
+      user-select: none;
+    }}
+
+    .faq-question::-webkit-details-marker {{
+      display: none;
+    }}
+
+    .faq-chevron {{
+      width: 18px;
+      height: 18px;
+      color: var(--neon-mint);
+      transition: transform var(--transition-fast);
+      flex-shrink: 0;
+    }}
+
+    .faq-item[open] .faq-chevron {{
+      transform: rotate(180deg);
+    }}
+
+    .faq-answer {{
+      padding: 0 24px 22px 24px;
+      font-size: 0.94rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      margin-top: 4px;
+      padding-top: 16px;
+    }}
+
+    /* Cookie Banner & Legal Modals */
+    .cookie-banner {{
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-width: 860px;
+      background: rgba(11, 20, 36, 0.96);
+      border: 1px solid rgba(0, 255, 157, 0.35);
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 24px rgba(0, 255, 157, 0.15);
+      z-index: 10000;
+      padding: 16px 24px;
+      box-sizing: border-box;
+      animation: fadeIn 0.3s ease-out;
+    }}
+
+    .cookie-banner-content {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      width: 100%;
+    }}
+
+    @media (max-width: 640px) {{
+      .cookie-banner-content {{
+        flex-direction: column;
+        align-items: flex-start;
+      }}
+    }}
+
+    .cookie-icon {{
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }}
+
+    .cookie-text {{
+      font-size: 0.86rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+      margin: 0;
+      flex: 1;
+    }}
+
+    .btn-cookie-accept {{
+      padding: 8px 22px;
+      font-size: 0.88rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }}
+
+    .footer-disclaimer-row {{
+      padding: 20px 0 10px 0;
+      border-top: 1px solid var(--border-hairline);
+      margin-top: 20px;
+    }}
+
+    .legal-disclaimer {{
+      font-size: 0.78rem;
+      line-height: 1.55;
+      color: var(--text-dim);
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }}
+
+    .footer-legal-link {{
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      transition: color var(--transition-fast);
+    }}
+
+    .footer-legal-link:hover {{
+      color: var(--neon-mint);
+    }}
+
+    .legal-modal-card {{
+      max-width: 640px;
+      width: 90%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }}
+
+    .legal-modal-body {{
+      padding: 20px 24px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      border-top: 1px solid var(--border-hairline);
+      border-bottom: 1px solid var(--border-hairline);
+    }}
+
+    .legal-modal-body h4 {{
+      color: #ffffff;
+      font-size: 0.98rem;
+      margin: 16px 0 6px 0;
+    }}
+
+    .legal-modal-body h4:first-child {{
+      margin-top: 0;
+    }}
+
+    .legal-modal-body p {{
+      margin-bottom: 10px;
+    }}
+
+    .legal-modal-footer {{
+      padding: 16px 24px;
+      display: flex;
+      justify-content: flex-end;
+    }}
   </style>
 
   <!-- Yandex.Metrika counter -->
@@ -2943,8 +3530,46 @@ html_content = f'''<!DOCTYPE html>
         </svg>
         <span data-i18n="heroEyebrow">Высокоскоростной DNS-шлюз • Прямой доступ к AI • Блокировка рекламы AdGuard</span>
       </div>
-      <h1 data-i18n="heroHeading">Быстрый DNS для Claude AI, Gemini, Google AI Studio и Antigravity</h1>
-      <p data-i18n="heroSubtitle">Прямой доступ к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN, сторонних приложений и падения скорости. Поддерживает Cursor, Midjourney, Grok и ещё десятки нейросетей со встроенной защитой от рекламы AdGuard. Выбери устройство и подключись за 1 минуту.</p>
+      <h1 data-i18n="heroHeading">Smart DNS для ИИ: быстрый доступ к Gemini, ChatGPT и Claude без VPN</h1>
+      <p class="hero-subtitle" data-i18n="heroSubtitle">Оптимизация сетевой маршрутизации к AI-платформам: запросы к международным нейросетям направляются через европейские узлы, а локальный трафик, российские банки и Госуслуги идут напрямую от вашего провайдера на максимальной скорости.</p>
+
+      <!-- 4 Specific Hero Benefits -->
+      <div class="hero-benefits-wrapper">
+        <ul class="hero-benefits-list">
+          <li class="hero-benefit-item">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span data-i18n="heroBenefit1">Прямой доступ без посредников: устранение региональных ограничений OpenAI, Anthropic и Google без падения скорости</span>
+          </li>
+          <li class="hero-benefit-item">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span data-i18n="heroBenefit2">0% нагрузки на аккумулятор: работает на уровне сетевого стека ОС, не требует фоновых программ и VPN-клиентов</span>
+          </li>
+          <li class="hero-benefit-item">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span data-i18n="heroBenefit3">Российские сервисы без сбоев: Сбербанк, Т-Банк и Госуслуги работают на полной скорости без капчи и отключений</span>
+          </li>
+          <li class="hero-benefit-item">
+            <div class="benefit-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span data-i18n="heroBenefit4">Минимальный пинг в API: прямое подключение с задержкой 25–45 мс для быстрой генерации и потоковых ответов</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Main CTA Button -->
+      <div class="hero-cta-wrapper">
+        <a href="#setup" class="btn-hero-cta" data-i18n="heroCta">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span data-i18n="heroCta">Подключить Smart DNS бесплатно</span>
+        </a>
+      </div>
       
       <!-- Unified Harmonious Services Ribbon -->
       <div class="services-ribbon-container">
@@ -3010,8 +3635,229 @@ html_content = f'''<!DOCTYPE html>
       </div>
     </section>
 
+    <!-- 2.5. Comparison Section -->
+    <section class="comparison-section" id="comparison">
+      <div class="section-tag-wrapper">
+        <div class="section-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          <span data-i18n="compTag">СРАВНЕНИЕ ТЕХНОЛОГИЙ</span>
+        </div>
+      </div>
+      <h2 class="section-heading" data-i18n="compTitle">Стандартный VPN против MagicDNS (Smart DNS)</h2>
+      <p class="section-subtitle" data-i18n="compSubtitle">Почему прямое перенаправление DNS эффективнее и надежнее тяжелых тоннелей</p>
+      
+      <div class="comparison-table-wrapper">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th class="col-param" data-i18n="compThParam">Параметр</th>
+              <th class="col-vpn" data-i18n="compThVpn">Стандартный VPN</th>
+              <th class="col-magic" data-i18n="compThMagic">MagicDNS (Smart DNS)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-param">
+                <strong data-i18n="compParamSpeed">Реальная скорость</strong>
+              </td>
+              <td class="cell-vpn">
+                <span class="status-indicator bad">✕</span>
+                <span data-i18n="compVpnSpeed">Падение скорости на 40–70% из-за шифрования тоннеля и очередей</span>
+              </td>
+              <td class="cell-magic">
+                <span class="status-indicator good">✓</span>
+                <span data-i18n="compMagicSpeed">100% скорости вашего провайдера (до 1 Гбит/с) без замедления</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="cell-param">
+                <strong data-i18n="compParamPing">Пинг в API</strong>
+              </td>
+              <td class="cell-vpn">
+                <span class="status-indicator bad">✕</span>
+                <span data-i18n="compVpnPing">Задержки 150–350 мс, лаги и прерывания стриминга токенов</span>
+              </td>
+              <td class="cell-magic">
+                <span class="status-indicator good">✓</span>
+                <span data-i18n="compMagicPing">Минимальный пинг 25–45 мс, мгновенный посимвольный вывод</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="cell-param">
+                <strong data-i18n="compParamBattery">Влияние на заряд смартфона</strong>
+              </td>
+              <td class="cell-vpn">
+                <span class="status-indicator bad">✕</span>
+                <span data-i18n="compVpnBattery">Повышенный расход батареи до 15–25% в сутки из-за фонового VPN-клиента</span>
+              </td>
+              <td class="cell-magic">
+                <span class="status-indicator good">✓</span>
+                <span data-i18n="compMagicBattery">0% расхода аккумулятора — сетевые настройки встроены в ОС</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="cell-param">
+                <strong data-i18n="compParamBanks">Доступность банков и Госуслуг</strong>
+              </td>
+              <td class="cell-vpn">
+                <span class="status-indicator bad">✕</span>
+                <span data-i18n="compVpnBanks">Сбои доступа, проверки безопасности, блокировки со стороны сервисов РФ</span>
+              </td>
+              <td class="cell-magic">
+                <span class="status-indicator good">✓</span>
+                <span data-i18n="compMagicBanks">Работают штатно: локальный трафик идёт напрямую от провайдера</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="cell-param">
+                <strong data-i18n="compParamStability">Стабильность соединения</strong>
+              </td>
+              <td class="cell-vpn">
+                <span class="status-indicator bad">✕</span>
+                <span data-i18n="compVpnStability">Периодические обрывы, поиск работающих серверов и протоколов</span>
+              </td>
+              <td class="cell-magic">
+                <span class="status-indicator good">✓</span>
+                <span data-i18n="compMagicStability">Стабильное соединение 24/7 при переключении между Wi-Fi и мобильным интернетом</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 2.7. Supported AI Platforms Section -->
+    <section class="ai-platforms-section" id="platforms">
+      <div class="section-tag-wrapper">
+        <div class="section-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span data-i18n="platTag">ПОДДЕРЖИВАЕМЫЕ ПЛАТФОРМЫ</span>
+        </div>
+      </div>
+      <h2 class="section-heading" data-i18n="platTitle">Поддерживаемые платформы ИИ и устраняемые ошибки</h2>
+      <p class="section-subtitle" data-i18n="platSubtitle">Автоматическое устранение региональных ошибок геолокации без прокси и сторонних приложений</p>
+
+      <div class="platforms-grid">
+        <!-- Card 1: Google Gemini -->
+        <div class="platform-card">
+          <div class="platform-card-header">
+            <div class="platform-icon-wrap gemini-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L14.2 9.8L22 12L14.2 14.2L12 22L9.8 14.2L2 12L9.8 9.8L12 2Z"/></svg>
+            </div>
+            <div>
+              <h3 class="platform-name">Google Gemini</h3>
+              <span class="platform-badge">gemini.google.com</span>
+            </div>
+          </div>
+          <div class="platform-error-box">
+            <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
+            <code class="error-code">"Gemini is not available in your country"</code>
+          </div>
+          <p class="platform-desc" data-i18n="platGeminiDesc">Устраняет ошибку «Gemini is not available in your country» в веб-версии и мобильных приложениях.</p>
+        </div>
+
+        <!-- Card 2: Google AI Studio -->
+        <div class="platform-card">
+          <div class="platform-card-header">
+            <div class="platform-icon-wrap aistudio-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M15 9h6"/><path d="M15 15h6"/></svg>
+            </div>
+            <div>
+              <h3 class="platform-name">Google AI Studio</h3>
+              <span class="platform-badge">aistudio.google.com</span>
+            </div>
+          </div>
+          <div class="platform-error-box">
+            <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
+            <code class="error-code">"User location is not supported"</code>
+          </div>
+          <p class="platform-desc" data-i18n="platAiStudioDesc">Устраняет ошибку «User location is not supported» при вызове моделей и выпуске API-ключей.</p>
+        </div>
+
+        <!-- Card 3: ChatGPT (OpenAI) -->
+        <div class="platform-card">
+          <div class="platform-card-header">
+            <div class="platform-icon-wrap chatgpt-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M9.5 15a3.5 3.5 0 0 0 5 0"/></svg>
+            </div>
+            <div>
+              <h3 class="platform-name">ChatGPT</h3>
+              <span class="platform-badge">chatgpt.com (OpenAI)</span>
+            </div>
+          </div>
+          <div class="platform-error-box">
+            <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
+            <code class="error-code">"OpenAI's services are not available in your country"</code>
+          </div>
+          <p class="platform-desc" data-i18n="platChatgptDesc">Устраняет сбои сессий «OpenAI's services are not available in your country» и проверки Cloudflare.</p>
+        </div>
+
+        <!-- Card 4: Claude (Anthropic) -->
+        <div class="platform-card">
+          <div class="platform-card-header">
+            <div class="platform-icon-wrap claude-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v4m0 12v4M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+            </div>
+            <div>
+              <h3 class="platform-name">Claude</h3>
+              <span class="platform-badge">claude.ai (Anthropic)</span>
+            </div>
+          </div>
+          <div class="platform-error-box">
+            <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
+            <code class="error-code">"App unavailable in your region"</code>
+          </div>
+          <p class="platform-desc" data-i18n="platClaudeDesc">Устраняет ошибку «App unavailable in your region» в браузере claude.ai и нативных приложениях.</p>
+        </div>
+
+        <!-- Card 5: Midjourney -->
+        <div class="platform-card">
+          <div class="platform-card-header">
+            <div class="platform-icon-wrap midjourney-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><path d="M7 16l5-8 5 8"/></svg>
+            </div>
+            <div>
+              <h3 class="platform-name">Midjourney</h3>
+              <span class="platform-badge">midjourney.com</span>
+            </div>
+          </div>
+          <div class="platform-error-box">
+            <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
+            <code class="error-code">"Failed to load user gallery / 403"</code>
+          </div>
+          <p class="platform-desc" data-i18n="platMidjourneyDesc">Устраняет сбои авторизации и загрузки на midjourney.com без замедления работы Discord.</p>
+        </div>
+
+        <!-- Card 6: Microsoft Copilot -->
+        <div class="platform-card">
+          <div class="platform-card-header">
+            <div class="platform-icon-wrap copilot-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="8 10 12 14 16 10"/></svg>
+            </div>
+            <div>
+              <h3 class="platform-name">Microsoft Copilot</h3>
+              <span class="platform-badge">copilot.microsoft.com</span>
+            </div>
+          </div>
+          <div class="platform-error-box">
+            <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
+            <code class="error-code">"Copilot is not available in your region"</code>
+          </div>
+          <p class="platform-desc" data-i18n="platCopilotDesc">Открывает доступ к генерации текста и картинок в Windows 11 и Edge без региональных отказов.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- 3. Device Configurator -->
-    <section class="configurator-section tabs-section">
+    <section class="configurator-section tabs-section" id="setup">
+      <div class="section-tag-wrapper">
+        <div class="section-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v7m0 6v7M2 12h7m6 0h7"/></svg>
+          <span data-i18n="setupTag">ИНСТРУКЦИИ ПО ПОДКЛЮЧЕНИЮ</span>
+        </div>
+      </div>
+      <h2 class="section-heading" data-i18n="setupTitle">Быстрая настройка Smart DNS на ваших устройствах</h2>
+      <p class="section-subtitle" data-i18n="setupSubtitle">Выберите вашу операционную систему или настройте домашний роутер за 1 минуту</p>
       <!-- Segmented Tab Bar -->
       <div class="segmented-bar-wrapper">
         <nav class="segmented-bar" role="tablist" aria-label="Конфигурация устройств">
@@ -3026,10 +3872,6 @@ html_content = f'''<!DOCTYPE html>
           <button class="segmented-tab" role="tab" id="tab-android" aria-controls="panel-android" aria-selected="false" tabindex="-1" data-target="panel-android">
             <svg viewBox="0 0 24 24" class="tab-icon"><path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4483.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.503C15.5902 8.411 13.8533 8.1 12 8.1s-3.5902.311-5.1368.8497L4.8409 5.4467a.4161.4161 0 00-.5677-.1521.4157.4157 0 00-.1521.5676l1.9973 3.4592C2.6889 11.1867.3432 14.6589 0 18.761h24c-.3432-4.1021-2.6889-7.5743-6.1185-9.4396" fill="currentColor"/></svg>
             <span data-i18n="tabAndroid">Android (DoT)</span>
-          </button>
-          <button class="segmented-tab" role="tab" id="tab-proxy" aria-controls="panel-proxy" aria-selected="false" tabindex="-1" data-target="panel-proxy">
-            <svg viewBox="0 0 24 24" class="tab-icon" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <span data-i18n="tabProxy">Прокси приложений</span>
           </button>
         </nav>
       </div>
@@ -3169,86 +4011,6 @@ html_content = f'''<!DOCTYPE html>
               <div class="qr-caption">
                 <svg viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2"></path><path d="M4 16v2a2 2 0 0 0 2 2h2"></path><path d="M16 4h2a2 2 0 0 1 2 2v2"></path><path d="M16 20h2a2 2 0 0 0 2-2v-2"></path></svg>
                 <span data-i18n="qrAndroidCaption">QR-код хоста Android DoT</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Panel 4: Прокси приложений -->
-      <div class="tab-panel" id="panel-proxy" role="tabpanel" aria-labelledby="tab-proxy">
-        <div class="glass-config-card">
-          <div class="card-left-column">
-            <div class="card-header-row">
-              <h2 class="card-header-title" data-i18n="proxyTitle">Персональный прокси для приложений</h2>
-              <span class="card-badge" data-i18n="proxyBadge">Порт 8085 • HTTP CONNECT</span>
-            </div>
-            <p class="card-instruction" data-i18n="proxyDesc">
-              Для прямого ввода в Telegram, нейросетевые клиенты, браузерные расширения и IDE. Авторизация по логину и паролю.
-            </p>
-            <div class="input-field-group">
-              <span class="input-field-label" data-i18n="proxyUrlLabel">Адрес персонального прокси:</span>
-              <div class="code-input-box">
-                <code class="code-input-text">http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085</code>
-                <button class="btn-inline-copy" data-clipboard="http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085" title="Скопировать URL" aria-label="Скопировать URL">
-                  <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  <span data-i18n="btnCopy">Копировать</span>
-                </button>
-              </div>
-            </div>
-            
-            <!-- Compact Parameter Subgrid -->
-            <div class="params-subgrid">
-              <div class="param-subcard">
-                <div class="param-subcard-header">
-                  <span class="param-subcard-label" data-i18n="proxyHostLabel">Хост</span>
-                  <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Копировать хост" aria-label="Копировать хост">
-                    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  </button>
-                </div>
-                <span class="param-subcard-val">109.120.132.43</span>
-              </div>
-              <div class="param-subcard">
-                <div class="param-subcard-header">
-                  <span class="param-subcard-label" data-i18n="proxyPortLabel">Порт</span>
-                  <button class="btn-inline-copy" data-clipboard="8085" title="Копировать порт" aria-label="Копировать порт">
-                    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  </button>
-                </div>
-                <span class="param-subcard-val">8085</span>
-              </div>
-              <div class="param-subcard">
-                <div class="param-subcard-header">
-                  <span class="param-subcard-label" data-i18n="proxyUserLabel">Логин</span>
-                  <button class="btn-inline-copy" data-clipboard="admin" title="Копировать логин" aria-label="Копировать логин">
-                    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  </button>
-                </div>
-                <span class="param-subcard-val">admin</span>
-              </div>
-              <div class="param-subcard">
-                <div class="param-subcard-header">
-                  <span class="param-subcard-label" data-i18n="proxyPassLabel">Пароль</span>
-                  <button class="btn-inline-copy" data-clipboard="Px94kM8vQ7wZb2Rt" title="Копировать пароль" aria-label="Копировать пароль">
-                    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                  </button>
-                </div>
-                <span class="param-subcard-val">Px94kM8vQ7wZb2Rt</span>
-              </div>
-            </div>
-
-            <div class="card-actions-row">
-              <button class="btn-neon-action" data-clipboard="http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085" data-i18n="btnCopyProxy">Скопировать прокси</button>
-            </div>
-          </div>
-          <div class="card-right-column">
-            <div class="qr-pod">
-              <div class="qr-canvas-box" title="QR-код настроек прокси">
-                {qr_proxy}
-              </div>
-              <div class="qr-caption">
-                <svg viewBox="0 0 24 24"><path d="M4 8V6a2 2 0 0 1 2-2h2"></path><path d="M4 16v2a2 2 0 0 0 2 2h2"></path><path d="M16 4h2a2 2 0 0 1 2 2v2"></path><path d="M16 20h2a2 2 0 0 0 2-2v-2"></path></svg>
-                <span data-i18n="qrProxyCaption">QR-код настроек прокси</span>
               </div>
             </div>
           </div>
@@ -3456,6 +4218,70 @@ html_content = f'''<!DOCTYPE html>
       </div>
     </section>
 
+    <!-- 4.2. FAQ Section -->
+    <section class="faq-section" id="faq">
+      <div class="section-tag-wrapper">
+        <div class="section-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span data-i18n="faqTag">ВОПРОСЫ И ОТВЕТЫ</span>
+        </div>
+      </div>
+      <h2 class="section-heading" data-i18n="faqTitle">Часто задаваемые вопросы о Smart DNS</h2>
+      <p class="section-subtitle" data-i18n="faqSubtitle">Всё о безопасности, скорости, настройке и юридической чистоте MagicDNS</p>
+
+      <div class="faq-accordion">
+        <details class="faq-item" open>
+          <summary class="faq-question">
+            <span data-i18n="faqQ1">Безопасно ли использовать MagicDNS для личных и банковских данных?</span>
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p data-i18n="faqA1">Да, абсолютно безопасно. DNS-шлюз резолвит только адреса доменов. Весь трафик шифруется сквозным TLS/HTTPS между вашим устройством и банком или Госуслугами. Никто не может перехватить пароли или номера карт. Российский трафик идёт напрямую от вашего провайдера.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span data-i18n="faqQ2">Ведется ли логирование DNS-запросов и истории посещений?</span>
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p data-i18n="faqA2">Сервис работает по строгой политике Zero-Logs. Мы не сохраняем историю DNS-запросов, не регистрируем IP-адреса пользователей и не создаем профилей поведения. Обработка происходит в оперативной памяти сервера с немедленной очисткой после ответа.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span data-i18n="faqQ3">Почему при использовании MagicDNS скорость интернета не снижается, в отличие от VPN?</span>
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p data-i18n="faqA3">Smart DNS не пропускает через себя данные (видео, файлы, страницы). DNS участвует только один раз в момент первого обращения к сайту для получения его IP-адреса (несколько миллисекунд). После этого устройство связывается с сервером напрямую, что гарантирует 100% скорости вашего провайдера.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span data-i18n="faqQ4">Будет ли работать Smart DNS при переключении между Wi-Fi и мобильной сетью?</span>
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p data-i18n="faqA4">Да. На Android в режиме «Персональный DNS» и на iOS через конфигурационный профиль DoH/DoT настройки действуют системно. При выходе из дома и переключении с Wi-Fi на мобильную сеть 4G/5G профиль сохраняет активность автоматически.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            <span data-i18n="faqQ5">В чем главное отличие Smart DNS от классического VPN?</span>
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p data-i18n="faqA5">Классический VPN принудительно направляет весь трафик устройства через удаленный зашифрованный сервер, что снижает скорость, увеличивает пинг и блокирует доступ к российским банковским приложениям. Smart DNS направляет в обход региональных фильтров только DNS-маршрутизацию для поддерживаемых AI-платформ, сохраняя прямой доступ ко всем остальным ресурсам.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
     <!-- 4.5. Community Reviews & Suggestions Section -->
     <section class="reviews-section" id="reviews">
       <div class="reviews-header">
@@ -3519,6 +4345,8 @@ html_content = f'''<!DOCTYPE html>
       </div>
 
       <div class="footer-links">
+        <button type="button" class="footer-legal-link" id="btn-open-privacy" data-i18n="footerPrivacy">Политика конфиденциальности</button>
+        <button type="button" class="footer-legal-link" id="btn-open-terms" data-i18n="footerTerms">Пользовательское соглашение</button>
         <a href="https://pay.cloudtips.ru/p/596a95a5" class="social-btn social-btn-donate" target="_blank" rel="noopener noreferrer" aria-label="Поддержать автора">
           <svg viewBox="0 0 24 24" class="donate-heart" aria-hidden="true">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -3527,7 +4355,73 @@ html_content = f'''<!DOCTYPE html>
         </a>
       </div>
     </div>
+    <div class="container footer-disclaimer-row">
+      <p class="legal-disclaimer" data-i18n="footerDisclaimer">
+        Отказ от ответственности: Сервис MagicDNS предоставляет технические услуги маршрутизации сетевых DNS-запросов по принципу «как есть» (AS IS). MagicDNS не является аффилированным лицом компаний OpenAI, Google, Anthropic или Microsoft. Все упомянутые товарные знаки и названия брендов принадлежат их законным правообладателям. Сервис не несет ответственности за возможные перебои или изменения условий обслуживания сторонних платформ.
+      </p>
+    </div>
   </footer>
+
+  <!-- Cookie Banner (152-ФЗ) -->
+  <div id="cookie-banner" class="cookie-banner" role="region" aria-label="Уведомление об обработке файлов cookie" style="display: none;">
+    <div class="cookie-banner-content">
+      <div class="cookie-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--neon-mint)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0-1.5 19.88"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><circle cx="15.5" cy="8.5" r="1.5" fill="currentColor"/><circle cx="12" cy="15" r="2" fill="currentColor"/></svg>
+      </div>
+      <p class="cookie-text" data-i18n="cookieText">
+        Мы используем файлы cookie и локальное хранилище для корректной работы сервиса и аналитической статистики в соответствии с 152-ФЗ «О персональных данных». Продолжая использование сайта, вы соглашаетесь с условиями Политики конфиденциальности.
+      </p>
+      <button type="button" class="btn-neon-action btn-cookie-accept" id="btn-cookie-accept" data-i18n="cookieAccept">Понятно</button>
+    </div>
+  </div>
+
+  <!-- Privacy Policy Modal (152-ФЗ) -->
+  <div id="privacy-modal" class="feedback-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="privacy-modal-title" aria-hidden="true" style="display: none;">
+    <div class="feedback-modal-card legal-modal-card">
+      <div class="feedback-modal-header">
+        <h3 id="privacy-modal-title" class="feedback-modal-title" data-i18n="privacyModalTitle">Политика конфиденциальности (152-ФЗ)</h3>
+        <button type="button" class="chat-close-btn" id="close-privacy-btn" aria-label="Закрыть окно">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="legal-modal-body">
+        <h4>1. Общие положения</h4>
+        <p>Настоящая Политика обработки персональных данных составлена в соответствии с Федеральным законом РФ от 27.07.2006 № 152-ФЗ «О персональных данных» и определяет порядок обработки и меры по обеспечению безопасности данных сервиса MagicDNS (magicdns.ru).</p>
+        <h4>2. Принципы обработки данных и Zero-Logs</h4>
+        <p>Сервис MagicDNS придерживается политики минимальной достаточности данных: мы не ведем логирование DNS-запросов, не сохраняем историю посещенных доменов и не сопоставляем IP-адреса пользователей с их активностью в сети. Обработка DNS-пакетов происходит исключительно в оперативной памяти резолверов без записи на постоянные накопители.</p>
+        <h4>3. Использование файлов Cookie и LocalStorage</h4>
+        <p>Для сохранения пользовательских настроек (выбранный язык интерфейса, согласие с правилами, статус сессии) используются локальные механизмы браузера (LocalStorage). Эти данные не передаются третьим лицам и используются исключительно для обеспечения удобства работы с интерфейсом сайта.</p>
+        <h4>4. Обратная связь</h4>
+        <p>При добровольной отправке отзыва через форму пользователь может указать контактные данные по собственному желанию. Данные используются исключительно для ответа на обращение.</p>
+      </div>
+      <div class="legal-modal-footer">
+        <button type="button" class="btn-dark-action" id="close-privacy-btn-bottom" data-i18n="legalClose">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms of Service Modal -->
+  <div id="terms-modal" class="feedback-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="terms-modal-title" aria-hidden="true" style="display: none;">
+    <div class="feedback-modal-card legal-modal-card">
+      <div class="feedback-modal-header">
+        <h3 id="terms-modal-title" class="feedback-modal-title" data-i18n="termsModalTitle">Пользовательское соглашение</h3>
+        <button type="button" class="chat-close-btn" id="close-terms-btn" aria-label="Закрыть окно">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="legal-modal-body">
+        <h4>1. Предмет соглашения</h4>
+        <p>Сервис MagicDNS предоставляет пользователю доступ к публичным серверам разрешения доменных имен (DoH, DoT, IPv4 DNS) на условиях настоящего Соглашения.</p>
+        <h4>2. Ограничение ответственности (AS IS)</h4>
+        <p>Сервис предоставляется по принципу «как есть» (AS IS). Администрация не гарантирует абсолютную бесперебойность работы сторонних зарубежных AI-платформ (OpenAI, Anthropic, Google, Microsoft) и не несет ответственности за технические изменения на их стороне.</p>
+        <h4>3. Правомерное использование</h4>
+        <p>Пользователь обязуется не использовать сервис для осуществления противоправной деятельности, нарушающей законодательство Российской Федерации.</p>
+      </div>
+      <div class="legal-modal-footer">
+        <button type="button" class="btn-dark-action" id="close-terms-btn-bottom" data-i18n="legalClose">Закрыть</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Toast Notification -->
   <div class="toast" id="toast-message" role="alert" aria-live="assertive">
@@ -4310,7 +5204,7 @@ html_content = f'''<!DOCTYPE html>
           return langAnswers.adblock || faqAnswers.adblock;
         }}
         if (lower.indexOf('ip') !== -1 || lower.indexOf('айпи') !== -1 || lower.indexOf('адрес') !== -1 || lower.indexOf('address') !== -1) {{
-          return 'Адреса MagicDNS:<br>• DoH URL: <code>https://dns.magicdns.ru/dns-query</code><br>• DoT хост: <code>dns.magicdns.ru</code><br>• IPv4 шлюзов: <code>109.120.132.43</code> / <code>94.249.177.102</code><br>• Прокси: <code>http://admin:Px94kM8vQ7wZb2Rt@109.120.132.43:8085</code>';
+          return 'Адреса MagicDNS:<br>• DoH URL: <code>https://dns.magicdns.ru/dns-query</code><br>• DoT хост: <code>dns.magicdns.ru</code><br>• IPv4 шлюзов: <code>109.120.132.43</code> / <code>94.249.177.102</code>';
         }}
         return null;
       }}
@@ -4671,6 +5565,51 @@ html_content = f'''<!DOCTYPE html>
       }}
 
       renderReviews();
+
+      // Cookie Banner Logic (152-ФЗ)
+      const cookieBanner = document.getElementById('cookie-banner');
+      const cookieAcceptBtn = document.getElementById('btn-cookie-accept');
+      if (cookieBanner && !localStorage.getItem('magicdns_cookie_consent')) {{
+        cookieBanner.style.display = 'block';
+      }}
+      if (cookieAcceptBtn) {{
+        cookieAcceptBtn.addEventListener('click', function() {{
+          playTactileFeedback(1000, 0.05);
+          localStorage.setItem('magicdns_cookie_consent', 'true');
+          if (cookieBanner) cookieBanner.style.display = 'none';
+        }});
+      }}
+
+      // Legal Modals (Privacy & Terms)
+      function setupLegalModal(btnId, modalId, closeIds) {{
+        const btn = document.getElementById(btnId);
+        const modal = document.getElementById(modalId);
+        if (!btn || !modal) return;
+        btn.addEventListener('click', function() {{
+          playTactileFeedback(800, 0.05);
+          modal.style.display = 'flex';
+          modal.setAttribute('aria-hidden', 'false');
+        }});
+        closeIds.forEach(function(cId) {{
+          const closeEl = document.getElementById(cId);
+          if (closeEl) {{
+            closeEl.addEventListener('click', function() {{
+              playTactileFeedback(600, 0.04);
+              modal.style.display = 'none';
+              modal.setAttribute('aria-hidden', 'true');
+            }});
+          }}
+        }});
+        modal.addEventListener('click', function(e) {{
+          if (e.target === modal) {{
+            modal.style.display = 'none';
+            modal.setAttribute('aria-hidden', 'true');
+          }}
+        }});
+      }}
+
+      setupLegalModal('btn-open-privacy', 'privacy-modal', ['close-privacy-btn', 'close-privacy-btn-bottom']);
+      setupLegalModal('btn-open-terms', 'terms-modal', ['close-terms-btn', 'close-terms-btn-bottom']);
 
     }})();
   </script>
