@@ -5735,6 +5735,13 @@ html_content = f'''<!DOCTYPE html>
           rating: 5,
           message: 'Спасибо вам) На винде работает)',
           date: '21 октября'
+        }},
+        {{
+          author: 'Аноним',
+          platform: 'Windows',
+          rating: 5,
+          message: 'Spasiba',
+          date: '21 октября'
         }}
       ];
 
