@@ -257,6 +257,7 @@ test("Cookie banner for 152-FZ present", 'id="cookie-banner"' in html and '152-�
 test("Liability disclaimer present", 'class="legal-disclaimer"' in html and 'AS IS' in html)
 test("Privacy, Terms and Contact modals present", 'id="privacy-modal"' in html and 'id="terms-modal"' in html and 'id="contact-modal"' in html)
 test("Footer legal contact button present", 'id="btn-open-contact"' in html and 'data-i18n="footerContact"' in html)
+test("News and announcements section present", 'id="news"' in html and 'id="news-grid"' in html and 'data-i18n="newsTitle"' in html)
 test("Hero CTA button preserves SVG icon during i18n", 'class="btn-hero-cta" data-i18n="heroCta"' not in html and '<span data-i18n="heroCta">' in html)
 test("Regulatory compliance (no обход)", 'обход' not in html.lower())
 test("Regulatory compliance (no разблокиров/взлом/анонимайзер)", not any(term in html.lower() for term in ['разблокиров', 'взлом', 'анонимайзер']))

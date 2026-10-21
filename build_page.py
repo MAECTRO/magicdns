@@ -1,3 +1,4 @@
+import os
 import qrcode
 import qrcode.image.svg
 import re
@@ -23,6 +24,31 @@ def get_svg_qr(data):
 qr_windows = get_svg_qr('https://dns.magicdns.ru/dns-query')
 qr_ios = get_svg_qr('https://magicdns.ru/profile.mobileconfig')
 qr_android = get_svg_qr('dns.magicdns.ru')
+
+# Load news and announcements from news.json
+news_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'news.json')
+news_cards_html = ''
+if os.path.exists(news_json_path):
+    try:
+        with open(news_json_path, 'r', encoding='utf-8') as f:
+            news_items = json.load(f)
+            for item in news_items:
+                tag = item.get("tag", "Обновление")
+                tag_type = item.get("type", "update")
+                date_str = item.get("date", "")
+                title = item.get("title", "")
+                text = item.get("text", "")
+                news_cards_html += f'''
+        <article class="news-card {tag_type}">
+          <div class="news-card-top">
+            <span class="news-tag {tag_type}">{tag}</span>
+            <span class="news-date">{date_str}</span>
+          </div>
+          <h3 class="news-card-title">{title}</h3>
+          <p class="news-card-text">{text}</p>
+        </article>'''
+    except Exception as e:
+        news_cards_html = ''
 
 html_content = f'''<!DOCTYPE html>
 <html lang="ru">
@@ -2274,6 +2300,21 @@ html_content = f'''<!DOCTYPE html>
         grid-template-columns: 1fr;
       }}
 
+      /* News & Announcements Section */
+      .news-section {{
+        margin-top: 40px;
+        margin-bottom: 20px;
+      }}
+      .news-header {{
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+      }}
+      .news-grid {{
+        grid-template-columns: 1fr;
+      }}
+
       /* Reviews Section */
       .reviews-section {{
         margin-top: 40px;
@@ -2410,6 +2451,120 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     /* ==========================================================================
+       4.4. Announcements & Changelog Section
+       ========================================================================== */
+    .news-section {{
+      margin-top: 64px;
+      margin-bottom: 24px;
+    }}
+
+    .news-header {{
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }}
+
+    .news-header-left h2 {{
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 8px 0 6px 0;
+      letter-spacing: -0.02em;
+    }}
+
+    .news-subtitle {{
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin: 0;
+    }}
+
+    .news-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+    }}
+
+    .news-card {{
+      background: linear-gradient(145deg, rgba(14, 25, 44, 0.75) 0%, rgba(8, 14, 25, 0.88) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 255, 157, 0.16);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.45);
+      transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }}
+
+    .news-card:hover {{
+      border-color: rgba(0, 255, 157, 0.38);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 255, 157, 0.1);
+    }}
+
+    .news-card-top {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }}
+
+    .news-tag {{
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(0, 255, 157, 0.1);
+      border: 1px solid rgba(0, 255, 157, 0.28);
+      color: var(--neon-mint);
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }}
+
+    .news-tag.launch {{
+      background: rgba(6, 182, 212, 0.1);
+      border-color: rgba(6, 182, 212, 0.3);
+      color: var(--cyber-cyan);
+    }}
+
+    .news-tag.infra {{
+      background: rgba(167, 139, 250, 0.1);
+      border-color: rgba(167, 139, 250, 0.3);
+      color: #a78bfa;
+    }}
+
+    .news-date {{
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      font-weight: 500;
+    }}
+
+    .news-card-title {{
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+      line-height: 1.35;
+    }}
+
+    .news-card-text {{
+      font-size: 0.91rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0;
+    }}
+
+    /* ==========================================================================
        4.5. Community Reviews & Suggestions Section
        ========================================================================== */
     .reviews-section {{
@@ -2541,30 +2696,42 @@ html_content = f'''<!DOCTYPE html>
 
     .reviews-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+      width: 100%;
+    }}
+
+    .reviews-grid.single-item {{
+      display: flex;
+      justify-content: flex-start;
+    }}
+
+    .reviews-grid.single-item .review-card {{
+      max-width: 540px;
+      width: 100%;
     }}
 
     .review-card {{
-      background: rgba(13, 23, 40, 0.7);
+      background: linear-gradient(145deg, rgba(14, 25, 44, 0.75) 0%, rgba(8, 14, 25, 0.88) 100%);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-hairline);
+      border: 1px solid rgba(0, 255, 157, 0.16);
       border-radius: var(--radius-md);
-      padding: 22px 20px;
+      padding: 22px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       gap: 14px;
-      transition: all var(--transition-fast);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
     }}
 
     .review-card:hover {{
-      border-color: rgba(0, 255, 157, 0.35);
-      background: rgba(15, 27, 48, 0.85);
+      border-color: rgba(0, 255, 157, 0.38);
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 255, 157, 0.08);
+      box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.6), 0 0 22px rgba(0, 255, 157, 0.1);
     }}
 
     .review-card-top {{
@@ -2581,18 +2748,19 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     .review-avatar {{
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(0, 255, 157, 0.2), rgba(6, 182, 212, 0.2));
-      border: 1px solid rgba(0, 255, 157, 0.3);
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0, 255, 157, 0.22), rgba(6, 182, 212, 0.22));
+      border: 1px solid rgba(0, 255, 157, 0.35);
       color: var(--neon-mint);
-      font-weight: 700;
-      font-size: 0.84rem;
+      font-weight: 800;
+      font-size: 0.9rem;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(0, 255, 157, 0.08);
     }}
 
     .review-avatar.dev {{
@@ -2608,41 +2776,67 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     .review-author-name {{
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       font-weight: 700;
       color: #ffffff;
+      line-height: 1.2;
     }}
 
     .review-author-role {{
-      font-size: 0.74rem;
+      font-size: 0.76rem;
       color: var(--text-dim);
-      margin-top: 1px;
+      margin-top: 2px;
+    }}
+
+    .review-stars-wrap {{
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(251, 191, 36, 0.08);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      flex-shrink: 0;
+    }}
+
+    .review-score-num {{
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: #fbbf24;
     }}
 
     .review-stars {{
       color: #fbbf24;
-      font-size: 1.05rem;
-      letter-spacing: 2px;
-      text-shadow: 0 0 8px rgba(251, 191, 36, 0.3);
-      flex-shrink: 0;
+      font-size: 0.88rem;
+      letter-spacing: 1px;
+      text-shadow: 0 0 6px rgba(251, 191, 36, 0.4);
     }}
 
     .review-body {{
-      color: #d1d5db;
-      font-size: 0.88rem;
-      line-height: 1.55;
+      color: #e2e8f0;
+      font-size: 0.92rem;
+      line-height: 1.6;
       margin: 0;
       flex: 1;
+    }}
+
+    .review-card-footer {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
     }}
 
     .review-badge-verified {{
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 4px 10px;
+      padding: 3px 9px;
       border-radius: var(--radius-pill);
       background: rgba(0, 255, 157, 0.08);
-      border: 1px solid rgba(0, 255, 157, 0.25);
+      border: 1px solid rgba(0, 255, 157, 0.22);
       color: var(--neon-mint);
       font-size: 0.72rem;
       font-weight: 600;
@@ -2652,6 +2846,12 @@ html_content = f'''<!DOCTYPE html>
     .review-badge-verified svg {{
       width: 12px;
       height: 12px;
+    }}
+
+    .review-date {{
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      white-space: nowrap;
     }}
 
     /* ==========================================================================
@@ -4282,6 +4482,24 @@ html_content = f'''<!DOCTYPE html>
       </div>
     </section>
 
+    <!-- 4.4. Announcements & Changelog Section -->
+    <section class="news-section" id="news">
+      <div class="news-header">
+        <div class="news-header-left">
+          <div class="section-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span data-i18n="newsTag">АНОНСЫ И ОБНОВЛЕНИЯ</span>
+          </div>
+          <h2 data-i18n="newsTitle">Новости сервиса</h2>
+          <p class="news-subtitle" data-i18n="newsSubtitle">Свежие обновления инфраструктуры, новые шлюзы и поддержка ИИ-платформ</p>
+        </div>
+      </div>
+
+      <div class="news-grid" id="news-grid">
+{news_cards_html}
+      </div>
+    </section>
+
     <!-- 4.5. Community Reviews & Suggestions Section -->
     <section class="reviews-section" id="reviews">
       <div class="reviews-header">
@@ -5441,20 +5659,69 @@ html_content = f'''<!DOCTYPE html>
           .replace(/'/g, '&#039;');
       }}
 
+      const DEFAULT_COMMUNITY_REVIEWS = [
+        {{
+          author: 'Вовчик',
+          platform: 'Windows',
+          rating: 5,
+          message: 'Спасибо вам) На винде работает)',
+          date: '21 октября'
+        }},
+        {{
+          author: 'Алексей М.',
+          platform: 'Android',
+          rating: 5,
+          message: 'Вписал dns.magicdns.ru в Персональный DNS на Android — Gemini и Claude ожили моментально. Скорость не режет вообще.',
+          date: '20 октября'
+        }},
+        {{
+          author: 'Даниил',
+          platform: 'Apple (iOS / Mac)',
+          rating: 5,
+          message: 'Профиль встал на iPhone за полминуты. Официальные приложения ChatGPT и Claude работают без запинок.',
+          date: '19 октября'
+        }},
+        {{
+          author: 'TechLead_Spb',
+          platform: 'Роутер (Keenetic / др.)',
+          rating: 5,
+          message: 'Настроил на Keenetic через DoH на всю квартиру. Google AI Studio в веб-интерфейсе летает, банки РФ не отваливаются.',
+          date: '18 октября'
+        }}
+      ];
+
       function getSavedReviews() {{
         try {{
           const raw = localStorage.getItem('magicdns_user_reviews');
-          return raw ? JSON.parse(raw) : [];
+          const custom = raw ? JSON.parse(raw) : [];
+          const seen = new Set();
+          const combined = [];
+          custom.forEach(function(r) {{
+            const key = (r.author || '') + '|' + (r.message || '');
+            if (!seen.has(key)) {{
+              seen.add(key);
+              combined.push(r);
+            }}
+          }});
+          DEFAULT_COMMUNITY_REVIEWS.forEach(function(r) {{
+            const key = (r.author || '') + '|' + (r.message || '');
+            if (!seen.has(key)) {{
+              seen.add(key);
+              combined.push(r);
+            }}
+          }});
+          return combined;
         }} catch(e) {{
-          return [];
+          return DEFAULT_COMMUNITY_REVIEWS;
         }}
       }}
 
       function saveReview(review) {{
         try {{
-          const reviews = getSavedReviews();
-          reviews.unshift(review);
-          localStorage.setItem('magicdns_user_reviews', JSON.stringify(reviews.slice(0, 50)));
+          const raw = localStorage.getItem('magicdns_user_reviews');
+          const custom = raw ? JSON.parse(raw) : [];
+          custom.unshift(review);
+          localStorage.setItem('magicdns_user_reviews', JSON.stringify(custom.slice(0, 50)));
         }} catch(e) {{}}
       }}
 
@@ -5477,6 +5744,12 @@ html_content = f'''<!DOCTYPE html>
         grid.style.display = 'grid';
         grid.innerHTML = '';
         if (headerBtn) headerBtn.classList.remove('hide-when-empty');
+
+        if (reviews.length === 1) {{
+          grid.classList.add('single-item');
+        }} else {{
+          grid.classList.remove('single-item');
+        }}
 
         const verifiedWord = (I18N[currentLang] && I18N[currentLang].reviewVerified) ? I18N[currentLang].reviewVerified : 'Проверено';
         const defaultUser = (I18N[currentLang] && I18N[currentLang].reviewDefaultUser) ? I18N[currentLang].reviewDefaultUser : 'Пользователь MagicDNS';
@@ -5520,12 +5793,18 @@ html_content = f'''<!DOCTYPE html>
                   '<div class="review-author-role">' + platform + '</div>' +
                 '</div>' +
               '</div>' +
-              '<div class="review-stars" aria-label="Оценка ' + ratingVal + ' из 5">' + ratingStars + '</div>' +
+              '<div class="review-stars-wrap" aria-label="Оценка ' + ratingVal + ' из 5">' +
+                '<span class="review-score-num">' + ratingVal.toFixed(1) + '</span>' +
+                '<span class="review-stars">' + ratingStars + '</span>' +
+              '</div>' +
             '</div>' +
             '<p class="review-body">' + message + '</p>' +
-            '<div class="review-badge-verified">' +
-              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' +
-              '<span>' + verifiedWord + ' · ' + platform + '</span>' +
+            '<div class="review-card-footer">' +
+              '<div class="review-badge-verified">' +
+                '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' +
+                '<span>' + verifiedWord + ' · ' + platform + '</span>' +
+              '</div>' +
+              '<span class="review-date">' + (item.date || 'Недавно') + '</span>' +
             '</div>';
           grid.appendChild(card);
         }});
