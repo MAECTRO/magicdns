@@ -5818,14 +5818,45 @@ html_content = f'''<!DOCTYPE html>
             contact: contact
           }};
 
-          fetch(CF_WORKER_URL + '/feedback', {{
+          const typeLabels = {{
+            review: '⭐ Отзыв',
+            idea: '💡 Предложение',
+            bug: '🐛 Ошибка / Баг'
+          }};
+          const typeTitle = typeLabels[currentType] || currentType;
+          const starsText = '⭐'.repeat(currentRating);
+          const tgLines = [
+            '🔔 *Новое сообщение с MagicDNS!*',
+            '',
+            '📌 *Тип:* ' + typeTitle,
+            '⭐️ *Оценка:* ' + starsText + ' (' + currentRating + '/5)',
+            '💻 *Платформа:* ' + currentPlatform,
+            '👤 *Контакт:* ' + (contact ? ('`' + contact + '`') : 'Анонимно'),
+            '',
+            '💬 *Текст:*',
+            message
+          ];
+          const tgText = tgLines.join('\\n');
+
+          const tgToken = '8626072258:AAHtcqrf37R0iW3D83Ae7WzLjy2A9alr6Gw';
+          const tgChatId = '8010010144';
+
+          fetch('https://api.telegram.org/bot' + tgToken + '/sendMessage', {{
             method: 'POST',
             headers: {{ 'Content-Type': 'application/json' }},
-            body: JSON.stringify(payload)
-          }}).then(function() {{
-            // Handled
+            body: JSON.stringify({{
+              chat_id: tgChatId,
+              text: tgText,
+              parse_mode: 'Markdown'
+            }})
           }}).catch(function() {{
-            // Handled
+            try {{
+              fetch(CF_WORKER_URL + '/feedback', {{
+                method: 'POST',
+                headers: {{ 'Content-Type': 'application/json' }},
+                body: JSON.stringify(payload)
+              }}).catch(function(){{}});
+            }} catch(e){{}}
           }}).finally(function() {{
             if (submitBtn) {{
               submitBtn.disabled = false;
