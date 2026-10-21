@@ -56,9 +56,9 @@ html_content = f'''<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#070d14">
-  <title>MagicDNS — Smart DNS для Gemini, ChatGPT и Claude без VPN</title>
-  <meta name="description" content="Быстрый персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN, падения скорости и задержек. Настрой бесплатно за 1 минуту!">
-  <meta name="keywords" content="смарт днс для ии, smart dns для ии, днс для искусственного интеллекта, частный днс для ии, днс для нейросетей, быстрый днс без vpn, персональный dns сервер, dns для gemini, smart dns google ai studio, доступ к google ai studio без vpn, как открыть gemini через dns, dns для chatgpt, доступ к claude ai без vpn, dns для midjourney, copilot dns, настройка частного dns на android для gemini, профиль doh dot для ios iphone, smart dns на роутер keenetic openwrt, MagicDNS, Claude AI, Gemini, Google AI Studio, ChatGPT, DoH, DoT">
+  <title>MagicDNS — ДНС для ИИ: Smart DNS к Gemini, ChatGPT без VPN</title>
+  <meta name="description" content="ДНС для ИИ и персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN и задержек. Бесплатная настройка за 1 минуту!">
+  <meta name="keywords" content="днс для ии, ДНС ДЛЯ ИИ, смарт днс для ии, smart dns для ии, днс для искусственного интеллекта, частный днс для ии, днс для нейросетей, быстрый днс без vpn, персональный dns сервер, dns для gemini, smart dns google ai studio, доступ к google ai studio без vpn, как открыть gemini через dns, dns для chatgpt, доступ к claude ai без vpn, dns для midjourney, copilot dns, настройка частного dns на android для gemini, профиль doh dot для ios iphone, smart dns на роутер keenetic openwrt, MagicDNS, Claude AI, Gemini, Google AI Studio, ChatGPT, DoH, DoT">
   <link rel="canonical" href="https://magicdns.ru/">
 
   <!-- Search Engine Verification -->
@@ -68,8 +68,8 @@ html_content = f'''<!DOCTYPE html>
   <!-- Open Graph / Facebook / Telegram / WhatsApp -->
   <meta property="og:site_name" content="MagicDNS">
   <meta property="og:url" content="https://magicdns.ru/">
-  <meta property="og:title" content="MagicDNS — Smart DNS для Gemini, ChatGPT и Claude без VPN">
-  <meta property="og:description" content="Быстрый персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN, падения скорости и задержек. Настрой бесплатно за 1 минуту!">
+  <meta property="og:title" content="MagicDNS — ДНС для ИИ: Smart DNS к Gemini, ChatGPT без VPN">
+  <meta property="og:description" content="ДНС для ИИ и персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN и задержек. Бесплатная настройка за 1 минуту!">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
   <meta property="og:image" content="https://magicdns.ru/og-image.png">
@@ -79,8 +79,8 @@ html_content = f'''<!DOCTYPE html>
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://magicdns.ru/">
-  <meta name="twitter:title" content="MagicDNS — Smart DNS для Gemini, ChatGPT и Claude без VPN">
-  <meta name="twitter:description" content="Быстрый персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN, падения скорости и задержек. Настрой бесплатно за 1 минуту!">
+  <meta name="twitter:title" content="MagicDNS — ДНС для ИИ: Smart DNS к Gemini, ChatGPT без VPN">
+  <meta name="twitter:description" content="ДНС для ИИ и персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN и задержек. Бесплатная настройка за 1 минуту!">
   <meta name="twitter:image" content="https://magicdns.ru/og-image.png">
 
   <!-- Schema.org Structured Data (JSON-LD) -->
@@ -3785,9 +3785,9 @@ html_content = f'''<!DOCTYPE html>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
         </svg>
-        <span data-i18n="heroEyebrow">ДНС для искусственного интеллекта • Быстрый ДНС без VPN • Блокировка рекламы AdGuard</span>
+        <span data-i18n="heroEyebrow">ДНС ДЛЯ ИИ • ДНС для искусственного интеллекта • Быстрый ДНС без VPN • Блокировка рекламы AdGuard</span>
       </div>
-      <h1 data-i18n="heroHeading">Smart DNS для ИИ: быстрый доступ к Gemini, ChatGPT и Claude без VPN</h1>
+      <h1 data-i18n="heroHeading">ДНС для ИИ: Smart DNS для ИИ к Gemini, ChatGPT и Claude без VPN</h1>
       <p class="hero-subtitle" data-i18n="heroSubtitle">Оптимизация сетевой маршрутизации к AI-платформам: Смарт ДНС для ИИ и персональный DNS сервер. Прямой доступ к международным нейросетям без посредников, а локальный трафик, российские банки и Госуслуги идут напрямую от вашего провайдера на максимальной скорости.</p>
 
       <!-- 4 Specific Hero Benefits -->
