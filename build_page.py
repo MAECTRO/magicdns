@@ -6110,6 +6110,7 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
                 <string>https://dns.magicdns.ru/dns-query</string>
                 <key>ServerAddresses</key>
                 <array>
+                    <string>2.56.179.170</string>
                     <string>109.120.132.43</string>
                     <string>94.249.177.102</string>
                 </array>

@@ -122,8 +122,10 @@ except Exception as e:
     test("profile.mobileconfig is valid XML", False, str(e))
 
 test("profile.mobileconfig has DoH protocol and URL", 'HTTPS' in mc_content and 'https://dns.magicdns.ru/dns-query' in mc_content)
-test("profile.mobileconfig has Swedish DNS IP 109.120.132.43", '109.120.132.43' in mc_content and '2.56.179.170' not in mc_content)
-test("profile.mobileconfig has Primary IP 109.120.132.43 before Secondary IP 94.249.177.102 in ServerAddresses", mc_content.find('<string>109.120.132.43</string>') < mc_content.find('<string>94.249.177.102</string>'))
+test("profile.mobileconfig has Finnish Primary DNS IP 2.56.179.170", '2.56.179.170' in mc_content)
+test("profile.mobileconfig has Swedish Backup DNS IP 109.120.132.43", '109.120.132.43' in mc_content)
+test("profile.mobileconfig has German Backup DNS IP 94.249.177.102", '94.249.177.102' in mc_content)
+test("profile.mobileconfig has Finland before Sweden before Germany in ServerAddresses", mc_content.find('<string>2.56.179.170</string>') < mc_content.find('<string>109.120.132.43</string>') < mc_content.find('<string>94.249.177.102</string>'))
 
 # 13. Extract JS and validate with Node.js vm
 script_match = re.search(r'<script>(.*?)</script>', html, re.DOTALL)
