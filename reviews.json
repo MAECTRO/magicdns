@@ -1,0 +1,18 @@
+[
+  {
+    "id": "rev-1",
+    "author": "Вовчик",
+    "platform": "Windows",
+    "rating": 5,
+    "message": "Спасибо вам) На винде работает)",
+    "date": "21 октября"
+  },
+  {
+    "id": "rev-2",
+    "author": "Аноним",
+    "platform": "Windows",
+    "rating": 5,
+    "message": "Spasiba",
+    "date": "21 октября"
+  }
+]

@@ -50,6 +50,17 @@ if os.path.exists(news_json_path):
     except Exception as e:
         news_cards_html = ''
 
+# Load community reviews from reviews.json
+reviews_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'reviews.json')
+reviews_json_str = "[]"
+if os.path.exists(reviews_json_path):
+    try:
+        with open(reviews_json_path, 'r', encoding='utf-8') as f:
+            reviews_data = json.load(f)
+            reviews_json_str = json.dumps(reviews_data, ensure_ascii=False)
+    except Exception as e:
+        reviews_json_str = "[]"
+
 html_content = f'''<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5728,22 +5739,7 @@ html_content = f'''<!DOCTYPE html>
           .replace(/'/g, '&#039;');
       }}
 
-      const DEFAULT_COMMUNITY_REVIEWS = [
-        {{
-          author: 'Вовчик',
-          platform: 'Windows',
-          rating: 5,
-          message: 'Спасибо вам) На винде работает)',
-          date: '21 октября'
-        }},
-        {{
-          author: 'Аноним',
-          platform: 'Windows',
-          rating: 5,
-          message: 'Spasiba',
-          date: '21 октября'
-        }}
-      ];
+      const DEFAULT_COMMUNITY_REVIEWS = {reviews_json_str};
 
       function getSavedReviews() {{
         try {{
@@ -5886,6 +5882,20 @@ html_content = f'''<!DOCTYPE html>
             submitBtn.querySelector('span').textContent = sendingTexts[currentLang] || 'Отправка...';
           }}
 
+          // 1. Smart Anti-Spam & Junk Filter
+          const spamRegex = /(казино|вулкан|1xbet|1win|ставки|договорн|крипт|заработ|легкие[ \t]*деньги|пассивный[ \t]*доход|секс|порно|визио|виагр|шлюх|prostitut|intim)/i;
+          const urlRegex = /(https?:[/][/]|www[.]|t[.]me[/]|bit[.]ly[/]|tinyurl|[.]xyz[/]|[.]top[/])/i;
+          const isGibberish = /^([a-zA-Zа-яА-Я0-9])\1{7,}$/.test(message);
+
+          if (spamRegex.test(message) || (urlRegex.test(message) && currentType === 'review') || isGibberish) {{
+            // Silently drop spam without sending to Telegram
+            toggleFeedbackModal(false);
+            if (textInput) textInput.value = '';
+            if (contactInput) contactInput.value = '';
+            showToast('Сообщение отправлено!');
+            return;
+          }}
+
           const payload = {{
             type: currentType,
             rating: currentRating,
@@ -5894,24 +5904,54 @@ html_content = f'''<!DOCTYPE html>
             contact: contact
           }};
 
-          const typeLabels = {{
-            review: '⭐ Отзыв',
-            idea: '💡 Предложение',
-            bug: '🐛 Ошибка / Баг'
-          }};
-          const typeTitle = typeLabels[currentType] || currentType;
-          const starsText = '⭐'.repeat(currentRating);
-          const tgLines = [
-            '🔔 *Новое сообщение с MagicDNS!*',
-            '',
-            '📌 *Тип:* ' + typeTitle,
-            '⭐️ *Оценка:* ' + starsText + ' (' + currentRating + '/5)',
-            '💻 *Платформа:* ' + currentPlatform,
-            '👤 *Контакт:* ' + (contact ? ('`' + contact + '`') : 'Анонимно'),
-            '',
-            '💬 *Текст:*',
-            message
-          ];
+          // 2. Structured Telegram Notification with Auto-Sorting Tags & 1-Click Publish Command
+          const safeAuthor = contact ? contact.replace(/^@/, '') : 'Аноним';
+          const safePlatform = currentPlatform || 'Windows';
+          const approveCmd = 'python add_review.py ' + JSON.stringify(safeAuthor) + ' ' + JSON.stringify(safePlatform) + ' ' + currentRating + ' ' + JSON.stringify(message);
+
+          let tgLines = [];
+          if (currentType === 'review') {{
+            const starsText = '★'.repeat(currentRating);
+            tgLines = [
+              '⭐ *НОВЫЙ ОТЗЫВ С САЙТА!* #ОТЗЫВ',
+              '',
+              '👤 *Автор:* ' + (contact ? ('`' + contact + '`') : 'Аноним'),
+              '💻 *Платформа:* ' + currentPlatform,
+              '⭐️ *Оценка:* ' + starsText + ' (' + currentRating + '/5)',
+              '',
+              '💬 *Текст отзыва:*',
+              message,
+              '',
+              '━━━━━━━━━━━━━━━━━━━',
+              '👉 *Опубликовать на сайт (в 1 клик):*',
+              '`' + approveCmd + '`'
+            ];
+          }} else if (currentType === 'bug') {{
+            tgLines = [
+              '🐛 *НОВЫЙ БАГ-РЕПОРТ С САЙТА!* #БАГ',
+              '',
+              '💻 *Платформа:* ' + currentPlatform,
+              '👤 *Контакт:* ' + (contact ? ('`' + contact + '`') : 'Анонимно'),
+              '',
+              '💬 *Описание проблемы:*',
+              message
+            ];
+          }} else if (currentType === 'idea') {{
+            tgLines = [
+              '💡 *НОВОЕ ПРЕДЛОЖЕНИЕ С САЙТА!* #ИДЕЯ',
+              '',
+              '💻 *Платформа:* ' + currentPlatform,
+              '👤 *Контакт:* ' + (contact ? ('`' + contact + '`') : 'Анонимно'),
+              '',
+              '💬 *Суть идеи:*',
+              message
+            ];
+          }} else {{
+            tgLines = [
+              '🔔 *Новое сообщение с MagicDNS!*',
+              '💬 ' + message
+            ];
+          }}
           const tgText = tgLines.join('\\n');
 
           const tgToken = '8626072258:AAHtcqrf37R0iW3D83Ae7WzLjy2A9alr6Gw';
