@@ -89,7 +89,7 @@ test("Result card with metrics", 'checker-result' in html and 'metric-ping' in h
 
 # 9. Footer
 test("Footer Uptime 99.9%", '99.9%' in html)
-test("Telegram and Discord removed from footer", 'https://t.me/magicdns' not in html and 'https://discord.gg/magicdns' not in html)
+test("Telegram and Discord removed from footer", 'https://t.me/magicdns"' not in html and 'https://discord.gg/magicdns' not in html)
 
 # 10. Controller & Accessibility (Xbox / Keyboard)
 test("Active tab has tabindex 0", 'id="tab-windows"' in html and 'tabindex="0"' in html)

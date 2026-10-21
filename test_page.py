@@ -46,7 +46,7 @@ checks = {
     'Diagnostics progress bar & log': 'checker-progress' in content and 'checker-fill' in content and 'checker-log' in content,
     'Checker result metrics card': 'checker-result' in content and 'metric-ping' in content,
     'Uptime 99.9% in footer': '99.9%' in content,
-    'Telegram and Discord removed from footer': 'https://t.me/magicdns' not in content and 'https://discord.gg/magicdns' not in content,
+    'Telegram and Discord removed from footer': 'https://t.me/magicdns"' not in content and 'https://discord.gg/magicdns' not in content,
     'Theme color #070d14': '#070d14' in content,
     'Neon mint color #00ff9d': '#00ff9d' in content,
     'Emerald color #10b981': '#10b981' in content,

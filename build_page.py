@@ -459,6 +459,56 @@ html_content = f'''<!DOCTYPE html>
       box-shadow: 0 0 18px rgba(0, 255, 157, 0.25);
     }}
 
+    .btn-tg-contact-header {{
+      background: rgba(6, 182, 212, 0.1);
+      border-color: rgba(6, 182, 212, 0.35);
+      color: #38bdf8;
+      box-shadow: 0 0 14px rgba(6, 182, 212, 0.1);
+    }}
+
+    .btn-tg-contact-header:hover {{
+      background: rgba(6, 182, 212, 0.22);
+      border-color: var(--cyber-cyan);
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+      transform: translateY(-1px);
+    }}
+
+    .feedback-direct-tg-hint {{
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }}
+
+    .link-direct-tg {{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--cyber-cyan);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+      transition: all var(--transition-fast);
+    }}
+
+    .link-direct-tg:hover {{
+      background: rgba(6, 182, 212, 0.2);
+      border-color: rgba(6, 182, 212, 0.5);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }}
+
     .donate-heart {{
       width: 15px;
       height: 15px;
@@ -3700,6 +3750,13 @@ html_content = f'''<!DOCTYPE html>
           </ul>
         </div>
 
+        <a href="https://t.me/magicdns_alert_bot" target="_blank" rel="noopener noreferrer" class="btn-support-header btn-tg-contact-header" aria-label="Связаться с админом">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+          </svg>
+          <span data-i18n="headerTgBtn">Написать админу</span>
+        </a>
+
         <a href="https://pay.cloudtips.ru/p/596a95a5" target="_blank" rel="noopener noreferrer" class="btn-support-header" aria-label="Поддержать автора">
           <svg viewBox="0 0 24 24" class="donate-heart" aria-hidden="true">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -4829,6 +4886,15 @@ html_content = f'''<!DOCTYPE html>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
           <span data-i18n="modalSubmitBtn">Отправить отзыв</span>
         </button>
+
+        <!-- Direct Telegram Hint -->
+        <div class="feedback-direct-tg-hint">
+          <span data-i18n="feedbackDirectTgText">Хотите задать вопрос или пообщаться лично?</span>
+          <a href="https://t.me/magicdns_alert_bot" target="_blank" rel="noopener noreferrer" class="link-direct-tg">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+            <span data-i18n="feedbackDirectTgLink">Написать админу в Telegram</span>
+          </a>
+        </div>
       </form>
     </div>
   </div>

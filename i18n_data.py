@@ -3,6 +3,9 @@
 i18n = {
     "ru": {
         "supportBtn": "Поддержать автора",
+        "headerTgBtn": "Написать админу",
+        "feedbackDirectTgText": "Хотите задать вопрос или пообщаться лично?",
+        "feedbackDirectTgLink": "Написать админу в Telegram",
         "statusLabel": "Статус сети: ",
         "statusText": "Работает стабильно",
         "heroEyebrow": "ДНС для искусственного интеллекта • Быстрый ДНС без VPN • Блокировка рекламы AdGuard",
@@ -174,6 +177,9 @@ i18n = {
     },
     "en": {
         "supportBtn": "Support author",
+        "headerTgBtn": "Contact Admin",
+        "feedbackDirectTgText": "Want to ask a question or chat directly?",
+        "feedbackDirectTgLink": "Chat with Admin in Telegram",
         "statusLabel": "Network status: ",
         "statusText": "Operating normally",
         "heroEyebrow": "DNS for Artificial Intelligence • Fast DNS Without VPN • AdGuard Ad Blocking",
@@ -345,6 +351,9 @@ i18n = {
     },
     "zh": {
         "supportBtn": "支持作者",
+        "headerTgBtn": "联系管理员",
+        "feedbackDirectTgText": "想直接提问或私聊沟通？",
+        "feedbackDirectTgLink": "在 Telegram 中联系管理员",
         "statusLabel": "网络状态：",
         "statusText": "运行正常",
         "heroEyebrow": "人工智能专用 DNS • 免 VPN 极速 DNS • 内置 AdGuard 广告拦截",
@@ -516,6 +525,9 @@ i18n = {
     },
     "tr": {
         "supportBtn": "Yazarı Destekle",
+        "headerTgBtn": "Yöneticiye Yazın",
+        "feedbackDirectTgText": "Doğrudan soru sormak veya görüşmek mi istiyorsunuz?",
+        "feedbackDirectTgLink": "Telegram'da Yöneticiyle İletişim",
         "statusLabel": "Ağ durumu: ",
         "statusText": "Sorunsuz çalışıyor",
         "heroEyebrow": "Yapay Zeka İçin DNS • VPN'siz Hızlı DNS • AdGuard Reklam Engelleme",
