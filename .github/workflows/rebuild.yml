@@ -1,0 +1,36 @@
+name: Auto-Rebuild on Review Approval
+
+on:
+  push:
+    paths:
+      - 'reviews.json'
+      - 'news.json'
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Rebuild index.html
+        run: |
+          python build_page.py
+
+      - name: Commit and push updated index.html
+        run: |
+          git config --global user.name "MagicDNS Bot"
+          git config --global user.email "bot@magicdns.ru"
+          git add index.html
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: auto-bake index.html with new reviews [skip ci]" && git push)

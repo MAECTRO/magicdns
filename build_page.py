@@ -5739,7 +5739,7 @@ html_content = f'''<!DOCTYPE html>
           .replace(/'/g, '&#039;');
       }}
 
-      const DEFAULT_COMMUNITY_REVIEWS = {reviews_json_str};
+      let DEFAULT_COMMUNITY_REVIEWS = {reviews_json_str};
 
       function getSavedReviews() {{
         try {{
@@ -5957,14 +5957,27 @@ html_content = f'''<!DOCTYPE html>
           const tgToken = '8626072258:AAHtcqrf37R0iW3D83Ae7WzLjy2A9alr6Gw';
           const tgChatId = '8010010144';
 
+          const tgBody = {{
+            chat_id: tgChatId,
+            text: tgText,
+            parse_mode: 'Markdown'
+          }};
+
+          if (currentType === 'review') {{
+            tgBody.reply_markup = {{
+              inline_keyboard: [
+                [
+                  {{ text: '✅ Опубликовать на сайт', callback_data: 'pub_review' }},
+                  {{ text: '❌ В корзину', callback_data: 'del_review' }}
+                ]
+              ]
+            }};
+          }}
+
           fetch('https://api.telegram.org/bot' + tgToken + '/sendMessage', {{
             method: 'POST',
             headers: {{ 'Content-Type': 'application/json' }},
-            body: JSON.stringify({{
-              chat_id: tgChatId,
-              text: tgText,
-              parse_mode: 'Markdown'
-            }})
+            body: JSON.stringify(tgBody)
           }}).catch(function() {{
             try {{
               fetch(CF_WORKER_URL + '/feedback', {{
@@ -6004,6 +6017,22 @@ html_content = f'''<!DOCTYPE html>
       }}
 
       renderReviews();
+
+      // Dynamic sync with reviews.json for live updates
+      try {{
+        fetch('/reviews.json?_=' + Date.now())
+          .then(function(res) {{
+            if (res.ok) return res.json();
+            throw new Error('Sync skip');
+          }})
+          .then(function(remoteReviews) {{
+            if (Array.isArray(remoteReviews) && remoteReviews.length > 0) {{
+              DEFAULT_COMMUNITY_REVIEWS = remoteReviews;
+              renderReviews();
+            }}
+          }})
+          .catch(function() {{}});
+      }} catch(e) {{}}
 
       // Cookie Banner Logic (152-ФЗ)
       const cookieBanner = document.getElementById('cookie-banner');
