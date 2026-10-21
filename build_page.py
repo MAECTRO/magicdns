@@ -4082,7 +4082,7 @@ html_content = f'''<!DOCTYPE html>
             <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
             <code class="error-code">"Failed to load user gallery / 403"</code>
           </div>
-          <p class="platform-desc" data-i18n="platMidjourneyDesc">DNS для Midjourney: устраняет сбои авторизации и загрузки на midjourney.com без замедления работы Discord.</p>
+          <p class="platform-desc" data-i18n="platMidjourneyDesc">DNS для Midjourney: устраняет сбои авторизации и обеспечивает стабильную загрузку веб-интерфейса и галереи на midjourney.com.</p>
         </div>
 
         <!-- Card 6: Microsoft Copilot -->
