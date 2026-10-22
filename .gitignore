@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+check_*.py
+temp_*
+test_interactive.py

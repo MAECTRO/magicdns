@@ -71,6 +71,7 @@ html_content = f'''<!DOCTYPE html>
   <meta name="description" content="ДНС для ИИ и персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN и задержек. Бесплатная настройка за 1 минуту!">
   <meta name="keywords" content="днс для ии, ДНС ДЛЯ ИИ, смарт днс для ии, smart dns для ии, днс для искусственного интеллекта, частный днс для ии, днс для нейросетей, быстрый днс без vpn, персональный dns сервер, dns для gemini, smart dns google ai studio, доступ к google ai studio без vpn, как открыть gemini через dns, dns для chatgpt, доступ к claude ai без vpn, dns для midjourney, copilot dns, настройка частного dns на android для gemini, профиль doh dot для ios iphone, smart dns на роутер keenetic openwrt, MagicDNS, Claude AI, Gemini, Google AI Studio, ChatGPT, DoH, DoT">
   <link rel="canonical" href="https://magicdns.ru/">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%2300ff9d'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Ccircle%20cx='12'%20cy='12'%20r='3'/%3E%3Cpath%20d='M12%202v7m0%206v7M2%2012h7m6%200h7'/%3E%3Ccircle%20cx='12'%20cy='2'%20r='1.5'%20fill='%2300ff9d'/%3E%3Ccircle%20cx='12'%20cy='22'%20r='1.5'%20fill='%2300ff9d'/%3E%3Ccircle%20cx='2'%20cy='12'%20r='1.5'%20fill='%2300ff9d'/%3E%3Ccircle%20cx='22'%20cy='12'%20r='1.5'%20fill='%2300ff9d'/%3E%3C/svg%3E">
 
   <!-- Search Engine Verification -->
   <meta name="google-site-verification" content="V-LR-OgNY2JECR2l_17IM_vNMcUglPzkEd3CSbcoIHw">
@@ -275,7 +276,7 @@ html_content = f'''<!DOCTYPE html>
     header {{
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 1100;
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       background: rgba(7, 13, 20, 0.85);
@@ -1730,7 +1731,7 @@ html_content = f'''<!DOCTYPE html>
       position: fixed;
       bottom: 90px;
       right: 24px;
-      z-index: 999;
+      z-index: 2500;
       background: rgba(11, 20, 36, 0.95);
       border: 1px solid var(--neon-mint);
       color: #ffffff;
@@ -3583,7 +3584,7 @@ html_content = f'''<!DOCTYPE html>
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 24px rgba(0, 255, 157, 0.15);
-      z-index: 10000;
+      z-index: 1000;
       padding: 16px 24px;
       box-sizing: border-box;
       animation: fadeIn 0.3s ease-out;
@@ -3597,10 +3598,24 @@ html_content = f'''<!DOCTYPE html>
       width: 100%;
     }}
 
+    .cookie-banner .btn-cookie-accept {{
+      padding: 8px 22px;
+      font-size: 0.88rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+      width: auto;
+    }}
+
     @media (max-width: 640px) {{
       .cookie-banner-content {{
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
+        gap: 12px;
+      }}
+      .cookie-banner .btn-cookie-accept {{
+        width: 100%;
+        text-align: center;
+        justify-content: center;
       }}
     }}
 
@@ -4886,13 +4901,13 @@ html_content = f'''<!DOCTYPE html>
         <!-- Textarea -->
         <div class="feedback-field">
           <label for="feedback-text" class="feedback-label" data-i18n="modalCommentLabel">Ваш комментарий или идея:</label>
-          <textarea id="feedback-text" class="feedback-textarea" rows="4" placeholder="Расскажите, как работает MagicDNS у вас, или какую функцию добавить..." required maxlength="1000" data-i18n-placeholder="modalCommentPlaceholder"></textarea>
+          <textarea id="feedback-text" class="feedback-textarea" rows="4" placeholder="Расскажите, как работает MagicDNS у вас, или какую функцию добавить..." required maxlength="1000" data-i18n-placeholder="modalCommentPlaceholder" data-metrika-unmasked="true"></textarea>
         </div>
 
         <!-- Contact (Optional) -->
         <div class="feedback-field">
           <label for="feedback-contact" class="feedback-label" data-i18n="modalContactLabel">Контакт для связи (по желанию):</label>
-          <input type="text" id="feedback-contact" class="feedback-input" placeholder="@telegram_username или email" maxlength="100" data-i18n-placeholder="modalContactPlaceholder">
+          <input type="text" id="feedback-contact" class="feedback-input" placeholder="@telegram_username или email" maxlength="100" data-i18n-placeholder="modalContactPlaceholder" data-metrika-unmasked="true">
         </div>
 
         <!-- Submit Button -->
@@ -5974,11 +5989,20 @@ html_content = f'''<!DOCTYPE html>
             }};
           }}
 
+          const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+          const tgTimeout = setTimeout(function() {{
+            if (controller) controller.abort();
+          }}, 4000);
+
           fetch('https://api.telegram.org/bot' + tgToken + '/sendMessage', {{
             method: 'POST',
             headers: {{ 'Content-Type': 'application/json' }},
-            body: JSON.stringify(tgBody)
+            body: JSON.stringify(tgBody),
+            signal: controller ? controller.signal : undefined
+          }}).then(function() {{
+            clearTimeout(tgTimeout);
           }}).catch(function() {{
+            clearTimeout(tgTimeout);
             try {{
               fetch(CF_WORKER_URL + '/feedback', {{
                 method: 'POST',
@@ -6020,18 +6044,20 @@ html_content = f'''<!DOCTYPE html>
 
       // Dynamic sync with reviews.json for live updates
       try {{
-        fetch('/reviews.json?_=' + Date.now())
-          .then(function(res) {{
-            if (res.ok) return res.json();
-            throw new Error('Sync skip');
-          }})
-          .then(function(remoteReviews) {{
-            if (Array.isArray(remoteReviews) && remoteReviews.length > 0) {{
-              DEFAULT_COMMUNITY_REVIEWS = remoteReviews;
-              renderReviews();
-            }}
-          }})
-          .catch(function() {{}});
+        if (window.location.protocol.startsWith('http')) {{
+          fetch('reviews.json?_=' + Date.now())
+            .then(function(res) {{
+              if (res.ok) return res.json();
+              throw new Error('Sync skip');
+            }})
+            .then(function(remoteReviews) {{
+              if (Array.isArray(remoteReviews) && remoteReviews.length > 0) {{
+                DEFAULT_COMMUNITY_REVIEWS = remoteReviews;
+                renderReviews();
+              }}
+            }})
+            .catch(function() {{}});
+        }}
       }} catch(e) {{}}
 
       // Cookie Banner Logic (152-ФЗ)
