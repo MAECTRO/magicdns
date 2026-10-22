@@ -3398,11 +3398,11 @@ html_content = f'''<!DOCTYPE html>
 
     .platforms-grid {{
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 20px;
     }}
 
-    @media (max-width: 992px) {{
+    @media (max-width: 1200px) {{
       .platforms-grid {{
         grid-template-columns: repeat(2, 1fr);
       }}
@@ -3463,6 +3463,85 @@ html_content = f'''<!DOCTYPE html>
     .platform-icon-wrap.claude-icon svg {{ color: #d97706; }}
     .platform-icon-wrap.midjourney-icon svg {{ color: #a855f7; }}
     .platform-icon-wrap.copilot-icon svg {{ color: #06b6d4; }}
+    .platform-icon-wrap.xbox-icon svg {{ color: #22c55e; }}
+    .platform-icon-wrap.ps-icon svg {{ color: #38bdf8; }}
+
+    /* Compliance & White-list Section */
+    .compliance-section {{
+      padding: 50px 0 40px 0;
+      position: relative;
+    }}
+
+    .compliance-grid {{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }}
+
+    @media (max-width: 992px) {{
+      .compliance-grid {{
+        grid-template-columns: 1fr;
+      }}
+    }}
+
+    .compliance-card {{
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      transition: all var(--transition-smooth);
+    }}
+
+    .compliance-card:hover {{
+      border-color: rgba(0, 255, 157, 0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 157, 0.1);
+    }}
+
+    .compliance-card-header {{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }}
+
+    .compliance-icon-wrap {{
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-hairline);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }}
+
+    .compliance-icon-wrap svg {{
+      width: 22px;
+      height: 22px;
+    }}
+
+    .compliance-icon-wrap.ai-wrap svg {{ color: var(--neon-mint); }}
+    .compliance-icon-wrap.gaming-wrap svg {{ color: var(--cyber-cyan); }}
+    .compliance-icon-wrap.pure-wrap svg {{ color: #10b981; }}
+
+    .compliance-card-title {{
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+    }}
+
+    .compliance-card-desc {{
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin: 0;
+    }}
 
     .platform-name {{
       font-size: 1.15rem;
@@ -4136,6 +4215,86 @@ html_content = f'''<!DOCTYPE html>
             <code class="error-code">"Copilot is not available in your region"</code>
           </div>
           <p class="platform-desc" data-i18n="platCopilotDesc">Copilot DNS: открывает доступ к генерации текста и картинок в Windows 11 и Edge без региональных отказов.</p>
+        </div>
+
+        <!-- Card 7: Xbox Live -->
+        <div class="platform-card">
+          <div class="platform-card-header">
+            <div class="platform-icon-wrap xbox-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M6 7c2.5 3 4.5 7 6 12"/><path d="M18 7c-2.5 3-4.5 7-6 12"/><path d="M5 16c3.5-2 6.5-2 14 0"/></svg>
+            </div>
+            <div>
+              <h3 class="platform-name">Xbox Live</h3>
+              <span class="platform-badge">xbox.com (Microsoft)</span>
+            </div>
+          </div>
+          <div class="platform-error-box">
+            <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
+            <code class="error-code">"0x80a40401 / 0x87dd0006"</code>
+          </div>
+          <p class="platform-desc" data-i18n="platXboxDesc">DNS для Xbox: устраняет ошибку входа 0x80a40401, обеспечивает стабильную авторизацию в профиле, работу Game Pass и синхронизацию облачных сохранений.</p>
+        </div>
+
+        <!-- Card 8: PlayStation Network -->
+        <div class="platform-card">
+          <div class="platform-card-header">
+            <div class="platform-icon-wrap ps-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 17c3-3 6-4 10-4v5l4-2v-8c-4 0-8 2-11 5"/><path d="M12 4v4c3 0 6 1 8 3l2-1c-2-3-6-6-10-6z"/></svg>
+            </div>
+            <div>
+              <h3 class="platform-name">PlayStation Network</h3>
+              <span class="platform-badge">playstation.com (Sony)</span>
+            </div>
+          </div>
+          <div class="platform-error-box">
+            <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
+            <code class="error-code">"WS-116521-6 / Ошибка связи с сервером"</code>
+          </div>
+          <p class="platform-desc" data-i18n="platPsDesc">DNS для PlayStation: устраняет сетевые сбои подключения к PSN, ошибки авторизации в аккаунте Sony и обеспечивает стабильную игру по сети на PS4 и PS5.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2.8. Compliance & White-list Section -->
+    <section class="compliance-section" id="compliance">
+      <div class="section-tag-wrapper">
+        <div class="section-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span data-i18n="complianceTag">100% БЕЛЫЙ СПИСОК</span>
+        </div>
+      </div>
+      <h2 class="section-heading" data-i18n="complianceTitle">Соответствие законодательству РФ и закрытый белый список</h2>
+      <p class="section-subtitle" data-i18n="complianceSubtitle">MagicDNS принципиально не обрабатывает запросы к ресурсам, ограниченным на территории РФ (149-ФЗ)</p>
+
+      <div class="compliance-grid">
+        <div class="compliance-card">
+          <div class="compliance-card-header">
+            <div class="compliance-icon-wrap ai-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 12L2.1 12a10 10 0 0 0 9.9 10V12z"/></svg>
+            </div>
+            <h3 class="compliance-card-title" data-i18n="complianceColAiTitle">Платформы искусственного интеллекта</h3>
+          </div>
+          <p class="compliance-card-desc" data-i18n="complianceColAiDesc">Прямой доступ к ChatGPT, Claude, Google Gemini, Perplexity, Cursor и Midjourney без посредников и задержек.</p>
+        </div>
+
+        <div class="compliance-card">
+          <div class="compliance-card-header">
+            <div class="compliance-icon-wrap gaming-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="8" cy="12" r="2"/><path d="M15 9v6m-3-3h6"/></svg>
+            </div>
+            <h3 class="compliance-card-title" data-i18n="complianceColGamingTitle">Игровые консоли и экосистемы</h3>
+          </div>
+          <p class="compliance-card-desc" data-i18n="complianceColGamingDesc">Устранение системных ошибок авторизации 0x80a40401 и WS-116521-6 для стабильной работы Xbox Live и PlayStation Network.</p>
+        </div>
+
+        <div class="compliance-card">
+          <div class="compliance-card-header">
+            <div class="compliance-icon-wrap pure-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <h3 class="compliance-card-title" data-i18n="complianceColPureTitle">Безопасность и чистый трафик (149-ФЗ)</h3>
+          </div>
+          <p class="compliance-card-desc" data-i18n="complianceColPureDesc">Сервис не затрагивает российские сервисы, банки и Госуслуги — они работают напрямую от вашего провайдера на полной скорости.</p>
         </div>
       </div>
     </section>
