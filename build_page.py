@@ -6194,6 +6194,8 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
     <string>ru.magicdns</string>
     <key>PayloadOrganization</key>
     <string>MagicDNS</string>
+    <key>PayloadScope</key>
+    <string>System</string>
     <key>PayloadRemovalDisallowed</key>
     <false/>
     <key>PayloadType</key>

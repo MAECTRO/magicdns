@@ -38,6 +38,8 @@
     <string>ru.magicdns</string>
     <key>PayloadOrganization</key>
     <string>MagicDNS</string>
+    <key>PayloadScope</key>
+    <string>System</string>
     <key>PayloadRemovalDisallowed</key>
     <false/>
     <key>PayloadType</key>
