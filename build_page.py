@@ -1307,6 +1307,38 @@ html_content = f'''<!DOCTYPE html>
       margin-bottom: 8px;
     }}
 
+    .config-tip-box {{
+      background: rgba(0, 255, 157, 0.05);
+      border: 1px solid rgba(0, 255, 157, 0.22);
+      border-left: 3px solid var(--neon-mint);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-top: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.84rem;
+      line-height: 1.5;
+      color: var(--text-light);
+    }}
+
+    .config-tip-icon {{
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      stroke: var(--neon-mint);
+      fill: none;
+      stroke-width: 2;
+      margin-top: 2px;
+    }}
+
+    .config-tip-text {{
+      flex: 1;
+      margin: 0;
+      color: #e2e8f0;
+    }}
+
     @media (max-width: 640px) {{
       .router-ips-grid,
       .win-ips-grid {{
@@ -4370,6 +4402,11 @@ html_content = f'''<!DOCTYPE html>
                   </button>
                 </div>
               </div>
+            </div>
+
+            <div class="config-tip-box">
+              <svg class="config-tip-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span class="config-tip-text" data-i18n="winDohTip">Важно для Windows 11: шаблон DoH (https://dns.magicdns.ru/dns-query) нужно вставить дважды — и для Основного, и для Резервного IPv4 (с шифрованием «Только через HTTPS»).</span>
             </div>
             <div class="card-actions-row">
               <button class="btn-neon-action" data-clipboard="https://dns.magicdns.ru/dns-query" data-i18n="btnCopyDoH">Скопировать DoH</button>
