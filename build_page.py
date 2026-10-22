@@ -4257,6 +4257,44 @@ html_content = f'''<!DOCTYPE html>
               <a href="https://magicdns.ru/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfile">Скачать профиль</a>
               <button class="btn-dark-action" data-clipboard="https://magicdns.ru/profile.mobileconfig" data-i18n="btnCopyLink">Скопировать ссылку</button>
             </div>
+
+            <!-- macOS Direct Setup Box -->
+            <div class="macos-helper-box" style="margin-top: 22px; padding-top: 18px; border-top: 1px dashed rgba(255,255,255,0.12);">
+              <div class="card-header-row" style="margin-bottom: 8px;">
+                <h3 class="card-header-title" style="font-size: 1.05rem;" data-i18n="macTitle">Для macOS без профиля (через Системные настройки)</h3>
+                <span class="card-badge" data-i18n="macBadge">Для любых приложений • macOS 11+</span>
+              </div>
+              <p class="card-instruction" style="margin-bottom: 12px;" data-i18n="macDesc">
+                На Mac можно не ставить профиль, а указать DNS в настройках сети — это работает для всей системы и любых десктопных программ (ChatGPT, Cursor, Claude). Открой: <b>Системные настройки → Сеть → Wi-Fi → Подробнее... → вкладка DNS</b>, нажми «+» и добавь два адреса:
+              </p>
+              <div class="router-ips-grid win-ips-grid">
+                <div class="input-field-group">
+                  <span class="input-field-label" data-i18n="macPrimaryIpv4Label">Основной IPv4 (macOS):</span>
+                  <div class="code-input-box">
+                    <code class="code-input-text" id="val-mac-ipv4-primary">109.120.132.43</code>
+                    <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Скопировать Основной IPv4" aria-label="Скопировать Основной IPv4">
+                      <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                      <span data-i18n="btnCopy">Копировать</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="input-field-group">
+                  <span class="input-field-label" data-i18n="macSecondaryIpv4Label">Резервный IPv4 (macOS):</span>
+                  <div class="code-input-box">
+                    <code class="code-input-text" id="val-mac-ipv4-secondary">94.249.177.102</code>
+                    <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Скопировать Резервный IPv4" aria-label="Скопировать Резервный IPv4">
+                      <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                      <span data-i18n="btnCopy">Копировать</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-actions-row" style="margin-top: 10px;">
+                <button class="btn-dark-action" data-clipboard="109.120.132.43" data-i18n="btnCopyPrimaryIpv4">Скопировать Основной IPv4</button>
+                <button class="btn-dark-action" data-clipboard="94.249.177.102" data-i18n="btnCopySecondaryIpv4">Скопировать Резервный IPv4</button>
+                <button class="btn-dark-action" data-clipboard="109.120.132.43&#10;94.249.177.102" data-i18n="btnCopyBoth">Скопировать оба IP</button>
+              </div>
+            </div>
           </div>
           <div class="card-right-column">
             <div class="qr-pod">

@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+Multi-language translation dictionaries for MagicDNS landing page.
+Supported languages: RU, EN, ZH, TR.
+"""
 
 i18n = {
     "ru": {
@@ -173,7 +177,12 @@ i18n = {
         "privacyModalTitle": "Политика конфиденциальности (152-ФЗ)",
         "termsModalTitle": "Пользовательское соглашение",
         "contactModalTitle": "Контакт для обращений (152-ФЗ)",
-        "legalClose": "Закрыть"
+        "legalClose": "Закрыть",
+        "macTitle": "Для macOS без профиля (через Системные настройки)",
+        "macBadge": "Для любых приложений • macOS 11+",
+        "macDesc": "На Mac можно не ставить профиль, а указать DNS в настройках сети — это работает для всей системы и любых десктопных программ (ChatGPT, Cursor, Claude). Открой: Системные настройки → Сеть → Wi-Fi → Подробнее... → вкладка DNS, нажми «+» и добавь два адреса:",
+        "macPrimaryIpv4Label": "Основной IPv4 (macOS):",
+        "macSecondaryIpv4Label": "Резервный IPv4 (macOS):"
     },
     "en": {
         "supportBtn": "Support author",
@@ -347,7 +356,12 @@ i18n = {
         "privacyModalTitle": "Privacy Policy (152-FZ Compliance)",
         "termsModalTitle": "Terms of Service",
         "contactModalTitle": "Contact for Inquiries (152-FZ)",
-        "legalClose": "Close"
+        "legalClose": "Close",
+        "macTitle": "For macOS without profile (via System Settings)",
+        "macBadge": "For all desktop apps • macOS 11+",
+        "macDesc": "On Mac, you can skip profile installation and enter DNS directly in network settings — this works system-wide for all browsers and desktop apps (ChatGPT, Cursor, Claude). Open: System Settings → Network → Wi-Fi → Details... → DNS tab, click «+» and add two addresses:",
+        "macPrimaryIpv4Label": "Primary IPv4 (macOS):",
+        "macSecondaryIpv4Label": "Secondary IPv4 (macOS):"
     },
     "zh": {
         "supportBtn": "支持作者",
@@ -521,7 +535,12 @@ i18n = {
         "privacyModalTitle": "隐私政策 (152-FZ 合规说明)",
         "termsModalTitle": "服务使用协议",
         "contactModalTitle": "联系与法律请求 (152-FZ)",
-        "legalClose": "关闭"
+        "legalClose": "关闭",
+        "macTitle": "macOS 无描述文件设置（通过系统设置）",
+        "macBadge": "适用于所有桌面客户端 • macOS 11+",
+        "macDesc": "在 Mac 上无需安装描述文件，直接在网络设置中指定 DNS 即可——系统全局生效，支持所有浏览器与独立客户端（ChatGPT、Cursor、Claude）。打开：系统设置 → 网络 → Wi-Fi → 详细信息... → DNS 标签页，点击「+」并添加两个地址：",
+        "macPrimaryIpv4Label": "首选 IPv4 (macOS):",
+        "macSecondaryIpv4Label": "备用 IPv4 (macOS):"
     },
     "tr": {
         "supportBtn": "Yazarı Destekle",
@@ -695,7 +714,12 @@ i18n = {
         "privacyModalTitle": "Gizlilik Politikası (152-FZ Uyumluluğu)",
         "termsModalTitle": "Kullanım Koşulları",
         "contactModalTitle": "İletişim ve Yasal Talepler (152-FZ)",
-        "legalClose": "Kapat"
+        "legalClose": "Kapat",
+        "macTitle": "macOS icin profilsiz kurulum (Sistem Ayarlari uzerinden)",
+        "macBadge": "Tum masaustu uygulamalari icin • macOS 11+",
+        "macDesc": "Mac'te profil yuklemeden dogrudan ag ayarlarindan DNS tanimlayabilirsiniz — sistem genelinde tum tarayicilar ve masaustu uygulamalari (ChatGPT, Cursor, Claude) icin gecerlidir. Sistem Ayarlari → Ag → Wi-Fi → Ayrintilar... → DNS sekmesini acin, «+» butonuna basip iki adresi ekleyin:",
+        "macPrimaryIpv4Label": "Birincil IPv4 (macOS):",
+        "macSecondaryIpv4Label": "Ikincil / Yedek IPv4 (macOS):"
     }
 }
 
@@ -703,7 +727,7 @@ faq_answers = {
     "ru": {
         "router": "Настройка на роутере открывает доступ сразу для всех устройств в доме:<br><br>• <b>Роутеры с поддержкой DoH (Keenetic, MikroTik)</b>: укажите адрес <code>https://dns.magicdns.ru/dns-query</code>.<br>• <b>Обычные роутеры без DoH (TP-Link, Asus, D-Link, Tenda)</b>: в разделе Интернет / WAN укажите два IPv4 DNS сервера:<br>— Основной DNS: <code>109.120.132.43</code><br>— Резервный DNS: <code>94.249.177.102</code><br><br>После сохранения перезагрузите Wi-Fi на устройствах для обновления кэша.",
         "security": "Полностью безопасно!<br><br>• MagicDNS перенаправляет запросы исключительно к зарубежным ИИ-сервисам с региональными ограничениями (Claude, Gemini, ChatGPT).<br>• Банки (Сбер, Т-Банк, ВТБ), Госуслуги, маркетплейсы и обычные сайты идут напрямую через вашего провайдера без шлюза и без замедления.<br>• Мы не ведем логов, весь DNS-трафик защищен шифрованием TLS 1.3.",
-        "ios": "На iOS кэш DNS держится дольше обычного. Сделайте 3 простых действия:<br><br>1. Включите режим «В самолёте» на 5 секунд и выключите обратно — это мгновенно сбросит кэш DNS.<br>2. Закройте вкладку с Claude / Gemini в Safari и откройте заново.<br>3. Проверьте в «Настройки → Основные → VPN и управление устройством → DNS», чтобы стоял профиль <b>MagicDNS</b>.",
+        "ios": "На iOS кэш DNS держится дольше обычного. Сделайте 3 простых действия:<br><br>1. Включите режим «В самолёте» на 5 секунд и выключите обратно — это мгновенно сбросит кэш DNS.<br>2. Закройте вкладку с Claude / Gemini в Safari и откройте заново.<br>3. Проверьте в «Настройки → Основные → VPN и управление устройством → DNS», чтобы стоял профиль <b>MagicDNS</b>.<br><br>• <b>Для Mac (macOS без профиля)</b>: Системные настройки → Сеть → Wi-Fi → Подробнее... → вкладка DNS → нажми «+» и добавь <code>109.120.132.43</code> и <code>94.249.177.102</code>.",
         "disable": "Отключение занимает 5 секунд:<br><br>• <b>iOS</b>: Настройки → Основные → VPN и управление устройством → DNS → выберите «Автоматически».<br>• <b>Android</b>: Настройки → Сеть и интернет → Персональный DNS → выберите «Отключено».<br>• <b>Windows</b>: Параметры → Сеть и интернет → DNS → переключите на «Автоматически (DHCP)»<br><br>Профиль можно включить обратно в любой момент.",
         "diff": "Главные отличия от обычного VPN:<br><br>• <b>Скорость</b>: VPN снижает скорость до 10-30 Мбит/с. MagicDNS маршрутизирует адреса ИИ-сервисов, остальной интернет работает на максимальной скорости вашего провайдера.<br>• <b>Блокировка рекламы</b>: Встроенный модуль AdGuard режет баннеры, трекеры и рекламу на уровне DNS.<br>• <b>Без капчи</b>: Шлюзы не внесены в спам-базы Cloudflare.<br>• <b>Не сажает батарею</b>: Не требует запущенного приложения в фоне.",
         "adblock": "В MagicDNS встроен модуль защиты AdGuard:<br><br>• Автоматически блокирует баннеры, всплывающую рекламу и трекеры на уровне DNS.<br>• Защита действует сразу во всех браузерах, приложениях и мобильных играх.<br>• Не требует установки лишних расширений или тяжелых фоновых программ."
@@ -711,7 +735,7 @@ faq_answers = {
     "en": {
         "router": "Router setup provides instant access for all devices in your home network:<br><br>• <b>Routers with DoH support (Keenetic, MikroTik)</b>: use address <code>https://dns.magicdns.ru/dns-query</code>.<br>• <b>Standard routers without DoH (TP-Link, Asus, D-Link, Tenda)</b>: in WAN/Internet DNS settings enter two IPv4 servers:<br>— Primary DNS: <code>109.120.132.43</code><br>— Secondary DNS: <code>94.249.177.102</code><br><br>After saving, reconnect Wi-Fi on your devices to clear DNS cache.",
         "security": "Completely secure!<br><br>• MagicDNS redirects requests exclusively to AI services (Claude, Gemini, ChatGPT).<br>• Banking apps, government portals, marketplaces, and everyday websites route directly through your ISP with zero proxying and no slowdown.<br>• Zero logs policy, all DNS traffic is encrypted with TLS 1.3.",
-        "ios": "iOS retains DNS cache longer than usual. Follow these 3 simple steps:<br><br>1. Toggle Airplane Mode on for 5 seconds and turn it back off — this instantly clears the DNS cache.<br>2. Close the Claude / Gemini tab in Safari and reopen it.<br>3. Check Settings → General → VPN & Device Management → DNS to confirm the <b>MagicDNS</b> profile is active.",
+        "ios": "iOS retains DNS cache longer than usual. Follow these 3 simple steps:<br><br>1. Toggle Airplane Mode on for 5 seconds and turn it back off — this instantly clears the DNS cache.<br>2. Close the Claude / Gemini tab in Safari and reopen it.<br>3. Check Settings → General → VPN & Device Management → DNS to confirm the <b>MagicDNS</b> profile is active.<br><br>• <b>For Mac (macOS without profile)</b>: System Settings → Network → Wi-Fi → Details... → DNS tab → click «+» and add <code>109.120.132.43</code> and <code>94.249.177.102</code>.",
         "disable": "Disabling takes 5 seconds:<br><br>• <b>iOS</b>: Settings → General → VPN & Device Management → DNS → select «Automatic».<br>• <b>Android</b>: Settings → Network & internet → Private DNS → select «Off».<br>• <b>Windows</b>: Settings → Network & internet → DNS → switch to «Automatic (DHCP)».<br><br>You can re-enable the profile at any time.",
         "diff": "Key differences from a traditional VPN:<br><br>• <b>Full Speed</b>: VPNs throttle bandwidth down to 10-30 Mbps. MagicDNS routes only AI services, while the rest of your traffic runs at full ISP line rate.<br>• <b>Ad Blocking</b>: Built-in AdGuard module eliminates banners, trackers, and ads at the DNS layer.<br>• <b>No Captchas</b>: Gateway nodes are clean and not flagged in Cloudflare anti-bot databases.<br>• <b>Zero Battery Drain</b>: Requires no background app running on your device.",
         "adblock": "MagicDNS includes a built-in AdGuard protection module:<br><br>• Automatically blocks banners, pop-ups, and trackers at the DNS layer.<br>• Works across all browsers, desktop apps, and mobile games.<br>• No need to install browser extensions or background software."
@@ -719,7 +743,7 @@ faq_answers = {
     "zh": {
         "router": "路由器配置可让家中所有设备立即获得加速访问：<br><br>• <b>支持 DoH 的路由器（Keenetic、MikroTik 等）</b>：指定地址 <code>https://dns.magicdns.ru/dns-query</code>。<br>• <b>普通无 DoH 路由器（TP-Link、华硕、D-Link、腾达等）</b>：在 WAN / 互联网设置中手动指定两个 IPv4 DNS 服务器：<br>— 首选 DNS：<code>109.120.132.43</code><br>— 备用 DNS：<code>94.249.177.102</code><br><br>保存后请重新连接设备 Wi-Fi 以刷新 DNS 缓存。",
         "security": "完全安全可靠！<br><br>• MagicDNS <b>仅重定向 AI 服务请求</b>（Claude、Gemini、ChatGPT）。<br>• 银行应用、公共政务服务、电商平台与日常网站均由本地宽带直连，不走代理且无延迟。<br>• 零日志记录策略，所有 DNS 流量均受 TLS 1.3 强加密保护。",
-        "ios": "iOS 系统的 DNS 缓存时间通常较长。请执行以下 3 个简单步骤：<br><br>1. 开启飞行模式 5 秒钟后关闭 — 这将立即刷新 DNS 缓存。<br>2. 在 Safari 中关闭 Claude / Gemini 标签页并重新打开。<br>3. 前往「设置 → 通用 → VPN 与设备管理 → DNS」，确认已激活 <b>MagicDNS</b> 描述文件。",
+        "ios": "iOS 系统的 DNS 缓存时间通常较长。请执行以下 3 个简单步骤：<br><br>1. 开启飞行模式 5 秒钟后关闭 — 这将立即刷新 DNS 缓存。<br>2. 在 Safari 中关闭 Claude / Gemini 标签页并重新打开。<br>3. 前往「设置 → 通用 → VPN 与设备管理 → DNS」，确认已激活 <b>MagicDNS</b> 描述文件。<br><br>• <b>适用于 Mac（macOS 无描述文件设置）</b>：系统设置 → 网络 → Wi-Fi → 详细信息... → DNS 标签页 → 点击「+」并添加 <code>109.120.132.43</code> 与 <code>94.249.177.102</code>。",
         "disable": "关闭仅需 5 秒：<br><br>• <b>iOS</b>：设置 → 通用 → VPN 与设备管理 → DNS → 选择「自动」。<br>• <b>Android</b>：设置 → 网络和互联网 → 私人 DNS → 选择「关闭」。<br>• <b>Windows</b>：设置 → 网络和 Internet → DNS → 切换为「自动 (DHCP)」。<br><br>您可以随时重新开启配置。",
         "diff": "与传统 VPN 的核心区别：<br><br>• <b>满速带宽</b>：普通 VPN 会将带宽压制到 10-30 Mbps。MagicDNS 仅精准路由 AI 服务，其余所有网络访问均保持原生运营商千兆满速。<br>• <b>广告拦截</b>：内置 AdGuard 防护模块，在 DNS 底层阻断横幅广告、弹窗与追踪器。<br>• <b>告别验证码</b>：网关节点干净纯洁，未被列入 Cloudflare 风险数据库。<br>• <b>不耗电</b>：无需在后台常驻运行消耗电量的代理软件。",
         "adblock": "MagicDNS 内置 AdGuard 安全防护模块：<br><br>• 在 DNS 底层自动拦截横幅、弹窗广告和追踪探针。<br>• 防护自动覆盖所有浏览器、桌面客户端与移动游戏。<br>• 无需额外安装浏览器扩展或后台常驻软件。"
@@ -727,7 +751,7 @@ faq_answers = {
     "tr": {
         "router": "Yönlendirici kurulumu evinizdeki tüm cihazlar için anında erişim sağlar:<br><br>• <b>DoH destekleyen yönlendiriciler (Keenetic, MikroTik)</b>: <code>https://dns.magicdns.ru/dns-query</code> adresini girin.<br>• <b>DoH desteği olmayan standart yönlendiriciler (TP-Link, Asus, D-Link, Tenda)</b>: WAN / İnternet DNS ayarlarında iki IPv4 sunucu adresi girin:<br>— Birincil DNS: <code>109.120.132.43</code><br>— İkincil / Yedek DNS: <code>94.249.177.102</code><br><br>Kaydettikten sonra DNS önbelleğini temizlemek için cihazlarınızın Wi-Fi bağlantısını yenileyin.",
         "security": "Tamamen güvenlidir!<br><br>• MagicDNS yalnızca yapay zeka servislerine yönelik istekleri (Claude, Gemini, ChatGPT) yönlendirir.<br>• Bankacılık uygulamaları, e-Devlet, pazaryerleri ve normal web siteleri vekil sunucu olmadan doğrudan servis sağlayıcınız üzerinden çalışır.<br>• Kayıt (log) tutulmaz, tüm DNS trafiği TLS 1.3 ile şifrelenir.",
-        "ios": "iOS DNS önbelleğini normalden daha uzun süre tutar. Şu 3 adımı uygulayın:<br><br>1. Uçak modunu 5 saniyeliğine açıp tekrar kapatın — bu DNS önbelleğini anında sıfırlar.<br>2. Safari'deki Claude / Gemini sekmesini kapatıp yeniden açın.<br>3. «Ayarlar → Genel → VPN ve Aygıt Yönetimi → DNS» bölümünde <b>MagicDNS</b> profilinin seçili olduğunu doğrulayın.",
+        "ios": "iOS DNS önbelleğini normalden daha uzun süre tutar. Şu 3 adımı uygulayın:<br><br>1. Uçak modunu 5 saniyeliğine açıp tekrar kapatın — bu DNS önbelleğini anında sıfırlar.<br>2. Safari'deki Claude / Gemini sekmesini kapatıp yeniden açın.<br>3. «Ayarlar → Genel → VPN ve Aygıt Yönetimi → DNS» bölümünde <b>MagicDNS</b> profilinin seçili olduğunu doğrulayın.<br><br>• <b>Mac icin (macOS profilsiz kurulum)</b>: Sistem Ayarlari → Ag → Wi-Fi → Ayrintilar... → DNS sekmesi → «+» butonuna basarak <code>109.120.132.43</code> ve <code>94.249.177.102</code> adreslerini ekleyin.",
         "disable": "Kapatmak 5 saniye sürer:<br><br>• <b>iOS</b>: Ayarlar → Genel → VPN ve Aygıt Yönetimi → DNS → «Otomatik»i seçin.<br>• <b>Android</b>: Ayarlar → Ağ ve internet → Özel DNS → «Kapalı»yı seçin.<br>• <b>Windows</b>: Ayarlar → Ağ ve internet → DNS → «Otomatik (DHCP)» olarak değiştirin.<br><br>İstediğiniz zaman tekrar etkinleştirebilirsiniz.",
         "diff": "Geleneksel VPN'e göre temel farklar:<br><br>• <b>Tam Hız</b>: VPN'ler bant genişliğini 10-30 Mbps'ye düşürür. MagicDNS yalnızca yapay zeka servislerini yönlendirir, internetinizin geri kalanı servis sağlayıcınızın tam hızında çalışır.<br>• <b>Reklam Engelleme</b>: Entegre AdGuard modülü reklamları ve izleyicileri doğrudan DNS seviyesinde engeller.<br>• <b>Captcha Yok</b>: Ağ geçitlerimiz temizdir ve Cloudflare spam veritabanlarında yer almaz.<br>• <b>Şarj Dostu</b>: Arka planda pil tüketen sürekli açık bir uygulama gerektirmez.",
         "adblock": "MagicDNS dahili AdGuard koruma modülü içerir:<br><br>• Bannerları, açılır pencereleri ve izleyicileri DNS seviyesinde otomatik engeller.<br>• Tüm tarayıcılarda, uygulamalarda ve mobil oyunlarda anında çalışır.<br>• Tarayıcı eklentisi veya arka plan programı yüklemeyi gerektirmez."
