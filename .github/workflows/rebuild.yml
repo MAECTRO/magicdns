@@ -24,6 +24,10 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install dependencies
+        run: |
+          pip install qrcode
+
       - name: Rebuild index.html
         run: |
           python build_page.py
