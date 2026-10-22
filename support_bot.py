@@ -16,7 +16,7 @@ import urllib.parse
 import urllib.error
 from datetime import datetime
 
-BOT_TOKEN = "8626072258:AAHtcqrf37R0iW3D83Ae7WzLjy2A9alr6Gw"
+BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 ADMIN_CHAT_ID = 8010010144
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_REPO = "MAECTRO/magicdns"

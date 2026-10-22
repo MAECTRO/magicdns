@@ -6040,45 +6040,33 @@ html_content = f'''<!DOCTYPE html>
           }}
           const tgText = tgLines.join('\\n');
 
-          const tgToken = '8626072258:AAHtcqrf37R0iW3D83Ae7WzLjy2A9alr6Gw';
-          const tgChatId = '8010010144';
-
-          const tgBody = {{
-            chat_id: tgChatId,
-            text: tgText,
-            parse_mode: 'HTML'
+          const feedbackPayload = {{
+            type: currentType,
+            platform: currentPlatform,
+            rating: currentRating,
+            message: message,
+            contact: contact
           }};
 
-          if (currentType === 'review') {{
-            tgBody.reply_markup = {{
-              inline_keyboard: [
-                [
-                  {{ text: '✅ Опубликовать на сайт', callback_data: 'pub_review' }},
-                  {{ text: '❌ В корзину', callback_data: 'del_review' }}
-                ]
-              ]
-            }};
-          }}
-
           const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-          const tgTimeout = setTimeout(function() {{
+          const fbTimeout = setTimeout(function() {{
             if (controller) controller.abort();
           }}, 4000);
 
-          fetch('https://api.telegram.org/bot' + tgToken + '/sendMessage', {{
+          fetch('https://fi.magicdns.ru/api/feedback', {{
             method: 'POST',
             headers: {{ 'Content-Type': 'application/json' }},
-            body: JSON.stringify(tgBody),
+            body: JSON.stringify(feedbackPayload),
             signal: controller ? controller.signal : undefined
           }}).then(function() {{
-            clearTimeout(tgTimeout);
+            clearTimeout(fbTimeout);
           }}).catch(function() {{
-            clearTimeout(tgTimeout);
+            clearTimeout(fbTimeout);
             try {{
               fetch(CF_WORKER_URL + '/feedback', {{
                 method: 'POST',
                 headers: {{ 'Content-Type': 'application/json' }},
-                body: JSON.stringify(payload)
+                body: JSON.stringify(feedbackPayload)
               }}).catch(function(){{}});
             }} catch(e){{}}
           }}).finally(function() {{

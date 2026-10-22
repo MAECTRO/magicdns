@@ -3,7 +3,7 @@ main = "worker.js"
 compatibility_date = "2024-01-01"
 
 [vars]
-TELEGRAM_BOT_TOKEN = "8626072258:AAHtcqrf37R0iW3D83Ae7WzLjy2A9alr6Gw"
+TELEGRAM_BOT_TOKEN = ""
 TELEGRAM_CHAT_ID = "8010010144"
 
 [ai]
