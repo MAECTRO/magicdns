@@ -176,7 +176,7 @@ def main():
 
     # 2. Запуск тестов
     print("[2/3] Запуск автоматических тестов верификации...")
-    test_files = ['test_i18n.py', 'test_page.py', 'test_deep.py', 'test_probe.py']
+    test_files = ['test_i18n.py', 'test_page.py', 'test_deep.py', 'test_probe.py', 'test_chat.py']
     for tf in test_files:
         test_path = os.path.join(BASE_DIR, tf)
         if os.path.exists(test_path):

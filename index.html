@@ -144,9 +144,14 @@
 
     html {
       scroll-behavior: smooth;
+      scroll-padding-top: 80px;
       overflow-x: hidden;
       width: 100%;
       max-width: 100%;
+    }
+
+    section, .tab-panel, .glass-config-card, .faq-section, .reviews-section, .interactive-checker {
+      scroll-margin-top: 80px;
     }
 
     *, *::before, *::after {
@@ -817,6 +822,10 @@
       transition: all var(--transition-fast);
       cursor: pointer;
       flex-shrink: 0;
+    }
+
+    .segmented-tab * {
+      pointer-events: none;
     }
 
     .segmented-tab:hover {
@@ -1708,7 +1717,7 @@
       position: fixed;
       bottom: 24px;
       right: 24px;
-      z-index: 1000;
+      z-index: 1050;
       width: 54px;
       height: 54px;
       border-radius: 50%;
@@ -3521,7 +3530,7 @@
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), 0 0 24px rgba(0, 255, 157, 0.15);
-      z-index: 1000;
+      z-index: 1060;
       padding: 16px 24px;
       box-sizing: border-box;
       animation: fadeIn 0.3s ease-out;
@@ -3654,7 +3663,7 @@
         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
     })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
 
-    ym(113667571, 'init', {clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true});
+    ym(113667571, 'init', {clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true, triggerEvent:true});
   </script>
   <noscript><div><img src="https://mc.yandex.ru/watch/113667571" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
   <!-- /Yandex.Metrika counter -->
@@ -4783,7 +4792,7 @@
 
     <div class="chat-input-bar">
       <form id="chat-form" class="chat-form" action="javascript:void(0);">
-        <input type="text" id="chat-input" class="chat-input" placeholder="Задайте свой вопрос..." autocomplete="off" maxlength="300" data-i18n-placeholder="chatPlaceholder">
+        <input type="text" id="chat-input" class="chat-input ym-record-keys" placeholder="Задайте свой вопрос..." autocomplete="off" maxlength="300" data-i18n-placeholder="chatPlaceholder">
         <button type="submit" id="chat-send-btn" class="chat-send-btn" aria-label="Отправить вопрос">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -4854,13 +4863,13 @@
         <!-- Textarea -->
         <div class="feedback-field">
           <label for="feedback-text" class="feedback-label" data-i18n="modalCommentLabel">Ваш комментарий или идея:</label>
-          <textarea id="feedback-text" class="feedback-textarea" rows="4" placeholder="Расскажите, как работает MagicDNS у вас, или какую функцию добавить..." required maxlength="1000" data-i18n-placeholder="modalCommentPlaceholder" data-metrika-unmasked="true"></textarea>
+          <textarea id="feedback-text" class="feedback-textarea ym-record-keys" rows="4" placeholder="Расскажите, как работает MagicDNS у вас, или какую функцию добавить..." required maxlength="1000" data-i18n-placeholder="modalCommentPlaceholder"></textarea>
         </div>
 
         <!-- Contact (Optional) -->
         <div class="feedback-field">
           <label for="feedback-contact" class="feedback-label" data-i18n="modalContactLabel">Контакт для связи (по желанию):</label>
-          <input type="text" id="feedback-contact" class="feedback-input" placeholder="@telegram_username или email" maxlength="100" data-i18n-placeholder="modalContactPlaceholder" data-metrika-unmasked="true">
+          <input type="text" id="feedback-contact" class="feedback-input ym-record-keys" placeholder="@telegram_username или email" maxlength="100" data-i18n-placeholder="modalContactPlaceholder">
         </div>
 
         <!-- Submit Button -->
@@ -4990,7 +4999,7 @@
 
       // 1. Procedural Web Audio API Tactile Feedback & Haptics
       let audioCtx = null;
-      function playTactileFeedback() {
+      function playTactileFeedback(freq, duration) {
         if (navigator.vibrate) {
           try { navigator.vibrate(12); } catch(e) {}
         }
@@ -5005,15 +5014,17 @@
           }
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
+          const f = (typeof freq === 'number' && freq > 0) ? freq : 600;
+          const d = (typeof duration === 'number' && duration > 0) ? duration : 0.04;
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.04);
+          osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + d);
           gain.gain.setValueAtTime(0.035, audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + d);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
           osc.start();
-          osc.stop(audioCtx.currentTime + 0.04);
+          osc.stop(audioCtx.currentTime + d);
         } catch(e) {}
       }
 
@@ -5634,8 +5645,23 @@
       }
 
       window.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && feedbackModal && feedbackModal.classList.contains('active')) {
-          toggleFeedbackModal(false);
+        if (e.key === 'Escape') {
+          if (feedbackModal && feedbackModal.classList.contains('active')) {
+            toggleFeedbackModal(false);
+          }
+          ['privacy-modal', 'terms-modal', 'contact-modal'].forEach(function(mId) {
+            const m = document.getElementById(mId);
+            if (m && m.classList.contains('active')) {
+              m.classList.remove('active');
+              setTimeout(function() {
+                m.style.display = 'none';
+                m.setAttribute('aria-hidden', 'true');
+              }, 200);
+            }
+          });
+          if (chatWindow && chatWindow.classList.contains('active')) {
+            toggleChat(false);
+          }
         }
       });
 
@@ -5872,6 +5898,13 @@
             contact: contact
           };
 
+          function escapeTgHtml(str) {
+            return String(str || '')
+              .replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;');
+          }
+
           // 2. Structured Telegram Notification with Auto-Sorting Tags & 1-Click Publish Command
           const safeAuthor = contact ? contact.replace(/^@/, '') : 'Аноним';
           const safePlatform = currentPlatform || 'Windows';
@@ -5881,43 +5914,43 @@
           if (currentType === 'review') {
             const starsText = '★'.repeat(currentRating);
             tgLines = [
-              '⭐ *НОВЫЙ ОТЗЫВ С САЙТА!* #ОТЗЫВ',
+              '⭐ <b>НОВЫЙ ОТЗЫВ С САЙТА!</b> #ОТЗЫВ',
               '',
-              '👤 *Автор:* ' + (contact ? ('`' + contact + '`') : 'Аноним'),
-              '💻 *Платформа:* ' + currentPlatform,
-              '⭐️ *Оценка:* ' + starsText + ' (' + currentRating + '/5)',
+              '👤 <b>Автор:</b> ' + (contact ? ('<code>' + escapeTgHtml(contact) + '</code>') : 'Аноним'),
+              '💻 <b>Платформа:</b> ' + escapeTgHtml(currentPlatform),
+              '⭐️ <b>Оценка:</b> ' + starsText + ' (' + currentRating + '/5)',
               '',
-              '💬 *Текст отзыва:*',
-              message,
+              '💬 <b>Текст отзыва:</b>',
+              escapeTgHtml(message),
               '',
               '━━━━━━━━━━━━━━━━━━━',
-              '👉 *Опубликовать на сайт (в 1 клик):*',
-              '`' + approveCmd + '`'
+              '👉 <b>Опубликовать на сайт (в 1 клик):</b>',
+              '<code>' + escapeTgHtml(approveCmd) + '</code>'
             ];
           } else if (currentType === 'bug') {
             tgLines = [
-              '🐛 *НОВЫЙ БАГ-РЕПОРТ С САЙТА!* #БАГ',
+              '🐛 <b>НОВЫЙ БАГ-РЕПОРТ С САЙТА!</b> #БАГ',
               '',
-              '💻 *Платформа:* ' + currentPlatform,
-              '👤 *Контакт:* ' + (contact ? ('`' + contact + '`') : 'Анонимно'),
+              '💻 <b>Платформа:</b> ' + escapeTgHtml(currentPlatform),
+              '👤 <b>Контакт:</b> ' + (contact ? ('<code>' + escapeTgHtml(contact) + '</code>') : 'Анонимно'),
               '',
-              '💬 *Описание проблемы:*',
-              message
+              '💬 <b>Описание проблемы:</b>',
+              escapeTgHtml(message)
             ];
           } else if (currentType === 'idea') {
             tgLines = [
-              '💡 *НОВОЕ ПРЕДЛОЖЕНИЕ С САЙТА!* #ИДЕЯ',
+              '💡 <b>НОВОЕ ПРЕДЛОЖЕНИЕ С САЙТА!</b> #ИДЕЯ',
               '',
-              '💻 *Платформа:* ' + currentPlatform,
-              '👤 *Контакт:* ' + (contact ? ('`' + contact + '`') : 'Анонимно'),
+              '💻 <b>Платформа:</b> ' + escapeTgHtml(currentPlatform),
+              '👤 <b>Контакт:</b> ' + (contact ? ('<code>' + escapeTgHtml(contact) + '</code>') : 'Анонимно'),
               '',
-              '💬 *Суть идеи:*',
-              message
+              '💬 <b>Суть идеи:</b>',
+              escapeTgHtml(message)
             ];
           } else {
             tgLines = [
-              '🔔 *Новое сообщение с MagicDNS!*',
-              '💬 ' + message
+              '🔔 <b>Новое сообщение с MagicDNS!</b>',
+              '💬 ' + escapeTgHtml(message)
             ];
           }
           const tgText = tgLines.join('\n');
@@ -5928,7 +5961,7 @@
           const tgBody = {
             chat_id: tgChatId,
             text: tgText,
-            parse_mode: 'Markdown'
+            parse_mode: 'HTML'
           };
 
           if (currentType === 'review') {
