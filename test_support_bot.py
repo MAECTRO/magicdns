@@ -1,0 +1,40 @@
+import unittest
+import os
+import json
+import time
+import support_bot
+
+class TestSupportBot(unittest.TestCase):
+    def setUp(self):
+        self.test_sub_file = "test_subscribers_temp.json"
+        support_bot.SUBSCRIBERS_FILE = self.test_sub_file
+        support_bot.subscribers.clear()
+
+    def tearDown(self):
+        if os.path.exists(self.test_sub_file):
+            os.remove(self.test_sub_file)
+
+    def test_subscribers_seed(self):
+        support_bot.load_subscribers()
+        self.assertGreaterEqual(len(support_bot.subscribers), 5)
+        self.assertIn("268714811", support_bot.subscribers)
+
+    def test_register_subscriber(self):
+        support_bot.load_subscribers()
+        support_bot.register_subscriber(999999, "TestUser", "test_user")
+        self.assertIn("999999", support_bot.subscribers)
+        self.assertEqual(support_bot.subscribers["999999"]["first_name"], "TestUser")
+        
+        # Admin should not be registered as subscriber
+        support_bot.register_subscriber(support_bot.ADMIN_CHAT_ID, "Admin", "admin")
+        self.assertNotIn(str(support_bot.ADMIN_CHAT_ID), support_bot.subscribers)
+
+    def test_format_alert(self):
+        raw = "Внимание <тест> & авария"
+        formatted = support_bot.format_alert_message(raw)
+        self.assertIn("ВНИМАНИЕ: ОПОВЕЩЕНИЕ СЕТИ MAGICDNS", formatted)
+        self.assertIn("&lt;тест&gt; &amp; авария", formatted)
+        self.assertIn("/status", formatted)
+
+if __name__ == '__main__':
+    unittest.main()

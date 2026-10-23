@@ -9,7 +9,8 @@ Features:
 2. 1-Tap Review Publishing via Telegram inline keyboard directly to GitHub repo.
 3. Two-way live technical support chat with 100% full media support (Photos, Screenshots, Documents, Voice, Video).
 4. Universal /dns, /setup, /status, /donate, /help commands for private chats and groups.
-5. Auto-registered Telegram menu commands (setMyCommands).
+5. Auto-registered Telegram menu commands (setMyCommands for users and admin scope).
+6. Emergency Alert Broadcast System (/alert, /users) with interactive confirmation and live delivery reporting.
 """
 
 import os
@@ -108,6 +109,96 @@ def forward_message(chat_id, from_chat_id, message_id):
     }
     return tg_request("forwardMessage", data)
 
+
+SUBSCRIBERS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "subscribers.json")
+INITIAL_KNOWN_USERS = [1452460886, 693846199, 268714811, 8970015768, 5786272987]
+
+subscribers_lock = threading.Lock()
+subscribers = {}
+PENDING_ALERTS = {}
+
+def load_subscribers():
+    global subscribers
+    with subscribers_lock:
+        if os.path.exists(SUBSCRIBERS_FILE):
+            try:
+                with open(SUBSCRIBERS_FILE, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    if isinstance(data, dict) and "users" in data:
+                        subscribers = data["users"]
+                    elif isinstance(data, dict):
+                        subscribers = data
+                print(f"[SUBS LOAD] Loaded {len(subscribers)} subscribers from {SUBSCRIBERS_FILE}")
+            except Exception as e:
+                print(f"[SUBS ERROR] load: {e}")
+        else:
+            now_str = time.strftime('%Y-%m-%d %H:%M:%S')
+            for uid in INITIAL_KNOWN_USERS:
+                subscribers[str(uid)] = {
+                    "user_id": uid,
+                    "first_name": "MagicDNS User",
+                    "username": "",
+                    "first_seen": now_str,
+                    "last_seen": now_str,
+                    "is_active": True
+                }
+            save_subscribers_locked()
+            print(f"[SUBS INIT] Seeded {len(subscribers)} initial subscribers")
+
+def save_subscribers_locked():
+    try:
+        tmp_file = SUBSCRIBERS_FILE + ".tmp"
+        with open(tmp_file, 'w', encoding='utf-8') as f:
+            json.dump({"users": subscribers, "updated_at": time.time()}, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_file, SUBSCRIBERS_FILE)
+    except Exception as e:
+        print(f"[SUBS ERROR] save: {e}")
+
+def register_subscriber(user_id, first_name="", username=""):
+    if not user_id or user_id == ADMIN_CHAT_ID:
+        return
+    uid_str = str(user_id)
+    now_str = time.strftime('%Y-%m-%d %H:%M:%S')
+    with subscribers_lock:
+        if uid_str not in subscribers:
+            subscribers[uid_str] = {
+                "user_id": int(user_id),
+                "first_name": first_name or "",
+                "username": username or "",
+                "first_seen": now_str,
+                "last_seen": now_str,
+                "is_active": True
+            }
+            save_subscribers_locked()
+            print(f"[SUBS NEW] Registered user {user_id} ({first_name} {username})")
+        else:
+            changed = False
+            sub = subscribers[uid_str]
+            if first_name and sub.get("first_name") != first_name:
+                sub["first_name"] = first_name
+                changed = True
+            if username and sub.get("username") != username:
+                sub["username"] = username
+                changed = True
+            if not sub.get("is_active", True):
+                sub["is_active"] = True
+                changed = True
+            last = sub.get("last_seen", "")
+            if last[:13] != now_str[:13]:
+                sub["last_seen"] = now_str
+                changed = True
+            if changed:
+                save_subscribers_locked()
+
+def format_alert_message(raw_text):
+    return (
+        "🚨 <b>ВНИМАНИЕ: ОПОВЕЩЕНИЕ СЕТИ MAGICDNS!</b>\n\n"
+        f"{html.escape(raw_text.strip())}\n\n"
+        "<i>🟢 Проверить статус узлов: /status\n"
+        "⚡ Параметры подключения: /dns\n"
+        "💬 Техподдержка: просто напишите в этот чат</i>"
+    )
+
 def set_bot_commands():
     cmds = [
         {"command": "dns", "description": "⚡ Параметры и ссылки MagicDNS"},
@@ -117,9 +208,26 @@ def set_bot_commands():
     ]
     try:
         res = tg_request("setMyCommands", {"commands": cmds})
-        print(f"[BOT COMMANDS] Registered menu: {res.get('ok')}")
+        print(f"[BOT COMMANDS] Registered public menu: {res.get('ok')}")
     except Exception as e:
         print(f"[BOT COMMANDS ERROR] {e}")
+
+    admin_cmds = [
+        {"command": "alert", "description": "🚨 Оповещение об аварии / рассылка"},
+        {"command": "users", "description": "📊 Статистика аудитории бота"},
+        {"command": "dns", "description": "⚡ Параметры MagicDNS"},
+        {"command": "status", "description": "🟢 Статус серверов сети"},
+        {"command": "donate", "description": "☕ Поддержать серверы"},
+        {"command": "help", "description": "💬 Справка"}
+    ]
+    try:
+        res_adm = tg_request("setMyCommands", {
+            "commands": admin_cmds,
+            "scope": {"type": "chat", "chat_id": ADMIN_CHAT_ID}
+        })
+        print(f"[BOT COMMANDS] Registered admin menu: {res_adm.get('ok')}")
+    except Exception as e:
+        print(f"[BOT ADMIN COMMANDS ERROR] {e}")
 
 # Reusable Card and Keyboard Definitions
 def get_dns_card():
@@ -397,6 +505,7 @@ def main():
     http_thread = threading.Thread(target=start_http_server, daemon=True)
     http_thread.start()
 
+    load_subscribers()
     set_bot_commands()
 
     last_offset = 0
@@ -427,6 +536,8 @@ def main():
                     msg_text = msg.get('text', '')
 
                     print(f"[CALLBACK] {data} from user {from_id}")
+                    from_user = cq.get('from', {})
+                    register_subscriber(from_id, from_user.get('first_name'), from_user.get('username'))
 
                     # Public callback queries
                     if data == 'cmd_dns':
@@ -442,6 +553,96 @@ def main():
                     # Admin-only callbacks
                     if from_id != ADMIN_CHAT_ID:
                         answer_callback(cq_id, "⛔ Действие только для администратора", alert=True)
+                        continue
+
+                    
+                    if data == 'cancel_alert':
+                        PENDING_ALERTS.pop(ADMIN_CHAT_ID, None)
+                        answer_callback(cq_id, "❌ Рассылка отменена")
+                        edit_message(ADMIN_CHAT_ID, msg_id, "❌ <i>Экстренное оповещение отменено администратором.</i>")
+                        continue
+
+                    if data == 'test_alert':
+                        pending = PENDING_ALERTS.get(ADMIN_CHAT_ID)
+                        if not pending:
+                            answer_callback(cq_id, "⚠️ Оповещение устарело, создайте заново: /alert", alert=True)
+                            continue
+                        test_text = format_alert_message(pending["text"])
+                        send_message(ADMIN_CHAT_ID, "🧪 <b>[ТЕСТОВОЕ ОПОВЕЩЕНИЕ]</b>\nВот так сообщение выглядит у пользователей:")
+                        if pending.get("media_msg"):
+                            copy_message(ADMIN_CHAT_ID, ADMIN_CHAT_ID, pending["media_msg"]['message_id'], caption=test_text, parse_mode="HTML")
+                        else:
+                            send_message(ADMIN_CHAT_ID, test_text)
+                        answer_callback(cq_id, "✅ Тестовое оповещение отправлено вам в чат!")
+                        continue
+
+                    if data == 'confirm_alert':
+                        pending = PENDING_ALERTS.pop(ADMIN_CHAT_ID, None)
+                        if not pending:
+                            answer_callback(cq_id, "⚠️ Оповещение устарело, создайте заново: /alert", alert=True)
+                            continue
+
+                        answer_callback(cq_id, "🚨 Начинаю рассылку оповещения...")
+                        edit_message(ADMIN_CHAT_ID, msg_id, "⏳ <b>Выполняется экстренная рассылка оповещения...</b>\n\n<i>Пожалуйста, подождите завершения отправки.</i>")
+
+                        def run_broadcast(alert_info, status_msg_id):
+                            alert_body = format_alert_message(alert_info["text"])
+                            media_msg = alert_info.get("media_msg")
+
+                            with subscribers_lock:
+                                recipients = [u for u in subscribers.values() if u.get('is_active', True) and u.get('user_id') != ADMIN_CHAT_ID]
+
+                            total = len(recipients)
+                            sent = 0
+                            blocked = 0
+                            errors = 0
+                            start_time = time.time()
+
+                            for u in recipients:
+                                uid = u.get('user_id')
+                                try:
+                                    if media_msg:
+                                        res = copy_message(uid, ADMIN_CHAT_ID, media_msg['message_id'], caption=alert_body, parse_mode="HTML")
+                                    else:
+                                        res = send_message(uid, alert_body)
+
+                                    if res.get('ok'):
+                                        sent += 1
+                                    else:
+                                        err_str = str(res.get('error', ''))
+                                        if '403' in err_str or 'blocked' in err_str.lower() or 'deactivated' in err_str.lower():
+                                            blocked += 1
+                                            with subscribers_lock:
+                                                if str(uid) in subscribers:
+                                                    subscribers[str(uid)]['is_active'] = False
+                                        else:
+                                            errors += 1
+                                except Exception as ex:
+                                    errors += 1
+                                    print(f"[BROADCAST ERR] {uid}: {ex}")
+
+                                time.sleep(0.05)
+
+                            with subscribers_lock:
+                                save_subscribers_locked()
+
+                            elapsed = round(time.time() - start_time, 1)
+                            report = (
+                                f"✅ <b>ЭКСТРЕННОЕ ОПОВЕЩЕНИЕ ЗАВЕРШЕНО!</b>\n\n"
+                                f"📊 <b>Отчет о доставке:</b>\n"
+                                f"• 👥 Всего получателей: {total}\n"
+                                f"• 📬 Успешно доставлено: {sent}\n"
+                                f"• 🚫 Заблокировали бота: {blocked}\n"
+                                f"• ⚠️ Ошибок отправки: {errors}\n"
+                                f"• ⏱ Время отправки: {elapsed} сек.\n\n"
+                                f"📢 <b>Разосланный текст:</b>\n"
+                                f"<i>{html.escape(alert_info['text'][:250])}</i>"
+                            )
+                            edit_message(ADMIN_CHAT_ID, status_msg_id, report)
+                            print(f"[BROADCAST DONE] Sent: {sent}/{total}, Blocked: {blocked}, Errors: {errors} in {elapsed}s")
+
+                        t = threading.Thread(target=run_broadcast, args=(pending, msg_id), daemon=True)
+                        t.start()
                         continue
 
                     if data == 'del_review':
@@ -492,6 +693,9 @@ def main():
                     username = f"@{sender.get('username')}" if sender.get('username') else "без юзернейма"
                     text = m.get('text', '') or m.get('caption', '') or ''
 
+                    if chat_type == 'private' and sender_id != ADMIN_CHAT_ID:
+                        register_subscriber(sender_id, sender_name, username)
+
                     # Detect media attachments
                     is_photo = bool(m.get('photo'))
                     is_doc = bool(m.get('document'))
@@ -506,7 +710,88 @@ def main():
                     cmd = text.strip().split()[0].lower() if text.strip() else ""
                     cmd = cmd.split('@')[0]  # strip @botname
 
-                    if cmd in ['/dns', '/setup', '/config', 'днс', 'настройка']:
+                    # Admin Emergency Broadcast & Statistics
+                    if cmd in ['/alert', '/broadcast', '/notify', 'оповещение', 'рассылка']:
+                        if sender_id != ADMIN_CHAT_ID:
+                            send_message(chat_id, "⛔ Команда доступна только администратору сервиса.")
+                            continue
+
+                        alert_text = ""
+                        reply_to = m.get('reply_to_message')
+                        tokens = text.strip().split(maxsplit=1)
+
+                        if len(tokens) > 1:
+                            alert_text = tokens[1].strip()
+                        elif reply_to:
+                            alert_text = reply_to.get('text') or reply_to.get('caption') or ""
+
+                        if not alert_text:
+                            guide = (
+                                "⚠️ <b>Как сделать экстренное оповещение:</b>\n\n"
+                                "1. Напишите команду с текстом аварии:\n"
+                                "<code>/alert Внимание! На шведском узле технические работы. Пожалуйста, временно переключитесь на немецкий узел: 94.249.177.102</code>\n\n"
+                                "2. Или отправьте скриншот/сообщение и ответьте на него командой <code>/alert</code>.\n\n"
+                                "<i>Перед отправкой бот покажет превью и попросит подтверждение!</i>"
+                            )
+                            send_message(ADMIN_CHAT_ID, guide)
+                            continue
+
+                        with subscribers_lock:
+                            active_recipients = [u for u in subscribers.values() if u.get('is_active', True) and u.get('user_id') != ADMIN_CHAT_ID]
+                            recipient_count = len(active_recipients)
+
+                        PENDING_ALERTS[ADMIN_CHAT_ID] = {
+                            "text": alert_text,
+                            "media_msg": reply_to if (reply_to and (reply_to.get('photo') or reply_to.get('document') or reply_to.get('video'))) else None,
+                            "created_at": time.time()
+                        }
+
+                        formatted_preview = format_alert_message(alert_text)
+                        preview_card = (
+                            f"⚠️ <b>ПОДТВЕРЖДЕНИЕ ЭКСТРЕННОГО ОПОВЕЩЕНИЯ:</b>\n\n"
+                            f"👥 <b>Получателей:</b> {recipient_count} чел.\n\n"
+                            f"📢 <b>Предпросмотр сообщения:</b>\n"
+                            f"————————————————————\n"
+                            f"{formatted_preview}\n"
+                            f"————————————————————\n\n"
+                            f"<i>Разослать оповещение всем пользователям бота?</i>"
+                        )
+
+                        alert_kb = {
+                            "inline_keyboard": [
+                                [{"text": f"🚨 Да, разослать всем ({recipient_count})", "callback_data": "confirm_alert"}],
+                                [{"text": "🧪 Проверить (отправить мне в ЛС)", "callback_data": "test_alert"}],
+                                [{"text": "❌ Отменить", "callback_data": "cancel_alert"}]
+                            ]
+                        }
+                        send_message(ADMIN_CHAT_ID, preview_card, reply_markup=alert_kb)
+                        continue
+
+                    elif cmd in ['/users', '/subs', '/subscribers', '/stats', 'статистика']:
+                        if sender_id != ADMIN_CHAT_ID:
+                            continue
+                        with subscribers_lock:
+                            total = len(subscribers)
+                            active = len([u for u in subscribers.values() if u.get('is_active', True)])
+                            blocked = total - active
+                            sorted_users = sorted(subscribers.values(), key=lambda x: x.get('last_seen', ''), reverse=True)
+
+                        stats_msg = (
+                            f"📊 <b>Статистика пользователей бота MagicDNS:</b>\n\n"
+                            f"👥 <b>Всего в базе:</b> {total}\n"
+                            f"🟢 <b>Активных:</b> {active}\n"
+                            f"🚫 <b>Заблокировали бота:</b> {blocked}\n\n"
+                            f"<b>Последние активные:</b>\n"
+                        )
+                        for u in sorted_users[:5]:
+                            uname = f"@{u.get('username')}" if u.get('username') else "без юзернейма"
+                            stats_msg += f"• <code>{u.get('user_id')}</code> ({html.escape(u.get('first_name', ''))}, {uname}) — {u.get('last_seen')}\n"
+
+                        stats_msg += "\n<i>Для рассылки аварийного оповещения используйте:</i>\n<code>/alert Текст аварии</code>"
+                        send_message(ADMIN_CHAT_ID, stats_msg)
+                        continue
+
+                    elif cmd in ['/dns', '/setup', '/config', 'днс', 'настройка']:
                         reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
                         send_message(chat_id, get_dns_card(), reply_to_message_id=reply_to_id, reply_markup=get_dns_kb())
                         continue
@@ -524,6 +809,14 @@ def main():
                     elif cmd in ['/rules', '/help', 'помощь', 'правила']:
                         reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
                         send_message(chat_id, get_help_card(), reply_to_message_id=reply_to_id, reply_markup=get_help_kb())
+                        if sender_id == ADMIN_CHAT_ID:
+                            admin_extra = (
+                                "🛠 <b>Панель администратора:</b>\n\n"
+                                "• <code>/alert Текст</code> — экстренное оповещение пользователей (с превью и подтверждением)\n"
+                                "• <code>/users</code> — статистика подписчиков и список недавних\n"
+                                "• <code>/status</code> — статус серверов сети"
+                            )
+                            send_message(ADMIN_CHAT_ID, admin_extra)
                         continue
 
                     elif cmd == '/start':
