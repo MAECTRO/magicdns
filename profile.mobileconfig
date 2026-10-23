@@ -19,7 +19,7 @@
                 </array>
             </dict>
             <key>PayloadDescription</key>
-            <string>Настройка зашифрованного DoH MagicDNS для прямого доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN</string>
+            <string>Настройка зашифрованного DoH MagicDNS для прямого доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без сторонних приложений и тоннелей</string>
             <key>PayloadDisplayName</key>
             <string>MagicDNS (AI Services DoH)</string>
             <key>PayloadIdentifier</key>

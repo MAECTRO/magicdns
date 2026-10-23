@@ -90,8 +90,8 @@ def main():
     # Если чего-то не хватает — запрашиваем интерактивно
     if not message:
         if not author:
-            author_input = input("Имя или ник автора [по умолчанию: Аноним]: ").strip()
-            author = author_input if author_input else "Аноним"
+            author_input = input("Имя или ник автора [по умолчанию: Пользователь MagicDNS]: ").strip()
+            author = author_input if author_input else "Пользователь MagicDNS"
 
         if not platform:
             print("\nВыберите платформу:")
@@ -116,7 +116,7 @@ def main():
             return
 
     # Валидация и нормализация
-    author = (author or 'Аноним').strip()
+    author = (author or 'Пользователь MagicDNS').strip()
     platform = normalize_platform(platform)
     try:
         rating = max(1, min(5, int(rating or 5)))

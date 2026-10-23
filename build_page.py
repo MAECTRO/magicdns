@@ -67,9 +67,9 @@ html_content = f'''<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#070d14">
-  <title>MagicDNS — ДНС для ИИ: Smart DNS к Gemini, ChatGPT без VPN</title>
-  <meta name="description" content="ДНС для ИИ и персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN и задержек. Бесплатная настройка за 1 минуту!">
-  <meta name="keywords" content="днс для ии, ДНС ДЛЯ ИИ, смарт днс для ии, smart dns для ии, днс для искусственного интеллекта, частный днс для ии, днс для нейросетей, быстрый днс без vpn, персональный dns сервер, dns для gemini, smart dns google ai studio, доступ к google ai studio без vpn, как открыть gemini через dns, dns для chatgpt, доступ к claude ai без vpn, dns для midjourney, copilot dns, настройка частного dns на android для gemini, профиль doh dot для ios iphone, smart dns на роутер keenetic openwrt, MagicDNS, Claude AI, Gemini, Google AI Studio, ChatGPT, DoH, DoT">
+  <title>MagicDNS — ДНС для ИИ: прямой доступ на полной скорости</title>
+  <meta name="description" content="ДНС для ИИ и Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без сторонних приложений и тоннелей на полной скорости. Бесплатная настройка!">
+  <meta name="keywords" content="днс для ии, ДНС ДЛЯ ИИ, смарт днс для ии, smart dns для ии, днс для искусственного интеллекта, частный днс для ии, днс для нейросетей, быстрый днс без сторонних приложений, персональный dns сервер, dns для gemini, smart dns google ai studio, доступ к google ai studio без сторонних приложений, как открыть gemini через dns, dns для chatgpt, доступ к claude ai без сторонних приложений, dns для midjourney, copilot dns, настройка частного dns на android для gemini, профиль doh dot для ios iphone, smart dns на роутер keenetic openwrt, MagicDNS, Claude AI, Gemini, Google AI Studio, ChatGPT, DoH, DoT">
   <link rel="canonical" href="https://magicdns.ru/">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='%2300ff9d'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Ccircle%20cx='12'%20cy='12'%20r='3'/%3E%3Cpath%20d='M12%202v7m0%206v7M2%2012h7m6%200h7'/%3E%3Ccircle%20cx='12'%20cy='2'%20r='1.5'%20fill='%2300ff9d'/%3E%3Ccircle%20cx='12'%20cy='22'%20r='1.5'%20fill='%2300ff9d'/%3E%3Ccircle%20cx='2'%20cy='12'%20r='1.5'%20fill='%2300ff9d'/%3E%3Ccircle%20cx='22'%20cy='12'%20r='1.5'%20fill='%2300ff9d'/%3E%3C/svg%3E">
 
@@ -80,8 +80,8 @@ html_content = f'''<!DOCTYPE html>
   <!-- Open Graph / Facebook / Telegram / WhatsApp -->
   <meta property="og:site_name" content="MagicDNS">
   <meta property="og:url" content="https://magicdns.ru/">
-  <meta property="og:title" content="MagicDNS — ДНС для ИИ: Smart DNS к Gemini, ChatGPT без VPN">
-  <meta property="og:description" content="ДНС для ИИ и персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN и задержек. Бесплатная настройка за 1 минуту!">
+  <meta property="og:title" content="MagicDNS — ДНС для ИИ: прямой доступ на полной скорости">
+  <meta property="og:description" content="ДНС для ИИ и Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без сторонних приложений и тоннелей на полной скорости. Бесплатная настройка!">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ru_RU">
   <meta property="og:image" content="https://magicdns.ru/og-image.png">
@@ -91,8 +91,8 @@ html_content = f'''<!DOCTYPE html>
   <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://magicdns.ru/">
-  <meta name="twitter:title" content="MagicDNS — ДНС для ИИ: Smart DNS к Gemini, ChatGPT без VPN">
-  <meta name="twitter:description" content="ДНС для ИИ и персональный Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без VPN и задержек. Бесплатная настройка за 1 минуту!">
+  <meta name="twitter:title" content="MagicDNS — ДНС для ИИ: прямой доступ на полной скорости">
+  <meta name="twitter:description" content="ДНС для ИИ и Smart DNS для нейросетей. Прямой доступ к Gemini, ChatGPT и Claude без сторонних приложений и тоннелей на полной скорости. Бесплатная настройка!">
   <meta name="twitter:image" content="https://magicdns.ru/og-image.png">
 
   <!-- Schema.org Structured Data (JSON-LD) -->
@@ -105,7 +105,7 @@ html_content = f'''<!DOCTYPE html>
         "@id": "https://magicdns.ru/#website",
         "url": "https://magicdns.ru/",
         "name": "MagicDNS",
-        "description": "Высокоскоростной Smart DNS для доступа к Claude AI, Gemini, ChatGPT без VPN",
+        "description": "Высокоскоростной Smart DNS для прямого доступа к Claude AI, Gemini, ChatGPT на полной скорости без сторонних приложений и тоннелей",
         "inLanguage": "ru-RU"
       }},
       {{
@@ -113,7 +113,7 @@ html_content = f'''<!DOCTYPE html>
         "@id": "https://magicdns.ru/#app",
         "name": "MagicDNS",
         "url": "https://magicdns.ru/",
-        "description": "Высокоскоростной защищённый Smart DNS (DoH/DoT) для прямого доступа к Claude AI, Gemini, Google AI Studio и ChatGPT без VPN.",
+        "description": "Высокоскоростной защищённый Smart DNS (DoH/DoT) для прямого доступа к Claude AI, Gemini, Google AI Studio и ChatGPT без сторонних приложений и тоннелей.",
         "applicationCategory": "NetworkingApplication",
         "operatingSystem": "Windows, iOS, macOS, Android, Linux, Keenetic, OpenWrt, MikroTik",
         "offers": {{
@@ -144,10 +144,10 @@ html_content = f'''<!DOCTYPE html>
           }},
           {{
             "@type": "Question",
-            "name": "Почему при использовании MagicDNS скорость интернета не снижается, в отличие от VPN?",
+            "name": "Почему при использовании MagicDNS скорость интернета не снижается, в отличие от сторонних сетевых клиентов?",
             "acceptedAnswer": {{
               "@type": "Answer",
-              "text": "Быстрый ДНС без VPN не пропускает через себя данные (видео, файлы, страницы). DNS участвует только один раз в момент первого обращения к сайту для получения его IP-адреса (несколько миллисекунд). После этого устройство связывается с сервером напрямую, что гарантирует 100% скорости вашего провайдера."
+              "text": "Быстрый ДНС не пропускает через себя данные (видео, файлы, страницы). DNS участвует только один раз в момент первого обращения к сайту для получения его IP-адреса (несколько миллисекунд). После этого устройство связывается с сервером напрямую, что гарантирует 100% скорости вашего провайдера."
             }}
           }},
           {{
@@ -160,10 +160,10 @@ html_content = f'''<!DOCTYPE html>
           }},
           {{
             "@type": "Question",
-            "name": "В чем главное отличие Smart DNS от классического VPN и как открыть Gemini через DNS?",
+            "name": "В чем главное отличие Smart DNS от сторонних сетевых клиентов и как открыть Gemini через DNS?",
             "acceptedAnswer": {{
               "@type": "Answer",
-              "text": "Классический VPN принудительно направляет весь трафик устройства через удаленный зашифрованный сервер, что снижает скорость, увеличивает пинг и блокирует доступ к российским банковским приложениям. Smart DNS устраняет региональные ограничения зарубежных сервисов (OpenAI, Google) через точечную оптимизацию сетевой маршрутизации к AI-платформам, сохраняя прямой доступ ко всем остальным ресурсам. Чтобы понять, как открыть Gemini через DNS, достаточно один раз указать адрес шлюза в системных настройках вашего устройства."
+              "text": "Сторонние сетевые клиенты и тоннели принудительно направляют весь трафик устройства через удаленный зашифрованный сервер, что снижает скорость, увеличивает пинг и блокирует доступ к российским банковским приложениям. Smart DNS устраняет региональные ограничения зарубежных сервисов (OpenAI, Google) через точечную оптимизацию сетевой маршрутизации к AI-платформам, сохраняя прямой доступ ко всем остальным ресурсам. Чтобы понять, как открыть Gemini через DNS, достаточно один раз указать адрес шлюза в системных настройках вашего устройства."
             }}
           }},
           {{
@@ -4041,9 +4041,9 @@ html_content = f'''<!DOCTYPE html>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
         </svg>
-        <span data-i18n="heroEyebrow">ДНС ДЛЯ ИИ • ДНС для искусственного интеллекта • Быстрый ДНС без VPN • Блокировка рекламы AdGuard</span>
+        <span data-i18n="heroEyebrow">ДНС ДЛЯ ИИ • ДНС для искусственного интеллекта • Прямой доступ на полной скорости • Блокировка рекламы AdGuard</span>
       </div>
-      <h1 data-i18n="heroHeading">ДНС для ИИ: Smart DNS для ИИ к Gemini, ChatGPT и Claude без VPN</h1>
+      <h1 data-i18n="heroHeading">ДНС для ИИ: Smart DNS для ИИ к Gemini, ChatGPT и Claude без сторонних приложений и тоннелей</h1>
       <p class="hero-subtitle" data-i18n="heroSubtitle">Оптимизация сетевой маршрутизации к AI-платформам: Смарт ДНС для ИИ и персональный DNS сервер. Прямой доступ к международным нейросетям без посредников, а локальный трафик, российские банки и Госуслуги идут напрямую от вашего провайдера на максимальной скорости.</p>
 
       <!-- 4 Specific Hero Benefits -->
@@ -4059,7 +4059,7 @@ html_content = f'''<!DOCTYPE html>
             <div class="benefit-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
-            <span data-i18n="heroBenefit2">0% нагрузки на аккумулятор: работает на уровне сетевого стека ОС, не требует фоновых программ и VPN-клиентов</span>
+            <span data-i18n="heroBenefit2">0% нагрузки на аккумулятор: работает на уровне сетевого стека ОС, не требует фоновых программ и сторонних сетевых клиентов</span>
           </li>
           <li class="hero-benefit-item">
             <div class="benefit-icon">
@@ -4113,7 +4113,7 @@ html_content = f'''<!DOCTYPE html>
           </button>
           <div class="service-chip highlight">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <span data-i18n="chipNoVpn">Без VPN и сторонних программ</span>
+            <span data-i18n="chipNoVpn">Без сторонних приложений и тоннелей</span>
           </div>
           <div class="service-chip highlight-adblock">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
@@ -4156,7 +4156,7 @@ html_content = f'''<!DOCTYPE html>
           <span data-i18n="compTag">СРАВНЕНИЕ ТЕХНОЛОГИЙ</span>
         </div>
       </div>
-      <h2 class="section-heading" data-i18n="compTitle">Стандартный VPN против MagicDNS (Smart DNS)</h2>
+      <h2 class="section-heading" data-i18n="compTitle">Сторонние сетевые клиенты против MagicDNS (Smart DNS)</h2>
       <p class="section-subtitle" data-i18n="compSubtitle">Почему прямое перенаправление DNS эффективнее и надежнее тяжелых тоннелей</p>
       
       <div class="comparison-table-wrapper">
@@ -4164,7 +4164,7 @@ html_content = f'''<!DOCTYPE html>
           <thead>
             <tr>
               <th class="col-param" data-i18n="compThParam">Параметр</th>
-              <th class="col-vpn" data-i18n="compThVpn">Стандартный VPN</th>
+              <th class="col-vpn" data-i18n="compThVpn">Сторонние сетевые клиенты</th>
               <th class="col-magic" data-i18n="compThMagic">MagicDNS (Smart DNS)</th>
             </tr>
           </thead>
@@ -4201,7 +4201,7 @@ html_content = f'''<!DOCTYPE html>
               </td>
               <td class="cell-vpn">
                 <span class="status-indicator bad">✕</span>
-                <span data-i18n="compVpnBattery">Повышенный расход батареи до 15–25% в сутки из-за фонового VPN-клиента</span>
+                <span data-i18n="compVpnBattery">Повышенный расход батареи до 15–25% в сутки из-за фонового клиента</span>
               </td>
               <td class="cell-magic">
                 <span class="status-indicator good">✓</span>
@@ -4284,7 +4284,7 @@ html_content = f'''<!DOCTYPE html>
             <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
             <code class="error-code">"User location is not supported"</code>
           </div>
-          <p class="platform-desc" data-i18n="platAiStudioDesc">Smart DNS Google AI Studio: прямой доступ к Google AI Studio без VPN для разработчиков. Устраняет ошибку «User location is not supported» при вызове моделей и выпуске API-ключей.</p>
+          <p class="platform-desc" data-i18n="platAiStudioDesc">Smart DNS Google AI Studio: прямой доступ к Google AI Studio без сторонних приложений и тоннелей для разработчиков. Устраняет ошибку «User location is not supported» при вызове моделей и выпуске API-ключей.</p>
         </div>
 
         <!-- Card 3: ChatGPT (OpenAI) -->
@@ -4320,7 +4320,7 @@ html_content = f'''<!DOCTYPE html>
             <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
             <code class="error-code">"App unavailable in your region"</code>
           </div>
-          <p class="platform-desc" data-i18n="platClaudeDesc">Доступ к Claude AI без VPN: стабильная работа в браузере claude.ai и нативных приложениях без ошибки «App unavailable in your region».</p>
+          <p class="platform-desc" data-i18n="platClaudeDesc">Доступ к Claude AI без сторонних приложений и тоннелей: стабильная работа в браузере claude.ai и нативных приложениях без ошибки «App unavailable in your region».</p>
         </div>
 
         <!-- Card 5: Midjourney -->
@@ -4478,7 +4478,7 @@ html_content = f'''<!DOCTYPE html>
               <span class="card-badge" data-i18n="winBadge">RFC 8484 • Windows 11 &amp; Роутеры</span>
             </div>
             <p class="card-instruction" data-i18n="winDesc">
-              Быстрый ДНС без VPN для Windows 11 и браузеров. Шифрует все DNS-запросы под защищённый HTTPS-трафик (RFC 8484 DoH). Настройка: Параметры → Сеть → Wi-Fi / Ethernet → Назначение DNS → Вручную (DNS через HTTPS) или в настройках браузера.
+              Быстрый ДНС без сторонних приложений и тоннелей для Windows 11 и браузеров. Шифрует все DNS-запросы под защищённый HTTPS-трафик (RFC 8484 DoH). Настройка: Параметры → Сеть → Wi-Fi / Ethernet → Назначение DNS → Вручную (DNS через HTTPS) или в настройках браузера.
             </p>
             <div class="input-field-group">
               <span class="input-field-label" data-i18n="winDohLabel">Шаблон DoH:</span>
@@ -4746,7 +4746,7 @@ html_content = f'''<!DOCTYPE html>
         <div class="checker-result-box" id="checker-result">
           <div class="result-status-title" id="result-status-title">
             <svg id="result-status-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-            <span id="result-status-text" data-i18n="checkerSuccess">MagicDNS активен! Сервисы Claude AI, Gemini, Google AI Studio и Antigravity доступны без VPN</span>
+            <span id="result-status-text" data-i18n="checkerSuccess">MagicDNS активен! Сервисы Claude AI, Gemini, Google AI Studio и Antigravity доступны на полной скорости</span>
           </div>
 
           <!-- AI Services Live Probe Grid -->
@@ -4888,11 +4888,11 @@ html_content = f'''<!DOCTYPE html>
 
         <details class="faq-item">
           <summary class="faq-question">
-            <span data-i18n="faqQ3">Почему при использовании MagicDNS скорость интернета не снижается, в отличие от VPN?</span>
+            <span data-i18n="faqQ3">Почему при использовании MagicDNS скорость интернета не снижается, в отличие от сторонних сетевых клиентов?</span>
             <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
           <div class="faq-answer">
-            <p data-i18n="faqA3">Быстрый ДНС без VPN не пропускает через себя данные (видео, файлы, страницы). DNS участвует только один раз в момент первого обращения к сайту для получения его IP-адреса (несколько миллисекунд). После этого устройство связывается с сервером напрямую, что гарантирует 100% скорости вашего провайдера.</p>
+            <p data-i18n="faqA3">Быстрый ДНС не пропускает через себя данные (видео, файлы, страницы). DNS участвует только один раз в момент первого обращения к сайту для получения его IP-адреса (несколько миллисекунд). После этого устройство связывается с сервером напрямую, что гарантирует 100% скорости вашего провайдера.</p>
           </div>
         </details>
 
@@ -4908,11 +4908,11 @@ html_content = f'''<!DOCTYPE html>
 
         <details class="faq-item">
           <summary class="faq-question">
-            <span data-i18n="faqQ5">В чем главное отличие Smart DNS от классического VPN и как открыть Gemini через DNS?</span>
+            <span data-i18n="faqQ5">В чем главное отличие Smart DNS от сторонних сетевых клиентов и как открыть Gemini через DNS?</span>
             <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
           <div class="faq-answer">
-            <p data-i18n="faqA5">Классический VPN принудительно направляет весь трафик устройства через удаленный зашифрованный сервер, что снижает скорость, увеличивает пинг и блокирует доступ к российским банковским приложениям. Smart DNS устраняет региональные ограничения зарубежных сервисов (OpenAI, Google) через точечную оптимизацию сетевой маршрутизации к AI-платформам, сохраняя прямой доступ ко всем остальным ресурсам. Чтобы понять, как открыть Gemini через DNS, достаточно один раз указать адрес шлюза в системных настройках вашего устройства.</p>
+            <p data-i18n="faqA5">Сторонние сетевые клиенты и тоннели принудительно направляют весь трафик устройства через удаленный зашифрованный сервер, что снижает скорость, увеличивает пинг и блокирует доступ к российским банковским приложениям. Smart DNS устраняет региональные ограничения зарубежных сервисов (OpenAI, Google) через точечную оптимизацию сетевой маршрутизации к AI-платформам, сохраняя прямой доступ ко всем остальным ресурсам. Чтобы понять, как открыть Gemini через DNS, достаточно один раз указать адрес шлюза в системных настройках вашего устройства.</p>
           </div>
         </details>
 
@@ -4955,7 +4955,7 @@ html_content = f'''<!DOCTYPE html>
             <span data-i18n="reviewsTag">ОТЗЫВЫ И ПРЕДЛОЖЕНИЯ</span>
           </div>
           <h2 data-i18n="reviewsTitle">Отзывы пользователей</h2>
-          <p class="reviews-subtitle" data-i18n="reviewsSubtitle">Честный опыт работы с Claude AI, Gemini, ChatGPT и кодингом без VPN</p>
+          <p class="reviews-subtitle" data-i18n="reviewsSubtitle">Честный опыт работы с Claude AI, Gemini, ChatGPT и кодингом без сторонних приложений и тоннелей</p>
         </div>
         <button type="button" class="btn-neon-action btn-feedback-trigger" id="open-feedback-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -5188,7 +5188,7 @@ html_content = f'''<!DOCTYPE html>
         <button class="chat-faq-chip" data-faq="security" data-i18n="chatFaqSecurity">🛡️ Безопасность и мобильные банки</button>
         <button class="chat-faq-chip" data-faq="ios" data-i18n="chatFaqIos">🍎 iPhone / Safari: не открывает сайты</button>
         <button class="chat-faq-chip" data-faq="disable" data-i18n="chatFaqDisable">🔄 Как временно отключить MagicDNS?</button>
-        <button class="chat-faq-chip" data-faq="diff" data-i18n="chatFaqDiff">🌐 Чем отличается от обычного VPN?</button>
+        <button class="chat-faq-chip" data-faq="diff" data-i18n="chatFaqDiff">🌐 Чем отличается от сторонних клиентов?</button>
         <button class="chat-faq-chip" id="chat-faq-feedback-trigger" data-faq="feedback" data-i18n="chatFaqFeedback">💡 Оставить отзыв или предложить идею</button>
       </div>
     </div>
@@ -5763,7 +5763,7 @@ html_content = f'''<!DOCTYPE html>
                   metricAccess.textContent = 'Прямой (Без капчи)';
                 }}
                 if (resultTitle) {{
-                  resultTitle.textContent = 'MagicDNS активен! Сервисы Claude AI, Gemini, Google AI Studio и Antigravity доступны без VPN';
+                  resultTitle.textContent = (I18N[currentLang] && I18N[currentLang].checkerSuccess) ? I18N[currentLang].checkerSuccess : 'MagicDNS активен! Сервисы Claude AI, Gemini, Google AI Studio и Antigravity доступны на полной скорости';
                 }}
                 if (resultIcon) {{
                   resultIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
@@ -6309,7 +6309,7 @@ html_content = f'''<!DOCTYPE html>
           }}
 
           // 2. Structured Telegram Notification with Auto-Sorting Tags & 1-Click Publish Command
-          const safeAuthor = contact ? contact.replace(/^@/, '') : 'Аноним';
+          const safeAuthor = contact ? contact.replace(/^@/, '') : 'Пользователь';
           const safePlatform = currentPlatform || 'Windows';
           const approveCmd = 'python add_review.py ' + JSON.stringify(safeAuthor) + ' ' + JSON.stringify(safePlatform) + ' ' + currentRating + ' ' + JSON.stringify(message);
 
@@ -6319,7 +6319,7 @@ html_content = f'''<!DOCTYPE html>
             tgLines = [
               '⭐ <b>НОВЫЙ ОТЗЫВ С САЙТА!</b> #ОТЗЫВ',
               '',
-              '👤 <b>Автор:</b> ' + (contact ? ('<code>' + escapeTgHtml(contact) + '</code>') : 'Аноним'),
+              '👤 <b>Автор:</b> ' + (contact ? ('<code>' + escapeTgHtml(contact) + '</code>') : 'Пользователь'),
               '💻 <b>Платформа:</b> ' + escapeTgHtml(currentPlatform),
               '⭐️ <b>Оценка:</b> ' + starsText + ' (' + currentRating + '/5)',
               '',
@@ -6335,7 +6335,7 @@ html_content = f'''<!DOCTYPE html>
               '🐛 <b>НОВЫЙ БАГ-РЕПОРТ С САЙТА!</b> #БАГ',
               '',
               '💻 <b>Платформа:</b> ' + escapeTgHtml(currentPlatform),
-              '👤 <b>Контакт:</b> ' + (contact ? ('<code>' + escapeTgHtml(contact) + '</code>') : 'Анонимно'),
+              '👤 <b>Контакт:</b> ' + (contact ? ('<code>' + escapeTgHtml(contact) + '</code>') : 'Не указан'),
               '',
               '💬 <b>Описание проблемы:</b>',
               escapeTgHtml(message)
@@ -6345,7 +6345,7 @@ html_content = f'''<!DOCTYPE html>
               '💡 <b>НОВОЕ ПРЕДЛОЖЕНИЕ С САЙТА!</b> #ИДЕЯ',
               '',
               '💻 <b>Платформа:</b> ' + escapeTgHtml(currentPlatform),
-              '👤 <b>Контакт:</b> ' + (contact ? ('<code>' + escapeTgHtml(contact) + '</code>') : 'Анонимно'),
+              '👤 <b>Контакт:</b> ' + (contact ? ('<code>' + escapeTgHtml(contact) + '</code>') : 'Не указан'),
               '',
               '💬 <b>Суть идеи:</b>',
               escapeTgHtml(message)
@@ -6551,7 +6551,7 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
                 </array>
             </dict>
             <key>PayloadDescription</key>
-            <string>Настройка зашифрованного DoH MagicDNS для прямого доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без VPN</string>
+            <string>Настройка зашифрованного DoH MagicDNS для прямого доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без сторонних приложений и тоннелей</string>
             <key>PayloadDisplayName</key>
             <string>MagicDNS (AI Services DoH)</string>
             <key>PayloadIdentifier</key>

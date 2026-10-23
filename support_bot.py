@@ -5,7 +5,7 @@ Runs as systemd service on Finland Host (2.56.179.170).
 Features:
 1. HTTP API on 127.0.0.1:8880 for https://dns.magicdns.ru/api/feedback
    - Client sends feedback/reviews here directly (NO tokens exposed in browser!).
-   - Works in Russia without VPN (since dns.magicdns.ru is not blocked!).
+   - Works directly without third-party network clients or tunnels.
 2. 1-Tap Review Publishing via Telegram inline keyboard directly to GitHub repo.
 3. Two-way live technical support chat with 100% full media support (Photos, Screenshots, Documents, Voice, Video).
 4. Universal /dns, /setup, /status, /donate, /help commands for private chats and groups.
@@ -313,7 +313,7 @@ def get_help_kb():
 def get_welcome_card():
     return (
         "👋 <b>Добро пожаловать в MagicDNS!</b>\n\n"
-        "Бесплатный Smart DNS для прямого доступа к нейросетям (ChatGPT, Claude, Gemini, Perplexity) без VPN на полной скорости вашего интернета.\n\n"
+        "Бесплатный Smart DNS для прямого доступа к нейросетям (ChatGPT, Claude, Gemini, Perplexity) без сторонних приложений и тоннелей на полной скорости вашего интернета.\n\n"
         "⚡ <b>Быстрые команды:</b>\n"
         "• <code>/dns</code> — получить адреса и ссылки для настройки\n"
         "• <code>/status</code> — статус работы серверов\n"
@@ -511,7 +511,7 @@ class FeedbackAPIHandler(BaseHTTPRequestHandler):
 
             try:
                 data = json.loads(body)
-                author = data.get('name', 'Аноним').strip() or 'Аноним'
+                author = data.get('name', 'Пользователь MagicDNS').strip() or 'Пользователь MagicDNS'
                 review_type = data.get('type', 'review')
                 platform = data.get('platform', 'Не указана')
                 rating = int(data.get('rating', 5))

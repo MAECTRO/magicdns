@@ -50,7 +50,7 @@ test("Hero heading for Smart DNS AI services",
 test("Hero subtitle direct access without VPN",
      'Оптимизация сетевой маршрутизации к AI-платформам' in html and 'на максимальной скорости' in html)
 test("Unified services ribbon chips",
-     all(chip in html for chip in ['Claude AI', 'Gemini', 'ChatGPT', 'Perplexity', 'Antigravity', 'Без VPN и сторонних программ'])
+     all(chip in html for chip in ['Claude AI', 'Gemini', 'ChatGPT', 'Perplexity', 'Antigravity', 'Без сторонних приложений и тоннелей'])
      and 'Claude AI &amp; Sonnet' not in html
      and 'Google AI Studio' not in html[html.find('class="services-ribbon"'):html.find('class="more-services-drawer"')])
 test("Support button in header", 'https://pay.cloudtips.ru/p/596a95a5' in html.split('</header>')[0] and 'target="_blank"' in html.split('</header>')[0] and 'rel="noopener noreferrer"' in html.split('</header>')[0])
@@ -249,12 +249,12 @@ if jsonld_match:
         test("Schema.org JSON-LD is valid JSON", False, str(e))
 
 # 17. Landing Page Content, SEO & Legal Compliance Suite
-test("Comparison table present with parameters", 'class="comparison-table"' in html and 'MagicDNS (Smart DNS)' in html and 'Стандартный VPN' in html)
+test("Comparison table present with parameters", 'class="comparison-table"' in html and 'MagicDNS (Smart DNS)' in html and 'Сторонние сетевые клиенты' in html)
 test("Comparison table has 5 evaluation rows", all(param in html for param in ['Реальная скорость', 'Пинг в API', 'Влияние на заряд смартфона', 'Доступность банков и Госуслуг', 'Стабильность соединения']))
 test("Supported AI platforms cards present", all(p in html for p in ['Google Gemini', 'Google AI Studio', 'ChatGPT', 'Claude', 'Midjourney', 'Microsoft Copilot']))
 test("AI platforms error codes documented", all(err in html for err in ['Gemini is not available in your country', 'User location is not supported', "OpenAI's services are not available in your country", 'App unavailable in your region']))
 test("FAQ accordion section present", 'class="faq-section"' in html and 'faq-accordion' in html)
-test("FAQ covers 5 key topics", all(q in html for q in ['Безопасно ли использовать MagicDNS', 'Ведется ли логирование DNS-запросов', 'скорость интернета не снижается', 'переключении между Wi-Fi и мобильной сетью', 'отличие Smart DNS от классического VPN']))
+test("FAQ covers 5 key topics", all(q in html for q in ['Безопасно ли использовать MagicDNS', 'Ведется ли логирование DNS-запросов', 'скорость интернета не снижается', 'переключении между Wi-Fi и мобильной сетью', 'отличие Smart DNS от сторонних сетевых клиентов']))
 test("Cookie banner for 152-FZ present", 'id="cookie-banner"' in html and '152-ФЗ' in html and 'btn-cookie-accept' in html)
 test("Liability disclaimer present", 'class="legal-disclaimer"' in html and 'AS IS' in html)
 test("Privacy, Terms and Contact modals present", 'id="privacy-modal"' in html and 'id="terms-modal"' in html and 'id="contact-modal"' in html)
@@ -262,14 +262,14 @@ test("Footer legal contact button present", 'id="btn-open-contact"' in html and 
 test("News and announcements section present", 'id="news"' in html and 'id="news-grid"' in html and 'data-i18n="newsTitle"' in html)
 test("Hero CTA button preserves SVG icon during i18n", 'class="btn-hero-cta" data-i18n="heroCta"' not in html and '<span data-i18n="heroCta">' in html)
 test("Regulatory compliance (no обход)", 'обход' not in html.lower())
-test("Regulatory compliance (no разблокиров/взлом/анонимайзер)", not any(term in html.lower() for term in ['разблокиров', 'взлом', 'анонимайзер']))
+test("Regulatory compliance (no разблок/взлом/аноним/запрещен)", not any(term in html.lower() for term in ['разблок', 'взлом', 'аноним', 'запрещен', 'запрещён']))
 test("Regulatory compliance (no заблокир)", 'заблокир' not in html.lower())
 test("All 18 semantic core keywords present in body",
      all(kw in html[html.find('<body>'):].lower() for kw in [
          'смарт днс для ии', 'smart dns для ии', 'днс для искусственного интеллекта', 
-         'частный днс для ии', 'днс для нейросетей', 'быстрый днс без vpn', 'персональный dns сервер',
-         'dns для gemini', 'smart dns google ai studio', 'доступ к google ai studio без vpn', 
-         'как открыть gemini через dns', 'dns для chatgpt', 'доступ к claude ai без vpn', 
+         'частный днс для ии', 'днс для нейросетей', 'быстрый днс без сторонних приложений', 'персональный dns сервер',
+         'dns для gemini', 'smart dns google ai studio', 'доступ к google ai studio без сторонних приложений', 
+         'как открыть gemini через dns', 'dns для chatgpt', 'доступ к claude ai без сторонних приложений', 
          'dns для midjourney', 'copilot dns',
          'настройка частного dns на android для gemini', 'профиль doh dot для ios iphone', 
          'smart dns на роутер keenetic openwrt'

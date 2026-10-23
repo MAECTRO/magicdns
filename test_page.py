@@ -29,7 +29,7 @@ checks = {
     'Pulsing dot animation in status badge': 'status-ping' in content and 'radar-ping' in content,
     'Hero heading with AI services': 'Smart DNS для ИИ' in content and 'Gemini' in content and 'ChatGPT' in content and 'Claude' in content,
     'Unified services ribbon with tags': all(tag in content for tag in [
-        'Claude AI', 'Gemini', 'ChatGPT', 'Perplexity', 'Antigravity', 'Без VPN и сторонних программ'
+        'Claude AI', 'Gemini', 'ChatGPT', 'Perplexity', 'Antigravity', 'Без сторонних приложений и тоннелей'
     ]) and 'Claude AI &amp; Sonnet' not in content and 'Google AI Studio' not in content[content.find('class="services-ribbon"'):content.find('class="more-services-drawer"')],
     'Support button in header': 'https://pay.cloudtips.ru/p/596a95a5' in content.split('</header>')[0] and 'target="_blank"' in content.split('</header>')[0] and 'rel="noopener noreferrer"' in content.split('</header>')[0],
     'Support button in footer': 'https://pay.cloudtips.ru/p/596a95a5' in content.split('<footer>')[1] and 'target="_blank"' in content.split('<footer>')[1] and 'rel="noopener noreferrer"' in content.split('<footer>')[1],
@@ -67,7 +67,7 @@ checks = {
     'Feedback modal platform chips & inputs i18n': 'data-i18n="modalPlatRouter"' in content and 'data-i18n-placeholder="modalContactPlaceholder"' in content,
     'Reviews platform & author dynamic localization': 'getLocalizedPlatform' in content and 'isDefaultAuthor' in content,
     'Download buttons tactile feedback binding': 'dlProfileBtn' in content,
-    'Comparison table present': 'class="comparison-table"' in content and 'MagicDNS (Smart DNS)' in content and 'Стандартный VPN' in content,
+    'Comparison table present': 'class="comparison-table"' in content and 'MagicDNS (Smart DNS)' in content and 'Сторонние сетевые клиенты' in content,
     'AI platforms cards present': all(p in content for p in ['Google Gemini', 'Google AI Studio', 'ChatGPT', 'Claude', 'Midjourney', 'Microsoft Copilot']),
     'FAQ accordion present': 'class="faq-section"' in content and 'class="faq-item"' in content,
     'Cookie banner present': 'id="cookie-banner"' in content and '152-ФЗ' in content,
@@ -75,14 +75,14 @@ checks = {
     'Footer contact link present': 'id="btn-open-contact"' in content and 'data-i18n="footerContact"' in content,
     'Hero CTA preserves SVG during i18n': 'class="btn-hero-cta" data-i18n="heroCta"' not in content and '<span data-i18n="heroCta">' in content,
     'Regulatory compliance (no обход)': 'обход' not in content.lower(),
-    'Regulatory compliance (no разблокиров/взлом/анонимайзер)': not any(term in content.lower() for term in ['разблокиров', 'взлом', 'анонимайзер']),
+    'Regulatory compliance (no разблок/взлом/аноним/запрещен)': not any(term in content.lower() for term in ['разблок', 'взлом', 'аноним', 'запрещен', 'запрещён']),
     'Regulatory compliance (no заблокир)': 'заблокир' not in content.lower(),
     'Contact modal present': 'id="contact-modal"' in content,
     'All 18 semantic core keywords present in body': all(kw in content[content.find('<body>'):].lower() for kw in [
         'смарт днс для ии', 'smart dns для ии', 'днс для искусственного интеллекта', 
-        'частный днс для ии', 'днс для нейросетей', 'быстрый днс без vpn', 'персональный dns сервер',
-        'dns для gemini', 'smart dns google ai studio', 'доступ к google ai studio без vpn', 
-        'как открыть gemini через dns', 'dns для chatgpt', 'доступ к claude ai без vpn', 
+        'частный днс для ии', 'днс для нейросетей', 'быстрый днс без сторонних приложений', 'персональный dns сервер',
+        'dns для gemini', 'smart dns google ai studio', 'доступ к google ai studio без сторонних приложений', 
+        'как открыть gemini через dns', 'dns для chatgpt', 'доступ к claude ai без сторонних приложений', 
         'dns для midjourney', 'copilot dns',
         'настройка частного dns на android для gemini', 'профиль doh dot для ios iphone', 
         'smart dns на роутер keenetic openwrt'

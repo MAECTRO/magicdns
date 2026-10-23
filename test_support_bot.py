@@ -36,5 +36,19 @@ class TestSupportBot(unittest.TestCase):
         self.assertIn("&lt;тест&gt; &amp; авария", formatted)
         self.assertIn("/status", formatted)
 
+    def test_cards_and_compliance(self):
+        welcome = support_bot.get_welcome_card()
+        self.assertIn("MagicDNS", welcome)
+        self.assertIn("без сторонних приложений и тоннелей", welcome)
+        self.assertNotIn("без vpn", welcome.lower())
+        
+        prohibited = ['обход', 'разблок', 'аноним', 'взлом', 'запрещен', 'запрещён']
+        for p in prohibited:
+            self.assertNotIn(p, welcome.lower(), f"Prohibited word '{p}' found in welcome card")
+            
+        status = support_bot.get_status_card()
+        self.assertIn("109.120.132.43", status)
+        self.assertIn("94.249.177.102", status)
+
 if __name__ == '__main__':
     unittest.main()
