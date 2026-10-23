@@ -213,11 +213,12 @@ def set_bot_commands():
         print(f"[BOT COMMANDS ERROR] {e}")
 
     admin_cmds = [
-        {"command": "alert", "description": "🚨 Оповещение об аварии / рассылка"},
+        {"command": "alert", "description": "🚨 Оповещение в Telegram (рассылка)"},
+        {"command": "sitealert", "description": "🌐 Оповещение на сайте magicdns.ru"},
+        {"command": "clearsitealert", "description": "🔕 Снять оповещение с сайта"},
         {"command": "users", "description": "📊 Статистика аудитории бота"},
-        {"command": "dns", "description": "⚡ Параметры MagicDNS"},
         {"command": "status", "description": "🟢 Статус серверов сети"},
-        {"command": "donate", "description": "☕ Поддержать серверы"},
+        {"command": "dns", "description": "⚡ Параметры MagicDNS"},
         {"command": "help", "description": "💬 Справка"}
     ]
     try:
@@ -383,6 +384,69 @@ def publish_review_to_github(author, platform, rating, message):
     except Exception as e:
         return False, f"Ошибка сохранения на GitHub: {e}"
 
+
+def update_github_file(file_path, content_str, commit_message):
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{file_path}"
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "User-Agent": "MagicDNS-Finland-VPS-Bot",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    sha = None
+    req_get = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req_get, timeout=15) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+            sha = data.get('sha')
+    except urllib.error.HTTPError as e:
+        if e.code != 404:
+            return False, f"HTTP {e.code}"
+    except Exception as e:
+        return False, str(e)
+
+    content_b64 = base64.b64encode(content_str.encode('utf-8')).decode('utf-8')
+    payload = {
+        "message": commit_message,
+        "content": content_b64
+    }
+    if sha:
+        payload["sha"] = sha
+
+    req_put = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode('utf-8'),
+        headers=headers,
+        method="PUT"
+    )
+    try:
+        with urllib.request.urlopen(req_put, timeout=15) as resp:
+            return True, "Успешно сохранено на GitHub"
+    except Exception as e:
+        return False, f"Ошибка PUT: {e}"
+
+def set_site_alert(active, message=""):
+    alert_data = {
+        "active": active,
+        "type": "warning" if active else "info",
+        "message": message.strip() if active else "",
+        "updated_at": int(time.time())
+    }
+    json_str = json.dumps(alert_data, ensure_ascii=False, indent=2)
+
+    # 1. Update on GitHub root and public/
+    ok1, msg1 = update_github_file("alert.json", json_str, f"chore: {'activate' if active else 'clear'} site alert")
+    update_github_file("public/alert.json", json_str, f"chore: {'activate' if active else 'clear'} site alert in public")
+
+    # 2. Also save locally on server
+    try:
+        local_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "alert.json")
+        with open(local_p, 'w', encoding='utf-8') as f:
+            f.write(json_str)
+    except Exception as e:
+        print(f"[LOCAL ALERT SAVE ERR] {e}")
+
+    return ok1, msg1
+
 def parse_review_message(text):
     author = "Пользователь"
     platform = "Не указана"
@@ -414,9 +478,31 @@ class FeedbackAPIHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
+
+    def do_GET(self):
+        if self.path.startswith('/api/alert'):
+            local_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "alert.json")
+            data = {"active": False, "type": "info", "message": "", "updated_at": 0}
+            if os.path.exists(local_p):
+                try:
+                    with open(local_p, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                except Exception as e:
+                    print(f"[API ALERT ERR] {e}")
+
+            payload = json.dumps(data, ensure_ascii=False).encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            self.end_headers()
+            self.wfile.write(payload)
+        else:
+            self.send_response(404)
+            self.end_headers()
 
     def do_POST(self):
         if self.path == '/api/feedback':
@@ -555,7 +641,16 @@ def main():
                         answer_callback(cq_id, "⛔ Действие только для администратора", alert=True)
                         continue
 
-                    
+                    if data == 'clear_site_alert':
+                        answer_callback(cq_id, "⏳ Снимаю оповещение с сайта...")
+                        ok, status_msg = set_site_alert(False, "")
+                        if ok:
+                            answer_callback(cq_id, "✅ Оповещение снято с сайта!")
+                            edit_message(ADMIN_CHAT_ID, msg_id, "🔕 <b>Оповещение на сайте magicdns.ru успешно снято!</b>\n\n<i>Баннер скрыт для всех посетителей.</i>")
+                        else:
+                            answer_callback(cq_id, f"⚠️ Ошибка: {status_msg}", alert=True)
+                        continue
+
                     if data == 'cancel_alert':
                         PENDING_ALERTS.pop(ADMIN_CHAT_ID, None)
                         answer_callback(cq_id, "❌ Рассылка отменена")
@@ -767,6 +862,65 @@ def main():
                         send_message(ADMIN_CHAT_ID, preview_card, reply_markup=alert_kb)
                         continue
 
+                                        # Site Alert Controls
+                    elif cmd in ['/sitealert', '/alertsite', 'оповещениесайта']:
+                        if sender_id != ADMIN_CHAT_ID:
+                            send_message(chat_id, "⛔ Команда доступна только администратору сервиса.")
+                            continue
+
+                        tokens = text.strip().split(maxsplit=1)
+                        arg = tokens[1].strip() if len(tokens) > 1 else ""
+
+                        if not arg:
+                            site_guide = (
+                                "🌐 <b>Управление оповещением на сайте magicdns.ru:</b>\n\n"
+                                "• <b>Включить баннер на сайте:</b>\n"
+                                "<code>/sitealert Внимание! На шведском узле идут технические работы. Пожалуйста, используйте адрес 94.249.177.102</code>\n\n"
+                                "• <b>Снять баннер с сайта:</b>\n"
+                                "<code>/clearsitealert</code> (или <code>/sitealert off</code>)"
+                            )
+                            send_message(ADMIN_CHAT_ID, site_guide)
+                            continue
+
+                        if arg.lower() in ['off', 'clear', 'stop', 'удалить', 'выкл', 'снять']:
+                            send_message(ADMIN_CHAT_ID, "⏳ Снимаю баннер с сайта...")
+                            ok, status_msg = set_site_alert(False, "")
+                            if ok:
+                                send_message(ADMIN_CHAT_ID, "🔕 <b>Оповещение успешно снято с сайта magicdns.ru!</b>\nБаннер отключен.")
+                            else:
+                                send_message(ADMIN_CHAT_ID, f"⚠️ Ошибка при снятии: {status_msg}")
+                            continue
+
+                        send_message(ADMIN_CHAT_ID, "⏳ Публикую оповещение на сайт magicdns.ru...")
+                        ok, status_msg = set_site_alert(True, arg)
+                        if ok:
+                            alert_msg = (
+                                f"🚨 <b>ОПОВЕЩЕНИЕ ОПУБЛИКОВАНО НА САЙТЕ MAGICDNS.RU!</b>\n\n"
+                                f"📢 <b>Текст на сайте:</b>\n{arg}\n\n"
+                                f"🌐 <i>Баннер отображается вверху сайта для всех посетителей.</i>"
+                            )
+                            kb = {
+                                "inline_keyboard": [
+                                    [{"text": "🔕 Снять оповещение с сайта", "callback_data": "clear_site_alert"}],
+                                    [{"text": "🌐 Открыть сайт", "url": "https://magicdns.ru"}]
+                                ]
+                            }
+                            send_message(ADMIN_CHAT_ID, alert_msg, reply_markup=kb)
+                        else:
+                            send_message(ADMIN_CHAT_ID, f"⚠️ Ошибка при публикации на сайт: {status_msg}")
+                        continue
+
+                    elif cmd in ['/clearsitealert', '/sitealertoff', 'снятьоповещение']:
+                        if sender_id != ADMIN_CHAT_ID:
+                            continue
+                        send_message(ADMIN_CHAT_ID, "⏳ Снимаю баннер с сайта...")
+                        ok, status_msg = set_site_alert(False, "")
+                        if ok:
+                            send_message(ADMIN_CHAT_ID, "🔕 <b>Оповещение успешно снято с сайта magicdns.ru!</b>\nБаннер отключен.")
+                        else:
+                            send_message(ADMIN_CHAT_ID, f"⚠️ Ошибка: {status_msg}")
+                        continue
+
                     elif cmd in ['/users', '/subs', '/subscribers', '/stats', 'статистика']:
                         if sender_id != ADMIN_CHAT_ID:
                             continue
@@ -812,7 +966,9 @@ def main():
                         if sender_id == ADMIN_CHAT_ID:
                             admin_extra = (
                                 "🛠 <b>Панель администратора:</b>\n\n"
-                                "• <code>/alert Текст</code> — экстренное оповещение пользователей (с превью и подтверждением)\n"
+                                "• <code>/alert Текст</code> — рассылка оповещения всем в Telegram (с превью)\n"
+                                "• <code>/sitealert Текст</code> — включить аварийный баннер на сайте magicdns.ru\n"
+                                "• <code>/clearsitealert</code> — снять баннер с сайта\n"
                                 "• <code>/users</code> — статистика подписчиков и список недавних\n"
                                 "• <code>/status</code> — статус серверов сети"
                             )

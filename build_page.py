@@ -3826,6 +3826,91 @@ html_content = f'''<!DOCTYPE html>
       display: flex;
       justify-content: flex-end;
     }}
+
+    /* Site Emergency Alert Banner */
+    .site-alert-banner {{
+      position: relative;
+      width: 100%;
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.16) 0%, rgba(239, 68, 68, 0.18) 100%);
+      border-bottom: 1px solid rgba(245, 158, 11, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: #fef3c7;
+      font-size: 0.92rem;
+      font-weight: 500;
+      z-index: 1000;
+      animation: slideDownAlert 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }}
+
+    @keyframes slideDownAlert {{
+      from {{ transform: translateY(-100%); opacity: 0; }}
+      to {{ transform: translateY(0); opacity: 1; }}
+    }}
+
+    .site-alert-inner {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      gap: 12px;
+    }}
+
+    .site-alert-content {{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.4;
+      flex-wrap: wrap;
+    }}
+
+    .site-alert-pulse {{
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #f59e0b;
+      box-shadow: 0 0 10px #f59e0b;
+      animation: pulseDot 1.5s infinite;
+      flex-shrink: 0;
+    }}
+
+    .site-alert-icon {{
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }}
+
+    .site-alert-text {{
+      color: #fffbeb;
+      font-size: 0.92rem;
+    }}
+
+    .site-alert-text code {{
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: #fde68a;
+      font-family: monospace;
+    }}
+
+    .site-alert-close {{
+      background: transparent;
+      border: none;
+      color: rgba(254, 243, 199, 0.7);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }}
+
+    .site-alert-close:hover {{
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+    }}
   </style>
 
   <!-- Yandex.Metrika counter -->
@@ -3843,6 +3928,23 @@ html_content = f'''<!DOCTYPE html>
   <!-- /Yandex.Metrika counter -->
 </head>
 <body>
+
+  <!-- Site Emergency Alert Banner -->
+  <aside id="site-alert-banner" class="site-alert-banner" style="display: none;" role="alert" aria-live="assertive">
+    <div class="container site-alert-inner">
+      <div class="site-alert-content">
+        <span class="site-alert-pulse"></span>
+        <span class="site-alert-icon">⚠️</span>
+        <span id="site-alert-text" class="site-alert-text"></span>
+      </div>
+      <button type="button" class="site-alert-close" id="site-alert-close-btn" aria-label="Закрыть оповещение" onclick="dismissSiteAlert()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </aside>
 
   <!-- 1. Header (Navbar) -->
   <header>
@@ -6366,6 +6468,38 @@ html_content = f'''<!DOCTYPE html>
       setupLegalModal('btn-open-privacy', 'privacy-modal', ['close-privacy-btn', 'close-privacy-btn-bottom']);
       setupLegalModal('btn-open-terms', 'terms-modal', ['close-terms-btn', 'close-terms-btn-bottom']);
       setupLegalModal('btn-open-contact', 'contact-modal', ['close-contact-btn', 'close-contact-btn-bottom']);
+
+      function initSiteAlert() {{
+        var url = '/alert.json?v=' + Date.now();
+        fetch(url)
+          .then(function(r) {{ return r.ok ? r.json() : null; }})
+          .then(function(data) {{
+            if (!data || !data.active || !data.message) return;
+            var dismissed = sessionStorage.getItem('magicdns_dismissed_alert');
+            if (dismissed && dismissed === String(data.updated_at)) return;
+            var banner = document.getElementById('site-alert-banner');
+            var textElem = document.getElementById('site-alert-text');
+            if (banner && textElem) {{
+              textElem.innerHTML = data.message;
+              banner.style.display = 'block';
+              window._currentAlertId = String(data.updated_at || Date.now());
+            }}
+          }})
+          .catch(function() {{}});
+      }}
+
+      function dismissSiteAlert() {{
+        var banner = document.getElementById('site-alert-banner');
+        if (banner) {{
+          banner.style.display = 'none';
+          if (window._currentAlertId) {{
+            sessionStorage.setItem('magicdns_dismissed_alert', window._currentAlertId);
+          }}
+        }}
+      }}
+      window.dismissSiteAlert = dismissSiteAlert;
+
+      initSiteAlert();
 
     }})();
   </script>
