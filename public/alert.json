@@ -1,6 +1,6 @@
 {
-  "active": true,
-  "type": "warning",
-  "message": "Тестовая авария: проверка связи",
-  "updated_at": 1792785596
+  "active": false,
+  "type": "info",
+  "message": "",
+  "updated_at": 1792785599
 }
