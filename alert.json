@@ -1,6 +1,6 @@
 {
-  "active": false,
-  "type": "info",
-  "message": "",
-  "updated_at": 1792882282
+  "active": true,
+  "type": "warning",
+  "message": "ВНИМАНИЕ! ВЕДУТСЯ РАБОТЫ НА СЕРВЕРАХ ПО ОПТИМИЗАЦИИ И МАРШРУТИЗАЦИИ! СКОРО ВСЕ ЗАРАБОТАЕТ",
+  "updated_at": 1792882483
 }
