@@ -6183,41 +6183,15 @@
           .replace(/'/g, '&#039;');
       }
 
+      // Purge any legacy cached reviews from localStorage to eliminate ghost deleted reviews on mobile/desktop
+      try {
+        localStorage.removeItem('magicdns_user_reviews');
+      } catch(e) {}
+
       let DEFAULT_COMMUNITY_REVIEWS = [{"id": 1792840232408, "author": "Пользователь MagicDNS", "platform": "iOS / macOS", "rating": 5, "date": "24 октября 2026", "message": "Спасибо, на iphone/Mac все летает!", "reply": {"text": "Рады, что всё летает! Спасибо за обратную связь.", "date": "24 октября 2026", "author": "Команда MagicDNS"}}, {"id": 1792839153874, "author": "Пользователь MagicDNS", "platform": "Windows", "rating": 5, "date": "24 октября 2026", "message": "Если выкладывать видео на Ютуб через этот днс, то трафик не начинает идти, скорее всего площадка считает, что трафик идет от бота."}, {"id": 1792836963976, "author": "Пользователь MagicDNS", "platform": "Android", "rating": 5, "date": "24 октября 2026", "message": "Блин ребята работает все я в восторге спасибо вы супер ."}, {"id": 1792791007889, "author": "Пользователь MagicDNS", "platform": "Windows", "rating": 5, "date": "24 октября 2026", "message": "красавчики, всё работает, надеюсь не забанят вас, как это было с прошлыми"}, {"id": 1792783419905, "author": "Пользователь MagicDNS", "platform": "Windows", "rating": 5, "date": "23 октября 2026", "message": "все работает спс, думаю ip dns для винды не пойдут чтоб условно какой-нибудь mortal kombat 1 запустить, но остальные мои проблемы решает"}, {"id": 1792747673756, "author": "Пользователь MagicDNS", "platform": "Android", "rating": 5, "date": "23 октября 2026", "message": "Всё огонь,но почему то каталог Rezka работать не желает.Печалька."}, {"id": "rev-1792699203", "author": "Пользователь MagicDNS", "platform": "Windows", "rating": 3, "message": "При подключении ноута к роутеру по вай фай не работает при раздаче мобильной сети ток", "date": "22 октября"}, {"id": "rev-1792664145", "author": "Пользователь MagicDNS", "platform": "Android", "rating": 5, "message": "Пока работает, дальше хз", "date": "22 октября"}, {"id": "rev-1792662818", "author": "Пользователь MagicDNS", "platform": "iOS / macOS", "rating": 5, "message": "Супер", "date": "22 октября"}, {"id": "rev-1792662202", "author": "Пользователь MagicDNS", "platform": "Windows", "rating": 5, "message": "Все работает", "date": "22 октября"}, {"id": "rev-1", "author": "Вовчик", "platform": "Windows", "rating": 5, "message": "Спасибо вам) На винде работает)", "date": "21 октября"}, {"id": "rev-2", "author": "Пользователь MagicDNS", "platform": "Windows", "rating": 5, "message": "Spasiba", "date": "21 октября"}];
 
       function getSavedReviews() {
-        try {
-          const raw = localStorage.getItem('magicdns_user_reviews');
-          const custom = raw ? JSON.parse(raw) : [];
-          const seen = new Set();
-          const combined = [];
-          custom.forEach(function(r) {
-            const key = (r.author || '') + '|' + (r.message || '');
-            if (!seen.has(key)) {
-              seen.add(key);
-              combined.push(r);
-            }
-          });
-          DEFAULT_COMMUNITY_REVIEWS.forEach(function(r) {
-            const key = (r.author || '') + '|' + (r.message || '');
-            if (!seen.has(key)) {
-              seen.add(key);
-              combined.push(r);
-            }
-          });
-          return combined;
-        } catch(e) {
-          return DEFAULT_COMMUNITY_REVIEWS;
-        }
-      }
-
-      function saveReview(review) {
-        try {
-          const raw = localStorage.getItem('magicdns_user_reviews');
-          const custom = raw ? JSON.parse(raw) : [];
-          custom.unshift(review);
-          localStorage.setItem('magicdns_user_reviews', JSON.stringify(custom.slice(0, 50)));
-        } catch(e) {}
+        return Array.isArray(DEFAULT_COMMUNITY_REVIEWS) ? DEFAULT_COMMUNITY_REVIEWS : [];
       }
 
       const REVIEWS_PAGE_SIZE = 6;
@@ -6505,16 +6479,7 @@
               submitBtn.style.opacity = '1';
               submitBtn.querySelector('span').textContent = (I18N[currentLang] && I18N[currentLang].modalSubmitBtn) ? I18N[currentLang].modalSubmitBtn : 'Отправить отзыв';
             }
-            if (currentType === 'review') {
-              saveReview({
-                author: contact ? contact.replace(/^@/, '') : '',
-                platform: currentPlatform,
-                rating: currentRating,
-                message: message,
-                date: new Date().toISOString()
-              });
-              renderReviews();
-            }
+            // Submitted review is forwarded to telegram bot for moderation, not stored locally in localStorage
             if (textInput) textInput.value = '';
             if (contactInput) contactInput.value = '';
             toggleFeedbackModal(false);
@@ -6531,23 +6496,30 @@
 
       renderReviews();
 
-      // Dynamic sync with reviews.json for live updates
-      try {
-        if (window.location.protocol.startsWith('http')) {
-          fetch('reviews.json?_=' + Date.now())
-            .then(function(res) {
-              if (res.ok) return res.json();
-              throw new Error('Sync skip');
-            })
-            .then(function(remoteReviews) {
-              if (Array.isArray(remoteReviews) && remoteReviews.length > 0) {
-                DEFAULT_COMMUNITY_REVIEWS = remoteReviews;
-                renderReviews();
-              }
-            })
-            .catch(function() {});
-        }
-      } catch(e) {}
+      // Dynamic live sync with reviews.json (no-store eliminates mobile browser caching)
+      function syncReviews() {
+        try {
+          if (window.location.protocol.startsWith('http')) {
+            fetch('reviews.json?_=' + Date.now(), { cache: 'no-store' })
+              .then(function(res) {
+                if (res.ok) return res.json();
+                throw new Error('Sync skip');
+              })
+              .then(function(remoteReviews) {
+                if (Array.isArray(remoteReviews)) {
+                  DEFAULT_COMMUNITY_REVIEWS = remoteReviews;
+                  renderReviews();
+                }
+              })
+              .catch(function() {});
+          }
+        } catch(e) {}
+      }
+
+      syncReviews();
+      window.addEventListener('pageshow', function() {
+        syncReviews();
+      });
 
       // Cookie Banner Logic (152-ФЗ)
       const cookieBanner = document.getElementById('cookie-banner');

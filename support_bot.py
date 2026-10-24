@@ -458,7 +458,8 @@ def send_reviews_list(chat_id, offset=0, limit=5):
         )
         kb = {
             "inline_keyboard": [
-                [{"text": btn_label, "callback_data": f"reply_rev_{r.get('id')}"}]
+                [{"text": btn_label, "callback_data": f"reply_rev_{r.get('id')}"}],
+                [{"text": "🗑 Удалить этот отзыв с сайта", "callback_data": f"del_ask_{r.get('id')}"}]
             ]
         }
         send_message(chat_id, card_text, reply_markup=kb)
@@ -488,6 +489,58 @@ def send_reviews_list(chat_id, offset=0, limit=5):
             ]
         }
         send_message(chat_id, f"✅ <b>Выгружены все {total_count} отзывов с сайта!</b>", reply_markup=end_kb)
+
+def delete_review_on_github(review_id):
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/reviews.json"
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "User-Agent": "MagicDNS-Finland-VPS-Bot",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    req = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+            sha = data['sha']
+            content_bytes = base64.b64decode(data['content'])
+            reviews = json.loads(content_bytes.decode('utf-8'))
+    except Exception as e:
+        return False, f"Ошибка загрузки reviews.json: {e}"
+
+    initial_len = len(reviews)
+    reviews = [r for r in reviews if str(r.get('id', '')) != str(review_id)]
+    if len(reviews) == initial_len:
+        return False, f"Отзыв с ID {review_id} не найден."
+
+    new_content_str = json.dumps(reviews, ensure_ascii=False, indent=2)
+    new_content_b64 = base64.b64encode(new_content_str.encode('utf-8')).decode('utf-8')
+
+    update_payload = {
+        "message": f"fix(reviews): delete review {review_id} via admin TG bot",
+        "content": new_content_b64,
+        "sha": sha
+    }
+
+    req_put = urllib.request.Request(
+        url,
+        data=json.dumps(update_payload).encode('utf-8'),
+        headers=headers,
+        method="PUT"
+    )
+
+    try:
+        with urllib.request.urlopen(req_put, timeout=15) as resp:
+            try:
+                local_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reviews.json")
+                with open(local_p, 'w', encoding='utf-8') as lf:
+                    lf.write(new_content_str)
+            except Exception:
+                pass
+            return True, "Отзыв успешно удалён из reviews.json на сайте!"
+    except Exception as e:
+        return False, f"Ошибка удаления на GitHub: {e}"
+
 
 def reply_to_review_on_github(review_id, reply_text, reply_author="Команда MagicDNS"):
     url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/reviews.json"
@@ -952,6 +1005,35 @@ def main():
                         next_offset = int(data.replace('rev_page_', ''))
                         answer_callback(cq_id, "Загружаю ещё отзывы...")
                         send_reviews_list(ADMIN_CHAT_ID, offset=next_offset, limit=5)
+                        continue
+
+                    if data.startswith('del_ask_'):
+                        rev_id = data.replace('del_ask_', '').strip()
+                        answer_callback(cq_id)
+                        confirm_kb = {
+                            "inline_keyboard": [
+                                [
+                                    {"text": "⚠️ Да, удалить навсегда", "callback_data": f"del_confirm_{rev_id}"},
+                                    {"text": "❌ Отмена", "callback_data": "admin_reviews"}
+                                ]
+                            ]
+                        }
+                        send_message(
+                            ADMIN_CHAT_ID,
+                            f"❓ <b>Подтверждение удаления отзыва #{rev_id}:</b>\n\n"
+                            f"Вы действительно хотите навсегда удалить этот отзыв с сайта?",
+                            reply_markup=confirm_kb
+                        )
+                        continue
+
+                    if data.startswith('del_confirm_'):
+                        rev_id = data.replace('del_confirm_', '').strip()
+                        answer_callback(cq_id, "Удаляю отзыв с сайта...")
+                        ok, msg = delete_review_on_github(rev_id)
+                        if ok:
+                            send_message(ADMIN_CHAT_ID, f"🗑 <b>Отзыв #{rev_id} успешно удалён!</b>\nСайт и кэш мобильных устройств синхронизированы.")
+                        else:
+                            send_message(ADMIN_CHAT_ID, f"❌ <b>Ошибка при удалении:</b> {msg}")
                         continue
 
                     if data.startswith('reply_rev_'):

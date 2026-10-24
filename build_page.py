@@ -6230,41 +6230,15 @@ html_content = f'''<!DOCTYPE html>
           .replace(/'/g, '&#039;');
       }}
 
+      // Purge any legacy cached reviews from localStorage to eliminate ghost deleted reviews on mobile/desktop
+      try {{
+        localStorage.removeItem('magicdns_user_reviews');
+      }} catch(e) {{}}
+
       let DEFAULT_COMMUNITY_REVIEWS = {reviews_json_str};
 
       function getSavedReviews() {{
-        try {{
-          const raw = localStorage.getItem('magicdns_user_reviews');
-          const custom = raw ? JSON.parse(raw) : [];
-          const seen = new Set();
-          const combined = [];
-          custom.forEach(function(r) {{
-            const key = (r.author || '') + '|' + (r.message || '');
-            if (!seen.has(key)) {{
-              seen.add(key);
-              combined.push(r);
-            }}
-          }});
-          DEFAULT_COMMUNITY_REVIEWS.forEach(function(r) {{
-            const key = (r.author || '') + '|' + (r.message || '');
-            if (!seen.has(key)) {{
-              seen.add(key);
-              combined.push(r);
-            }}
-          }});
-          return combined;
-        }} catch(e) {{
-          return DEFAULT_COMMUNITY_REVIEWS;
-        }}
-      }}
-
-      function saveReview(review) {{
-        try {{
-          const raw = localStorage.getItem('magicdns_user_reviews');
-          const custom = raw ? JSON.parse(raw) : [];
-          custom.unshift(review);
-          localStorage.setItem('magicdns_user_reviews', JSON.stringify(custom.slice(0, 50)));
-        }} catch(e) {{}}
+        return Array.isArray(DEFAULT_COMMUNITY_REVIEWS) ? DEFAULT_COMMUNITY_REVIEWS : [];
       }}
 
       const REVIEWS_PAGE_SIZE = 6;
@@ -6552,16 +6526,7 @@ html_content = f'''<!DOCTYPE html>
               submitBtn.style.opacity = '1';
               submitBtn.querySelector('span').textContent = (I18N[currentLang] && I18N[currentLang].modalSubmitBtn) ? I18N[currentLang].modalSubmitBtn : 'Отправить отзыв';
             }}
-            if (currentType === 'review') {{
-              saveReview({{
-                author: contact ? contact.replace(/^@/, '') : '',
-                platform: currentPlatform,
-                rating: currentRating,
-                message: message,
-                date: new Date().toISOString()
-              }});
-              renderReviews();
-            }}
+            // Submitted review is forwarded to telegram bot for moderation, not stored locally in localStorage
             if (textInput) textInput.value = '';
             if (contactInput) contactInput.value = '';
             toggleFeedbackModal(false);
@@ -6578,23 +6543,30 @@ html_content = f'''<!DOCTYPE html>
 
       renderReviews();
 
-      // Dynamic sync with reviews.json for live updates
-      try {{
-        if (window.location.protocol.startsWith('http')) {{
-          fetch('reviews.json?_=' + Date.now())
-            .then(function(res) {{
-              if (res.ok) return res.json();
-              throw new Error('Sync skip');
-            }})
-            .then(function(remoteReviews) {{
-              if (Array.isArray(remoteReviews) && remoteReviews.length > 0) {{
-                DEFAULT_COMMUNITY_REVIEWS = remoteReviews;
-                renderReviews();
-              }}
-            }})
-            .catch(function() {{}});
-        }}
-      }} catch(e) {{}}
+      // Dynamic live sync with reviews.json (no-store eliminates mobile browser caching)
+      function syncReviews() {{
+        try {{
+          if (window.location.protocol.startsWith('http')) {{
+            fetch('reviews.json?_=' + Date.now(), {{ cache: 'no-store' }})
+              .then(function(res) {{
+                if (res.ok) return res.json();
+                throw new Error('Sync skip');
+              }})
+              .then(function(remoteReviews) {{
+                if (Array.isArray(remoteReviews)) {{
+                  DEFAULT_COMMUNITY_REVIEWS = remoteReviews;
+                  renderReviews();
+                }}
+              }})
+              .catch(function() {{}});
+          }}
+        }} catch(e) {{}}
+      }}
+
+      syncReviews();
+      window.addEventListener('pageshow', function() {{
+        syncReviews();
+      }});
 
       // Cookie Banner Logic (152-ФЗ)
       const cookieBanner = document.getElementById('cookie-banner');
