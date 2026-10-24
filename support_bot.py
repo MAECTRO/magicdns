@@ -116,6 +116,7 @@ INITIAL_KNOWN_USERS = [1452460886, 693846199, 268714811, 8970015768, 5786272987]
 subscribers_lock = threading.Lock()
 subscribers = {}
 PENDING_ALERTS = {}
+PENDING_REVIEWS_REPLIES = {}  # admin_chat_id -> review_id
 
 def load_subscribers():
     global subscribers
@@ -380,7 +381,75 @@ def publish_review_to_github(author, platform, rating, message):
 
     try:
         with urllib.request.urlopen(req_put, timeout=15) as resp:
-            return True, "Отзыв успешно опубликован на GitHub!"
+            return True, "Отзыв успешно опубликован на GitHub!", new_review.get("id")
+    except Exception as e:
+        return False, f"Ошибка сохранения на GitHub: {e}", None
+
+def reply_to_review_on_github(review_id, reply_text, reply_author="Команда MagicDNS"):
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/reviews.json"
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "User-Agent": "MagicDNS-Finland-VPS-Bot",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    req = urllib.request.Request(url, headers=headers)
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode('utf-8'))
+            sha = data['sha']
+            content_bytes = base64.b64decode(data['content'])
+            reviews = json.loads(content_bytes.decode('utf-8'))
+    except Exception as e:
+        return False, f"Ошибка загрузки reviews.json: {e}"
+
+    now = datetime.now()
+    formatted_date = f"{now.day} {MONTHS_RU.get(now.month, 'января')} {now.year}"
+
+    found = False
+    for r in reviews:
+        if str(r.get('id', '')) == str(review_id):
+            if reply_text.strip():
+                r['reply'] = {
+                    'text': reply_text.strip(),
+                    'date': formatted_date,
+                    'author': reply_author
+                }
+            else:
+                if 'reply' in r:
+                    del r['reply']
+            found = True
+            break
+
+    if not found:
+        return False, f"Отзыв с ID {review_id} не найден."
+
+    new_content_str = json.dumps(reviews, ensure_ascii=False, indent=2)
+    new_content_b64 = base64.b64encode(new_content_str.encode('utf-8')).decode('utf-8')
+
+    update_payload = {
+        "message": f"feat(reviews): reply to review {review_id}",
+        "content": new_content_b64,
+        "sha": sha
+    }
+
+    req_put = urllib.request.Request(
+        url,
+        data=json.dumps(update_payload).encode('utf-8'),
+        headers=headers,
+        method="PUT"
+    )
+
+    try:
+        with urllib.request.urlopen(req_put, timeout=15) as resp:
+            # Also save locally
+            try:
+                local_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reviews.json")
+                with open(local_p, 'w', encoding='utf-8') as lf:
+                    lf.write(new_content_str)
+            except Exception:
+                pass
+            return True, "Ответ на отзыв успешно опубликован на сайте!"
     except Exception as e:
         return False, f"Ошибка сохранения на GitHub: {e}"
 
@@ -740,6 +809,18 @@ def main():
                         t.start()
                         continue
 
+                    if data.startswith('reply_rev_'):
+                        rev_id = data.replace('reply_rev_', '').strip()
+                        PENDING_REVIEWS_REPLIES[ADMIN_CHAT_ID] = rev_id
+                        answer_callback(cq_id, "✍️ Введите ответ в чат")
+                        send_message(
+                            ADMIN_CHAT_ID,
+                            f"💬 <b>Ответ команды на отзыв #{rev_id}:</b>\n\n"
+                            f"Отправьте текст ответа следующим сообщением, и он сразу появится на сайте прямо под этим отзывом.\n"
+                            f"<i>(Для отмены отправьте /cancel)</i>"
+                        )
+                        continue
+
                     if data == 'del_review':
                         answer_callback(cq_id, "🗑️ Отзыв отклонён")
                         edit_message(ADMIN_CHAT_ID, msg_id, msg_text + "\n\n❌ <i>Отзыв отклонён и отправлен в корзину.</i>")
@@ -751,7 +832,10 @@ def main():
                         print(f"[PUB] Author: {author}, Platform: {platform}, Rating: {rating}, Text: {review_text[:40]}...")
 
                         try:
-                            ok, status_msg = publish_review_to_github(author, platform, rating, review_text)
+                            res = publish_review_to_github(author, platform, rating, review_text)
+                            ok = res[0]
+                            status_msg = res[1]
+                            new_rev_id = res[2] if len(res) > 2 else None
                             if ok:
                                 stars_str = '★' * rating
                                 esc_author = html.escape(str(author))
@@ -761,13 +845,20 @@ def main():
                                     f"✅ <b>ОПУБЛИКОВАНО НА САЙТЕ MAGICDNS.RU!</b>\n\n"
                                     f"👤 <b>Автор:</b> {esc_author}\n"
                                     f"💻 <b>Платформа:</b> {esc_platform}\n"
-                                    f"⭐️ <b>Оценка:</b> {stars_str} ({rating}/5)\n\n"
+                                    f"⭐️ <b>Оценка:</b> {stars_str} ({rating}/5)\n"
+                                    f"🆔 <b>ID:</b> <code>{new_rev_id}</code>\n\n"
                                     f"💬 <b>Текст:</b>\n{esc_text}\n\n"
                                     f"🌐 <i>Отзыв уже залит в reviews.json и доступен на сайте!</i>"
                                 )
-                                edit_message(ADMIN_CHAT_ID, msg_id, updated_text)
+                                pub_kb = {
+                                    "inline_keyboard": [
+                                        [{"text": "💬 Ответить на этот отзыв", "callback_data": f"reply_rev_{new_rev_id}"}],
+                                        [{"text": "🌐 Открыть сайт", "url": "https://magicdns.ru"}]
+                                    ]
+                                } if new_rev_id else None
+                                edit_message(ADMIN_CHAT_ID, msg_id, updated_text, reply_markup=pub_kb)
                                 answer_callback(cq_id, "🎉 Успешно! Отзыв опубликован на сайте!")
-                                print(f"[PUB SUCCESS] Review by {author} published to reviews.json!")
+                                print(f"[PUB SUCCESS] Review by {author} (ID: {new_rev_id}) published to reviews.json!")
                             else:
                                 answer_callback(cq_id, f"⚠️ Ошибка: {status_msg}", alert=True)
                                 print(f"[PUB FAIL] {status_msg}")
@@ -921,6 +1012,79 @@ def main():
                             send_message(ADMIN_CHAT_ID, f"⚠️ Ошибка: {status_msg}")
                         continue
 
+                    elif cmd in ['/reply', '/comment', 'ответить']:
+                        if sender_id != ADMIN_CHAT_ID:
+                            continue
+                        tokens = text.strip().split(maxsplit=2)
+                        if len(tokens) < 3:
+                            send_message(
+                                ADMIN_CHAT_ID,
+                                "⚠️ <b>Использование:</b>\n<code>/reply &lt;ID_отзыва&gt; &lt;Текст ответа&gt;</code>\n\n"
+                                "<i>Пример:</i>\n<code>/reply 1792840232408 Спасибо за отзыв, приятного пользования!</code>\n\n"
+                                "Посмотреть последние отзывы: <code>/reviews</code>"
+                            )
+                            continue
+                        r_id = tokens[1].strip()
+                        r_text = tokens[2].strip()
+                        send_message(ADMIN_CHAT_ID, f"⏳ Публикую ответ на отзыв #{r_id}...")
+                        ok, msg = reply_to_review_on_github(r_id, r_text)
+                        if ok:
+                            send_message(
+                                ADMIN_CHAT_ID,
+                                f"✅ <b>Ответ на отзыв #{r_id} опубликован на сайте!</b>\n\n"
+                                f"💬 <b>Ваш комментарий:</b>\n<i>{html.escape(r_text)}</i>"
+                            )
+                        else:
+                            send_message(ADMIN_CHAT_ID, f"⚠️ Ошибка: {msg}")
+                        continue
+
+                    elif cmd in ['/reviews', '/feedback', 'отзывы']:
+                        if sender_id != ADMIN_CHAT_ID:
+                            continue
+                        send_message(ADMIN_CHAT_ID, "⏳ Загружаю отзывы...")
+                        url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/reviews.json"
+                        headers = {"Authorization": f"token {GITHUB_TOKEN}", "User-Agent": "MagicDNS-Bot"}
+                        revs = []
+                        try:
+                            req = urllib.request.Request(url, headers=headers)
+                            with urllib.request.urlopen(req, timeout=10) as resp:
+                                d = json.loads(resp.read().decode('utf-8'))
+                                revs = json.loads(base64.b64decode(d['content']).decode('utf-8'))
+                        except Exception:
+                            try:
+                                local_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reviews.json")
+                                with open(local_p, "r", encoding="utf-8") as f:
+                                    revs = json.load(f)
+                            except Exception:
+                                revs = []
+
+                        if not revs:
+                            send_message(ADMIN_CHAT_ID, "📭 Список отзывов пуст.")
+                            continue
+
+                        send_message(ADMIN_CHAT_ID, f"📋 <b>Последние отзывы на magicdns.ru (Всего: {len(revs)}):</b>")
+                        for r in revs[:5]:
+                            stars = '★' * r.get('rating', 5)
+                            reply_info = ""
+                            if r.get('reply'):
+                                rep = r['reply']
+                                rep_text = rep.get('text') if isinstance(rep, dict) else rep
+                                reply_info = f"\n\n💬 <b>Ответ команды:</b> <i>{html.escape(str(rep_text))}</i>"
+
+                            card_text = (
+                                f"⭐️ <b>{stars} ({r.get('rating')}/5)</b> — <b>{html.escape(str(r.get('author')))}</b> [{html.escape(str(r.get('platform')))}]\n"
+                                f"📅 {r.get('date', '')} | 🆔 <code>{r.get('id')}</code>\n\n"
+                                f"«{html.escape(str(r.get('message')))}»"
+                                f"{reply_info}"
+                            )
+                            kb = {
+                                "inline_keyboard": [
+                                    [{"text": "💬 Ответить на этот отзыв", "callback_data": f"reply_rev_{r.get('id')}"}]
+                                ]
+                            }
+                            send_message(ADMIN_CHAT_ID, card_text, reply_markup=kb)
+                        continue
+
                     elif cmd in ['/users', '/subs', '/subscribers', '/stats', 'статистика']:
                         if sender_id != ADMIN_CHAT_ID:
                             continue
@@ -1059,6 +1223,25 @@ def main():
 
                         send_message(sender_id, "✓ Сообщение передано администратору. Скоро ответим прямо здесь!")
                     else:
+                        # Check if admin is sending a reply to a review
+                        if sender_id == ADMIN_CHAT_ID and ADMIN_CHAT_ID in PENDING_REVIEWS_REPLIES:
+                            if text.strip().lower() in ['/cancel', 'отмена', 'cancel']:
+                                del PENDING_REVIEWS_REPLIES[ADMIN_CHAT_ID]
+                                send_message(ADMIN_CHAT_ID, "❌ Добавление ответа отменено.")
+                                continue
+                            target_rev_id = PENDING_REVIEWS_REPLIES.pop(ADMIN_CHAT_ID)
+                            send_message(ADMIN_CHAT_ID, f"⏳ Публикую ответ на отзыв #{target_rev_id}...")
+                            ok, msg = reply_to_review_on_github(target_rev_id, text.strip())
+                            if ok:
+                                send_message(
+                                    ADMIN_CHAT_ID,
+                                    f"✅ <b>Ответ на отзыв #{target_rev_id} успешно опубликован на сайте!</b>\n\n"
+                                    f"💬 <b>Ваш комментарий:</b>\n<i>{html.escape(text.strip())}</i>"
+                                )
+                            else:
+                                send_message(ADMIN_CHAT_ID, f"⚠️ Ошибка: {msg}")
+                            continue
+
                         # Admin reply to user
                         reply_to = m.get('reply_to_message')
                         if reply_to:

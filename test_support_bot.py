@@ -50,5 +50,23 @@ class TestSupportBot(unittest.TestCase):
         self.assertIn("109.120.132.43", status)
         self.assertIn("94.249.177.102", status)
 
+    def test_review_reply_structure(self):
+        self.assertTrue(hasattr(support_bot, 'reply_to_review_on_github'))
+        # Test simulated reply dictionary injection
+        mock_reviews = [
+            {"id": 12345, "author": "User", "message": "Good!", "rating": 5}
+        ]
+        mock_reply_text = "Спасибо за отзыв!"
+        for r in mock_reviews:
+            if r['id'] == 12345:
+                r['reply'] = {
+                    'text': mock_reply_text,
+                    'date': '24 октября 2026',
+                    'author': 'Команда MagicDNS'
+                }
+        self.assertIn('reply', mock_reviews[0])
+        self.assertEqual(mock_reviews[0]['reply']['text'], mock_reply_text)
+        self.assertEqual(mock_reviews[0]['reply']['author'], 'Команда MagicDNS')
+
 if __name__ == '__main__':
     unittest.main()

@@ -2931,6 +2931,53 @@ html_content = f'''<!DOCTYPE html>
       flex: 1;
     }}
 
+    /* Developer / Admin Reply Block */
+    .review-reply {{
+      margin-top: 10px;
+      padding: 12px 14px;
+      background: rgba(0, 255, 157, 0.04);
+      border-left: 2px solid var(--neon-mint);
+      border-radius: 4px 8px 8px 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }}
+
+    .review-reply-header {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }}
+
+    .review-reply-author {{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--neon-mint);
+      letter-spacing: 0.02em;
+    }}
+
+    .review-reply-author svg {{
+      width: 12px;
+      height: 12px;
+      stroke: var(--neon-mint);
+    }}
+
+    .review-reply-date {{
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }}
+
+    .review-reply-text {{
+      color: #cbd5e1;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin: 0;
+    }}
+
     .review-card-footer {{
       display: flex;
       align-items: center;
@@ -6250,6 +6297,29 @@ html_content = f'''<!DOCTYPE html>
           const initials = authorName.substring(0, 2).toUpperCase();
           const message = escapeHtml(item.message);
 
+          let replyHtml = '';
+          if (item.reply) {{
+            const replyObj = typeof item.reply === 'object' ? item.reply : {{ text: item.reply }};
+            const replyText = escapeHtml(replyObj.text || '');
+            const defaultReplyAuthor = (I18N[currentLang] && I18N[currentLang].reviewReplyAuthor) ? I18N[currentLang].reviewReplyAuthor : 'Ответ команды MagicDNS';
+            const isDefReplyAuthor = !replyObj.author || replyObj.author === 'Команда MagicDNS' || replyObj.author === 'MagicDNS Team' || replyObj.author === 'MagicDNS 团队' || replyObj.author === 'MagicDNS Ekibi';
+            const replyAuthor = isDefReplyAuthor ? defaultReplyAuthor : escapeHtml(replyObj.author);
+            const replyDate = escapeHtml(replyObj.date || '');
+            if (replyText) {{
+              replyHtml = 
+                '<div class="review-reply">' +
+                  '<div class="review-reply-header">' +
+                    '<span class="review-reply-author">' +
+                      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>' +
+                      replyAuthor +
+                    '</span>' +
+                    (replyDate ? '<span class="review-reply-date">' + replyDate + '</span>' : '') +
+                  '</div>' +
+                  '<p class="review-reply-text">' + replyText + '</p>' +
+                '</div>';
+            }}
+          }}
+
           card.innerHTML = 
             '<div class="review-card-top">' +
               '<div class="review-author-info">' +
@@ -6265,6 +6335,7 @@ html_content = f'''<!DOCTYPE html>
               '</div>' +
             '</div>' +
             '<p class="review-body">' + message + '</p>' +
+            replyHtml +
             '<div class="review-card-footer">' +
               '<div class="review-badge-verified">' +
                 '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' +
