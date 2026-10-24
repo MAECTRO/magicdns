@@ -6660,28 +6660,29 @@ html_content = f'''<!DOCTYPE html>
       setupLegalModal('btn-open-contact', 'contact-modal', ['close-contact-btn', 'close-contact-btn-bottom']);
 
       function initSiteAlert() {{
+        try {{
+          sessionStorage.removeItem('magicdns_dismissed_alert');
+        }} catch(e) {{}}
         var url = '/alert.json?v=' + Date.now();
-        fetch(url)
+        fetch(url, {{ cache: 'no-store' }})
           .then(function(r) {{ return r.ok ? r.json() : null; }})
           .then(function(data) {{
             var badge = document.querySelector('.status-badge');
             var statusText = document.querySelector('.status-text');
+            var banner = document.getElementById('site-alert-banner');
+            var textElem = document.getElementById('site-alert-text');
             if (!data || !data.active || !data.message) {{
               if (badge) badge.classList.remove('status-degraded');
               if (statusText) statusText.textContent = 'Работает стабильно';
+              if (banner) banner.style.display = 'none';
               return;
             }}
             if (badge) badge.classList.add('status-degraded');
             if (statusText) statusText.textContent = 'Внимание: техработы';
-            var dismissed = sessionStorage.getItem('magicdns_dismissed_alert');
-            if (dismissed && dismissed === String(data.updated_at)) return;
-            var banner = document.getElementById('site-alert-banner');
-            var textElem = document.getElementById('site-alert-text');
             if (banner && textElem) {{
               var cleanMsg = (data.message || '').replace(/^(\\s*⚠️\\s*)+/g, '').replace(/(\\s*⚠️\\s*)+$/g, '').trim();
               textElem.innerHTML = cleanMsg;
               banner.style.display = 'block';
-              window._currentAlertId = String(data.updated_at || Date.now());
             }}
           }})
           .catch(function() {{}});
@@ -6691,9 +6692,6 @@ html_content = f'''<!DOCTYPE html>
         var banner = document.getElementById('site-alert-banner');
         if (banner) {{
           banner.style.display = 'none';
-          if (window._currentAlertId) {{
-            sessionStorage.setItem('magicdns_dismissed_alert', window._currentAlertId);
-          }}
         }}
       }}
       window.dismissSiteAlert = dismissSiteAlert;
