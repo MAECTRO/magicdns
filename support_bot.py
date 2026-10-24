@@ -214,13 +214,16 @@ def set_bot_commands():
         print(f"[BOT COMMANDS ERROR] {e}")
 
     admin_cmds = [
+        {"command": "admin", "description": "🛠 Панель управления"},
+        {"command": "reviews", "description": "💬 Отзывы и ответы команды"},
+        {"command": "reply", "description": "✍️ Ответить на отзыв по ID"},
         {"command": "alert", "description": "🚨 Оповещение в Telegram (рассылка)"},
         {"command": "sitealert", "description": "🌐 Оповещение на сайте magicdns.ru"},
         {"command": "clearsitealert", "description": "🔕 Снять оповещение с сайта"},
         {"command": "users", "description": "📊 Статистика аудитории бота"},
         {"command": "status", "description": "🟢 Статус серверов сети"},
         {"command": "dns", "description": "⚡ Параметры MagicDNS"},
-        {"command": "help", "description": "💬 Справка"}
+        {"command": "help", "description": "💬 Справка и админка"}
     ]
     try:
         res_adm = tg_request("setMyCommands", {
@@ -384,6 +387,71 @@ def publish_review_to_github(author, platform, rating, message):
             return True, "Отзыв успешно опубликован на GitHub!", new_review.get("id")
     except Exception as e:
         return False, f"Ошибка сохранения на GitHub: {e}", None
+
+def get_admin_panel_card():
+    return (
+        "🛠 <b>Панель администратора MagicDNS:</b>\n\n"
+        "Управляйте отзывами, сайтом и оповещениями через кнопки ниже:\n\n"
+        "• 💬 <b>Отзывы и ответы:</b> просмотр отзывов и публикация официальных комментариев команды\n"
+        "• 🌐 <b>Баннер на сайте:</b> включить или снять аварию на magicdns.ru\n"
+        "• 🚨 <b>Рассылка:</b> экстренное оповещение всем подписчикам бота\n"
+        "• 📊 <b>Статистика:</b> аудитория и активные пользователи"
+    )
+
+def get_admin_panel_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "💬 Отзывы на сайте и ответы", "callback_data": "admin_reviews"}],
+            [{"text": "🌐 Баннер на сайте", "callback_data": "admin_sitealert_info"}, {"text": "🚨 Рассылка", "callback_data": "admin_alert_info"}],
+            [{"text": "📊 Статистика подписчиков", "callback_data": "cmd_users"}, {"text": "🟢 Статус сети", "callback_data": "cmd_status"}]
+        ]
+    }
+
+def send_reviews_list(chat_id):
+    send_message(chat_id, "⏳ Загружаю отзывы с сайта...")
+    url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/reviews.json"
+    headers = {"Authorization": f"token {GITHUB_TOKEN}", "User-Agent": "MagicDNS-Bot"}
+    revs = []
+    try:
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            d = json.loads(resp.read().decode('utf-8'))
+            revs = json.loads(base64.b64decode(d['content']).decode('utf-8'))
+    except Exception:
+        try:
+            local_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reviews.json")
+            with open(local_p, "r", encoding="utf-8") as f:
+                revs = json.load(f)
+        except Exception:
+            revs = []
+
+    if not revs:
+        send_message(chat_id, "📭 Список отзывов пуст.")
+        return
+
+    send_message(chat_id, f"📋 <b>Последние отзывы на magicdns.ru (Всего: {len(revs)}):</b>\n<i>Нажмите кнопку под нужным отзывом, чтобы оставить ответ команды:</i>")
+    for r in revs[:5]:
+        stars = '★' * r.get('rating', 5)
+        reply_info = ""
+        btn_label = "💬 Ответить на этот отзыв"
+        if r.get('reply'):
+            rep = r['reply']
+            rep_text = rep.get('text') if isinstance(rep, dict) else rep
+            reply_info = f"\n\n💬 <b>Ответ команды:</b> <i>{html.escape(str(rep_text))}</i>"
+            btn_label = "✏️ Изменить ответ команды"
+
+        card_text = (
+            f"⭐️ <b>{stars} ({r.get('rating')}/5)</b> — <b>{html.escape(str(r.get('author')))}</b> [{html.escape(str(r.get('platform')))}]\n"
+            f"📅 {r.get('date', '')} | 🆔 <code>{r.get('id')}</code>\n\n"
+            f"«{html.escape(str(r.get('message')))}»"
+            f"{reply_info}"
+        )
+        kb = {
+            "inline_keyboard": [
+                [{"text": btn_label, "callback_data": f"reply_rev_{r.get('id')}"}]
+            ]
+        }
+        send_message(chat_id, card_text, reply_markup=kb)
 
 def reply_to_review_on_github(review_id, reply_text, reply_author="Команда MagicDNS"):
     url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/reviews.json"
@@ -809,6 +877,35 @@ def main():
                         t.start()
                         continue
 
+                    if data == 'admin_panel':
+                        answer_callback(cq_id)
+                        edit_message(ADMIN_CHAT_ID, msg_id, get_admin_panel_card(), reply_markup=get_admin_panel_kb())
+                        continue
+
+                    if data == 'admin_reviews':
+                        answer_callback(cq_id, "Загружаю отзывы...")
+                        send_reviews_list(ADMIN_CHAT_ID)
+                        continue
+
+                    if data == 'admin_sitealert_info':
+                        answer_callback(cq_id)
+                        send_message(
+                            ADMIN_CHAT_ID,
+                            "🌐 <b>Управление баннером на сайте:</b>\n\n"
+                            "• Включить: <code>/sitealert Текст аварии</code>\n"
+                            "• Снять: <code>/clearsitealert</code>"
+                        )
+                        continue
+
+                    if data == 'admin_alert_info':
+                        answer_callback(cq_id)
+                        send_message(
+                            ADMIN_CHAT_ID,
+                            "🚨 <b>Экстренная рассылка подписчикам:</b>\n\n"
+                            "Отправьте команду:\n<code>/alert Текст оповещения</code>"
+                        )
+                        continue
+
                     if data.startswith('reply_rev_'):
                         rev_id = data.replace('reply_rev_', '').strip()
                         PENDING_REVIEWS_REPLIES[ADMIN_CHAT_ID] = rev_id
@@ -1041,48 +1138,13 @@ def main():
                     elif cmd in ['/reviews', '/feedback', 'отзывы']:
                         if sender_id != ADMIN_CHAT_ID:
                             continue
-                        send_message(ADMIN_CHAT_ID, "⏳ Загружаю отзывы...")
-                        url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/reviews.json"
-                        headers = {"Authorization": f"token {GITHUB_TOKEN}", "User-Agent": "MagicDNS-Bot"}
-                        revs = []
-                        try:
-                            req = urllib.request.Request(url, headers=headers)
-                            with urllib.request.urlopen(req, timeout=10) as resp:
-                                d = json.loads(resp.read().decode('utf-8'))
-                                revs = json.loads(base64.b64decode(d['content']).decode('utf-8'))
-                        except Exception:
-                            try:
-                                local_p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reviews.json")
-                                with open(local_p, "r", encoding="utf-8") as f:
-                                    revs = json.load(f)
-                            except Exception:
-                                revs = []
+                        send_reviews_list(ADMIN_CHAT_ID)
+                        continue
 
-                        if not revs:
-                            send_message(ADMIN_CHAT_ID, "📭 Список отзывов пуст.")
+                    elif cmd in ['/admin', '/menu', 'админ', 'панель']:
+                        if sender_id != ADMIN_CHAT_ID:
                             continue
-
-                        send_message(ADMIN_CHAT_ID, f"📋 <b>Последние отзывы на magicdns.ru (Всего: {len(revs)}):</b>")
-                        for r in revs[:5]:
-                            stars = '★' * r.get('rating', 5)
-                            reply_info = ""
-                            if r.get('reply'):
-                                rep = r['reply']
-                                rep_text = rep.get('text') if isinstance(rep, dict) else rep
-                                reply_info = f"\n\n💬 <b>Ответ команды:</b> <i>{html.escape(str(rep_text))}</i>"
-
-                            card_text = (
-                                f"⭐️ <b>{stars} ({r.get('rating')}/5)</b> — <b>{html.escape(str(r.get('author')))}</b> [{html.escape(str(r.get('platform')))}]\n"
-                                f"📅 {r.get('date', '')} | 🆔 <code>{r.get('id')}</code>\n\n"
-                                f"«{html.escape(str(r.get('message')))}»"
-                                f"{reply_info}"
-                            )
-                            kb = {
-                                "inline_keyboard": [
-                                    [{"text": "💬 Ответить на этот отзыв", "callback_data": f"reply_rev_{r.get('id')}"}]
-                                ]
-                            }
-                            send_message(ADMIN_CHAT_ID, card_text, reply_markup=kb)
+                        send_message(ADMIN_CHAT_ID, get_admin_panel_card(), reply_markup=get_admin_panel_kb())
                         continue
 
                     elif cmd in ['/users', '/subs', '/subscribers', '/stats', 'статистика']:
@@ -1127,23 +1189,18 @@ def main():
                     elif cmd in ['/rules', '/help', 'помощь', 'правила']:
                         reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
                         send_message(chat_id, get_help_card(), reply_to_message_id=reply_to_id, reply_markup=get_help_kb())
-                        if sender_id == ADMIN_CHAT_ID:
-                            admin_extra = (
-                                "🛠 <b>Панель администратора:</b>\n\n"
-                                "• <code>/alert Текст</code> — рассылка оповещения всем в Telegram (с превью)\n"
-                                "• <code>/sitealert Текст</code> — включить аварийный баннер на сайте magicdns.ru\n"
-                                "• <code>/clearsitealert</code> — снять баннер с сайта\n"
-                                "• <code>/users</code> — статистика подписчиков и список недавних\n"
-                                "• <code>/status</code> — статус серверов сети"
-                            )
-                            send_message(ADMIN_CHAT_ID, admin_extra)
+                        if sender_id == ADMIN_CHAT_ID and chat_type == 'private':
+                            send_message(ADMIN_CHAT_ID, get_admin_panel_card(), reply_markup=get_admin_panel_kb())
                         continue
 
                     elif cmd == '/start':
-                        send_message(chat_id, get_welcome_card(), reply_markup=get_welcome_kb())
-                        if chat_type == 'private' and sender_id != ADMIN_CHAT_ID:
-                            notify = f"👤 Новый пользователь в боте поддержки:\n<b>{sender_name}</b> ({username})\nID: <code>[ID: {sender_id}]</code>"
-                            send_message(ADMIN_CHAT_ID, notify)
+                        if sender_id == ADMIN_CHAT_ID and chat_type == 'private':
+                            send_message(ADMIN_CHAT_ID, get_admin_panel_card(), reply_markup=get_admin_panel_kb())
+                        else:
+                            send_message(chat_id, get_welcome_card(), reply_markup=get_welcome_kb())
+                            if chat_type == 'private' and sender_id != ADMIN_CHAT_ID:
+                                notify = f"👤 Новый пользователь в боте поддержки:\n<b>{sender_name}</b> ({username})\nID: <code>[ID: {sender_id}]</code>"
+                                send_message(ADMIN_CHAT_ID, notify)
                         continue
 
                     # --- A. GROUP / SUPERGROUP NON-COMMAND HANDLING ---
