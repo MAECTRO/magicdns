@@ -235,6 +235,68 @@ def set_bot_commands():
         print(f"[BOT ADMIN COMMANDS ERROR] {e}")
 
 # Reusable Card and Keyboard Definitions
+SERVERS_STATUS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "servers_status.json")
+
+DEFAULT_SERVERS_STATUS = {
+    "se": {
+        "name": "🇸🇪 Швеция (Основа / Core Node)",
+        "short_name": "🇸🇪 Швеция",
+        "ip": "109.120.132.43",
+        "status": "ok"
+    },
+    "de": {
+        "name": "🇩🇪 Германия (Второй узел / Backup)",
+        "short_name": "🇩🇪 Германия",
+        "ip": "94.249.177.102",
+        "status": "ok"
+    },
+    "fi": {
+        "name": "🇫🇮 Финляндия (Резервный узел)",
+        "short_name": "🇫🇮 Финляндия (Резерв)",
+        "ip": "2.56.179.170",
+        "status": "ok"
+    }
+}
+
+def load_servers_status():
+    try:
+        if os.path.exists(SERVERS_STATUS_FILE):
+            with open(SERVERS_STATUS_FILE, "r", encoding="utf-8") as f:
+                loaded = json.load(f)
+                res = {k: v.copy() for k, v in DEFAULT_SERVERS_STATUS.items()}
+                for k, v in loaded.items():
+                    if k in res:
+                        res[k].update(v)
+                return res
+    except Exception as e:
+        print(f"[STATUS LOAD ERR] {e}")
+    return {k: v.copy() for k, v in DEFAULT_SERVERS_STATUS.items()}
+
+def save_servers_status(data):
+    try:
+        with open(SERVERS_STATUS_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[STATUS SAVE ERR] {e}")
+
+STATUS_CONFIG = {
+    "ok": {
+        "badge": "🟢",
+        "label": "Штатно",
+        "title": "Работает стабильно"
+    },
+    "degraded": {
+        "badge": "🟡",
+        "label": "С перебоями",
+        "title": "Высокая нагрузка / техработы"
+    },
+    "down": {
+        "badge": "🔴",
+        "label": "Авария",
+        "title": "Временно недоступен"
+    }
+}
+
 def get_dns_card():
     return (
         "⚡ <b>Параметры подключения MagicDNS:</b>\n\n"
@@ -261,20 +323,108 @@ def get_dns_kb():
         ]
     }
 
-def get_status_card():
+def get_status_card(is_admin=False):
+    statuses = load_servers_status()
+    se = statuses.get("se", {})
+    de = statuses.get("de", {})
+    fi = statuses.get("fi", {})
+
+    se_meta = STATUS_CONFIG.get(se.get("status", "ok"), STATUS_CONFIG["ok"])
+    de_meta = STATUS_CONFIG.get(de.get("status", "ok"), STATUS_CONFIG["ok"])
+    fi_meta = STATUS_CONFIG.get(fi.get("status", "ok"), STATUS_CONFIG["ok"])
+
+    any_problem = (se.get("status") != "ok" or de.get("status") != "ok")
+    header_badge = "⚠️" if any_problem else "🟢"
+
+    lines = [
+        f"• {se.get('name', '🇸🇪 Швеция')}: {se_meta['badge']} <code>{se.get('ip')}</code> ({se_meta['label']})",
+        f"• {de.get('name', '🇩🇪 Германия')}: {de_meta['badge']} <code>{de.get('ip')}</code> ({de_meta['label']})"
+    ]
+
+    if is_admin:
+        lines.append(f"• {fi.get('name', '🇫🇮 Финляндия')}: {fi_meta['badge']} <code>{fi.get('ip')}</code> ({fi_meta['label']})")
+
+    body = "\n".join(lines)
+
+    if not any_problem:
+        footer = "\n\n🛡️ <i>Все узлы активны 24/7. Uptime 99.9%. Трафик маршрутизируется без задержек.</i>"
+    else:
+        if se.get("status") != "ok" and de.get("status") == "ok":
+            rec = f"Рекомендуем временно использовать второй узел (🇩🇪 Германия): <code>{de.get('ip')}</code>."
+        elif de.get("status") != "ok" and se.get("status") == "ok":
+            rec = f"Рекомендуем временно использовать основной узел (🇸🇪 Швеция): <code>{se.get('ip')}</code>."
+        else:
+            rec = "Ведутся восстановительные работы на инфраструктуре."
+        footer = (
+            f"\n\n⚠️ <i>Внимание: на некоторых серверах зафиксированы перебои в работе. "
+            f"{rec} Мы уже занимаемся оптимизацией.</i>"
+        )
+
+    return f"{header_badge} <b>Статус инфраструктуры MagicDNS:</b>\n\n{body}{footer}"
+
+def get_status_kb(is_admin=False):
+    buttons = [
+        [{"text": "⚡ Параметры подключения", "callback_data": "cmd_dns"}],
+        [{"text": "☕ Поддержать серверы", "url": DONATE_URL}],
+        [{"text": "🌐 Сайт magicdns.ru", "url": "https://magicdns.ru"}]
+    ]
+    if is_admin:
+        buttons.insert(0, [{"text": "🚦 Изменить статус серверов", "callback_data": "admin_srv_status"}])
+    return {"inline_keyboard": buttons}
+
+def get_admin_servers_card():
+    statuses = load_servers_status()
+    se = statuses.get("se", {})
+    de = statuses.get("de", {})
+    fi = statuses.get("fi", {})
+
+    se_meta = STATUS_CONFIG.get(se.get("status", "ok"), STATUS_CONFIG["ok"])
+    de_meta = STATUS_CONFIG.get(de.get("status", "ok"), STATUS_CONFIG["ok"])
+    fi_meta = STATUS_CONFIG.get(fi.get("status", "ok"), STATUS_CONFIG["ok"])
+
     return (
-        "🟢 <b>Статус инфраструктуры MagicDNS:</b>\n\n"
-        "• 🇸🇪 Швеция (Основа / Core Node): 🟢 <code>109.120.132.43</code> (Штатно)\n"
-        "• 🇩🇪 Германия (Второй узел / Backup): 🟢 <code>94.249.177.102</code> (Штатно)\n\n"
-        "🛡️ <i>Все узлы активны 24/7. Uptime 99.9%. Трафик маршрутизируется без задержек.</i>"
+        "🚦 <b>Управление состоянием серверов MagicDNS:</b>\n\n"
+        f"🇸🇪 <b>Швеция (109.120.132.43):</b> {se_meta['badge']} {se_meta['label']}\n"
+        f"🇩🇪 <b>Германия (94.249.177.102):</b> {de_meta['badge']} {de_meta['label']}\n"
+        f"🇫🇮 <b>Финляндия (2.56.179.170, Резерв):</b> {fi_meta['badge']} {fi_meta['label']}\n\n"
+        "<i>Нажмите на сервер ниже, чтобы переключить его статус (Штатно / С перебоями / Авария). "
+        "Новый статус моментально отобразится всем пользователям в /status!</i>"
     )
 
-def get_status_kb():
+def get_admin_servers_kb():
+    statuses = load_servers_status()
+    se_b = STATUS_CONFIG.get(statuses.get("se", {}).get("status", "ok"), STATUS_CONFIG["ok"])["badge"]
+    de_b = STATUS_CONFIG.get(statuses.get("de", {}).get("status", "ok"), STATUS_CONFIG["ok"])["badge"]
+    fi_b = STATUS_CONFIG.get(statuses.get("fi", {}).get("status", "ok"), STATUS_CONFIG["ok"])["badge"]
+
     return {
         "inline_keyboard": [
-            [{"text": "⚡ Параметры подключения", "callback_data": "cmd_dns"}],
-            [{"text": "☕ Поддержать серверы", "url": DONATE_URL}],
-            [{"text": "🌐 Сайт magicdns.ru", "url": "https://magicdns.ru"}]
+            [{"text": f"🇸🇪 Швеция: {se_b}", "callback_data": "srv_pick_se"}],
+            [{"text": f"🇩🇪 Германия: {de_b}", "callback_data": "srv_pick_de"}],
+            [{"text": f"🇫🇮 Финляндия (Резерв): {fi_b}", "callback_data": "srv_pick_fi"}],
+            [{"text": "🛠 В панель администратора", "callback_data": "admin_panel"}]
+        ]
+    }
+
+def get_server_picker_card(srv_key):
+    statuses = load_servers_status()
+    srv = statuses.get(srv_key, {})
+    curr = STATUS_CONFIG.get(srv.get("status", "ok"), STATUS_CONFIG["ok"])
+    name = srv.get("name", srv_key.upper())
+
+    return (
+        f"⚙️ <b>Настройка статуса для {name}:</b>\n\n"
+        f"Текущее состояние: {curr['badge']} <b>{curr['label']}</b> ({curr['title']})\n\n"
+        f"<i>Выберите новое состояние:</i>"
+    )
+
+def get_server_picker_kb(srv_key):
+    return {
+        "inline_keyboard": [
+            [{"text": "🟢 Штатно (Стабильно)", "callback_data": f"srv_set_{srv_key}_ok"}],
+            [{"text": "🟡 С перебоями (Нагрузка / Лаги)", "callback_data": f"srv_set_{srv_key}_degraded"}],
+            [{"text": "🔴 Авария (Недоступен)", "callback_data": f"srv_set_{srv_key}_down"}],
+            [{"text": "🔙 Назад к списку серверов", "callback_data": "admin_srv_status"}]
         ]
     }
 
@@ -400,8 +550,9 @@ def get_admin_panel_kb():
     return {
         "inline_keyboard": [
             [{"text": "💬 Отзывы на сайте и ответы", "callback_data": "admin_reviews"}],
+            [{"text": "🚦 Статусы серверов (перебои)", "callback_data": "admin_srv_status"}],
             [{"text": "🌐 Баннер на сайте", "callback_data": "admin_sitealert_info"}, {"text": "🚨 Рассылка", "callback_data": "admin_alert_info"}],
-            [{"text": "📊 Статистика подписчиков", "callback_data": "cmd_users"}, {"text": "🟢 Статус сети", "callback_data": "cmd_status"}]
+            [{"text": "📊 Статистика подписчиков", "callback_data": "cmd_users"}, {"text": "🟢 Проверить /status", "callback_data": "cmd_status"}]
         ]
     }
 
@@ -857,12 +1008,39 @@ def main():
 
                     if data == 'cmd_status':
                         answer_callback(cq_id, "🟢 Статус серверов")
-                        send_message(from_id, get_status_card(), reply_markup=get_status_kb())
+                        is_adm = (from_id == ADMIN_CHAT_ID)
+                        send_message(from_id, get_status_card(is_admin=is_adm), reply_markup=get_status_kb(is_admin=is_adm))
                         continue
 
                     # Admin-only callbacks
                     if from_id != ADMIN_CHAT_ID:
                         answer_callback(cq_id, "⛔ Действие только для администратора", alert=True)
+                        continue
+
+                    if data == 'admin_srv_status':
+                        answer_callback(cq_id, "🚦 Управление серверами")
+                        edit_message(ADMIN_CHAT_ID, msg_id, get_admin_servers_card(), reply_markup=get_admin_servers_kb())
+                        continue
+
+                    if data.startswith('srv_pick_'):
+                        srv_key = data.replace('srv_pick_', '').strip()
+                        answer_callback(cq_id)
+                        edit_message(ADMIN_CHAT_ID, msg_id, get_server_picker_card(srv_key), reply_markup=get_server_picker_kb(srv_key))
+                        continue
+
+                    if data.startswith('srv_set_'):
+                        parts = data.split('_')
+                        if len(parts) >= 4:
+                            srv_key = parts[2]
+                            new_status = parts[3]
+                            statuses = load_servers_status()
+                            if srv_key in statuses and new_status in STATUS_CONFIG:
+                                statuses[srv_key]['status'] = new_status
+                                save_servers_status(statuses)
+                                meta = STATUS_CONFIG[new_status]
+                                srv_name = statuses[srv_key].get('short_name', srv_key.upper())
+                                answer_callback(cq_id, f"{meta['badge']} {srv_name}: {meta['label']}!")
+                                edit_message(ADMIN_CHAT_ID, msg_id, get_admin_servers_card(), reply_markup=get_admin_servers_kb())
                         continue
 
                     if data == 'clear_site_alert':
@@ -1306,7 +1484,8 @@ def main():
 
                     elif cmd in ['/status', 'статус']:
                         reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
-                        send_message(chat_id, get_status_card(), reply_to_message_id=reply_to_id, reply_markup=get_status_kb())
+                        is_adm = (sender_id == ADMIN_CHAT_ID)
+                        send_message(chat_id, get_status_card(is_admin=is_adm), reply_to_message_id=reply_to_id, reply_markup=get_status_kb(is_admin=is_adm))
                         continue
 
                     elif cmd in ['/donate', '/support', '/tip', 'донат']:
