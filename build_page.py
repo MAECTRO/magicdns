@@ -2978,6 +2978,29 @@ html_content = f'''<!DOCTYPE html>
       margin: 0;
     }}
 
+    /* Reviews Load More Wrap */
+    .reviews-load-more-wrap {{
+      display: flex;
+      justify-content: center;
+      margin-top: 24px;
+      width: 100%;
+    }}
+
+    .btn-load-more-reviews {{
+      padding: 12px 28px;
+      font-size: 0.95rem;
+      gap: 8px;
+      cursor: pointer;
+    }}
+
+    .btn-load-more-reviews svg {{
+      transition: transform 0.3s ease;
+    }}
+
+    .btn-load-more-reviews.expanded svg {{
+      transform: rotate(180deg);
+    }}
+
     .review-card-footer {{
       display: flex;
       align-items: center;
@@ -5046,6 +5069,12 @@ html_content = f'''<!DOCTYPE html>
           </button>
         </div>
         <div class="reviews-grid" id="reviews-grid" style="display: none;"></div>
+        <div class="reviews-load-more-wrap" id="reviews-load-more-wrap" style="display: none;">
+          <button type="button" class="btn-neon-action btn-load-more-reviews" id="btn-load-more-reviews">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            <span id="load-more-reviews-text" data-i18n="reviewsLoadMore">Показать ещё отзывы</span>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -6238,16 +6267,23 @@ html_content = f'''<!DOCTYPE html>
         }} catch(e) {{}}
       }}
 
+      const REVIEWS_PAGE_SIZE = 6;
+      let reviewsExpanded = false;
+
       function renderReviews() {{
         const emptyState = document.getElementById('reviews-empty-state');
         const grid = document.getElementById('reviews-grid');
+        const loadMoreWrap = document.getElementById('reviews-load-more-wrap');
+        const loadMoreBtn = document.getElementById('btn-load-more-reviews');
+        const loadMoreText = document.getElementById('load-more-reviews-text');
         if (!grid || !emptyState) return;
 
-        const reviews = getSavedReviews();
+        const allReviews = getSavedReviews();
         const headerBtn = document.getElementById('open-feedback-btn');
-        if (!reviews || reviews.length === 0) {{
+        if (!allReviews || allReviews.length === 0) {{
           emptyState.style.display = 'flex';
           grid.style.display = 'none';
+          if (loadMoreWrap) loadMoreWrap.style.display = 'none';
           grid.innerHTML = '';
           if (headerBtn) headerBtn.classList.add('hide-when-empty');
           return;
@@ -6257,6 +6293,8 @@ html_content = f'''<!DOCTYPE html>
         grid.style.display = 'grid';
         grid.innerHTML = '';
         if (headerBtn) headerBtn.classList.remove('hide-when-empty');
+
+        const reviews = reviewsExpanded ? allReviews : allReviews.slice(0, REVIEWS_PAGE_SIZE);
 
         if (reviews.length === 1) {{
           grid.classList.add('single-item');
@@ -6344,6 +6382,38 @@ html_content = f'''<!DOCTYPE html>
               '<span class="review-date">' + (item.date || 'Недавно') + '</span>' +
             '</div>';
           grid.appendChild(card);
+        }});
+
+        if (loadMoreWrap && loadMoreBtn && loadMoreText) {{
+          if (allReviews.length > REVIEWS_PAGE_SIZE) {{
+            loadMoreWrap.style.display = 'flex';
+            const moreLabel = (I18N[currentLang] && I18N[currentLang].reviewsLoadMore) ? I18N[currentLang].reviewsLoadMore : 'Показать ещё отзывы';
+            const collapseLabel = (I18N[currentLang] && I18N[currentLang].reviewsCollapse) ? I18N[currentLang].reviewsCollapse : 'Свернуть отзывы';
+            if (reviewsExpanded) {{
+              loadMoreBtn.classList.add('expanded');
+              loadMoreText.textContent = collapseLabel;
+            }} else {{
+              loadMoreBtn.classList.remove('expanded');
+              const remaining = allReviews.length - REVIEWS_PAGE_SIZE;
+              loadMoreText.textContent = moreLabel + ' (' + remaining + ')';
+            }}
+          }} else {{
+            loadMoreWrap.style.display = 'none';
+          }}
+        }}
+      }}
+
+      // Load More Reviews Trigger
+      const loadMoreBtnElem = document.getElementById('btn-load-more-reviews');
+      if (loadMoreBtnElem) {{
+        loadMoreBtnElem.addEventListener('click', function() {{
+          playTactileFeedback();
+          reviewsExpanded = !reviewsExpanded;
+          renderReviews();
+          if (!reviewsExpanded) {{
+            const reviewsSec = document.getElementById('reviews');
+            if (reviewsSec) reviewsSec.scrollIntoView({{ behavior: 'smooth' }});
+          }}
         }});
       }}
 

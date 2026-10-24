@@ -407,8 +407,9 @@ def get_admin_panel_kb():
         ]
     }
 
-def send_reviews_list(chat_id):
-    send_message(chat_id, "⏳ Загружаю отзывы с сайта...")
+def send_reviews_list(chat_id, offset=0, limit=5):
+    if offset == 0:
+        send_message(chat_id, "⏳ Загружаю отзывы с сайта...")
     url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/reviews.json"
     headers = {"Authorization": f"token {GITHUB_TOKEN}", "User-Agent": "MagicDNS-Bot"}
     revs = []
@@ -429,8 +430,17 @@ def send_reviews_list(chat_id):
         send_message(chat_id, "📭 Список отзывов пуст.")
         return
 
-    send_message(chat_id, f"📋 <b>Последние отзывы на magicdns.ru (Всего: {len(revs)}):</b>\n<i>Нажмите кнопку под нужным отзывом, чтобы оставить ответ команды:</i>")
-    for r in revs[:5]:
+    total_count = len(revs)
+    batch = revs[offset:offset + limit]
+
+    if offset == 0:
+        send_message(
+            chat_id,
+            f"📋 <b>Отзывы на сайте magicdns.ru (Всего: {total_count}):</b>\n"
+            f"<i>Показано {min(offset + len(batch), total_count)} из {total_count}. Нажмите кнопку под нужным отзывом для ответа:</i>"
+        )
+
+    for r in batch:
         stars = '★' * r.get('rating', 5)
         reply_info = ""
         btn_label = "💬 Ответить на этот отзыв"
@@ -452,6 +462,32 @@ def send_reviews_list(chat_id):
             ]
         }
         send_message(chat_id, card_text, reply_markup=kb)
+
+    shown_so_far = offset + len(batch)
+    if shown_so_far < total_count:
+        remaining = total_count - shown_so_far
+        next_chunk = min(5, remaining)
+        more_kb = {
+            "inline_keyboard": [
+                [
+                    {"text": f"📥 Загрузить ещё {next_chunk} (осталось {remaining})", "callback_data": f"rev_page_{shown_so_far}"},
+                    {"text": f"📜 Показать вообще все ({remaining})", "callback_data": f"rev_all_{shown_so_far}"}
+                ],
+                [{"text": "🛠 В панель администратора", "callback_data": "admin_panel"}]
+            ]
+        }
+        send_message(
+            chat_id,
+            f"👇 <b>Показано {shown_so_far} из {total_count} отзывов.</b>",
+            reply_markup=more_kb
+        )
+    else:
+        end_kb = {
+            "inline_keyboard": [
+                [{"text": "🛠 В панель администратора", "callback_data": "admin_panel"}]
+            ]
+        }
+        send_message(chat_id, f"✅ <b>Выгружены все {total_count} отзывов с сайта!</b>", reply_markup=end_kb)
 
 def reply_to_review_on_github(review_id, reply_text, reply_author="Команда MagicDNS"):
     url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/reviews.json"
@@ -904,6 +940,18 @@ def main():
                             "🚨 <b>Экстренная рассылка подписчикам:</b>\n\n"
                             "Отправьте команду:\n<code>/alert Текст оповещения</code>"
                         )
+                        continue
+
+                    if data.startswith('rev_all_'):
+                        curr_offset = int(data.replace('rev_all_', ''))
+                        answer_callback(cq_id, "Выгружаю все отзывы...")
+                        send_reviews_list(ADMIN_CHAT_ID, offset=curr_offset, limit=100)
+                        continue
+
+                    if data.startswith('rev_page_'):
+                        next_offset = int(data.replace('rev_page_', ''))
+                        answer_callback(cq_id, "Загружаю ещё отзывы...")
+                        send_reviews_list(ADMIN_CHAT_ID, offset=next_offset, limit=5)
                         continue
 
                     if data.startswith('reply_rev_'):
