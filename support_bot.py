@@ -249,12 +249,6 @@ DEFAULT_SERVERS_STATUS = {
         "short_name": "🇩🇪 Германия",
         "ip": "94.249.177.102",
         "status": "ok"
-    },
-    "fi": {
-        "name": "🇫🇮 Финляндия (Резервный узел)",
-        "short_name": "🇫🇮 Финляндия (Резерв)",
-        "ip": "2.56.179.170",
-        "status": "ok"
     }
 }
 
@@ -327,11 +321,8 @@ def get_status_card(is_admin=False):
     statuses = load_servers_status()
     se = statuses.get("se", {})
     de = statuses.get("de", {})
-    fi = statuses.get("fi", {})
-
     se_meta = STATUS_CONFIG.get(se.get("status", "ok"), STATUS_CONFIG["ok"])
     de_meta = STATUS_CONFIG.get(de.get("status", "ok"), STATUS_CONFIG["ok"])
-    fi_meta = STATUS_CONFIG.get(fi.get("status", "ok"), STATUS_CONFIG["ok"])
 
     any_problem = (se.get("status") != "ok" or de.get("status") != "ok")
     header_badge = "⚠️" if any_problem else "🟢"
@@ -340,9 +331,6 @@ def get_status_card(is_admin=False):
         f"• {se.get('name', '🇸🇪 Швеция')}: {se_meta['badge']} <code>{se.get('ip')}</code> ({se_meta['label']})",
         f"• {de.get('name', '🇩🇪 Германия')}: {de_meta['badge']} <code>{de.get('ip')}</code> ({de_meta['label']})"
     ]
-
-    if is_admin:
-        lines.append(f"• {fi.get('name', '🇫🇮 Финляндия')}: {fi_meta['badge']} <code>{fi.get('ip')}</code> ({fi_meta['label']})")
 
     body = "\n".join(lines)
 
@@ -376,17 +364,13 @@ def get_admin_servers_card():
     statuses = load_servers_status()
     se = statuses.get("se", {})
     de = statuses.get("de", {})
-    fi = statuses.get("fi", {})
-
     se_meta = STATUS_CONFIG.get(se.get("status", "ok"), STATUS_CONFIG["ok"])
     de_meta = STATUS_CONFIG.get(de.get("status", "ok"), STATUS_CONFIG["ok"])
-    fi_meta = STATUS_CONFIG.get(fi.get("status", "ok"), STATUS_CONFIG["ok"])
 
     return (
         "🚦 <b>Управление состоянием серверов MagicDNS:</b>\n\n"
         f"🇸🇪 <b>Швеция (109.120.132.43):</b> {se_meta['badge']} {se_meta['label']}\n"
-        f"🇩🇪 <b>Германия (94.249.177.102):</b> {de_meta['badge']} {de_meta['label']}\n"
-        f"🇫🇮 <b>Финляндия (2.56.179.170, Резерв):</b> {fi_meta['badge']} {fi_meta['label']}\n\n"
+        f"🇩🇪 <b>Германия (94.249.177.102):</b> {de_meta['badge']} {de_meta['label']}\n\n"
         "<i>Нажмите на сервер ниже, чтобы переключить его статус (Штатно / С перебоями / Авария). "
         "Новый статус моментально отобразится всем пользователям в /status!</i>"
     )
@@ -401,7 +385,6 @@ def get_admin_servers_kb():
         "inline_keyboard": [
             [{"text": f"🇸🇪 Швеция: {se_b}", "callback_data": "srv_pick_se"}],
             [{"text": f"🇩🇪 Германия: {de_b}", "callback_data": "srv_pick_de"}],
-            [{"text": f"🇫🇮 Финляндия (Резерв): {fi_b}", "callback_data": "srv_pick_fi"}],
             [{"text": "🛠 В панель администратора", "callback_data": "admin_panel"}]
         ]
     }
