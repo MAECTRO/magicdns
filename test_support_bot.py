@@ -2,6 +2,7 @@ import unittest
 import os
 import json
 import time
+import xml.etree.ElementTree as ET
 import support_bot
 
 class TestSupportBot(unittest.TestCase):
@@ -69,13 +70,10 @@ class TestSupportBot(unittest.TestCase):
 
     def test_sync_servers_to_site_logic(self):
         self.assertTrue(hasattr(support_bot, 'sync_servers_to_site'))
-        
-        # Test mock statuses when all OK
         statuses_all_ok = {
             'se': {'status': 'ok'},
             'de': {'status': 'ok'}
         }
-        # In test environment, set_site_alert won't commit to GitHub (no token), but function logic should execute without crash
         try:
             support_bot.sync_servers_to_site(statuses_all_ok)
         except Exception as e:
@@ -105,10 +103,50 @@ class TestSupportBot(unittest.TestCase):
         callbacks = [btn['callback_data'] for row in kb['inline_keyboard'] for btn in row if 'callback_data' in btn]
         self.assertIn("admin_test_ai", callbacks)
         self.assertIn("admin_srv_status", callbacks)
+        self.assertIn("admin_dig_info", callbacks)
 
         srv_kb = support_bot.get_admin_servers_kb()
         srv_callbacks = [btn['callback_data'] for row in srv_kb['inline_keyboard'] for btn in row if 'callback_data' in btn]
         self.assertIn("admin_test_ai", srv_callbacks)
+
+    def test_generate_mobileconfig_variants(self):
+        self.assertTrue(hasattr(support_bot, 'generate_mobileconfig'))
+        for v in ['dual', 'se', 'de']:
+            raw = support_bot.generate_mobileconfig(v)
+            self.assertIsInstance(raw, bytes)
+            xml_str = raw.decode('utf-8')
+            root = ET.fromstring(xml_str)
+            self.assertEqual(root.tag, 'plist')
+            if v == 'se':
+                self.assertIn('109.120.132.43', xml_str)
+                self.assertNotIn('94.249.177.102', xml_str)
+            elif v == 'de':
+                self.assertIn('94.249.177.102', xml_str)
+                self.assertNotIn('109.120.132.43', xml_str)
+            else:
+                self.assertIn('109.120.132.43', xml_str)
+                self.assertIn('94.249.177.102', xml_str)
+
+    def test_run_dig_diagnostics(self):
+        self.assertTrue(hasattr(support_bot, 'run_dig_diagnostics'))
+        # Valid domain
+        rep, clean_dom = support_bot.run_dig_diagnostics("https://claude.ai/login")
+        self.assertEqual(clean_dom, "claude.ai")
+        self.assertIn("DNS-диагностика домена", rep)
+        self.assertIn("claude.ai", rep)
+
+        # Invalid domain
+        err_rep, err_dom = support_bot.run_dig_diagnostics("invalid..domain!!!")
+        self.assertIsNone(err_dom)
+        self.assertIn("Некорректный домен", err_rep)
+
+    def test_ios_picker_keyboards(self):
+        self.assertTrue(hasattr(support_bot, 'get_ios_picker_kb'))
+        kb = support_bot.get_ios_picker_kb()
+        callbacks = [btn['callback_data'] for row in kb['inline_keyboard'] for btn in row if 'callback_data' in btn]
+        self.assertIn("dl_ios_dual", callbacks)
+        self.assertIn("dl_ios_se", callbacks)
+        self.assertIn("dl_ios_de", callbacks)
 
 if __name__ == '__main__':
     unittest.main()

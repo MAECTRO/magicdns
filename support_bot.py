@@ -26,6 +26,8 @@ import urllib.parse
 import urllib.error
 import subprocess
 import ssl
+import uuid
+import socket
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime
 
@@ -91,6 +93,38 @@ def send_message(chat_id, text, parse_mode="HTML", reply_to_message_id=None, rep
     if reply_markup:
         data["reply_markup"] = reply_markup
     return tg_request("sendMessage", data)
+
+def send_document(chat_id, file_bytes, filename, caption="", reply_markup=None):
+    """Sends a binary document (e.g. .mobileconfig) to Telegram chat via multipart/form-data."""
+    boundary = f"----TelegramBoundary{uuid.uuid4().hex}"
+    body = bytearray()
+
+    def add_field(name, val):
+        body.extend(f"--{boundary}\r\nContent-Disposition: form-data; name=\"{name}\"\r\n\r\n{val}\r\n".encode('utf-8'))
+
+    add_field("chat_id", str(chat_id))
+    if caption:
+        add_field("caption", caption)
+        add_field("parse_mode", "HTML")
+    if reply_markup:
+        add_field("reply_markup", json.dumps(reply_markup))
+
+    body.extend(f"--{boundary}\r\nContent-Disposition: form-data; name=\"document\"; filename=\"{filename}\"\r\nContent-Type: application/x-apple-aspen-config\r\n\r\n".encode('utf-8'))
+    body.extend(file_bytes)
+    body.extend(f"\r\n--{boundary}--\r\n".encode('utf-8'))
+
+    req = urllib.request.Request(
+        f"{BASE_URL}/sendDocument",
+        data=bytes(body),
+        headers={"Content-Type": f"multipart/form-data; boundary={boundary}"}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            return json.loads(resp.read().decode('utf-8'))
+    except Exception as e:
+        print(f"[TG SEND_DOC ERROR] {e}")
+        return {'ok': False, 'error': str(e)}
+
 
 def copy_message(chat_id, from_chat_id, message_id, caption=None, parse_mode="HTML", reply_to_message_id=None):
     data = {
@@ -207,6 +241,7 @@ def format_alert_message(raw_text):
 def set_bot_commands():
     cmds = [
         {"command": "dns", "description": "⚡ Параметры и ссылки MagicDNS"},
+        {"command": "ios", "description": "🍏 Профиль для iPhone и iPad"},
         {"command": "status", "description": "🟢 Статус серверов сети"},
         {"command": "donate", "description": "☕ Поддержать серверы"},
         {"command": "help", "description": "💬 Помощь и связь с поддержкой"}
@@ -220,6 +255,8 @@ def set_bot_commands():
     admin_cmds = [
         {"command": "admin", "description": "🛠 Панель управления"},
         {"command": "testai", "description": "🧪 Экспресс-тест доступности ИИ"},
+        {"command": "dig", "description": "🔍 DNS-диагностика любого домена"},
+        {"command": "ios", "description": "🍏 Профиль для iPhone и iPad"},
         {"command": "reviews", "description": "💬 Отзывы и ответы команды"},
         {"command": "reply", "description": "✍️ Ответить на отзыв по ID"},
         {"command": "alert", "description": "🚨 Оповещение в Telegram (рассылка)"},
@@ -316,7 +353,7 @@ def get_dns_card():
 def get_dns_kb():
     return {
         "inline_keyboard": [
-            [{"text": "🍏 Скачать профиль для iOS / Mac", "url": "https://magicdns.ru/profile.mobileconfig"}],
+            [{"text": "🍏 Профиль для iPhone / iPad в чат", "callback_data": "cmd_ios"}],
             [{"text": "🌐 Инструкция на сайте", "url": "https://magicdns.ru/#setup"}],
             [{"text": "☕ Сказать спасибо проекту", "url": DONATE_URL}]
         ]
@@ -464,7 +501,7 @@ def get_welcome_card():
 def get_welcome_kb():
     return {
         "inline_keyboard": [
-            [{"text": "⚡ Получить настройки DNS", "callback_data": "cmd_dns"}],
+            [{"text": "⚡ Настройки DNS", "callback_data": "cmd_dns"}, {"text": "🍏 Профиль для iOS", "callback_data": "cmd_ios"}],
             [{"text": "🌐 Инструкция на сайте", "url": "https://magicdns.ru/#setup"}],
             [{"text": "☕ Сказать спасибо", "url": DONATE_URL}]
         ]
@@ -539,7 +576,7 @@ def get_admin_panel_kb():
         "inline_keyboard": [
             [{"text": "💬 Отзывы на сайте и ответы", "callback_data": "admin_reviews"}],
             [{"text": "🚦 Статусы серверов (перебои)", "callback_data": "admin_srv_status"}],
-            [{"text": "🧪 Экспресс-тест доступности ИИ", "callback_data": "admin_test_ai"}],
+            [{"text": "🧪 Экспресс-тест доступности ИИ", "callback_data": "admin_test_ai"}, {"text": "🔍 DNS-диагностика /dig", "callback_data": "admin_dig_info"}],
             [{"text": "🌐 Баннер на сайте", "callback_data": "admin_sitealert_info"}, {"text": "🚨 Рассылка", "callback_data": "admin_alert_info"}],
             [{"text": "📊 Статистика подписчиков", "callback_data": "cmd_users"}, {"text": "🟢 Проверить /status", "callback_data": "cmd_status"}]
         ]
@@ -1015,6 +1052,184 @@ def get_ai_diagnostics_kb():
         ]
     }
 
+def generate_mobileconfig(variant="dual"):
+    """Generates a valid Apple mobileconfig XML for iOS/macOS DoH."""
+    if variant == "se":
+        servers = ["109.120.132.43"]
+        name = "MagicDNS (Швеция)"
+        desc = "Шведский узел MagicDNS DoH"
+    elif variant == "de":
+        servers = ["94.249.177.102"]
+        name = "MagicDNS (Германия)"
+        desc = "Резервный немецкий узел MagicDNS DoH"
+    else:
+        servers = ["109.120.132.43", "94.249.177.102"]
+        name = "MagicDNS (Швеция + Германия)"
+        desc = "Двойной узел MagicDNS с автопереключением"
+
+    server_tags = "\n".join([f"                    <string>{s}</string>" for s in servers])
+
+    xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>DNSSettings</key>
+            <dict>
+                <key>DNSProtocol</key>
+                <string>HTTPS</string>
+                <key>ServerAddresses</key>
+                <array>
+{server_tags}
+                </array>
+                <key>ServerURL</key>
+                <string>https://dns.magicdns.ru/dns-query</string>
+            </dict>
+            <key>PayloadDescription</key>
+            <string>{desc}</string>
+            <key>PayloadDisplayName</key>
+            <string>{name} DoH</string>
+            <key>PayloadIdentifier</key>
+            <string>ru.magicdns.doh.{variant}</string>
+            <key>PayloadType</key>
+            <string>com.apple.dnsSettings.managed</string>
+            <key>PayloadUUID</key>
+            <string>{uuid.uuid4()}</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+        </dict>
+    </array>
+    <key>PayloadDescription</key>
+    <string>Автоматическая маршрутизация трафика к сервисам ИИ без сторонних приложений и тоннелей</string>
+    <key>PayloadDisplayName</key>
+    <string>{name}</string>
+    <key>PayloadIdentifier</key>
+    <string>ru.magicdns.profile.{variant}</string>
+    <key>PayloadOrganization</key>
+    <string>MagicDNS</string>
+    <key>PayloadRemovalDisallowed</key>
+    <false/>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadUUID</key>
+    <string>{uuid.uuid4()}</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+</dict>
+</plist>"""
+    return xml.encode('utf-8')
+
+
+def get_ios_picker_card():
+    return (
+        "🍏 <b>Конфигурационные профили для iPhone и iPad:</b>\n\n"
+        "Выберите подходящий вариант профиля:\n\n"
+        "• <b>Швеция + Германия (Рекомендуется):</b>\n"
+        "Основной шведский узел с автоматическим переключением на Германию при любых перебоях.\n\n"
+        "• <b>Только Швеция (Core):</b>\n"
+        "Прямой маршрут на Стокгольм без резервирования.\n\n"
+        "• <b>Только Германия (Backup):</b>\n"
+        "Специальный профиль на Франкфурт (если ваш мобильный оператор сбоит на шведских подсетях)."
+    )
+
+
+def get_ios_picker_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🍏 Скачать: Швеция + Германия (Рекомендуется)", "callback_data": "dl_ios_dual"}],
+            [{"text": "🇸🇪 Скачать: Только Швеция", "callback_data": "dl_ios_se"}],
+            [{"text": "🇩🇪 Скачать: Только Германия", "callback_data": "dl_ios_de"}],
+            [{"text": "⚡ Параметры других платформ", "callback_data": "cmd_dns"}]
+        ]
+    }
+
+
+def run_dig_diagnostics(domain):
+    """
+    Performs live DNS resolution of a target domain across Sweden, Germany, and Cloudflare upstream.
+    Determines if domain is proxied through Smart DNS or directly resolved.
+    """
+    clean_domain = domain.strip().lower()
+    clean_domain = re.sub(r'^https?://', '', clean_domain)
+    clean_domain = clean_domain.split('/')[0].split(':')[0].strip()
+
+    if not clean_domain or not re.match(r'^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$', clean_domain):
+        return (
+            f"⚠️ <b>Некорректный домен:</b> <code>{html.escape(domain)}</code>\n\n"
+            "Пример правильной команды:\n"
+            "<code>/dig cursor.com</code>\n"
+            "<code>/dig claude.ai</code>"
+        ), None
+
+    servers = [
+        ("🇸🇪 Швеция (Core Node)", "109.120.132.43"),
+        ("🇩🇪 Германия (Backup Node)", "94.249.177.102"),
+        ("🌐 Cloudflare (Upstream)", "1.1.1.1")
+    ]
+
+    report_lines = [
+        f"🔍 <b>DNS-диагностика домена:</b> <code>{clean_domain}</code>\n"
+    ]
+
+    for s_name, s_ip in servers:
+        t0 = time.time()
+        res_ips = []
+        try:
+            p = subprocess.run(
+                ["dig", "+short", "+time=2", f"@{s_ip}", clean_domain],
+                capture_output=True,
+                text=True,
+                timeout=4
+            )
+            raw_out = p.stdout.strip()
+            if raw_out:
+                lines = [line.strip() for line in raw_out.splitlines() if line.strip() and not line.startswith(';')]
+                res_ips = lines
+        except Exception:
+            try:
+                ai = socket.getaddrinfo(clean_domain, None)
+                res_ips = list(set([sockaddr[0] for family, type, proto, canonname, sockaddr in ai if family == socket.AF_INET]))
+            except Exception:
+                res_ips = []
+
+        lat = int((time.time() - t0) * 1000)
+
+        if res_ips:
+            is_proxied = any(ip in ("109.120.132.43", "94.249.177.102", "2.56.179.170") for ip in res_ips)
+            ips_str = ", ".join(res_ips[:3])
+            if is_proxied:
+                status_icon = "🟢"
+                route_desc = "Маршрутизируется через Smart DNS шлюз"
+            else:
+                status_icon = "⚪"
+                route_desc = "Прямой резолв (проксирование не требуется)"
+
+            report_lines.append(
+                f"{s_name}:\n"
+                f"• IP: <code>{ips_str}</code> ({lat} мс)\n"
+                f"• Статус: {status_icon} <i>{route_desc}</i>\n"
+            )
+        else:
+            report_lines.append(
+                f"{s_name}:\n"
+                f"• Статус: 🔴 <i>Нет ответа / NXDOMAIN</i> ({lat} мс)\n"
+            )
+
+    report_lines.append(f"🕐 <i>Проверено: {datetime.now().strftime('%d.%m.%Y %H:%M:%S MSK')}</i>")
+    return "\n".join(report_lines), clean_domain
+
+
+def get_dig_kb(clean_domain):
+    return {
+        "inline_keyboard": [
+            [{"text": f"🔄 Перепроверить {clean_domain}", "callback_data": f"dig_re_{clean_domain}"}],
+            [{"text": "🧪 Экспресс-тест ИИ", "callback_data": "admin_test_ai"}, {"text": "« В админку", "callback_data": "admin_panel"}]
+        ]
+    }
+
+
 
 def parse_review_message(text):
     author = "Пользователь"
@@ -1337,6 +1552,62 @@ def main():
                         t.start()
                         continue
 
+                    if data == 'cmd_ios':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_ios_picker_card(), reply_markup=get_ios_picker_kb())
+                        continue
+
+                    if data in ('dl_ios_dual', 'dl_ios_se', 'dl_ios_de'):
+                        var_key = data.replace('dl_ios_', '')
+                        labels = {
+                            'dual': 'Швеция + Германия',
+                            'se': 'Только Швеция',
+                            'de': 'Только Германия'
+                        }
+                        file_names = {
+                            'dual': 'MagicDNS-Dual.mobileconfig',
+                            'se': 'MagicDNS-Sweden.mobileconfig',
+                            'de': 'MagicDNS-Germany.mobileconfig'
+                        }
+                        lbl = labels.get(var_key, 'MagicDNS')
+                        fname = file_names.get(var_key, 'MagicDNS.mobileconfig')
+                        answer_callback(cq_id, f"🍏 Отправляю профиль ({lbl})...")
+                        raw_bytes = generate_mobileconfig(var_key)
+                        caption = (
+                            f"🍏 <b>Профиль MagicDNS ({lbl}) для iPhone и iPad</b>\n\n"
+                            "<b>Инструкция по установке:</b>\n"
+                            "1. Нажмите на прикрепленный файл выше и подтвердите загрузку.\n"
+                            "2. Откройте <b>Настройки</b> устройства.\n"
+                            "3. В самом верху нажмите <b>«Профиль загружен»</b>.\n"
+                            "4. Нажмите <b>Установить</b> в правом верхнем углу и введите код-пароль.\n\n"
+                            "🛡 <i>Трафик к нейросетям (Gemini, Claude, ChatGPT) идет через защищенный DoH на полной скорости без сторонних приложений.</i>"
+                        )
+                        send_document(chat_id, raw_bytes, fname, caption=caption, reply_markup=get_dns_kb())
+                        continue
+
+                    if data == 'admin_dig_info':
+                        answer_callback(cq_id)
+                        send_message(
+                            ADMIN_CHAT_ID,
+                            "🔍 <b>DNS-диагностика доменов (/dig):</b>\n\n"
+                            "Отправьте команду с нужным доменом:\n"
+                            "<code>/dig cursor.com</code>\n"
+                            "<code>/dig claude.ai</code>\n"
+                            "<code>/dig chatgpt.com</code>\n\n"
+                            "<i>Бот опросит серверы Швеции, Германии и публичный DNS и покажет, проксируется ли трафик.</i>"
+                        )
+                        continue
+
+                    if data.startswith('dig_re_'):
+                        domain_to_check = data.replace('dig_re_', '').strip()
+                        answer_callback(cq_id, f"🔍 Опрашиваю DNS: {domain_to_check}...")
+                        def do_dig_refresh(t_msg_id, dom):
+                            rep, c_dom = run_dig_diagnostics(dom)
+                            kb = get_dig_kb(c_dom) if c_dom else None
+                            edit_message(ADMIN_CHAT_ID, t_msg_id, rep, reply_markup=kb)
+                        threading.Thread(target=do_dig_refresh, args=(msg_id, domain_to_check), daemon=True).start()
+                        continue
+
                     if data == 'admin_test_ai':
                         answer_callback(cq_id, "🧪 Запуск экспресс-теста ИИ...")
                         edit_message(ADMIN_CHAT_ID, msg_id, "⏳ <b>Выполняется экспресс-диагностика доступности ИИ...</b>\n\n<i>Проверяем сетевые шлюзы и опрашиваем нейросети (Gemini, Claude, ChatGPT, Copilot)...</i>")
@@ -1655,6 +1926,36 @@ def main():
                         if sender_id != ADMIN_CHAT_ID:
                             continue
                         send_message(ADMIN_CHAT_ID, get_admin_panel_card(), reply_markup=get_admin_panel_kb())
+                        continue
+
+                    elif cmd in ['/ios', '/apple', '/profile', '/mobileconfig']:
+                        reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
+                        send_message(chat_id, get_ios_picker_card(), reply_to_message_id=reply_to_id, reply_markup=get_ios_picker_kb())
+                        continue
+
+                    elif cmd in ['/dig', '/resolve', '/nslookup']:
+                        args = text_raw[len(cmd):].strip()
+                        if not args:
+                            send_message(
+                                chat_id,
+                                "🔍 <b>DNS-диагностика домена:</b>\n\n"
+                                "Использование: <code>/dig домен</code>\n"
+                                "Примеры:\n"
+                                "• <code>/dig cursor.com</code>\n"
+                                "• <code>/dig claude.ai</code>\n"
+                                "• <code>/dig chatgpt.com</code>"
+                            )
+                            continue
+                        wait_msg = send_message(chat_id, f"🔍 <i>Опрашиваю DNS-узлы для домена {html.escape(args)}...</i>")
+                        wait_msg_id = wait_msg.get('result', {}).get('message_id') if isinstance(wait_msg, dict) else None
+                        def do_dig_cmd(t_chat_id, t_msg_id, dom):
+                            rep, c_dom = run_dig_diagnostics(dom)
+                            kb = get_dig_kb(c_dom) if c_dom else None
+                            if t_msg_id:
+                                edit_message(t_chat_id, t_msg_id, rep, reply_markup=kb)
+                            else:
+                                send_message(t_chat_id, rep, reply_markup=kb)
+                        threading.Thread(target=do_dig_cmd, args=(chat_id, wait_msg_id, args), daemon=True).start()
                         continue
 
                     elif cmd in ['/testai', '/checkai', '/aitest']:
