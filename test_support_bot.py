@@ -52,7 +52,6 @@ class TestSupportBot(unittest.TestCase):
 
     def test_review_reply_structure(self):
         self.assertTrue(hasattr(support_bot, 'reply_to_review_on_github'))
-        # Test simulated reply dictionary injection
         mock_reviews = [
             {"id": 12345, "author": "User", "message": "Good!", "rating": 5}
         ]
@@ -67,6 +66,49 @@ class TestSupportBot(unittest.TestCase):
         self.assertIn('reply', mock_reviews[0])
         self.assertEqual(mock_reviews[0]['reply']['text'], mock_reply_text)
         self.assertEqual(mock_reviews[0]['reply']['author'], 'Команда MagicDNS')
+
+    def test_sync_servers_to_site_logic(self):
+        self.assertTrue(hasattr(support_bot, 'sync_servers_to_site'))
+        
+        # Test mock statuses when all OK
+        statuses_all_ok = {
+            'se': {'status': 'ok'},
+            'de': {'status': 'ok'}
+        }
+        # In test environment, set_site_alert won't commit to GitHub (no token), but function logic should execute without crash
+        try:
+            support_bot.sync_servers_to_site(statuses_all_ok)
+        except Exception as e:
+            self.fail(f"sync_servers_to_site crashed on all_ok: {e}")
+
+    def test_run_ai_diagnostics(self):
+        self.assertTrue(hasattr(support_bot, 'run_ai_diagnostics'))
+        card = support_bot.run_ai_diagnostics()
+        self.assertIn("Результаты экспресс-теста доступности ИИ", card)
+        self.assertIn("Google Gemini", card)
+        self.assertIn("Google AI Studio", card)
+        self.assertIn("OpenAI (ChatGPT)", card)
+        self.assertIn("Anthropic Claude", card)
+        self.assertIn("Microsoft Copilot", card)
+
+    def test_ai_diagnostics_kb(self):
+        self.assertTrue(hasattr(support_bot, 'get_ai_diagnostics_kb'))
+        kb = support_bot.get_ai_diagnostics_kb()
+        self.assertIn("inline_keyboard", kb)
+        callbacks = [btn['callback_data'] for row in kb['inline_keyboard'] for btn in row if 'callback_data' in btn]
+        self.assertIn("admin_test_ai", callbacks)
+        self.assertIn("admin_srv_status", callbacks)
+        self.assertIn("admin_panel", callbacks)
+
+    def test_admin_panel_kb_has_new_features(self):
+        kb = support_bot.get_admin_panel_kb()
+        callbacks = [btn['callback_data'] for row in kb['inline_keyboard'] for btn in row if 'callback_data' in btn]
+        self.assertIn("admin_test_ai", callbacks)
+        self.assertIn("admin_srv_status", callbacks)
+
+        srv_kb = support_bot.get_admin_servers_kb()
+        srv_callbacks = [btn['callback_data'] for row in srv_kb['inline_keyboard'] for btn in row if 'callback_data' in btn]
+        self.assertIn("admin_test_ai", srv_callbacks)
 
 if __name__ == '__main__':
     unittest.main()

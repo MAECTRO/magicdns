@@ -531,6 +531,26 @@
       box-shadow: 0 0 18px rgba(0, 255, 157, 0.15);
     }
 
+    .status-badge.status-degraded {
+      border-color: rgba(245, 158, 11, 0.5);
+      background: rgba(30, 20, 10, 0.85);
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.2);
+    }
+
+    .status-badge.status-degraded .status-dot {
+      background-color: #f59e0b;
+      box-shadow: 0 0 10px #f59e0b;
+    }
+
+    .status-badge.status-degraded .status-ping {
+      background: rgba(245, 158, 11, 0.4);
+    }
+
+    .status-badge.status-degraded .status-text {
+      color: #fbbf24;
+      font-weight: 600;
+    }
+
     .status-dot-wrapper {
       position: relative;
       display: flex;
@@ -6578,7 +6598,15 @@
         fetch(url)
           .then(function(r) { return r.ok ? r.json() : null; })
           .then(function(data) {
-            if (!data || !data.active || !data.message) return;
+            var badge = document.querySelector('.status-badge');
+            var statusText = document.querySelector('.status-text');
+            if (!data || !data.active || !data.message) {
+              if (badge) badge.classList.remove('status-degraded');
+              if (statusText) statusText.textContent = 'Работает стабильно';
+              return;
+            }
+            if (badge) badge.classList.add('status-degraded');
+            if (statusText) statusText.textContent = 'Внимание: техработы';
             var dismissed = sessionStorage.getItem('magicdns_dismissed_alert');
             if (dismissed && dismissed === String(data.updated_at)) return;
             var banner = document.getElementById('site-alert-banner');

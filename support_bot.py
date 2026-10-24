@@ -24,6 +24,8 @@ import threading
 import urllib.request
 import urllib.parse
 import urllib.error
+import subprocess
+import ssl
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime
 
@@ -217,6 +219,7 @@ def set_bot_commands():
 
     admin_cmds = [
         {"command": "admin", "description": "🛠 Панель управления"},
+        {"command": "testai", "description": "🧪 Экспресс-тест доступности ИИ"},
         {"command": "reviews", "description": "💬 Отзывы и ответы команды"},
         {"command": "reply", "description": "✍️ Ответить на отзыв по ID"},
         {"command": "alert", "description": "🚨 Оповещение в Telegram (рассылка)"},
@@ -381,12 +384,12 @@ def get_admin_servers_kb():
     statuses = load_servers_status()
     se_b = STATUS_CONFIG.get(statuses.get("se", {}).get("status", "ok"), STATUS_CONFIG["ok"])["badge"]
     de_b = STATUS_CONFIG.get(statuses.get("de", {}).get("status", "ok"), STATUS_CONFIG["ok"])["badge"]
-    fi_b = STATUS_CONFIG.get(statuses.get("fi", {}).get("status", "ok"), STATUS_CONFIG["ok"])["badge"]
 
     return {
         "inline_keyboard": [
             [{"text": f"🇸🇪 Швеция: {se_b}", "callback_data": "srv_pick_se"}],
             [{"text": f"🇩🇪 Германия: {de_b}", "callback_data": "srv_pick_de"}],
+            [{"text": "🧪 Экспресс-тест доступности ИИ", "callback_data": "admin_test_ai"}],
             [{"text": "🛠 В панель администратора", "callback_data": "admin_panel"}]
         ]
     }
@@ -536,6 +539,7 @@ def get_admin_panel_kb():
         "inline_keyboard": [
             [{"text": "💬 Отзывы на сайте и ответы", "callback_data": "admin_reviews"}],
             [{"text": "🚦 Статусы серверов (перебои)", "callback_data": "admin_srv_status"}],
+            [{"text": "🧪 Экспресс-тест доступности ИИ", "callback_data": "admin_test_ai"}],
             [{"text": "🌐 Баннер на сайте", "callback_data": "admin_sitealert_info"}, {"text": "🚨 Рассылка", "callback_data": "admin_alert_info"}],
             [{"text": "📊 Статистика подписчиков", "callback_data": "cmd_users"}, {"text": "🟢 Проверить /status", "callback_data": "cmd_status"}]
         ]
@@ -807,6 +811,211 @@ def set_site_alert(active, message=""):
 
     return ok1, msg1
 
+def sync_servers_to_site(statuses=None):
+    """
+    Automatically syncs server health state to magicdns.ru via alert.json.
+    - If all servers are OK: clears alert banner on the site.
+    - If Sweden or Germany is degraded/down: sets prominent alert advising the healthy node.
+    """
+    try:
+        if statuses is None:
+            statuses = load_servers_status()
+        se_st = statuses.get('se', {}).get('status', 'ok')
+        de_st = statuses.get('de', {}).get('status', 'ok')
+
+        if se_st == 'ok' and de_st == 'ok':
+            ok, msg = set_site_alert(False, "")
+            print(f"[SYNC SITE] Cleared site alert (all nodes OK): {ok} {msg}")
+            return ok, msg
+
+        if se_st in ('degraded', 'down') and de_st == 'ok':
+            if se_st == 'down':
+                alert_text = "⚠️ <b>Шведский сервер MagicDNS временно на техобслуживании.</b> Рекомендуем переключиться на Германию: <code>94.249.177.102</code>"
+            else:
+                alert_text = "⚠️ <b>На шведском сервере возможны задержки.</b> Рекомендуем переключиться на резервный сервер (Германия): <code>94.249.177.102</code>"
+            ok, msg = set_site_alert(True, alert_text)
+            print(f"[SYNC SITE] Set site alert for Sweden ({se_st}): {ok} {msg}")
+            return ok, msg
+
+        if de_st in ('degraded', 'down') and se_st == 'ok':
+            if de_st == 'down':
+                alert_text = "⚠️ <b>Сервер в Германии временно на техобслуживании.</b> Основной шведский узел <code>109.120.132.43</code> работает штатно."
+            else:
+                alert_text = "⚠️ <b>На сервере в Германии возможны задержки.</b> Рекомендуем использовать основной сервер (Швеция): <code>109.120.132.43</code>"
+            ok, msg = set_site_alert(True, alert_text)
+            print(f"[SYNC SITE] Set site alert for Germany ({de_st}): {ok} {msg}")
+            return ok, msg
+
+        # Both degraded / down
+        alert_text = "⚠️ <b>Ведутся технические работы по обновлению инфраструктуры.</b> Возможны задержки при подключении. Мы уже восстанавливаем штатную работу!"
+        ok, msg = set_site_alert(True, alert_text)
+        print(f"[SYNC SITE] Set site alert for both nodes down/degraded: {ok} {msg}")
+        return ok, msg
+    except Exception as e:
+        print(f"[SYNC SITE ERR] {e}")
+        return False, str(e)
+
+
+def run_ai_diagnostics():
+    """
+    Probes key AI platforms (Gemini, AI Studio, OpenAI, Claude, Copilot)
+    directly through the Sweden core node (10.10.0.1 via WireGuard) or locally.
+    Detects 302 captcha redirects and Cloudflare blocks.
+    """
+    targets = [
+        ("Google Gemini", "https://gemini.google.com/"),
+        ("Google AI Studio", "https://aistudio.google.com/welcome"),
+        ("OpenAI (ChatGPT)", "https://api.openai.com/v1/models"),
+        ("Anthropic Claude", "https://api.anthropic.com/v1/messages"),
+        ("Microsoft Copilot", "https://copilot.microsoft.com/"),
+    ]
+
+    remote_code = """
+import urllib.request, time, ssl
+ctx = ssl.create_default_context()
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'}
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+opener = urllib.request.build_opener(NoRedirect)
+targets = [
+    ('Google Gemini', 'https://gemini.google.com/'),
+    ('Google AI Studio', 'https://aistudio.google.com/welcome'),
+    ('OpenAI (ChatGPT)', 'https://api.openai.com/v1/models'),
+    ('Anthropic Claude', 'https://api.anthropic.com/v1/messages'),
+    ('Microsoft Copilot', 'https://copilot.microsoft.com/'),
+]
+for name, url in targets:
+    t0 = time.time()
+    code = 0
+    note = ''
+    try:
+        req = urllib.request.Request(url, headers=headers)
+        resp = opener.open(req, timeout=5)
+        code = resp.status
+        note = 'OK'
+    except urllib.error.HTTPError as e:
+        code = e.code
+        loc = e.headers.get('Location', '')
+        if 'sorry' in loc or 'recaptcha' in loc:
+            note = 'Капча Google'
+        elif code in (401, 405):
+            note = 'Доступен'
+        elif code == 403:
+            note = 'Cloudflare 403'
+        else:
+            note = f'HTTP {code}'
+    except Exception as e:
+        note = 'Сбой'
+    lat = int((time.time() - t0) * 1000)
+    print(f'{name}|{code}|{lat}|{note}')
+"""
+    results = []
+    node_label = "🇸🇪 Швеция (Core Node — 109.120.132.43)"
+    tested_remote = False
+
+    try:
+        p = subprocess.run(
+            ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "ConnectTimeout=4", "10.10.0.1", "python3", "-"],
+            input=remote_code,
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        output = p.stdout.strip()
+        if output and '|' in output:
+            for line in output.splitlines():
+                parts = line.split('|')
+                if len(parts) >= 4:
+                    results.append({
+                        'name': parts[0],
+                        'code': parts[1],
+                        'latency': int(parts[2]),
+                        'note': parts[3],
+                        'is_ok': parts[3] in ('OK', 'Доступен')
+                    })
+            tested_remote = True
+    except Exception:
+        pass
+
+    if not tested_remote or not results:
+        node_label = "📍 Локальный узел мониторинга"
+        results = []
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+        }
+        class NoRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                return None
+        opener = urllib.request.build_opener(NoRedirect)
+
+        for name, url in targets:
+            t0 = time.time()
+            code = 0
+            note = ''
+            try:
+                req = urllib.request.Request(url, headers=headers)
+                resp = opener.open(req, timeout=5)
+                code = resp.status
+                note = 'OK'
+            except urllib.error.HTTPError as e:
+                code = e.code
+                loc = e.headers.get('Location', '')
+                if 'sorry' in loc or 'recaptcha' in loc:
+                    note = 'Капча Google'
+                elif code in (401, 405):
+                    note = 'Доступен'
+                elif code == 403:
+                    note = 'Cloudflare 403'
+                else:
+                    note = f'HTTP {code}'
+            except Exception:
+                note = 'Сбой'
+            lat = int((time.time() - t0) * 1000)
+            results.append({
+                'name': name,
+                'code': str(code),
+                'latency': lat,
+                'note': note,
+                'is_ok': note in ('OK', 'Доступен')
+            })
+
+    lines = [
+        "🧪 <b>Результаты экспресс-теста доступности ИИ:</b>",
+        f"📍 <i>Узел проверки: {node_label}</i>\n"
+    ]
+
+    all_ok = True
+    for r in results:
+        if r['is_ok']:
+            icon = "🟢"
+            badge = f"штатно ({r['code']}, {r['latency']} мс)"
+        else:
+            all_ok = False
+            icon = "🔴" if "Капча" in r['note'] or "Сбой" in r['note'] else "🟡"
+            badge = f"<b>{r['note']}</b> ({r['code']}, {r['latency']} мс)"
+        lines.append(f"{icon} <b>{r['name']}:</b> {badge}")
+
+    now_str = datetime.now().strftime("%d.%m.%Y %H:%M MSK")
+    lines.append("")
+    if all_ok:
+        lines.append("⚡️ <b>Сводка:</b> Все проверенные ИИ-сервисы доступны на полной скорости без блокировок и капчи.")
+    else:
+        lines.append("⚠️ <b>Сводка:</b> На некоторых сервисах обнаружены задержки или ограничения. Рекомендуется проверить статус серверов.")
+    lines.append(f"🕐 <i>Время проверки: {now_str}</i>")
+
+    return "\n".join(lines)
+
+
+def get_ai_diagnostics_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🔄 Повторить проверку", "callback_data": "admin_test_ai"}],
+            [{"text": "🖥 Статус серверов", "callback_data": "admin_srv_status"}, {"text": "« В админ-панель", "callback_data": "admin_panel"}]
+        ]
+    }
+
+
 def parse_review_message(text):
     author = "Пользователь"
     platform = "Не указана"
@@ -1026,6 +1235,7 @@ def main():
                                 srv_name = statuses[srv_key].get('short_name', srv_key.upper())
                                 answer_callback(cq_id, f"{meta['badge']} {srv_name}: {meta['label']}!")
                                 edit_message(ADMIN_CHAT_ID, msg_id, get_admin_servers_card(), reply_markup=get_admin_servers_kb())
+                                threading.Thread(target=sync_servers_to_site, args=(statuses,), daemon=True).start()
                         continue
 
                     if data == 'clear_site_alert':
@@ -1125,6 +1335,15 @@ def main():
 
                         t = threading.Thread(target=run_broadcast, args=(pending, msg_id), daemon=True)
                         t.start()
+                        continue
+
+                    if data == 'admin_test_ai':
+                        answer_callback(cq_id, "🧪 Запуск экспресс-теста ИИ...")
+                        edit_message(ADMIN_CHAT_ID, msg_id, "⏳ <b>Выполняется экспресс-диагностика доступности ИИ...</b>\n\n<i>Проверяем сетевые шлюзы и опрашиваем нейросети (Gemini, Claude, ChatGPT, Copilot)...</i>")
+                        def do_ai_test(target_msg_id):
+                            card = run_ai_diagnostics()
+                            edit_message(ADMIN_CHAT_ID, target_msg_id, card, reply_markup=get_ai_diagnostics_kb())
+                        threading.Thread(target=do_ai_test, args=(msg_id,), daemon=True).start()
                         continue
 
                     if data == 'admin_panel':
@@ -1436,6 +1655,20 @@ def main():
                         if sender_id != ADMIN_CHAT_ID:
                             continue
                         send_message(ADMIN_CHAT_ID, get_admin_panel_card(), reply_markup=get_admin_panel_kb())
+                        continue
+
+                    elif cmd in ['/testai', '/checkai', '/aitest']:
+                        if sender_id != ADMIN_CHAT_ID:
+                            continue
+                        wait_msg = send_message(ADMIN_CHAT_ID, "⏳ <b>Выполняется экспресс-диагностика доступности ИИ...</b>\n\n<i>Проверяем сетевые шлюзы и опрашиваем нейросети (Gemini, Claude, ChatGPT, Copilot)...</i>")
+                        wait_msg_id = wait_msg.get('result', {}).get('message_id') if isinstance(wait_msg, dict) else None
+                        def do_ai_test_cmd(target_msg_id):
+                            card = run_ai_diagnostics()
+                            if target_msg_id:
+                                edit_message(ADMIN_CHAT_ID, target_msg_id, card, reply_markup=get_ai_diagnostics_kb())
+                            else:
+                                send_message(ADMIN_CHAT_ID, card, reply_markup=get_ai_diagnostics_kb())
+                        threading.Thread(target=do_ai_test_cmd, args=(wait_msg_id,), daemon=True).start()
                         continue
 
                     elif cmd in ['/users', '/subs', '/subscribers', '/stats', 'статистика']:
