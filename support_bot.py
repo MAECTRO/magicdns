@@ -867,24 +867,24 @@ def sync_servers_to_site(statuses=None):
 
         if se_st in ('degraded', 'down') and de_st == 'ok':
             if se_st == 'down':
-                alert_text = "⚠️ <b>Шведский сервер MagicDNS временно на техобслуживании.</b> Рекомендуем переключиться на Германию: <code>94.249.177.102</code>"
+                alert_text = "<b>Шведский сервер MagicDNS временно на техобслуживании.</b> Рекомендуем переключиться на Германию: <code>94.249.177.102</code>"
             else:
-                alert_text = "⚠️ <b>На шведском сервере возможны задержки.</b> Рекомендуем переключиться на резервный сервер (Германия): <code>94.249.177.102</code>"
+                alert_text = "<b>На шведском сервере возможны задержки.</b> Рекомендуем переключиться на резервный сервер (Германия): <code>94.249.177.102</code>"
             ok, msg = set_site_alert(True, alert_text)
             print(f"[SYNC SITE] Set site alert for Sweden ({se_st}): {ok} {msg}")
             return ok, msg
 
         if de_st in ('degraded', 'down') and se_st == 'ok':
             if de_st == 'down':
-                alert_text = "⚠️ <b>Сервер в Германии временно на техобслуживании.</b> Основной шведский узел <code>109.120.132.43</code> работает штатно."
+                alert_text = "<b>Сервер в Германии временно на техобслуживании.</b> Основной шведский узел <code>109.120.132.43</code> работает штатно."
             else:
-                alert_text = "⚠️ <b>На сервере в Германии возможны задержки.</b> Рекомендуем использовать основной сервер (Швеция): <code>109.120.132.43</code>"
+                alert_text = "<b>На сервере в Германии возможны задержки.</b> Рекомендуем использовать основной сервер (Швеция): <code>109.120.132.43</code>"
             ok, msg = set_site_alert(True, alert_text)
             print(f"[SYNC SITE] Set site alert for Germany ({de_st}): {ok} {msg}")
             return ok, msg
 
         # Both degraded / down
-        alert_text = "⚠️ <b>Ведутся технические работы по обновлению инфраструктуры.</b> Возможны задержки при подключении. Мы уже восстанавливаем штатную работу!"
+        alert_text = "<b>Ведутся технические работы по обновлению инфраструктуры.</b> Возможны задержки при подключении. Мы уже восстанавливаем штатную работу!"
         ok, msg = set_site_alert(True, alert_text)
         print(f"[SYNC SITE] Set site alert for both nodes down/degraded: {ok} {msg}")
         return ok, msg
