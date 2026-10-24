@@ -61,20 +61,22 @@ def tg_request(method, data=None):
         print(f"[TG ERROR] {method}: {e}")
         return {'ok': False, 'error': str(e)}
 
-def answer_callback(cq_id, text, alert=False):
-    return tg_request("answerCallbackQuery", {
-        "callback_query_id": cq_id,
-        "text": text,
-        "show_alert": alert
-    })
+def answer_callback(cq_id, text="", alert=False):
+    payload = {"callback_query_id": cq_id, "show_alert": alert}
+    if text:
+        payload["text"] = text
+    return tg_request("answerCallbackQuery", payload)
 
-def edit_message(chat_id, message_id, text, parse_mode="HTML"):
-    return tg_request("editMessageText", {
+def edit_message(chat_id, message_id, text, parse_mode="HTML", reply_markup=None):
+    payload = {
         "chat_id": chat_id,
         "message_id": message_id,
         "text": text,
         "parse_mode": parse_mode
-    })
+    }
+    if reply_markup is not None:
+        payload["reply_markup"] = reply_markup
+    return tg_request("editMessageText", payload)
 
 def send_message(chat_id, text, parse_mode="HTML", reply_to_message_id=None, reply_markup=None):
     data = {
