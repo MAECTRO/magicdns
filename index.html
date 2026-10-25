@@ -2369,11 +2369,183 @@
       }
 
       /* News & Announcements Section */
-          /* News Accordion (Compact expandable list) */
-    .news-section {
-      margin-top: 24px;
-      margin-bottom: 32px;
+      .news-section {
+        margin-top: 20px;
+        margin-bottom: 24px;
+      }
+      .news-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .news-summary {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px 16px;
+      }
+      .news-summary-left {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .news-title-text {
+        font-size: 0.96rem;
+      }
+      .news-summary-right {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .news-body {
+        padding: 14px 16px 18px 16px;
+      }
+      /* Reviews Section */
+      .reviews-section {
+        margin-top: 40px;
+        margin-bottom: 20px;
+      }
+      .reviews-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+      }
+      .reviews-header-left h2 {
+        font-size: 1.45rem;
+      }
+      .btn-feedback-trigger {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+      .btn-feedback-trigger.hide-when-empty {
+        display: none !important;
+      }
+      .reviews-empty-state {
+        padding: 28px 16px;
+        box-sizing: border-box;
+      }
+      .reviews-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Footer & Chat FAB */
+      .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+      .footer-links {
+        width: 100%;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .social-btn {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+      footer {
+        padding-bottom: 76px;
+      }
+      .chat-window {
+        bottom: 76px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-width: none;
+        height: calc(100dvh - 90px);
+        max-height: 520px;
+      }
+      .chat-fab {
+        bottom: 16px;
+        right: 14px;
+        width: 44px;
+        height: 44px;
+      }
+      .chat-fab-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+      .toast {
+        bottom: 76px;
+        right: 14px;
+        left: 14px;
+        max-width: none;
+        box-sizing: border-box;
+        justify-content: center;
+      }
     }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 12px;
+      }
+      .params-subgrid {
+        grid-template-columns: 1fr;
+      }
+      .feedback-modal-overlay {
+        padding: 8px;
+      }
+      .feedback-modal-card {
+        padding: 18px 14px;
+        border-radius: var(--radius-md);
+        max-height: calc(100dvh - 16px);
+      }
+      .feedback-modal-title {
+        font-size: 1.02rem;
+      }
+      .feedback-type-chip {
+        min-width: 80px;
+        padding: 8px 6px;
+        font-size: 0.78rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .container {
+        padding: 0 10px;
+      }
+      .glass-config-card {
+        padding: 14px 10px;
+      }
+      .code-input-box {
+        padding: 7px 8px;
+        gap: 6px;
+      }
+      .code-input-text {
+        font-size: 0.8rem;
+      }
+      .btn-inline-copy {
+        padding: 4px 6px;
+        font-size: 0.72rem;
+      }
+      .segmented-tab {
+        padding: 8px 4px;
+        font-size: 0.76rem;
+        gap: 4px;
+      }
+      .tab-icon {
+        width: 13px;
+        height: 13px;
+      }
+      .ai-services-probe-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ==========================================================================
+       4.4. Announcements & Changelog Section (Expandable Accordion)
+       ========================================================================== */
+    .news-section {
+      margin-top: 36px;
+      margin-bottom: 36px;
+    }
+
     .news-header {
       display: flex;
       align-items: flex-end;
@@ -2382,6 +2554,7 @@
       flex-wrap: wrap;
       margin-bottom: 20px;
     }
+
     .news-header-left h2 {
       font-size: 1.65rem;
       font-weight: 800;
@@ -2389,38 +2562,46 @@
       margin: 8px 0 6px 0;
       letter-spacing: -0.02em;
     }
+
     .news-subtitle {
       color: var(--text-muted);
       font-size: 0.92rem;
       margin: 0;
     }
+
     .news-accordion {
-      max-width: 100%;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      width: 100%;
     }
+
     .news-item {
-      background: linear-gradient(145deg, rgba(14, 25, 44, 0.75) 0%, rgba(8, 14, 25, 0.88) 100%);
-      border: 1px solid rgba(0, 255, 157, 0.14);
-      border-radius: var(--radius-md);
+      background: linear-gradient(145deg, rgba(14, 25, 44, 0.75) 0%, rgba(8, 14, 25, 0.92) 100%);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 255, 157, 0.16);
+      border-radius: var(--radius-md);
       transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
       overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     }
+
     .news-item:hover {
-      border-color: rgba(0, 255, 157, 0.32);
-      box-shadow: 0 6px 20px -6px rgba(0, 0, 0, 0.5), 0 0 14px rgba(0, 255, 157, 0.08);
+      border-color: rgba(0, 255, 157, 0.35);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 14px rgba(0, 255, 157, 0.08);
+      transform: translateY(-1px);
     }
+
     .news-item[open] {
-      border-color: rgba(0, 255, 157, 0.38);
-      box-shadow: 0 10px 28px -8px rgba(0, 0, 0, 0.6), 0 0 18px rgba(0, 255, 157, 0.12);
-      background: linear-gradient(145deg, rgba(16, 28, 48, 0.85) 0%, rgba(10, 18, 32, 0.95) 100%);
+      border-color: rgba(0, 255, 157, 0.42);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 18px rgba(0, 255, 157, 0.12);
+      background: linear-gradient(145deg, rgba(16, 28, 48, 0.85) 0%, rgba(10, 18, 32, 0.96) 100%);
     }
+
     .news-summary {
-      padding: 16px 22px;
-      font-size: 0.98rem;
+      padding: 18px 22px;
+      font-size: 1rem;
       font-weight: 600;
       color: #ffffff;
       cursor: pointer;
@@ -2432,12 +2613,15 @@
       user-select: none;
       transition: background var(--transition-fast);
     }
+
     .news-summary::-webkit-details-marker {
       display: none;
     }
+
     .news-summary:hover {
       background: rgba(0, 255, 157, 0.03);
     }
+
     .news-summary-left {
       display: flex;
       align-items: center;
@@ -2445,23 +2629,28 @@
       flex: 1;
       min-width: 0;
     }
+
     .news-title-text {
-      font-size: 1rem;
+      font-size: 1.02rem;
       font-weight: 600;
       color: #ffffff;
       line-height: 1.4;
     }
+
     .news-summary-right {
       display: flex;
       align-items: center;
       gap: 16px;
       flex-shrink: 0;
     }
-    .news-summary-right .news-date {
+
+    .news-date {
       font-size: 0.82rem;
       color: var(--text-dim);
       font-weight: 500;
+      white-space: nowrap;
     }
+
     .news-chevron {
       width: 18px;
       height: 18px;
@@ -2469,28 +2658,34 @@
       transition: transform var(--transition-fast);
       flex-shrink: 0;
     }
+
     .news-item[open] .news-chevron {
       transform: rotate(180deg);
     }
+
     .news-body {
-      padding: 18px 22px 22px 22px;
-      font-size: 0.93rem;
+      padding: 16px 22px 22px 22px;
+      font-size: 0.94rem;
       line-height: 1.7;
       color: var(--text-secondary);
       border-top: 1px solid rgba(255, 255, 255, 0.06);
-      background: rgba(0, 0, 0, 0.15);
+      background: rgba(0, 0, 0, 0.16);
     }
+
     .news-body p {
       margin: 0;
     }
+
     .news-body p + p {
-      margin-top: 10px;
+      margin-top: 12px;
     }
+
     .news-body a {
       color: var(--neon-mint);
       text-decoration: underline;
       font-weight: 600;
     }
+
     .news-body code {
       background: rgba(0, 255, 157, 0.08);
       border: 1px solid rgba(0, 255, 157, 0.2);
@@ -2505,7 +2700,7 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      padding: 3px 10px;
+      padding: 4px 10px;
       border-radius: var(--radius-pill);
       background: rgba(0, 255, 157, 0.1);
       border: 1px solid rgba(0, 255, 157, 0.28);
@@ -2515,53 +2710,14 @@
       letter-spacing: 0.03em;
       text-transform: uppercase;
       flex-shrink: 0;
+      white-space: nowrap;
     }
+
     .news-tag.launch {
       background: rgba(6, 182, 212, 0.1);
       border-color: rgba(6, 182, 212, 0.3);
       color: var(--cyber-cyan);
     }
-    .news-tag.featured {
-      background: rgba(16, 185, 129, 0.18);
-      border-color: rgba(16, 185, 129, 0.45);
-      color: #10b981;
-    }
-    .news-tag.infra {
-      background: rgba(167, 139, 250, 0.1);
-      border-color: rgba(167, 139, 250, 0.3);
-      color: #a78bfa;
-    }
-
-    @media (max-width: 768px) {
-      .news-summary {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 14px 16px;
-      }
-      .news-summary-left {
-        width: 100%;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-      }
-      .news-title-text {
-        font-size: 0.95rem;
-      }
-      .news-summary-right {
-        width: 100%;
-        justify-content: space-between;
-      }
-      .news-body {
-        padding: 14px 16px 18px 16px;
-      }
-    }
-
-    .news-card.featured .news-card-text strong {
-      color: var(--neon-mint);
-      display: inline-block;
-      margin-top: 6px;
-    }
 
     .news-tag.featured {
       background: rgba(16, 185, 129, 0.18);
@@ -2574,28 +2730,6 @@
       border-color: rgba(167, 139, 250, 0.3);
       color: #a78bfa;
     }
-
-    .news-date {
-      font-size: 0.78rem;
-      color: var(--text-dim);
-      font-weight: 500;
-    }
-
-    .news-card-title {
-      font-size: 1.08rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin: 0;
-      line-height: 1.35;
-    }
-
-    .news-card-text {
-      font-size: 0.91rem;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin: 0;
-    }
-
     /* ==========================================================================
        4.5. Community Reviews & Suggestions Section
        ========================================================================== */
@@ -4063,50 +4197,6 @@
   <!-- Main Content -->
   <main class="container">
     
-    <!-- Announcements & Changelog Section (Top Placement) -->
-    <!-- 4.4. Announcements & Changelog Section -->
-    <section class="news-section" id="news">
-      <div class="news-header">
-        <div class="news-header-left">
-          <div class="section-tag">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            <span data-i18n="newsTag">АНОНСЫ И ОБНОВЛЕНИЯ</span>
-          </div>
-          <h2 data-i18n="newsTitle">Новости сервиса</h2>
-          <p class="news-subtitle" data-i18n="newsSubtitle">Свежие обновления инфраструктуры, новые шлюзы и поддержка ИИ-платформ</p>
-        </div>
-      </div>
-
-      <div class="news-grid" id="news-grid">
-
-        <article class="news-card recovery">
-          <div class="news-card-top">
-            <span class="news-tag recovery">Штатный режим</span>
-            <span class="news-date">25 октября 2026</span>
-          </div>
-          <h3 class="news-card-title">🟢 Сеть полностью восстановлена: расширены шлюзы и устранены задержки</h3>
-          <p class="news-card-text">Устранили последствия пиковой нагрузки на европейские узлы, полностью пересобрали маршрутизацию и подключили резервные серверы. ChatGPT, Claude, Gemini и Cursor работают на максимальной скорости с минимальным пингом. В Telegram-боте (@magicdns_support_bot) доступна команда быстрой диагностики /dig.</p>
-        </article>
-        <article class="news-card launch">
-          <div class="news-card-top">
-            <span class="news-tag launch">Запуск</span>
-            <span class="news-date">21 октября 2026</span>
-          </div>
-          <h3 class="news-card-title">Официальный запуск MagicDNS и поддержка DoH / DoT</h3>
-          <p class="news-card-text">Развернуты европейские узлы маршрутизации с прямым доступом к Gemini, ChatGPT, Claude и Google AI Studio. Средняя сетевая задержка составляет 25–35 мс без использования сторонних приложений.</p>
-        </article>
-        <article class="news-card infra">
-          <div class="news-card-top">
-            <span class="news-tag infra">Инфраструктура</span>
-            <span class="news-date">20 октября 2026</span>
-          </div>
-          <h3 class="news-card-title">Оптимизация маршрутов для домашних роутеров Keenetic и OpenWrt</h3>
-          <p class="news-card-text">Добавлены готовые инструкции и протестирована работа DoH через шлюз https://magicdns.ru. Локальный трафик российских банков и Госуслуг идет напрямую от вашего провайдера на максимальной скорости.</p>
-        </article>
-      </div>
-    </section>
-
-    
     <!-- 2. Hero Section -->
     <section class="hero hero-section">
       <div class="hero-eyebrow">
@@ -5000,8 +5090,7 @@
       </div>
     </section>
 
-    
-        <!-- 4.4. Announcements & Changelog Section -->
+    <!-- 4.4. Announcements & Changelog Section -->
     <section class="news-section" id="news">
       <div class="news-header">
         <div class="news-header-left">
@@ -5065,7 +5154,6 @@
         </details>
       </div>
     </section>
-
     <!-- 4.5. Community Reviews & Suggestions Section -->
     <section class="reviews-section" id="reviews">
       <div class="reviews-header">
