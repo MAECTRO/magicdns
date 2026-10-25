@@ -2433,7 +2433,7 @@ html_content = f'''<!DOCTYPE html>
 
       /* News & Announcements Section */
       .news-section {{
-        margin-top: 40px;
+        margin-top: 14px;
         margin-bottom: 20px;
       }}
       .news-header {{
@@ -2585,8 +2585,8 @@ html_content = f'''<!DOCTYPE html>
        4.4. Announcements & Changelog Section
        ========================================================================== */
     .news-section {{
-      margin-top: 64px;
-      margin-bottom: 24px;
+      margin-top: 20px;
+      margin-bottom: 28px;
     }}
 
     .news-header {{
@@ -4198,6 +4198,26 @@ html_content = f'''<!DOCTYPE html>
   <!-- Main Content -->
   <main class="container">
     
+    <!-- Announcements & Changelog Section (Top Placement) -->
+    <!-- 4.4. Announcements & Changelog Section -->
+    <section class="news-section" id="news">
+      <div class="news-header">
+        <div class="news-header-left">
+          <div class="section-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span data-i18n="newsTag">АНОНСЫ И ОБНОВЛЕНИЯ</span>
+          </div>
+          <h2 data-i18n="newsTitle">Новости сервиса</h2>
+          <p class="news-subtitle" data-i18n="newsSubtitle">Свежие обновления инфраструктуры, новые шлюзы и поддержка ИИ-платформ</p>
+        </div>
+      </div>
+
+      <div class="news-grid" id="news-grid">
+{news_cards_html}
+      </div>
+    </section>
+
+    
     <!-- 2. Hero Section -->
     <section class="hero hero-section">
       <div class="hero-eyebrow">
@@ -5088,24 +5108,6 @@ html_content = f'''<!DOCTYPE html>
             <p data-i18n="faqA6">Нет. Сервис MagicDNS строго соблюдает Федеральный закон № 149-ФЗ и решения уполномоченных органов РФ. Серверы используют архитектуру закрытого белого списка (Strict Whitelist) и маршрутизируют исключительно адреса платформ искусственного интеллекта (OpenAI, Google Gemini, Anthropic Claude, Cursor, Midjourney) и игровых экосистем, которые сами ограничили доступ для РФ со своей стороны. Запросы к ресурсам, доступ к которым ограничен на территории РФ (Единый реестр Роскомнадзора), серверами не обрабатываются и не перенаправляются.</p>
           </div>
         </details>
-      </div>
-    </section>
-
-    <!-- 4.4. Announcements & Changelog Section -->
-    <section class="news-section" id="news">
-      <div class="news-header">
-        <div class="news-header-left">
-          <div class="section-tag">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            <span data-i18n="newsTag">АНОНСЫ И ОБНОВЛЕНИЯ</span>
-          </div>
-          <h2 data-i18n="newsTitle">Новости сервиса</h2>
-          <p class="news-subtitle" data-i18n="newsSubtitle">Свежие обновления инфраструктуры, новые шлюзы и поддержка ИИ-платформ</p>
-        </div>
-      </div>
-
-      <div class="news-grid" id="news-grid">
-{news_cards_html}
       </div>
     </section>
 

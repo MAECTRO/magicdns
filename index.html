@@ -2370,7 +2370,7 @@
 
       /* News & Announcements Section */
       .news-section {
-        margin-top: 40px;
+        margin-top: 14px;
         margin-bottom: 20px;
       }
       .news-header {
@@ -2522,8 +2522,8 @@
        4.4. Announcements & Changelog Section
        ========================================================================== */
     .news-section {
-      margin-top: 64px;
-      margin-bottom: 24px;
+      margin-top: 20px;
+      margin-bottom: 28px;
     }
 
     .news-header {
@@ -4135,6 +4135,50 @@
   <!-- Main Content -->
   <main class="container">
     
+    <!-- Announcements & Changelog Section (Top Placement) -->
+    <!-- 4.4. Announcements & Changelog Section -->
+    <section class="news-section" id="news">
+      <div class="news-header">
+        <div class="news-header-left">
+          <div class="section-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span data-i18n="newsTag">АНОНСЫ И ОБНОВЛЕНИЯ</span>
+          </div>
+          <h2 data-i18n="newsTitle">Новости сервиса</h2>
+          <p class="news-subtitle" data-i18n="newsSubtitle">Свежие обновления инфраструктуры, новые шлюзы и поддержка ИИ-платформ</p>
+        </div>
+      </div>
+
+      <div class="news-grid" id="news-grid">
+
+        <article class="news-card featured">
+          <div class="news-card-top">
+            <span class="news-tag featured">Штатный режим</span>
+            <span class="news-date">25 октября 2026</span>
+          </div>
+          <h3 class="news-card-title">🟢 Мы снова в строю! Все сервера работают штатно</h3>
+          <p class="news-card-text">Друзья, первым делом хочу искренне извиниться перед всеми, кто этой ночью не спал, переживал и ждал, пока всё оживёт. Я видел в метрике, как люди в два часа ночи сидели на сайте десятками минут и караулили запуск. Простите за нервы!<br><br><strong>Что случилось:</strong><br>Сервис накрыло мощной волной трафика. Нагрузка на шведский и немецкий узлы подскочила так, что сервера мягко говоря офигели от лавины одновременных DoH-запросов.<br><br><strong>Что сделали за ночь:</strong><br>Полностью пересобрали маршрутизацию, перенастроили балансировку между узлами и расширили пропускную способность. Заодно устранили узкие горлышки, чтобы сеть спокойно переваривала любые пиковые наплывы.<br><br><strong>Сейчас всё летает:</strong> ChatGPT, Claude, Gemini, Google AI Studio и Cursor откликаются мгновенно.<br><br>MagicDNS как был, так и остаётся на 100% бесплатным для всех. Спасибо вам за терпение и колоссальную поддержку — ради вас и работаем.<br><br>Проверяйте работу и, если что-то где-то зацепится, пишите в бота: <a href="https://t.me/magicdns_support_bot" target="_blank" rel="noopener" style="color: var(--neon-mint); text-decoration: underline; font-weight: 600;">@magicdns_support_bot</a></p>
+        </article>
+        <article class="news-card launch">
+          <div class="news-card-top">
+            <span class="news-tag launch">Запуск</span>
+            <span class="news-date">21 октября 2026</span>
+          </div>
+          <h3 class="news-card-title">Официальный запуск MagicDNS и поддержка DoH / DoT</h3>
+          <p class="news-card-text">Развернуты европейские узлы маршрутизации с прямым доступом к Gemini, ChatGPT, Claude и Google AI Studio. Средняя сетевая задержка составляет 25–35 мс без использования сторонних приложений.</p>
+        </article>
+        <article class="news-card infra">
+          <div class="news-card-top">
+            <span class="news-tag infra">Инфраструктура</span>
+            <span class="news-date">20 октября 2026</span>
+          </div>
+          <h3 class="news-card-title">Оптимизация маршрутов для домашних роутеров Keenetic и OpenWrt</h3>
+          <p class="news-card-text">Добавлены готовые инструкции и протестирована работа DoH через шлюз https://magicdns.ru. Локальный трафик российских банков и Госуслуг идет напрямую от вашего провайдера на максимальной скорости.</p>
+        </article>
+      </div>
+    </section>
+
+    
     <!-- 2. Hero Section -->
     <section class="hero hero-section">
       <div class="hero-eyebrow">
@@ -5025,48 +5069,6 @@
             <p data-i18n="faqA6">Нет. Сервис MagicDNS строго соблюдает Федеральный закон № 149-ФЗ и решения уполномоченных органов РФ. Серверы используют архитектуру закрытого белого списка (Strict Whitelist) и маршрутизируют исключительно адреса платформ искусственного интеллекта (OpenAI, Google Gemini, Anthropic Claude, Cursor, Midjourney) и игровых экосистем, которые сами ограничили доступ для РФ со своей стороны. Запросы к ресурсам, доступ к которым ограничен на территории РФ (Единый реестр Роскомнадзора), серверами не обрабатываются и не перенаправляются.</p>
           </div>
         </details>
-      </div>
-    </section>
-
-    <!-- 4.4. Announcements & Changelog Section -->
-    <section class="news-section" id="news">
-      <div class="news-header">
-        <div class="news-header-left">
-          <div class="section-tag">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            <span data-i18n="newsTag">АНОНСЫ И ОБНОВЛЕНИЯ</span>
-          </div>
-          <h2 data-i18n="newsTitle">Новости сервиса</h2>
-          <p class="news-subtitle" data-i18n="newsSubtitle">Свежие обновления инфраструктуры, новые шлюзы и поддержка ИИ-платформ</p>
-        </div>
-      </div>
-
-      <div class="news-grid" id="news-grid">
-
-        <article class="news-card featured">
-          <div class="news-card-top">
-            <span class="news-tag featured">Штатный режим</span>
-            <span class="news-date">25 октября 2026</span>
-          </div>
-          <h3 class="news-card-title">🟢 Мы снова в строю! Все сервера работают штатно</h3>
-          <p class="news-card-text">Друзья, первым делом хочу искренне извиниться перед всеми, кто этой ночью не спал, переживал и ждал, пока всё оживёт. Я видел в метрике, как люди в два часа ночи сидели на сайте десятками минут и караулили запуск. Простите за нервы!<br><br><strong>Что случилось:</strong><br>Сервис накрыло мощной волной трафика. Нагрузка на шведский и немецкий узлы подскочила так, что сервера мягко говоря офигели от лавины одновременных DoH-запросов.<br><br><strong>Что сделали за ночь:</strong><br>Полностью пересобрали маршрутизацию, перенастроили балансировку между узлами и расширили пропускную способность. Заодно устранили узкие горлышки, чтобы сеть спокойно переваривала любые пиковые наплывы.<br><br><strong>Сейчас всё летает:</strong> ChatGPT, Claude, Gemini, Google AI Studio и Cursor откликаются мгновенно.<br><br>MagicDNS как был, так и остаётся на 100% бесплатным для всех. Спасибо вам за терпение и колоссальную поддержку — ради вас и работаем.<br><br>Проверяйте работу и, если что-то где-то зацепится, пишите в бота: <a href="https://t.me/magicdns_support_bot" target="_blank" rel="noopener" style="color: var(--neon-mint); text-decoration: underline; font-weight: 600;">@magicdns_support_bot</a></p>
-        </article>
-        <article class="news-card launch">
-          <div class="news-card-top">
-            <span class="news-tag launch">Запуск</span>
-            <span class="news-date">21 октября 2026</span>
-          </div>
-          <h3 class="news-card-title">Официальный запуск MagicDNS и поддержка DoH / DoT</h3>
-          <p class="news-card-text">Развернуты европейские узлы маршрутизации с прямым доступом к Gemini, ChatGPT, Claude и Google AI Studio. Средняя сетевая задержка составляет 25–35 мс без использования сторонних приложений.</p>
-        </article>
-        <article class="news-card infra">
-          <div class="news-card-top">
-            <span class="news-tag infra">Инфраструктура</span>
-            <span class="news-date">20 октября 2026</span>
-          </div>
-          <h3 class="news-card-title">Оптимизация маршрутов для домашних роутеров Keenetic и OpenWrt</h3>
-          <p class="news-card-text">Добавлены готовые инструкции и протестирована работа DoH через шлюз https://magicdns.ru. Локальный трафик российских банков и Госуслуг идет напрямую от вашего провайдера на максимальной скорости.</p>
-        </article>
       </div>
     </section>
 
