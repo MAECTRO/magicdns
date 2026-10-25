@@ -1587,25 +1587,33 @@ def main():
 
                     if data == 'admin_dig_info':
                         answer_callback(cq_id)
+                        dig_admin_kb = {
+                            "inline_keyboard": [
+                                [{"text": "🔍 cursor.com", "callback_data": "dig_re_cursor.com"}, {"text": "🔍 claude.ai", "callback_data": "dig_re_claude.ai"}],
+                                [{"text": "🔍 chatgpt.com", "callback_data": "dig_re_chatgpt.com"}, {"text": "🔍 gemini.google.com", "callback_data": "dig_re_gemini.google.com"}],
+                                [{"text": "« В админку", "callback_data": "admin_panel"}]
+                            ]
+                        }
                         send_message(
                             ADMIN_CHAT_ID,
                             "🔍 <b>DNS-диагностика доменов (/dig):</b>\n\n"
-                            "Отправьте команду с нужным доменом:\n"
-                            "<code>/dig cursor.com</code>\n"
-                            "<code>/dig claude.ai</code>\n"
-                            "<code>/dig chatgpt.com</code>\n\n"
-                            "<i>Бот опросит серверы Швеции, Германии и публичный DNS и покажет, проксируется ли трафик.</i>"
+                            "Отправьте команду с любым доменом:\n"
+                            "• <code>/dig cursor.com</code>\n"
+                            "• <code>/dig claude.ai</code>\n"
+                            "• <code>/dig chatgpt.com</code>\n\n"
+                            "<i>Или нажмите на один из популярных сервисов ниже:</i>",
+                            reply_markup=dig_admin_kb
                         )
                         continue
 
                     if data.startswith('dig_re_'):
                         domain_to_check = data.replace('dig_re_', '').strip()
                         answer_callback(cq_id, f"🔍 Опрашиваю DNS: {domain_to_check}...")
-                        def do_dig_refresh(t_msg_id, dom):
+                        def do_dig_refresh(t_chat_id, t_msg_id, dom):
                             rep, c_dom = run_dig_diagnostics(dom)
                             kb = get_dig_kb(c_dom) if c_dom else None
-                            edit_message(ADMIN_CHAT_ID, t_msg_id, rep, reply_markup=kb)
-                        threading.Thread(target=do_dig_refresh, args=(msg_id, domain_to_check), daemon=True).start()
+                            edit_message(t_chat_id, t_msg_id, rep, reply_markup=kb)
+                        threading.Thread(target=do_dig_refresh, args=(chat_id, msg_id, domain_to_check), daemon=True).start()
                         continue
 
                     if data == 'admin_test_ai':
@@ -1934,16 +1942,26 @@ def main():
                         continue
 
                     elif cmd in ['/dig', '/resolve', '/nslookup']:
-                        args = text_raw[len(cmd):].strip()
+                        tokens = text.strip().split(maxsplit=1)
+                        args = tokens[1].strip() if len(tokens) > 1 else ""
                         if not args:
+                            dig_quick_kb = {
+                                "inline_keyboard": [
+                                    [{"text": "🔍 cursor.com", "callback_data": "dig_re_cursor.com"}, {"text": "🔍 claude.ai", "callback_data": "dig_re_claude.ai"}],
+                                    [{"text": "🔍 chatgpt.com", "callback_data": "dig_re_chatgpt.com"}, {"text": "🔍 gemini.google.com", "callback_data": "dig_re_gemini.google.com"}]
+                                ]
+                            }
                             send_message(
                                 chat_id,
                                 "🔍 <b>DNS-диагностика домена:</b>\n\n"
-                                "Использование: <code>/dig домен</code>\n"
+                                "Использование: <code>/dig домен</code>\n\n"
                                 "Примеры:\n"
                                 "• <code>/dig cursor.com</code>\n"
                                 "• <code>/dig claude.ai</code>\n"
-                                "• <code>/dig chatgpt.com</code>"
+                                "• <code>/dig chatgpt.com</code>\n"
+                                "• <code>/dig openai.com</code>\n\n"
+                                "<i>Или выберите сервис для мгновенной проверки ниже:</i>",
+                                reply_markup=dig_quick_kb
                             )
                             continue
                         wait_msg = send_message(chat_id, f"🔍 <i>Опрашиваю DNS-узлы для домена {html.escape(args)}...</i>")
