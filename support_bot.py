@@ -562,43 +562,94 @@ def get_faq_troubleshoot_kb():
 
 def get_faq_win_reset_card():
     return (
-        "💻 <b>Windows: Сброс сети и правильная настройка DNS</b>\n\n"
-        "Если после смены настроек пропал интернет, пишет «Шлюз не обнаружен» или не открываются сайты:\n\n"
-        "1️⃣ <b>Быстрый сброс сетевого стека:</b>\n"
-        "1. Нажмите <b>Win + R</b>, введите <code>cmd</code> и нажмите <b>Ctrl + Shift + Enter</b> (запуск от имени администратора).\n"
-        "2. По очереди введите эти 4 команды (Enter после каждой):\n"
-        "<code>ipconfig /flushdns</code>\n"
-        "<i>(очищает устаревший системный кэш DNS)</i>\n"
-        "<code>netsh winsock reset</code>\n"
-        "<i>(сбрасывает каталог сокетов Winsock после VPN и прокси)</i>\n"
-        "<code>netsh int ip reset</code>\n"
-        "<i>(сбрасывает стек протоколов TCP/IP до заводского состояния)</i>\n"
-        "<code>ipconfig /renew</code>\n"
-        "<i>(запрашивает у роутера свежий IP и восстанавливает шлюз)</i>\n"
-        "3. <b>Перезагрузите компьютер.</b>\n\n"
-        "2️⃣ <b>Как правильно прописать адреса (Классический способ):</b>\n"
-        "1. Нажмите <b>Win + R</b>, введите <code>ncpa.cpl</code> и нажмите Enter.\n"
-        "2. Правой кнопкой по вашему подключению (Ethernet / Wi-Fi) → <b>Свойства</b> → <b>«IP версии 4 (TCP/IPv4)»</b>.\n"
-        "3. ⚠️ <b>Главное правило:</b>\n"
-        "• Вверху ОБЯЗАТЕЛЬНО: <b>«Получать IP-адрес автоматически»</b> (если стереть там шлюз роутера — Windows отключит интернет!).\n"
-        "• Внизу выбираем <b>«Использовать следующие адреса DNS-серверов»</b>:\n"
-        "  — Предпочитаемый: <code>109.120.132.43</code>\n"
-        "  — Альтернативный: <code>94.249.177.102</code>\n\n"
-        "3️⃣ <b>Для Windows 11 (Зашифрованный DoH):</b>\n"
-        "В «Параметры» → «Сеть и Интернет» → «Ethernet / Wi-Fi» → «Назначение DNS-сервера: Изменить» → «Вручную» (IPv4):\n"
-        "• <b>Предпочитаемый DNS:</b> <code>109.120.132.43</code>\n"
-        "  — Шифрование DNS: <i>«Только шифрование (DNS over HTTPS)»</i>\n"
-        "  — Шаблон DoH: <code>https://dns.magicdns.ru/dns-query</code>\n"
-        "• <b>Альтернативный DNS:</b> <code>94.249.177.102</code>\n"
-        "  — Шифрование DNS: <i>«Только шифрование (DNS over HTTPS)»</i>\n"
-        "  — Шаблон DoH: <code>https://dns.magicdns.ru/dns-query</code>\n\n"
-        "⚠️ <i>Важно: шаблон DoH нужно указывать обязательно для ОБОИХ адресов (и для 109..., и для 94...), иначе второй сервер не будет шифроваться!</i>"
+        "💻 <b>Настройка и сброс сети Windows</b>\n\n"
+        "Если после смены DNS пропал интернет, Windows ругается на «Шлюз не обнаружен» или перестали открываться сайты, выберите удобный формат инструкции:\n\n"
+        "• <b>🐣 Инструкция для чайников</b> — подробно, с юмором, куда жать пальцем и как не сломать систему.\n"
+        "• <b>⚡ Шпаргалка для профи</b> — сухие команды для терминала и параметры адаптера без лишних слов."
     )
 
 def get_faq_win_reset_kb():
     return {
         "inline_keyboard": [
-            [{"text": "🌐 Настройка в Яндекс Браузере и Chrome", "callback_data": "faq_browser"}],
+            [{"text": "🐣 Инструкция для чайников (по шагам)", "callback_data": "faq_win_noob"}],
+            [{"text": "⚡ Шпаргалка для профи (без воды)", "callback_data": "faq_win_pro"}],
+            [{"text": "🌐 Настройка в браузере (DoH)", "callback_data": "faq_browser"}],
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "👨‍💻 Задать вопрос админу", "callback_data": "faq_contact_admin"}]
+        ]
+    }
+
+def get_faq_win_noob_card():
+    return (
+        "🐣 <b>Инструкция для чайников: реанимируем сеть на Windows</b>\n\n"
+        "Спокойно, без паники! Компьютер ты не сломаешь, сейчас всё вернём к жизни за пару минут.\n\n"
+        "<b>Шаг 1. Открываем страшное чёрное окно:</b>\n"
+        "1. Посмотри на клавиатуру. Слева внизу, между Ctrl и Alt, живёт клавиша со значком Windows (флажок).\n"
+        "2. Зажми её и, не отпуская, нажми английскую клавишу <b>R</b> (русскую «К»). Выскочит маленькое окошко «Выполнить».\n"
+        "3. Напечатай туда три буквы: <code>cmd</code>\n"
+        "4. ⚠️ <b>Стоп, не жми просто Enter!</b> Зажми вместе <b>Ctrl + Shift</b> и только потом нажми <b>Enter</b> (либо в Пуске найди «Командная строка» → правой кнопкой → «Запуск от имени администратора»). Появится чёрное окно. Ты почти хакер.\n\n"
+        "<b>Шаг 2. Магические заклинания:</b>\n"
+        "Копируй эти 4 строчки <b>СТРОГО ПО ОДНОЙ</b> (не пихай всё разом, винда подавится!) и вставляй в чёрное окно, нажимая Enter после каждой:\n\n"
+        "<code>ipconfig /flushdns</code>\n"
+        "<i>(стирает склероз DNS — комп забудет старые заблокированные адреса)</i>\n\n"
+        "<code>netsh winsock reset</code>\n"
+        "<i>(выбивает из системы ошметки старых зависших VPN и прокси)</i>\n\n"
+        "<code>netsh int ip reset</code>\n"
+        "<i>(приводит сетевой стек в чувство до заводских настроек)</i>\n\n"
+        "<code>ipconfig /renew</code>\n"
+        "<i>(идёт с повинной к роутеру и просит свежий рабочий шлюз)</i>\n\n"
+        "<i>Если написало «Требуется повышение прав» — ты забыл запустить от админа! Закрой и повтори Шаг 1.</i>\n\n"
+        "<b>Шаг 3. Перезагрузка!</b>\n"
+        "Закрой чёрное окно и <b>ПЕРЕЗАГРУЗИ компьютер</b>. Нет, просто закрыть крышку ноутбука не считается. Именно Пуск → Перезагрузка.\n\n"
+        "<b>Шаг 4. Где косячат 90% людей (Шлюз не обнаружен):</b>\n"
+        "1. Снова нажми <b>Win + R</b>, вбей волшебное слово <code>ncpa.cpl</code> и нажми Enter.\n"
+        "2. Ткни правой кнопкой по своему интернету (Ethernet или Wi-Fi) → <b>Свойства</b>.\n"
+        "3. Найди строку <b>«IP версии 4 (TCP/IPv4)»</b> и дважды нажми на неё.\n"
+        "4. ⚠️ <b>Смотри в оба:</b>\n"
+        "• В верхней половине точка <b>ОБЯЗАНА</b> стоять на <i>«Получать IP-адрес автоматически»</i>! Если ты вбил туда IP или стёр шлюз роутера — ты сам себе перерезал провод интернета.\n"
+        "• В нижней половине выбирай <i>«Использовать следующие адреса DNS-серверов»</i>:\n"
+        "  — Предпочитаемый: <code>109.120.132.43</code>\n"
+        "  — Альтернативный: <code>94.249.177.102</code>\n"
+        "5. Жми ОК, ещё раз ОК и иди тестировать ChatGPT!\n\n"
+        "💡 <i>Для Windows 11 (DoH): если настраиваешь через «Параметры», вбивай шаблон <code>https://dns.magicdns.ru/dns-query</code> ОБЯЗАТЕЛЬНО под обоими IP-адресами, не ленись.</i>"
+    )
+
+def get_faq_win_noob_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "⚡ Показать кратко для профи (без воды)", "callback_data": "faq_win_pro"}],
+            [{"text": "🌐 Настройка в браузере (DoH)", "callback_data": "faq_browser"}],
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "👨‍💻 Задать вопрос админу", "callback_data": "faq_contact_admin"}]
+        ]
+    }
+
+def get_faq_win_pro_card():
+    return (
+        "⚡ <b>Windows: Сброс сети и параметры DNS (Pro-версия)</b>\n\n"
+        "Для тех, кто знает, куда жать и ценит своё время.\n\n"
+        "<b>1. Терминал от Администратора (Win+X → Терминал):</b>\n"
+        "<code>ipconfig /flushdns</code>\n"
+        "<code>netsh winsock reset</code>\n"
+        "<code>netsh int ip reset</code>\n"
+        "<code>ipconfig /renew</code>\n"
+        "<i>Reboot обязательно для применения сокетов.</i>\n\n"
+        "<b>2. Сетевой адаптер (ncpa.cpl):</b>\n"
+        "• <b>IPv4 IP Assignment:</b> DHCP (Auto)\n"
+        "  <i>(Шлюз и маску руками не трогать во избежание Gateway Not Found)</i>\n"
+        "• <b>DNS Servers:</b>\n"
+        "  — Primary (🇸🇪 Швеция): <code>109.120.132.43</code>\n"
+        "  — Secondary (🇩🇪 Германия): <code>94.249.177.102</code>\n\n"
+        "<b>3. Windows 11 DoH Template:</b>\n"
+        "Параметры → Сеть → Wi-Fi / Ethernet → Назначение DNS: Вручную (IPv4):\n"
+        "• Primary: <code>109.120.132.43</code> | DoH: <code>https://dns.magicdns.ru/dns-query</code>\n"
+        "• Alternate: <code>94.249.177.102</code> | DoH: <code>https://dns.magicdns.ru/dns-query</code>\n"
+        "<i>(Шаблон указывать строго для обоих узлов)</i>"
+    )
+
+def get_faq_win_pro_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🐣 Разжевать как для чайника", "callback_data": "faq_win_noob"}],
+            [{"text": "🌐 Настройка в браузере (DoH)", "callback_data": "faq_browser"}],
             [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "👨‍💻 Задать вопрос админу", "callback_data": "faq_contact_admin"}]
         ]
     }
@@ -1667,6 +1718,16 @@ def main():
                     if data == 'faq_win_reset':
                         answer_callback(cq_id)
                         edit_message(chat_id, msg_id, get_faq_win_reset_card(), reply_markup=get_faq_win_reset_kb())
+                        continue
+
+                    if data == 'faq_win_noob':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_win_noob_card(), reply_markup=get_faq_win_noob_kb())
+                        continue
+
+                    if data == 'faq_win_pro':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_win_pro_card(), reply_markup=get_faq_win_pro_kb())
                         continue
 
                     if data == 'faq_browser':
