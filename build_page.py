@@ -2668,6 +2668,42 @@ html_content = f'''<!DOCTYPE html>
       color: var(--cyber-cyan);
     }}
 
+    .news-card.featured {{
+      grid-column: 1 / -1;
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.12) 0%, rgba(14, 25, 44, 0.88) 50%, rgba(8, 14, 25, 0.96) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.38);
+      box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.18);
+    }}
+
+    .news-card.featured:hover {{
+      border-color: rgba(0, 255, 157, 0.55);
+      box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.7), 0 0 24px rgba(0, 255, 157, 0.22);
+    }}
+
+    .news-card.featured .news-card-title {{
+      font-size: 1.25rem;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }}
+
+    .news-card.featured .news-card-text {{
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: #e2e8f0;
+    }}
+
+    .news-card.featured .news-card-text strong {{
+      color: var(--neon-mint);
+      display: inline-block;
+      margin-top: 6px;
+    }}
+
+    .news-tag.featured {{
+      background: rgba(16, 185, 129, 0.18);
+      border-color: rgba(16, 185, 129, 0.45);
+      color: #10b981;
+    }}
+
     .news-tag.infra {{
       background: rgba(167, 139, 250, 0.1);
       border-color: rgba(167, 139, 250, 0.3);
