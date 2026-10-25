@@ -1,6 +1,6 @@
 {
-  "active": true,
-  "type": "warning",
-  "message": "ЧАСТЬ ИИ СЕРВИСОВ ВОССТАНОВЛЕНА! РАБОТЫ ПРОДОЛЖАЮТСЯ",
-  "updated_at": 1792886611
+  "active": false,
+  "type": "info",
+  "message": "",
+  "updated_at": 1792916190
 }
