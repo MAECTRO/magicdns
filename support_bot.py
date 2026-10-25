@@ -241,6 +241,7 @@ def format_alert_message(raw_text):
 def set_bot_commands():
     cmds = [
         {"command": "dns", "description": "⚡ Параметры и ссылки MagicDNS"},
+        {"command": "faq", "description": "❓ Решение частых проблем (FAQ)"},
         {"command": "ios", "description": "🍏 Профиль для iPhone и iPad"},
         {"command": "status", "description": "🟢 Статус серверов сети"},
         {"command": "donate", "description": "☕ Поддержать серверы"},
@@ -256,6 +257,7 @@ def set_bot_commands():
         {"command": "admin", "description": "🛠 Панель управления"},
         {"command": "testai", "description": "🧪 Экспресс-тест доступности ИИ"},
         {"command": "dig", "description": "🔍 DNS-диагностика любого домена"},
+        {"command": "faq", "description": "❓ Решение частых проблем (FAQ)"},
         {"command": "ios", "description": "🍏 Профиль для iPhone и iPad"},
         {"command": "reviews", "description": "💬 Отзывы и ответы команды"},
         {"command": "reply", "description": "✍️ Ответить на отзыв по ID"},
@@ -353,6 +355,7 @@ def get_dns_card():
 def get_dns_kb():
     return {
         "inline_keyboard": [
+            [{"text": "❓ Частые проблемы и решения (FAQ)", "callback_data": "faq_menu"}],
             [{"text": "🍏 Профиль для iPhone / iPad в чат", "callback_data": "cmd_ios"}],
             [{"text": "🌐 Инструкция на сайте", "url": "https://magicdns.ru/#setup"}],
             [{"text": "☕ Сказать спасибо проекту", "url": DONATE_URL}]
@@ -481,6 +484,7 @@ def get_help_card():
 def get_help_kb():
     return {
         "inline_keyboard": [
+            [{"text": "❓ Частые вопросы и ошибки (FAQ)", "callback_data": "faq_menu"}],
             [{"text": "⚡ Настройки DNS", "callback_data": "cmd_dns"}],
             [{"text": "🌐 Инструкции на сайте", "url": "https://magicdns.ru/#setup"}],
             [{"text": "☕ Сказать спасибо", "url": DONATE_URL}]
@@ -502,8 +506,234 @@ def get_welcome_kb():
     return {
         "inline_keyboard": [
             [{"text": "⚡ Настройки DNS", "callback_data": "cmd_dns"}, {"text": "🍏 Профиль для iOS", "callback_data": "cmd_ios"}],
+            [{"text": "❓ Частые вопросы и ошибки (FAQ)", "callback_data": "faq_menu"}],
             [{"text": "🌐 Инструкция на сайте", "url": "https://magicdns.ru/#setup"}],
             [{"text": "☕ Сказать спасибо", "url": DONATE_URL}]
+        ]
+    }
+
+# ==========================================
+# FAQ & TROUBLESHOOTING KNOWLEDGE BASE
+# ==========================================
+
+def get_faq_menu_card():
+    return (
+        "❓ <b>База решений и частые вопросы (FAQ) MagicDNS</b>\n\n"
+        "Выберите тему ниже, чтобы мгновенно получить пошаговую инструкцию:"
+    )
+
+def get_faq_menu_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🔴 Не открывается / Шлюз не обнаружен", "callback_data": "faq_troubleshoot"}],
+            [{"text": "💻 Windows: команды сброса сети", "callback_data": "faq_win_reset"}],
+            [{"text": "🌐 Яндекс Браузер, Chrome, Edge (DoH)", "callback_data": "faq_browser"}],
+            [{"text": "📱 Android: ошибка подключения частного DNS", "callback_data": "faq_android"}],
+            [{"text": "📶 Роутеры (Keenetic, TP-Link, MikroTik)", "callback_data": "faq_routers"}],
+            [{"text": "🍏 iPhone / iPad / Mac: профиль", "callback_data": "faq_apple"}],
+            [{"text": "🛡️ Безопасность: банки и Госуслуги", "callback_data": "faq_security"}],
+            [{"text": "👨‍💻 Связаться с администратором", "callback_data": "faq_contact_admin"}],
+            [{"text": "⚡ Параметры подключения", "callback_data": "cmd_dns"}, {"text": "🟢 Статус серверов", "callback_data": "cmd_status"}]
+        ]
+    }
+
+def get_faq_troubleshoot_card():
+    return (
+        "🔴 <b>Что делать, если сайты не открываются или пишет «Шлюз не обнаружен»:</b>\n\n"
+        "1️⃣ <b>Выключите сторонние VPN!</b>\n"
+        "Любой активный VPN (WireGuard, Outline, v2ray, Planet VPN) перехватывает все сетевые запросы и отправляет их в свой тоннель. MagicDNS при этом перестает действовать. Отключите VPN и обновите страницу.\n\n"
+        "2️⃣ <b>Ошибка «Основной шлюз не обнаружен» (Windows / Android):</b>\n"
+        "• <b>Windows:</b> Не трогайте верхнюю часть настроек IPv4 («Получать IP-адрес автоматически»)! Если затереть там шлюз роутера — пропадёт вся сеть. Адреса MagicDNS нужно вписывать <b>только в нижнее поле</b> («Использовать следующие адреса DNS-серверов»).\n"
+        "• <b>Android:</b> В строке «Имя хоста поставщика частного DNS» должно быть строго <code>dns.magicdns.ru</code> (без <code>https://</code> и без пробелов).\n\n"
+        "3️⃣ <b>Сбросьте кэш браузера:</b>\n"
+        "Браузер может помнить старый заблокированный IP адрес. Нажмите комбинацию клавиш <b>Ctrl + F5</b> (Cmd + Shift + R на Mac) либо откройте сайт в режиме Инкогнито.\n\n"
+        "4️⃣ <b>Проверьте статус серверов:</b>\n"
+        "Нажмите кнопку «🟢 Статус серверов» ниже, чтобы убедиться, что узлы в Швеции и Германии работают штатно."
+    )
+
+def get_faq_troubleshoot_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "💻 Windows: команды сброса сети", "callback_data": "faq_win_reset"}],
+            [{"text": "📱 Проблема на Android", "callback_data": "faq_android"}],
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "👨‍💻 Задать вопрос админу", "callback_data": "faq_contact_admin"}]
+        ]
+    }
+
+def get_faq_win_reset_card():
+    return (
+        "💻 <b>Windows: Сброс сети и правильная настройка DNS</b>\n\n"
+        "Если после смены настроек пропал интернет, пишет «Шлюз не обнаружен» или не открываются сайты:\n\n"
+        "1️⃣ <b>Быстрый сброс сетевого стека:</b>\n"
+        "1. Нажмите <b>Win + R</b>, введите <code>cmd</code> и нажмите <b>Ctrl + Shift + Enter</b> (запуск от имени администратора).\n"
+        "2. По очереди введите эти 4 команды (Enter после каждой):\n"
+        "<code>ipconfig /flushdns</code>\n"
+        "<i>(очищает устаревший системный кэш DNS)</i>\n"
+        "<code>netsh winsock reset</code>\n"
+        "<i>(сбрасывает каталог сокетов Winsock после VPN и прокси)</i>\n"
+        "<code>netsh int ip reset</code>\n"
+        "<i>(сбрасывает стек протоколов TCP/IP до заводского состояния)</i>\n"
+        "<code>ipconfig /renew</code>\n"
+        "<i>(запрашивает у роутера свежий IP и восстанавливает шлюз)</i>\n"
+        "3. <b>Перезагрузите компьютер.</b>\n\n"
+        "2️⃣ <b>Как правильно прописать адреса (Классический способ):</b>\n"
+        "1. Нажмите <b>Win + R</b>, введите <code>ncpa.cpl</code> и нажмите Enter.\n"
+        "2. Правой кнопкой по вашему подключению (Ethernet / Wi-Fi) → <b>Свойства</b> → <b>«IP версии 4 (TCP/IPv4)»</b>.\n"
+        "3. ⚠️ <b>Главное правило:</b>\n"
+        "• Вверху ОБЯЗАТЕЛЬНО: <b>«Получать IP-адрес автоматически»</b> (если стереть там шлюз роутера — Windows отключит интернет!).\n"
+        "• Внизу выбираем <b>«Использовать следующие адреса DNS-серверов»</b>:\n"
+        "  — Предпочитаемый: <code>109.120.132.43</code>\n"
+        "  — Альтернативный: <code>94.249.177.102</code>\n\n"
+        "3️⃣ <b>Для Windows 11 (Зашифрованный DoH):</b>\n"
+        "В «Параметры» → «Сеть и Интернет» → «Ethernet / Wi-Fi» → «Назначение DNS-сервера: Изменить» → «Вручную» (IPv4):\n"
+        "• <b>Предпочитаемый DNS:</b> <code>109.120.132.43</code>\n"
+        "  — Шифрование DNS: <i>«Только шифрование (DNS over HTTPS)»</i>\n"
+        "  — Шаблон DoH: <code>https://dns.magicdns.ru/dns-query</code>\n"
+        "• <b>Альтернативный DNS:</b> <code>94.249.177.102</code>\n"
+        "  — Шифрование DNS: <i>«Только шифрование (DNS over HTTPS)»</i>\n"
+        "  — Шаблон DoH: <code>https://dns.magicdns.ru/dns-query</code>\n\n"
+        "⚠️ <i>Важно: шаблон DoH нужно указывать обязательно для ОБОИХ адресов (и для 109..., и для 94...), иначе второй сервер не будет шифроваться!</i>"
+    )
+
+def get_faq_win_reset_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🌐 Настройка в Яндекс Браузере и Chrome", "callback_data": "faq_browser"}],
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "👨‍💻 Задать вопрос админу", "callback_data": "faq_contact_admin"}]
+        ]
+    }
+
+def get_faq_browser_card():
+    return (
+        "🌐 <b>Яндекс Браузер, Chrome и Edge (DNS-over-HTTPS)</b>\n\n"
+        "Современные браузеры часто игнорируют DNS вашей операционной системы и используют собственный встроенный безопасный резолвер. Если в Windows вы всё прописали, а нейросети не открываются — настройте DoH в браузере:\n\n"
+        "<b>Яндекс Браузер:</b>\n"
+        "1. Меню (три полоски) → <b>Настройки</b> → вкладка <b>«Системные»</b> (или раздел «Безопасность»).\n"
+        "2. Найдите блок <b>«Использовать DNS-серверы»</b>.\n"
+        "3. Выберите «Вручную» и вставьте адрес:\n"
+        "<code>https://dns.magicdns.ru/dns-query</code>\n"
+        "<i>Либо выберите «Системный DNS», чтобы браузер использовал настройки вашего сетевого адаптера или роутера.</i>\n\n"
+        "<b>Google Chrome / Edge / Brave / Opera:</b>\n"
+        "1. <b>Настройки</b> → <b>«Конфиденциальность и безопасность»</b> → <b>«Безопасность»</b>.\n"
+        "2. Прокрутите вниз до пункта <b>«Использовать безопасный DNS-сервер»</b>.\n"
+        "3. Выберите «С поставщиком: Вручную (Custom)» и укажите:\n"
+        "<code>https://dns.magicdns.ru/dns-query</code>\n"
+        "4. Перезапустите вкладку."
+    )
+
+def get_faq_browser_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "💻 Windows: команды сброса сети", "callback_data": "faq_win_reset"}],
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "👨‍💻 Задать вопрос админу", "callback_data": "faq_contact_admin"}]
+        ]
+    }
+
+def get_faq_android_card():
+    return (
+        "📱 <b>Android: Решение проблем с «Персональным DNS»</b>\n\n"
+        "1️⃣ <b>Ошибка «Не удалось подключиться»:</b>\n"
+        "В настройках телефона (Подключения → Другие настройки → Персональный DNS) вводите строго имя хоста:\n"
+        "<code>dns.magicdns.ru</code>\n"
+        "<i>Нельзя добавлять http://, https://, слеши на конце или пробелы! Android ждет чистое доменное имя для порта 853 (DoT).</i>\n\n"
+        "2️⃣ <b>Блокировка порта 853 сотовым оператором (МТС, Билайн, Мегафон):</b>\n"
+        "Некоторые мобильные операторы блокируют порт DoT 853 на сотовых вышках.\n"
+        "<b>Быстрое решение без сторонних программ:</b>\n"
+        "1. Откройте Google Chrome или Яндекс Браузер на телефоне.\n"
+        "2. Перейдите в <b>Настройки браузера</b> → <b>Конфиденциальность и безопасность</b> → <b>Безопасный DNS</b>.\n"
+        "3. Выберите «Выбрать другого поставщика: Вручную» и укажите:\n"
+        "<code>https://dns.magicdns.ru/dns-query</code>\n"
+        "<i>Браузер отправляет запросы через порт 443 (стандартный HTTPS), который мобильные операторы никогда не блокируют!</i>\n\n"
+        "3️⃣ <b>Точка доступа и активный VPN:</b>\n"
+        "На оболочках MIUI/HyperOS и OneUI при включенной раздаче Wi-Fi (модеме) или активном VPN частный DNS отключается системой. Выключите точку доступа и сторонние VPN."
+    )
+
+def get_faq_android_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🌐 Настройка в браузере (DoH)", "callback_data": "faq_browser"}],
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "👨‍💻 Задать вопрос админу", "callback_data": "faq_contact_admin"}]
+        ]
+    }
+
+def get_faq_routers_card():
+    return (
+        "📶 <b>Настройка роутеров (для всей квартиры / офиса)</b>\n\n"
+        "Если настроить MagicDNS в роутере, ChatGPT, Claude и другие нейросети будут открываться сразу на всех ваших смартфонах, телевизорах, ноутбуках и ПК без возни с каждым устройством.\n\n"
+        "<b>Параметры для роутера:</b>\n"
+        "• Основной DNS: <code>109.120.132.43</code>\n"
+        "• Дополнительный DNS: <code>94.249.177.102</code>\n\n"
+        "<b>Инструкции по маркам:</b>\n"
+        "• <b>Keenetic:</b> Перейдите в 192.168.1.1 → «Сетевые правила» → «Интернет» → в вашем подключении нажмите «DNS-серверы» → добавьте оба IP. Если установлен компонент DoH/DoT, можно добавить DoH: <code>https://dns.magicdns.ru/dns-query</code>\n"
+        "• <b>TP-Link:</b> «Дополнительные настройки» → «Сеть» → «Интернет» (или «DHCP-сервер») → укажите Первичный и Вторичный DNS.\n"
+        "• <b>MikroTik:</b> В терминале WinBox выполните:\n"
+        "<code>/ip dns set servers=109.120.132.43,94.249.177.102 allow-remote-requests=yes</code>\n"
+        "• <b>ASUS:</b> «Интернет» → «Подключение» → «Подключаться к DNS-серверу автоматически: НЕТ» → введите IP-адреса."
+    )
+
+def get_faq_routers_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "💻 Windows: команды сброса сети", "callback_data": "faq_win_reset"}],
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "👨‍💻 Задать вопрос админу", "callback_data": "faq_contact_admin"}]
+        ]
+    }
+
+def get_faq_apple_card():
+    return (
+        "🍏 <b>iPhone, iPad и Mac: Профиль конфигурации</b>\n\n"
+        "Для Apple мы собрали готовый зашифрованный профиль <code>.mobileconfig</code> (DNS-over-HTTPS).\n\n"
+        "<b>Установка за 1 минуту:</b>\n"
+        "1. Нажмите кнопку <b>«🍏 Скачать профиль в чат»</b> внизу.\n"
+        "2. Нажмите на прикрепленный файл и подтвердите загрузку.\n"
+        "3. Откройте <b>«Настройки»</b> iPhone/iPad.\n"
+        "4. Вверху нажмите пункт <b>«Профиль загружен»</b>.\n"
+        "5. Нажмите <b>«Установить»</b> (введите код-пароль устройства).\n\n"
+        "<b>Как проверить активность:</b>\n"
+        "«Настройки» → «Основные» → «VPN и управление устройством» → «DNS» → стоит галочка напротив <b>MagicDNS</b>.\n\n"
+        "<i>На Mac профиль устанавливается в Системных настройках → Конфиденциальность и безопасность → Профили.</i>"
+    )
+
+def get_faq_apple_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🍏 Скачать профиль в чат", "callback_data": "cmd_ios"}],
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "👨‍💻 Задать вопрос админу", "callback_data": "faq_contact_admin"}]
+        ]
+    }
+
+def get_faq_security_card():
+    return (
+        "🛡️ <b>Безопасность и приватность в MagicDNS</b>\n\n"
+        "<b>Видит ли MagicDNS мои пароли, переписки или данные банков?</b>\n"
+        "<b>НЕТ, это технически исключено:</b>\n\n"
+        "• <b>Обычный интернет не перенаправляется:</b> Мы не являемся классическим VPN, который гонит весь трафик через себя. Сбербанк, Т-Банк, Госуслуги, VK, Яндекс и любые российские ресурсы открываются напрямую с вашего интернет-провайдера на максимальной скорости.\n\n"
+        "• <b>Точечная маршрутизация:</b> Только конкретные зарубежные домены нейросетей (ChatGPT, Claude, Gemini, Cursor) направляются на европейский шлюз.\n\n"
+        "• <b>Сквозное TLS-шифрование:</b> Весь обмен данными между вашим устройством и сервисами ИИ зашифрован сертификатами Cloudflare / OpenAI / Google. Доступа к содержимому запросов, токенам и паролям нет ни у кого, включая наши серверы."
+    )
+
+def get_faq_security_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}],
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "👨‍💻 Задать вопрос админу", "callback_data": "faq_contact_admin"}]
+        ]
+    }
+
+def get_faq_contact_admin_card():
+    return (
+        "👨‍💻 <b>Связь с технической поддержкой MagicDNS</b>\n\n"
+        "Если решения из FAQ не помогли решить вашу проблему:\n\n"
+        "1. Просто напишите ваш вопрос прямо в этот чат.\n"
+        "2. Приложите скриншот экрана (с ошибкой или настройками сети).\n\n"
+        "Администратор сервиса получит обращение и ответит вам прямо здесь!"
+    )
+
+def get_faq_contact_admin_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}],
+            [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
         ]
     }
 
@@ -1404,12 +1634,13 @@ def main():
                     msg = cq.get('message', {})
                     msg_id = msg.get('message_id')
                     msg_text = msg.get('text', '')
+                    chat_id = msg.get('chat', {}).get('id', from_id)
 
                     print(f"[CALLBACK] {data} from user {from_id}")
                     from_user = cq.get('from', {})
                     register_subscriber(from_id, from_user.get('first_name'), from_user.get('username'))
 
-                    # Public callback queries
+                    # Public callback queries (Available for ALL users)
                     if data == 'cmd_dns':
                         answer_callback(cq_id, "⚡ Параметры MagicDNS")
                         send_message(from_id, get_dns_card(), reply_markup=get_dns_kb())
@@ -1419,6 +1650,53 @@ def main():
                         answer_callback(cq_id, "🟢 Статус серверов")
                         is_adm = (from_id == ADMIN_CHAT_ID)
                         send_message(from_id, get_status_card(is_admin=is_adm), reply_markup=get_status_kb(is_admin=is_adm))
+                        continue
+
+
+
+                    if data == 'faq_menu':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_menu_card(), reply_markup=get_faq_menu_kb())
+                        continue
+
+                    if data == 'faq_troubleshoot':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_troubleshoot_card(), reply_markup=get_faq_troubleshoot_kb())
+                        continue
+
+                    if data == 'faq_win_reset':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_win_reset_card(), reply_markup=get_faq_win_reset_kb())
+                        continue
+
+                    if data == 'faq_browser':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_browser_card(), reply_markup=get_faq_browser_kb())
+                        continue
+
+                    if data == 'faq_android':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_android_card(), reply_markup=get_faq_android_kb())
+                        continue
+
+                    if data == 'faq_routers':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_routers_card(), reply_markup=get_faq_routers_kb())
+                        continue
+
+                    if data == 'faq_apple':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_apple_card(), reply_markup=get_faq_apple_kb())
+                        continue
+
+                    if data == 'faq_security':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_security_card(), reply_markup=get_faq_security_kb())
+                        continue
+
+                    if data == 'faq_contact_admin':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_contact_admin_card(), reply_markup=get_faq_contact_admin_kb())
                         continue
 
                     # Admin-only callbacks
@@ -2030,6 +2308,11 @@ def main():
                         send_message(chat_id, get_donate_card(), reply_to_message_id=reply_to_id, reply_markup=get_donate_kb())
                         continue
 
+                    elif cmd in ['/faq', 'faq', 'чаво', 'вопросы', 'проблемы']:
+                        reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
+                        send_message(chat_id, get_faq_menu_card(), reply_to_message_id=reply_to_id, reply_markup=get_faq_menu_kb())
+                        continue
+
                     elif cmd in ['/rules', '/help', 'помощь', 'правила']:
                         reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
                         send_message(chat_id, get_help_card(), reply_to_message_id=reply_to_id, reply_markup=get_help_kb())
@@ -2122,7 +2405,17 @@ def main():
                             if not copy_res.get('ok'):
                                 forward_message(ADMIN_CHAT_ID, sender_id, m['message_id'])
 
-                        send_message(sender_id, "✓ Сообщение передано администратору. Скоро ответим прямо здесь!")
+                        ack_text = (
+                            "✓ <b>Сообщение передано администратору!</b> Скоро ответим прямо здесь.\n\n"
+                            "💡 Если у вас что-то не открывается, пишет «Шлюз не обнаружен» или возникла ошибка при подключении — большинство решений уже есть в нашем справочнике:"
+                        )
+                        ack_kb = {
+                            "inline_keyboard": [
+                                [{"text": "❓ Частые вопросы и решения (FAQ)", "callback_data": "faq_menu"}],
+                                [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
+                            ]
+                        }
+                        send_message(sender_id, ack_text, reply_markup=ack_kb)
                     else:
                         # Check if admin is sending a reply to a review
                         if sender_id == ADMIN_CHAT_ID and ADMIN_CHAT_ID in PENDING_REVIEWS_REPLIES:
