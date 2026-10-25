@@ -155,6 +155,7 @@ subscribers_lock = threading.Lock()
 subscribers = {}
 PENDING_ALERTS = {}
 PENDING_REVIEWS_REPLIES = {}  # admin_chat_id -> review_id
+PENDING_USER_MESSAGES = {}  # user_id -> dict with pending message
 
 def load_subscribers():
     global subscribers
@@ -1760,6 +1761,66 @@ def main():
                         edit_message(chat_id, msg_id, get_faq_contact_admin_card(), reply_markup=get_faq_contact_admin_kb())
                         continue
 
+                    if data == 'confirm_user_msg':
+                        pending = PENDING_USER_MESSAGES.pop(from_id, None)
+                        if not pending:
+                            answer_callback(cq_id, "⚠️ Сообщение уже отправлено или устарело", alert=True)
+                            continue
+
+                        answer_callback(cq_id, "✈️ Отправлено администратору!")
+                        esc_name = html.escape(str(pending.get('sender_name', 'Пользователь')))
+                        esc_uname = html.escape(str(pending.get('username', '')))
+                        esc_msg = html.escape(str(pending.get('text', '')))
+                        media_label = pending.get('media_label', '')
+
+                        admin_forward = (
+                            f"📩 <b>Сообщение от пользователя{media_label}!</b>\n\n"
+                            f"👤 <b>От:</b> {esc_name} ({esc_uname})\n"
+                            f"🆔 <code>[ID: {from_id}]</code>\n"
+                        )
+                        if esc_msg:
+                            admin_forward += f"\n💬 <b>Текст:</b>\n{esc_msg}\n"
+                        admin_forward += f"\n👉 <i>Сделайте 'Reply' (Ответить), чтобы написать пользователю.</i>"
+
+                        info_res = send_message(ADMIN_CHAT_ID, admin_forward)
+                        info_msg_id = info_res.get('result', {}).get('message_id') if info_res.get('ok') else None
+
+                        if pending.get('has_media'):
+                            copy_res = copy_message(ADMIN_CHAT_ID, from_id, pending['message_id'], reply_to_message_id=info_msg_id)
+                            if not copy_res.get('ok'):
+                                forward_message(ADMIN_CHAT_ID, from_id, pending['message_id'])
+
+                        sent_card = (
+                            "✓ <b>Сообщение успешно передано администратору!</b>\n"
+                            "Скоро ответим прямо здесь в чате.\n\n"
+                            "💡 Если у вас возникли сложности при подключении, посмотрите частые вопросы — скорее всего решение уже есть:"
+                        )
+                        sent_kb = {
+                            "inline_keyboard": [
+                                [{"text": "❓ Частые вопросы и решения (FAQ)", "callback_data": "faq_menu"}],
+                                [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
+                            ]
+                        }
+                        edit_message(chat_id, msg_id, sent_card, reply_markup=sent_kb)
+                        continue
+
+                    if data == 'cancel_user_msg':
+                        PENDING_USER_MESSAGES.pop(from_id, None)
+                        answer_callback(cq_id, "❌ Отправка отменена")
+                        cancel_card = (
+                            "❌ <b>Отправка отменена.</b>\n\n"
+                            "Ваше сообщение <b>не было передано</b> администратору.\n"
+                            "Вы можете изучить частые вопросы или написать новое обращение в любой момент."
+                        )
+                        cancel_kb = {
+                            "inline_keyboard": [
+                                [{"text": "❓ Частые вопросы (FAQ)", "callback_data": "faq_menu"}],
+                                [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
+                            ]
+                        }
+                        edit_message(chat_id, msg_id, cancel_card, reply_markup=cancel_kb)
+                        continue
+
                     # Admin-only callbacks
                     if from_id != ADMIN_CHAT_ID:
                         answer_callback(cq_id, "⛔ Действие только для администратора", alert=True)
@@ -2369,6 +2430,12 @@ def main():
                         send_message(chat_id, get_donate_card(), reply_to_message_id=reply_to_id, reply_markup=get_donate_kb())
                         continue
 
+                    elif cmd in ['/cancel', 'отмена', 'отменить']:
+                        if sender_id in PENDING_USER_MESSAGES:
+                            PENDING_USER_MESSAGES.pop(sender_id, None)
+                            send_message(chat_id, "❌ <i>Отправка сообщения в поддержку отменена.</i>")
+                            continue
+
                     elif cmd in ['/faq', 'faq', 'чаво', 'вопросы', 'проблемы']:
                         reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
                         send_message(chat_id, get_faq_menu_card(), reply_to_message_id=reply_to_id, reply_markup=get_faq_menu_kb())
@@ -2429,7 +2496,6 @@ def main():
 
                     # --- B. PRIVATE CHAT HANDLING (Support & Admin Relay) ---
                     if sender_id != ADMIN_CHAT_ID:
-                        # Forward user message and/or media to admin
                         media_label = ""
                         if is_photo:
                             media_label = " [📷 Скриншот/Фото]"
@@ -2444,39 +2510,38 @@ def main():
                         elif is_sticker:
                             media_label = " [🎨 Стикер]"
 
-                        esc_name = html.escape(str(sender_name))
-                        esc_uname = html.escape(str(username))
-                        esc_msg = html.escape(str(text)) if text else ""
+                        # Save pending message with confirmation
+                        PENDING_USER_MESSAGES[sender_id] = {
+                            "message_id": m['message_id'],
+                            "text": text,
+                            "sender_name": sender_name,
+                            "username": username,
+                            "media_label": media_label,
+                            "has_media": has_media,
+                            "time": time.time()
+                        }
 
-                        admin_forward = (
-                            f"📩 <b>Сообщение от пользователя{media_label}!</b>\n\n"
-                            f"👤 <b>От:</b> {esc_name} ({esc_uname})\n"
-                            f"🆔 <code>[ID: {sender_id}]</code>\n"
-                        )
-                        if esc_msg:
-                            admin_forward += f"\n💬 <b>Текст:</b>\n{esc_msg}\n"
-                        admin_forward += f"\n👉 <i>Сделайте 'Reply' (Ответить), чтобы написать пользователю.</i>"
-
-                        info_res = send_message(ADMIN_CHAT_ID, admin_forward)
-                        info_msg_id = info_res.get('result', {}).get('message_id') if info_res.get('ok') else None
-
-                        # Deliver the media directly to admin
+                        preview_text = html.escape(text[:300]) if text else ""
+                        card = "📨 <b>Подтверждение отправки в поддержку:</b>\n\n"
+                        if preview_text:
+                            card += f"💬 <b>Текст:</b> <i>«{preview_text}»</i>\n"
                         if has_media:
-                            copy_res = copy_message(ADMIN_CHAT_ID, sender_id, m['message_id'], reply_to_message_id=info_msg_id)
-                            if not copy_res.get('ok'):
-                                forward_message(ADMIN_CHAT_ID, sender_id, m['message_id'])
-
-                        ack_text = (
-                            "✓ <b>Сообщение передано администратору!</b> Скоро ответим прямо здесь.\n\n"
-                            "💡 Если у вас что-то не открывается, пишет «Шлюз не обнаружен» или возникла ошибка при подключении — большинство решений уже есть в нашем справочнике:"
+                            card += f"📎 <b>Вложение:</b>{media_label}\n"
+                        card += (
+                            "\n<i>Отправить этот запрос администратору сервиса? "
+                            "Если вы написали случайно или передумали — нажмите «Отменить».</i>"
                         )
-                        ack_kb = {
+                        kb = {
                             "inline_keyboard": [
-                                [{"text": "❓ Частые вопросы и решения (FAQ)", "callback_data": "faq_menu"}],
+                                [
+                                    {"text": "✈️ Да, отправить админу", "callback_data": "confirm_user_msg"},
+                                    {"text": "❌ Отменить", "callback_data": "cancel_user_msg"}
+                                ],
+                                [{"text": "❓ Сначала посмотреть FAQ", "callback_data": "faq_menu"}],
                                 [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
                             ]
                         }
-                        send_message(sender_id, ack_text, reply_markup=ack_kb)
+                        send_message(sender_id, card, reply_markup=kb)
                     else:
                         # Check if admin is sending a reply to a review
                         if sender_id == ADMIN_CHAT_ID and ADMIN_CHAT_ID in PENDING_REVIEWS_REPLIES:
