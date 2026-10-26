@@ -349,6 +349,9 @@ def get_dns_card():
         "  <i>(нажмите кнопку внизу или ссылку, чтобы скачать и установить профиль в Настройках)</i>\n\n"
         "• <b>Windows 10/11 и браузеры (DoH):</b>\n"
         "  Шаблон DoH: <code>https://dns.magicdns.ru/dns-query</code>\n\n"
+        "• <b>Linux (Ubuntu / Mint / Debian):</b>\n"
+        "  DoT (порт 853): <code>94.249.177.102#dns.magicdns.ru</code>\n"
+        "  DoH (порт 443): <code>https://dns.magicdns.ru/dns-query</code>\n\n"
         "🌐 <b>Подробные инструкции с картинками:</b>\n"
         "<a href='https://magicdns.ru/#setup'>https://magicdns.ru/#setup</a>"
     )
@@ -533,6 +536,7 @@ def get_faq_menu_kb():
             [{"text": "📶 Роутеры (Keenetic, TP-Link, MikroTik)", "callback_data": "faq_routers"}],
             [{"text": "🍏 iPhone / iPad / Mac: профиль", "callback_data": "faq_apple"}],
             [{"text": "🛡️ Безопасность: банки и Госуслуги", "callback_data": "faq_security"}],
+            [{"text": "🐧 Linux (Ubuntu, Mint, Debian): DoT", "callback_data": "faq_linux"}],
             [{"text": "🤝 Дружественные проекты (Dagami DNS)", "callback_data": "faq_friends"}],
             [{"text": "👨‍💻 Связаться с администратором", "callback_data": "faq_contact_admin"}],
             [{"text": "⚡ Параметры подключения", "callback_data": "cmd_dns"}, {"text": "🟢 Статус серверов", "callback_data": "cmd_status"}]
@@ -787,6 +791,39 @@ def get_faq_contact_admin_kb():
         "inline_keyboard": [
             [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}],
             [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
+        ]
+    }
+
+
+def get_faq_linux_card():
+    return (
+        "🐧 <b>Подключение Linux (Ubuntu, Linux Mint, Debian)</b>\n\n"
+        "<b>1️⃣ Быстрая настройка через терминал (DoT с шифрованием):</b>\n"
+        "Подходит для Ubuntu 20.04+, Mint 20+, Debian 11+ и любых систем с <code>systemd-resolved</code>. Не зависит от названия сетевой карты, шифрует весь DNS через TLS (порт 853):\n\n"
+        "<code>sudo mkdir -p /etc/systemd/resolved.conf.d &amp;&amp; sudo tee /etc/systemd/resolved.conf.d/magicdns.conf &lt;&lt; 'EOF'\n"
+        "[Resolve]\n"
+        "DNS=94.249.177.102#dns.magicdns.ru 109.120.132.43#dns.magicdns.ru\n"
+        "FallbackDNS=1.1.1.1 8.8.8.8\n"
+        "DNSOverTLS=yes\n"
+        "EOF\n"
+        "sudo systemctl restart systemd-resolved</code>\n\n"
+        "• <b>Проверка работы:</b> <code>resolvectl status</code>\n"
+        "<i>(в выводе должно быть DNS over TLS: yes)</i>\n\n"
+        "• <b>Как отключить:</b>\n"
+        "<code>sudo rm -f /etc/systemd/resolved.conf.d/magicdns.conf &amp;&amp; sudo systemctl restart systemd-resolved</code>\n\n"
+        "<b>2️⃣ Через GUI (Параметры сети):</b>\n"
+        "В свойствах IPv4 выберите ручной DNS и введите:\n"
+        "<code>94.249.177.102, 109.120.132.43</code>\n\n"
+        "<b>3️⃣ Только для браузера (DoH):</b>\n"
+        "В настройках Безопасного DNS укажите свой провайдер:\n"
+        "<code>https://dns.magicdns.ru/dns-query</code>"
+    )
+
+def get_faq_linux_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🌐 Открыть инструкцию на сайте", "url": "https://magicdns.ru/#setup"}],
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
         ]
     }
 
@@ -1847,6 +1884,11 @@ def main():
                     if data == 'faq_security':
                         answer_callback(cq_id)
                         edit_message(chat_id, msg_id, get_faq_security_card(), reply_markup=get_faq_security_kb())
+                        continue
+
+                    if data == 'faq_linux':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_linux_card(), reply_markup=get_faq_linux_kb())
                         continue
 
                     if data == 'faq_friends':
