@@ -533,6 +533,7 @@ def get_faq_menu_kb():
             [{"text": "📶 Роутеры (Keenetic, TP-Link, MikroTik)", "callback_data": "faq_routers"}],
             [{"text": "🍏 iPhone / iPad / Mac: профиль", "callback_data": "faq_apple"}],
             [{"text": "🛡️ Безопасность: банки и Госуслуги", "callback_data": "faq_security"}],
+            [{"text": "🤝 Дружественные проекты (Dagami DNS)", "callback_data": "faq_friends"}],
             [{"text": "👨‍💻 Связаться с администратором", "callback_data": "faq_contact_admin"}],
             [{"text": "⚡ Параметры подключения", "callback_data": "cmd_dns"}, {"text": "🟢 Статус серверов", "callback_data": "cmd_status"}]
         ]
@@ -788,6 +789,28 @@ def get_faq_contact_admin_kb():
             [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
         ]
     }
+
+def get_faq_friends_card():
+    return (
+        "🤝 <b>Дружественные проекты и независимое комьюнити</b>\n\n"
+        "Мы за свободный интернет, чистую скорость и взаимовыручку среди независимых разработчиков!\n\n"
+        "Если вам нужен надёжный резервный Smart DNS или доступ к дополнительным сервисам (Twitch, Strava, DeepL, Linguee) — искренне рекомендуем проект наших братишек:\n\n"
+        "🌐 <b>Dagami DNS</b>\n"
+        "• <b>Сайт:</b> https://dns.dagami.ru\n"
+        "• <b>Чат сообщества:</b> @dagamvi\n"
+        "• <b>Канал новостей:</b> @dagamivibe\n\n"
+        "Ребята тоже развивают бесплатный Smart DNS для людей без навязчивой рекламы и платных тарифов, с собственными подписанными Apple-профилями. Добавьте в закладки про запас!"
+    )
+
+def get_faq_friends_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🌐 Перейти на dns.dagami.ru", "url": "https://dns.dagami.ru/"}],
+            [{"text": "💬 Чат @dagamvi", "url": "https://t.me/dagamvi"}, {"text": "📢 Канал @dagamivibe", "url": "https://t.me/dagamivibe"}],
+            [{"text": "⬅️ Назад в меню FAQ", "callback_data": "faq_menu"}, {"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
+        ]
+    }
+
 
 def publish_review_to_github(author, platform, rating, message):
     url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/reviews.json"
@@ -1824,6 +1847,11 @@ def main():
                     if data == 'faq_security':
                         answer_callback(cq_id)
                         edit_message(chat_id, msg_id, get_faq_security_card(), reply_markup=get_faq_security_kb())
+                        continue
+
+                    if data == 'faq_friends':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_faq_friends_card(), reply_markup=get_faq_friends_kb())
                         continue
 
                     if data == 'faq_contact_admin':
