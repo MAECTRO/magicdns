@@ -246,7 +246,8 @@ def set_bot_commands():
         {"command": "ios", "description": "🍏 Профиль для iPhone и iPad"},
         {"command": "status", "description": "🟢 Статус серверов сети"},
         {"command": "donate", "description": "☕ Поддержать серверы"},
-        {"command": "help", "description": "💬 Помощь и связь с поддержкой"}
+        {"command": "help", "description": "💬 Помощь и связь с поддержкой"},
+        {"command": "friends", "description": "🤝 Друзья проекта (Dagami DNS)"}
     ]
     try:
         res = tg_request("setMyCommands", {"commands": cmds})
@@ -352,6 +353,8 @@ def get_dns_card():
         "• <b>Linux (Ubuntu / Mint / Debian):</b>\n"
         "  DoT (порт 853): <code>94.249.177.102#dns.magicdns.ru</code>\n"
         "  DoH (порт 443): <code>https://dns.magicdns.ru/dns-query</code>\n\n"
+        "🤝 <b>Дружественные проекты:</b>\n"
+        "• <b>Dagami DNS:</b> <a href='https://dns.dagami.ru'>https://dns.dagami.ru</a> (чат @dagamvi)\n\n"
         "🌐 <b>Подробные инструкции с картинками:</b>\n"
         "<a href='https://magicdns.ru/#setup'>https://magicdns.ru/#setup</a>"
     )
@@ -359,10 +362,9 @@ def get_dns_card():
 def get_dns_kb():
     return {
         "inline_keyboard": [
-            [{"text": "❓ Частые проблемы и решения (FAQ)", "callback_data": "faq_menu"}],
-            [{"text": "🍏 Профиль для iPhone / iPad в чат", "callback_data": "cmd_ios"}],
-            [{"text": "🌐 Инструкция на сайте", "url": "https://magicdns.ru/#setup"}],
-            [{"text": "☕ Сказать спасибо проекту", "url": DONATE_URL}]
+            [{"text": "❓ Частые проблемы и решения (FAQ)", "callback_data": "faq_menu"}, {"text": "🍏 Профиль iOS", "callback_data": "cmd_ios"}],
+            [{"text": "🤝 Дружественные проекты (Dagami DNS)", "callback_data": "faq_friends"}],
+            [{"text": "🌐 Инструкция на сайте", "url": "https://magicdns.ru/#setup"}, {"text": "☕ Сказать спасибо", "url": DONATE_URL}]
         ]
     }
 
@@ -511,8 +513,8 @@ def get_welcome_kb():
         "inline_keyboard": [
             [{"text": "⚡ Настройки DNS", "callback_data": "cmd_dns"}, {"text": "🍏 Профиль для iOS", "callback_data": "cmd_ios"}],
             [{"text": "❓ Частые вопросы и ошибки (FAQ)", "callback_data": "faq_menu"}],
-            [{"text": "🌐 Инструкция на сайте", "url": "https://magicdns.ru/#setup"}],
-            [{"text": "☕ Сказать спасибо", "url": DONATE_URL}]
+            [{"text": "🤝 Дружественные проекты (Dagami DNS)", "callback_data": "faq_friends"}],
+            [{"text": "🌐 Инструкция на сайте", "url": "https://magicdns.ru/#setup"}, {"text": "☕ Сказать спасибо", "url": DONATE_URL}]
         ]
     }
 
@@ -920,7 +922,8 @@ def get_admin_panel_kb():
             [{"text": "🚦 Статусы серверов (перебои)", "callback_data": "admin_srv_status"}],
             [{"text": "🧪 Экспресс-тест доступности ИИ", "callback_data": "admin_test_ai"}, {"text": "🔍 DNS-диагностика /dig", "callback_data": "admin_dig_info"}],
             [{"text": "🌐 Баннер на сайте", "callback_data": "admin_sitealert_info"}, {"text": "🚨 Рассылка", "callback_data": "admin_alert_info"}],
-            [{"text": "📊 Статистика подписчиков", "callback_data": "cmd_users"}, {"text": "🟢 Проверить /status", "callback_data": "cmd_status"}]
+            [{"text": "📊 Статистика подписчиков", "callback_data": "cmd_users"}, {"text": "🟢 Проверить /status", "callback_data": "cmd_status"}],
+            [{"text": "🤝 Друзья (Dagami DNS)", "callback_data": "faq_friends"}, {"text": "⚡ Параметры DNS", "callback_data": "cmd_dns"}]
         ]
     }
 
@@ -2532,6 +2535,11 @@ def main():
                         reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
                         is_adm = (sender_id == ADMIN_CHAT_ID)
                         send_message(chat_id, get_status_card(is_admin=is_adm), reply_to_message_id=reply_to_id, reply_markup=get_status_kb(is_admin=is_adm))
+                        continue
+
+                    elif cmd in ['/friends', '/dagami', 'друзья', 'партнеры', 'партнёры']:
+                        reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
+                        send_message(chat_id, get_faq_friends_card(), reply_to_message_id=reply_to_id, reply_markup=get_faq_friends_kb())
                         continue
 
                     elif cmd in ['/donate', '/support', '/tip', 'донат']:
