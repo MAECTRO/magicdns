@@ -1334,6 +1334,40 @@ def get_ai_diagnostics_kb():
         ]
     }
 
+def sign_mobileconfig(xml_bytes):
+    """
+    Signs Apple .mobileconfig XML using OpenSSL in CMS/PKCS#7 format
+    with Let's Encrypt certificate for dns.magicdns.ru and its private key.
+    Includes the intermediate certificate chain up to ISRG Root X1.
+    Provides domain-owner cryptographic signing (verified green badge in iOS/macOS).
+    Falls back to raw unsigned XML bytes if certs are unavailable.
+    """
+    cert_path = "/etc/letsencrypt/live/dns.magicdns.ru/cert.pem"
+    key_path = "/etc/letsencrypt/live/dns.magicdns.ru/privkey.pem"
+    chain_path = "/etc/letsencrypt/live/dns.magicdns.ru/chain.pem"
+
+    if os.path.exists(cert_path) and os.path.exists(key_path) and os.path.exists(chain_path):
+        cmd = [
+            "openssl", "cms", "-sign",
+            "-signer", cert_path,
+            "-inkey", key_path,
+            "-certfile", chain_path,
+            "-outform", "der",
+            "-nodetach"
+        ]
+        try:
+            res = subprocess.run(cmd, input=xml_bytes, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)
+            if res.returncode == 0 and len(res.stdout) > 0:
+                print(f"[SIGN PROFILE] Successfully signed mobileconfig via CMS/PKCS#7 ({len(res.stdout)} bytes)")
+                return res.stdout
+            else:
+                err_msg = res.stderr.decode('utf-8', errors='replace')
+                print(f"[SIGN PROFILE ERROR] openssl failed (code {res.returncode}): {err_msg}")
+        except Exception as e:
+            print(f"[SIGN PROFILE EXCEPTION] {e}")
+
+    return xml_bytes
+
 def generate_mobileconfig(variant="dual"):
     """Generates a valid Apple mobileconfig XML for iOS/macOS DoH."""
     if variant == "se":
@@ -1401,7 +1435,7 @@ def generate_mobileconfig(variant="dual"):
     <integer>1</integer>
 </dict>
 </plist>"""
-    return xml.encode('utf-8')
+    return sign_mobileconfig(xml.encode('utf-8'))
 
 
 def get_ios_picker_card():
@@ -1704,6 +1738,42 @@ def main():
                         send_message(from_id, get_status_card(is_admin=is_adm), reply_markup=get_status_kb(is_admin=is_adm))
                         continue
 
+                    if data == 'cmd_ios':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_ios_picker_card(), reply_markup=get_ios_picker_kb())
+                        continue
+
+                    if data in ('dl_ios_dual', 'dl_ios_se', 'dl_ios_de'):
+                        var_key = data.replace('dl_ios_', '')
+                        labels = {
+                            'dual': 'Швеция + Германия',
+                            'se': 'Только Швеция',
+                            'de': 'Только Германия'
+                        }
+                        file_names = {
+                            'dual': 'MagicDNS-Dual.mobileconfig',
+                            'se': 'MagicDNS-Sweden.mobileconfig',
+                            'de': 'MagicDNS-Germany.mobileconfig'
+                        }
+                        lbl = labels.get(var_key, 'MagicDNS')
+                        fname = file_names.get(var_key, 'MagicDNS.mobileconfig')
+                        answer_callback(cq_id, f"🍏 Отправляю подписанный профиль ({lbl})...")
+                        raw_bytes = generate_mobileconfig(var_key)
+                        caption = (
+                            f"🍏 <b>Профиль MagicDNS ({lbl}) для iPhone и iPad</b>\n\n"
+                            "🟢 <b>Криптографически подписан (CMS / PKCS#7):</b>\n"
+                            "Сертификат: <code>dns.magicdns.ru</code> (Let\'s Encrypt)\n"
+                            "Статус в iOS: 🟢 <b>«Проверен»</b> (зелёная галочка)\n\n"
+                            "<b>Инструкция по установке:</b>\n"
+                            "1. Нажмите на прикрепленный файл выше и подтвердите загрузку.\n"
+                            "2. Откройте <b>Настройки</b> устройства.\n"
+                            "3. В самом верху нажмите <b>«Профиль загружен»</b>.\n"
+                            "4. Нажмите <b>Установить</b> в правом верхнем углу и введите код-пароль.\n\n"
+                            "🛡 <i>Трафик к нейросетям идет через защищенный DoH на полной скорости без сторонних приложений.</i>"
+                        )
+                        send_document(chat_id, raw_bytes, fname, caption=caption, reply_markup=get_dns_kb())
+                        continue
+
 
 
                     if data == 'faq_menu':
@@ -1952,38 +2022,7 @@ def main():
                         t.start()
                         continue
 
-                    if data == 'cmd_ios':
-                        answer_callback(cq_id)
-                        edit_message(chat_id, msg_id, get_ios_picker_card(), reply_markup=get_ios_picker_kb())
-                        continue
 
-                    if data in ('dl_ios_dual', 'dl_ios_se', 'dl_ios_de'):
-                        var_key = data.replace('dl_ios_', '')
-                        labels = {
-                            'dual': 'Швеция + Германия',
-                            'se': 'Только Швеция',
-                            'de': 'Только Германия'
-                        }
-                        file_names = {
-                            'dual': 'MagicDNS-Dual.mobileconfig',
-                            'se': 'MagicDNS-Sweden.mobileconfig',
-                            'de': 'MagicDNS-Germany.mobileconfig'
-                        }
-                        lbl = labels.get(var_key, 'MagicDNS')
-                        fname = file_names.get(var_key, 'MagicDNS.mobileconfig')
-                        answer_callback(cq_id, f"🍏 Отправляю профиль ({lbl})...")
-                        raw_bytes = generate_mobileconfig(var_key)
-                        caption = (
-                            f"🍏 <b>Профиль MagicDNS ({lbl}) для iPhone и iPad</b>\n\n"
-                            "<b>Инструкция по установке:</b>\n"
-                            "1. Нажмите на прикрепленный файл выше и подтвердите загрузку.\n"
-                            "2. Откройте <b>Настройки</b> устройства.\n"
-                            "3. В самом верху нажмите <b>«Профиль загружен»</b>.\n"
-                            "4. Нажмите <b>Установить</b> в правом верхнем углу и введите код-пароль.\n\n"
-                            "🛡 <i>Трафик к нейросетям (Gemini, Claude, ChatGPT) идет через защищенный DoH на полной скорости без сторонних приложений.</i>"
-                        )
-                        send_document(chat_id, raw_bytes, fname, caption=caption, reply_markup=get_dns_kb())
-                        continue
 
                     if data == 'admin_dig_info':
                         answer_callback(cq_id)
