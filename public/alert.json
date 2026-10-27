@@ -1,6 +1,6 @@
 {
-  "active": false,
-  "type": "info",
-  "message": "",
-  "updated_at": 1792916186
+  "active": true,
+  "type": "warning",
+  "message": "Возможна нестабильная работа Gemini / Antigravity\nПроблему знаю, но починить смогу только вечером, около 9 часов вечера по мск",
+  "updated_at": 1793079229
 }
