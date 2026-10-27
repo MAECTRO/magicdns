@@ -1,6 +1,6 @@
 {
-  "active": true,
-  "type": "warning",
-  "message": "ВНИМАНИЕ! НАЧАЛИСЬ РАБОТЫ НА СЕРВЕРАХ! ВОЗМОЖНЫ СБОИ!",
-  "updated_at": 1793126844
+  "active": false,
+  "type": "info",
+  "message": "",
+  "updated_at": 1793140644
 }
