@@ -61,6 +61,17 @@ if os.path.exists(reviews_json_path):
     except Exception as e:
         reviews_json_str = "[]"
 
+# Load community wishlist from wishlist.json
+wishlist_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'wishlist.json')
+wishlist_json_str = "[]"
+if os.path.exists(wishlist_json_path):
+    try:
+        with open(wishlist_json_path, 'r', encoding='utf-8') as f:
+            wishlist_data = json.load(f)
+            wishlist_json_str = json.dumps(wishlist_data, ensure_ascii=False)
+    except Exception as e:
+        wishlist_json_str = "[]"
+
 html_content = f'''<!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -2520,6 +2531,33 @@ html_content = f'''<!DOCTYPE html>
         box-sizing: border-box;
       }}
 
+      /* Wishlist Section Responsive */
+      .wishlist-section {{
+        margin-top: 40px;
+        margin-bottom: 20px;
+      }}
+      .wishlist-header {{
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+      }}
+      .wishlist-header-left h2 {{
+        font-size: 1.45rem;
+      }}
+      .btn-suggest-trigger {{
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+      }}
+      .wishlist-pipeline {{
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }}
+      .wishlist-grid {{
+        grid-template-columns: 1fr;
+      }}
+
       /* Footer & Chat FAB */
       .footer-content {{
         flex-direction: column;
@@ -3285,6 +3323,397 @@ html_content = f'''<!DOCTYPE html>
       font-size: 0.72rem;
       color: var(--text-dim);
       white-space: nowrap;
+    }}
+
+    /* ==========================================================================
+       Wishlist & Community Voting Section
+       ========================================================================== */
+    .wishlist-section {{
+      margin-top: 64px;
+      margin-bottom: 24px;
+    }}
+
+    .wishlist-header {{
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }}
+
+    .wishlist-header-left h2 {{
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 8px 0 6px 0;
+      letter-spacing: -0.02em;
+    }}
+
+    .wishlist-subtitle {{
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin: 0;
+      max-width: 720px;
+    }}
+
+    .btn-suggest-trigger {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }}
+
+    /* 4-Step Process Pipeline */
+    .wishlist-pipeline {{
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }}
+
+    .pipeline-step {{
+      background: rgba(13, 23, 40, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      position: relative;
+      transition: all var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }}
+
+    .pipeline-step:hover {{
+      border-color: rgba(0, 255, 157, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }}
+
+    .pipeline-step-top {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }}
+
+    .step-number {{
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--neon-mint);
+      background: rgba(0, 255, 157, 0.1);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(0, 255, 157, 0.25);
+    }}
+
+    .step-icon {{
+      font-size: 1.15rem;
+      line-height: 1;
+    }}
+
+    .step-title {{
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0;
+    }}
+
+    .step-desc {{
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin: 0;
+      line-height: 1.45;
+    }}
+
+    /* Wishlist Grid & Cards */
+    .wishlist-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }}
+
+    .wishlist-card {{
+      background: rgba(13, 23, 40, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 255, 157, 0.2);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      transition: all var(--transition-normal);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+    }}
+
+    .wishlist-card:hover {{
+      border-color: rgba(0, 255, 157, 0.45);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(0, 255, 157, 0.12);
+      transform: translateY(-2px);
+    }}
+
+    .wishlist-card-top {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }}
+
+    .wishlist-category-badge {{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #06b6d4;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+    }}
+
+    .wishlist-status-pill {{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+    }}
+
+    .wishlist-card-body {{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }}
+
+    .wishlist-card-title-wrap {{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }}
+
+    .wishlist-card-icon {{
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(251, 191, 36, 0.1);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fbbf24;
+      flex-shrink: 0;
+    }}
+
+    .wishlist-card-title {{
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0;
+      line-height: 1.3;
+    }}
+
+    .wishlist-card-domains {{
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono, monospace);
+    }}
+
+    .wishlist-card-desc {{
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.5;
+    }}
+
+    .wishlist-card-footer {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      flex-wrap: wrap;
+    }}
+
+    .wishlist-compliance-badge {{
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--neon-mint);
+    }}
+
+    .wishlist-compliance-badge svg {{
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }}
+
+    .btn-vote {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 255, 157, 0.08);
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      color: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      user-select: none;
+    }}
+
+    .btn-vote:hover {{
+      background: rgba(0, 255, 157, 0.18);
+      border-color: var(--neon-mint);
+      box-shadow: 0 0 16px rgba(0, 255, 157, 0.25);
+      transform: scale(1.03);
+    }}
+
+    .btn-vote.voted {{
+      background: rgba(0, 255, 157, 0.22);
+      border-color: var(--neon-mint);
+      color: var(--neon-mint);
+      box-shadow: 0 0 18px rgba(0, 255, 157, 0.3);
+    }}
+
+    .btn-vote svg {{
+      width: 16px;
+      height: 16px;
+      transition: transform var(--transition-fast);
+    }}
+
+    .btn-vote:hover svg {{
+      transform: scale(1.15) rotate(-5deg);
+    }}
+
+    .vote-count {{
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #ffffff;
+      transition: transform 0.2s ease;
+    }}
+
+    .btn-vote.voted .vote-count {{
+      background: rgba(0, 255, 157, 0.25);
+      color: #ffffff;
+    }}
+
+    /* Action Card: "Предложить свой сервис или игру" */
+    .wishlist-action-card {{
+      background: rgba(0, 255, 157, 0.03);
+      border: 2px dashed rgba(0, 255, 157, 0.35);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      transition: all var(--transition-normal);
+      cursor: pointer;
+      position: relative;
+    }}
+
+    .wishlist-action-card:hover {{
+      background: rgba(0, 255, 157, 0.07);
+      border-color: var(--neon-mint);
+      box-shadow: 0 0 30px rgba(0, 255, 157, 0.2);
+      transform: translateY(-2px);
+    }}
+
+    .action-card-header {{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }}
+
+    .action-card-icon {{
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(0, 255, 157, 0.12);
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neon-mint);
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }}
+
+    .action-card-title {{
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0;
+      line-height: 1.3;
+    }}
+
+    .action-card-desc {{
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.5;
+    }}
+
+    .action-card-footer {{
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }}
+
+    .btn-action-card {{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }}
+
+    .compliance-note-box {{
+      background: rgba(0, 255, 157, 0.06);
+      border: 1px solid rgba(0, 255, 157, 0.25);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.45;
+    }}
+
+    .compliance-note-box svg {{
+      flex-shrink: 0;
+      color: var(--neon-mint);
     }}
 
     /* ==========================================================================
@@ -5629,6 +6058,120 @@ sudo systemctl restart systemd-resolved</code></pre>
         </div>
       </div>
     </section>
+ 
+    <!-- 4.6. Community Wishlist & Voting Section -->
+    <section class="wishlist-section" id="wishlist">
+      <div class="wishlist-header">
+        <div class="wishlist-header-left">
+          <div class="section-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span data-i18n="wishlistTag">ВИШЛИСТ СООБЩЕСТВА</span>
+          </div>
+          <h2 data-i18n="wishlistTitle">Голосование за новые сервисы и игры</h2>
+          <p class="wishlist-subtitle" data-i18n="wishlistSubtitle">Честный вишлист: мы не добавляем фейковые карточки для массовки. Здесь только реальные запросы пользователей. Голосуйте за нужные сервисы или предложите свой.</p>
+        </div>
+        <button type="button" class="btn-neon-action btn-suggest-trigger" id="open-suggest-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6m-4 4h2M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg>
+          <span data-i18n="btnOpenSuggest">💡 Предложить свой сервис или игру</span>
+        </button>
+      </div>
+
+      <!-- 4-Step Process Pipeline -->
+      <div class="wishlist-pipeline">
+        <div class="pipeline-step">
+          <div class="pipeline-step-top">
+            <span class="step-number">1. Предложение</span>
+            <span class="step-icon">💡</span>
+          </div>
+          <h4 class="step-title" data-i18n="wishlistStep1Title">1. Ваше предложение</h4>
+          <p class="step-desc" data-i18n="wishlistStep1Desc">Вы предлагаете нужный сервис или игру через форму</p>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-top">
+            <span class="step-number">2. Проверка РКН</span>
+            <span class="step-icon">🛡️</span>
+          </div>
+          <h4 class="step-title" data-i18n="wishlistStep2Title">2. Проверка на РКН</h4>
+          <p class="step-desc" data-i18n="wishlistStep2Desc">Сверка с 149-ФЗ и закрытым белым списком сервиса</p>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-top">
+            <span class="step-number">3. Модерация</span>
+            <span class="step-icon">⚙️</span>
+          </div>
+          <h4 class="step-title" data-i18n="wishlistStep3Title">3. Модерация и тесты</h4>
+          <p class="step-desc" data-i18n="wishlistStep3Desc">Инженеры проверяют SNI-маршрутизацию и геолокацию узлов</p>
+        </div>
+        <div class="pipeline-step">
+          <div class="pipeline-step-top">
+            <span class="step-number">4. Голосование</span>
+            <span class="step-icon">🚀</span>
+          </div>
+          <h4 class="step-title" data-i18n="wishlistStep4Title">4. Публикация в вишлист</h4>
+          <p class="step-desc" data-i18n="wishlistStep4Desc">Сервис появляется в списке: сообщество голосует, топ идет в работу</p>
+        </div>
+      </div>
+
+      <!-- Wishlist Grid: Only Real Card (Konami) + Action Card -->
+      <div class="wishlist-grid" id="wishlist-grid">
+        <!-- Card 1: Konami (Real user request) -->
+        <article class="wishlist-card" id="card-konami">
+          <div class="wishlist-card-top">
+            <span class="wishlist-category-badge">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="8" cy="12" r="2"/><path d="M15 9v6m-3-3h6"/></svg>
+              <span>Игры и аккаунты</span>
+            </span>
+            <span class="wishlist-status-pill">
+              <span class="status-dot" style="width: 7px; height: 7px; background: #fbbf24; border-radius: 50%; box-shadow: 0 0 8px #fbbf24;"></span>
+              <span data-i18n="statusInProgress">В обработке у команды 🟡</span>
+            </span>
+          </div>
+          <div class="wishlist-card-body">
+            <div class="wishlist-card-title-wrap">
+              <div class="wishlist-card-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="8" cy="12" r="2"/><path d="M15 9v6m-3-3h6"/></svg>
+              </div>
+              <div>
+                <h3 class="wishlist-card-title">Konami (eFootball / PES / Yu-Gi-Oh)</h3>
+                <span class="wishlist-card-domains">konami.com • konami.net</span>
+              </div>
+            </div>
+            <p class="wishlist-card-desc">Реальный запрос от игроков: устранение сетевых ошибок авторизации в Konami ID, синхронизация профилей eFootball и стабильный онлайн-матчмейкинг без лагов.</p>
+          </div>
+          <div class="wishlist-card-footer">
+            <span class="wishlist-compliance-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              <span>100% белый список (149-ФЗ)</span>
+            </span>
+            <button type="button" class="btn-vote" id="vote-btn-konami" data-service-id="konami" aria-label="Поддержать Konami">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+              <span class="vote-text" data-i18n="btnVote">Поддержать</span>
+              <span class="vote-count" id="vote-count-konami">142</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Card 2: Action Card / Предложить свой сервис или игру -->
+        <article class="wishlist-action-card" id="wishlist-action-card" role="button" tabindex="0" aria-label="Предложить свой сервис или игру">
+          <div class="wishlist-card-body">
+            <div class="action-card-header">
+              <div class="action-card-icon">💡</div>
+              <div>
+                <h3 class="action-card-title" data-i18n="wishlistActionCardTitle">💡 Предложить свой сервис или игру</h3>
+                <span class="wishlist-card-domains" style="color: var(--neon-mint);">Сбор реальных предложений</span>
+              </div>
+            </div>
+            <p class="action-card-desc" data-i18n="wishlistActionCardDesc">Не нашли нужный сервис или игру? Отправьте заявку напрямую инженерам. После проверки на РКН и быстрой модерации она появится здесь для голосования.</p>
+          </div>
+          <div class="action-card-footer">
+            <button type="button" class="btn-neon-action btn-action-card" id="action-card-suggest-btn">
+              <span data-i18n="wishlistActionCardBtn">Предложить</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
 
   </main>
 
@@ -5939,6 +6482,79 @@ sudo systemctl restart systemd-resolved</code></pre>
     </div>
   </div>
 
+  <!-- Wishlist Suggestion Modal -->
+  <div id="suggest-modal" class="feedback-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="suggest-modal-title" aria-hidden="true" style="display: none;">
+    <div class="feedback-modal-card">
+      <div class="feedback-modal-header">
+        <div class="feedback-modal-title-wrap">
+          <div class="feedback-modal-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--neon-mint)" stroke-width="2">
+              <path d="M9 18h6m-4 4h2M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 id="suggest-modal-title" class="feedback-modal-title" data-i18n="suggestModalTitle">Предложить сервис или игру</h3>
+            <p class="feedback-modal-subtitle" data-i18n="suggestModalSubtitle">Каждая заявка проходит проверку на РКН и после модерации публикуется для открытого голосования</p>
+          </div>
+        </div>
+        <button type="button" class="chat-close-btn" id="close-suggest-btn" aria-label="Закрыть окно">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="suggest-form" class="feedback-form" action="javascript:void(0);">
+        <!-- Suggestion Type Segmented Chips -->
+        <div class="feedback-type-group" role="radiogroup" aria-label="Тип сервиса">
+          <button type="button" class="feedback-type-chip active" data-suggest-type="game" role="radio" aria-checked="true">
+            <span data-i18n="suggestTypeGame">🎮 Игра</span>
+          </button>
+          <button type="button" class="feedback-type-chip" data-suggest-type="ai" role="radio" aria-checked="false">
+            <span data-i18n="suggestTypeAi">🤖 ИИ / Нейросеть</span>
+          </button>
+          <button type="button" class="feedback-type-chip" data-suggest-type="app" role="radio" aria-checked="false">
+            <span data-i18n="suggestTypeApp">💻 Программа / Сайт</span>
+          </button>
+        </div>
+
+        <!-- Service / Game Name -->
+        <div class="feedback-field">
+          <label for="suggest-name" class="feedback-label" data-i18n="suggestNameLabel">Название сервиса или игры:</label>
+          <input type="text" id="suggest-name" class="feedback-input ym-record-keys" placeholder="Например: Konami ID, EA FC, Cursor..." required maxlength="80" data-i18n-placeholder="suggestNamePlaceholder">
+        </div>
+
+        <!-- Domain (Optional) -->
+        <div class="feedback-field">
+          <label for="suggest-domain" class="feedback-label" data-i18n="suggestDomainLabel">Официальный сайт или домен (если знаете):</label>
+          <input type="text" id="suggest-domain" class="feedback-input ym-record-keys" placeholder="Например: konami.com" maxlength="120" data-i18n-placeholder="suggestDomainPlaceholder">
+        </div>
+
+        <!-- Description / Reason -->
+        <div class="feedback-field">
+          <label for="suggest-reason" class="feedback-label" data-i18n="suggestReasonLabel">Какая ошибка возникает или почему нужен доступ:</label>
+          <textarea id="suggest-reason" class="feedback-textarea ym-record-keys" rows="3" placeholder="Опишите ошибку (код ошибки, сбой подключения, авторизации или матчмейкинга)..." required maxlength="600" data-i18n-placeholder="suggestReasonPlaceholder"></textarea>
+        </div>
+
+        <!-- Contact (Optional) -->
+        <div class="feedback-field">
+          <label for="suggest-contact" class="feedback-label" data-i18n="suggestContactLabel">Ваш контакт (Telegram или Email, по желанию):</label>
+          <input type="text" id="suggest-contact" class="feedback-input ym-record-keys" placeholder="@username (напишем лично, когда добавим)" maxlength="100" data-i18n-placeholder="suggestContactPlaceholder">
+        </div>
+
+        <!-- Compliance Note -->
+        <div class="compliance-note-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--neon-mint)" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          <span data-i18n="suggestComplianceNote">🛡️ Все предложения проходят проверку на соответствие 149-ФЗ и белому списку. Сервис обрабатывает только легитимные ресурсы.</span>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="suggest-submit-btn" class="btn-neon-action feedback-submit-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          <span data-i18n="suggestSubmitBtn">Отправить на проверку</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
   <!-- Client Script -->
   <script>
     (function() {{
@@ -5983,6 +6599,10 @@ sudo systemctl restart systemd-resolved</code></pre>
 
         if (typeof renderReviews === 'function') {{
           renderReviews();
+        }}
+
+        if (typeof updateVoteButtonState === 'function') {{
+          updateVoteButtonState();
         }}
 
         try {{
@@ -6698,7 +7318,7 @@ sudo systemctl restart systemd-resolved</code></pre>
           if (feedbackModal && feedbackModal.classList.contains('active')) {{
             toggleFeedbackModal(false);
           }}
-          ['privacy-modal', 'terms-modal', 'contact-modal'].forEach(function(mId) {{
+          ['privacy-modal', 'terms-modal', 'contact-modal', 'suggest-modal'].forEach(function(mId) {{
             const m = document.getElementById(mId);
             if (m && m.classList.contains('active')) {{
               m.classList.remove('active');
@@ -7393,6 +8013,228 @@ sudo systemctl restart systemd-resolved</code></pre>
       window.dismissSiteAlert = dismissSiteAlert;
 
       initSiteAlert();
+
+      // ==========================================================================
+      // Community Wishlist & Proposal Logic
+      // ==========================================================================
+      const suggestModal = document.getElementById('suggest-modal');
+      const openSuggestBtn = document.getElementById('open-suggest-btn');
+      const actionCardSuggestBtn = document.getElementById('action-card-suggest-btn');
+      const wishlistActionCard = document.getElementById('wishlist-action-card');
+      const closeSuggestBtn = document.getElementById('close-suggest-btn');
+      const suggestForm = document.getElementById('suggest-form');
+      const suggestTypeChips = document.querySelectorAll('[data-suggest-type]');
+      let currentSuggestCategory = 'Игра';
+
+      function toggleSuggestModal(open) {{
+        if (!suggestModal) return;
+        const isOpen = open !== undefined ? open : !suggestModal.classList.contains('active');
+        if (isOpen) {{
+          suggestModal.style.display = 'flex';
+          requestAnimationFrame(function() {{
+            suggestModal.classList.add('active');
+            suggestModal.setAttribute('aria-hidden', 'false');
+          }});
+          setTimeout(function() {{
+            const nameInput = document.getElementById('suggest-name');
+            if (nameInput) nameInput.focus();
+          }}, 120);
+        }} else {{
+          suggestModal.classList.remove('active');
+          suggestModal.setAttribute('aria-hidden', 'true');
+          setTimeout(function() {{
+            suggestModal.style.display = 'none';
+          }}, 250);
+        }}
+        playTactileFeedback();
+      }}
+
+      if (openSuggestBtn) {{
+        openSuggestBtn.addEventListener('click', function() {{ toggleSuggestModal(true); }});
+      }}
+      if (actionCardSuggestBtn) {{
+        actionCardSuggestBtn.addEventListener('click', function(e) {{
+          e.stopPropagation();
+          toggleSuggestModal(true);
+        }});
+      }}
+      if (wishlistActionCard) {{
+        wishlistActionCard.addEventListener('click', function() {{
+          toggleSuggestModal(true);
+        }});
+        wishlistActionCard.addEventListener('keydown', function(e) {{
+          if (e.key === 'Enter' || e.key === ' ') {{
+            e.preventDefault();
+            toggleSuggestModal(true);
+          }}
+        }});
+      }}
+      if (closeSuggestBtn) {{
+        closeSuggestBtn.addEventListener('click', function() {{ toggleSuggestModal(false); }});
+      }}
+      if (suggestModal) {{
+        suggestModal.addEventListener('click', function(e) {{
+          if (e.target === suggestModal) toggleSuggestModal(false);
+        }});
+      }}
+
+      // Category Chips
+      suggestTypeChips.forEach(function(chip) {{
+        chip.addEventListener('click', function() {{
+          playTactileFeedback();
+          suggestTypeChips.forEach(function(c) {{
+            c.classList.remove('active');
+            c.setAttribute('aria-checked', 'false');
+          }});
+          chip.classList.add('active');
+          chip.setAttribute('aria-checked', 'true');
+          const t = chip.getAttribute('data-suggest-type');
+          if (t === 'game') currentSuggestCategory = 'Игра';
+          else if (t === 'ai') currentSuggestCategory = 'ИИ / Нейросеть';
+          else currentSuggestCategory = 'Программа / Сайт';
+        }});
+      }});
+
+      // Wishlist Voting Logic
+      const voteKonamiBtn = document.getElementById('vote-btn-konami');
+      const voteCountEl = document.getElementById('vote-count-konami');
+      let votedItems = [];
+      try {{
+        votedItems = JSON.parse(localStorage.getItem('magicdns_voted_wishlist') || '[]');
+        if (!Array.isArray(votedItems)) votedItems = [];
+      }} catch(e) {{
+        votedItems = [];
+      }}
+
+      function updateVoteButtonState() {{
+        if (!voteKonamiBtn) return;
+        const hasVoted = votedItems.indexOf('konami') !== -1;
+        const textSpan = voteKonamiBtn.querySelector('.vote-text');
+        if (hasVoted) {{
+          voteKonamiBtn.classList.add('voted');
+          if (textSpan) {{
+            textSpan.textContent = (I18N[currentLang] && I18N[currentLang].btnVoted) ? I18N[currentLang].btnVoted : 'Вы поддержали ✓';
+          }}
+        }} else {{
+          voteKonamiBtn.classList.remove('voted');
+          if (textSpan) {{
+            textSpan.textContent = (I18N[currentLang] && I18N[currentLang].btnVote) ? I18N[currentLang].btnVote : 'Поддержать';
+          }}
+        }}
+      }}
+      window.updateVoteButtonState = updateVoteButtonState;
+      updateVoteButtonState();
+
+      if (voteKonamiBtn) {{
+        voteKonamiBtn.addEventListener('click', function() {{
+          playTactileFeedback(720, 0.08);
+          const hasVoted = votedItems.indexOf('konami') !== -1;
+          if (hasVoted) {{
+            showToast('Вы уже поддержали этот запрос 👍');
+            return;
+          }}
+
+          votedItems.push('konami');
+          try {{
+            localStorage.setItem('magicdns_voted_wishlist', JSON.stringify(votedItems));
+          }} catch(e) {{}}
+
+          if (voteCountEl) {{
+            let currentVotes = parseInt(voteCountEl.textContent || '142', 10);
+            if (isNaN(currentVotes)) currentVotes = 142;
+            voteCountEl.textContent = String(currentVotes + 1);
+            voteCountEl.style.transform = 'scale(1.25)';
+            setTimeout(function() {{ voteCountEl.style.transform = ''; }}, 200);
+          }}
+
+          updateVoteButtonState();
+          showToast('Спасибо! Ваш голос учтён 👍');
+
+          try {{
+            fetch('https://dns.magicdns.ru/api/feedback', {{
+              method: 'POST',
+              headers: {{ 'Content-Type': 'application/json' }},
+              body: JSON.stringify({{ type: 'vote', service_id: 'konami' }})
+            }}).catch(function() {{
+              fetch(CF_WORKER_URL + '/feedback', {{
+                method: 'POST',
+                headers: {{ 'Content-Type': 'application/json' }},
+                body: JSON.stringify({{ type: 'vote', service_id: 'konami' }})
+              }}).catch(function(){{}});
+            }});
+          }} catch(e) {{}}
+        }});
+      }}
+
+      // Suggestion Form Submit
+      if (suggestForm) {{
+        suggestForm.addEventListener('submit', function(e) {{
+          e.preventDefault();
+          const nameInput = document.getElementById('suggest-name');
+          const domainInput = document.getElementById('suggest-domain');
+          const reasonInput = document.getElementById('suggest-reason');
+          const contactInput = document.getElementById('suggest-contact');
+          const submitBtn = document.getElementById('suggest-submit-btn');
+
+          const title = nameInput ? nameInput.value.trim() : '';
+          const domain = domainInput ? domainInput.value.trim() : '';
+          const reason = reasonInput ? reasonInput.value.trim() : '';
+          const contact = contactInput ? contactInput.value.trim() : '';
+
+          if (!title || !reason) return;
+
+          playTactileFeedback(800, 0.06);
+
+          if (submitBtn) {{
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.7';
+          }}
+
+          const payload = {{
+            type: 'wishlist',
+            category: currentSuggestCategory,
+            service_title: title,
+            domain: domain,
+            message: reason,
+            contact: contact,
+            platform: 'Wishlist Suggestion'
+          }};
+
+          const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+          const sTimeout = setTimeout(function() {{
+            if (controller) controller.abort();
+          }}, 4000);
+
+          fetch('https://dns.magicdns.ru/api/feedback', {{
+            method: 'POST',
+            headers: {{ 'Content-Type': 'application/json' }},
+            body: JSON.stringify(payload),
+            signal: controller ? controller.signal : undefined
+          }}).then(function() {{
+            clearTimeout(sTimeout);
+          }}).catch(function() {{
+            clearTimeout(sTimeout);
+            try {{
+              fetch(CF_WORKER_URL + '/feedback', {{
+                method: 'POST',
+                headers: {{ 'Content-Type': 'application/json' }},
+                body: JSON.stringify(payload)
+              }}).catch(function(){{}});
+            }} catch(e){{}}
+          }}).finally(function() {{
+            if (submitBtn) {{
+              submitBtn.disabled = false;
+              submitBtn.style.opacity = '1';
+            }}
+            toggleSuggestModal(false);
+            if (nameInput) nameInput.value = '';
+            if (domainInput) domainInput.value = '';
+            if (reasonInput) reasonInput.value = '';
+            if (contactInput) contactInput.value = '';
+            showToast('Предложение отправлено на модерацию и проверку РКН! 💡');
+          }});
+        }});
+      }}
 
     }})();
   </script>

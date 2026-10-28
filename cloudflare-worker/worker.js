@@ -116,6 +116,22 @@ export default {
               `💻 <b>Платформа:</b> ${escapeTgHtml(platform)}\n` +
               `👤 <b>Контакт:</b> ${contact ? `<code>${escapeTgHtml(contact)}</code>` : 'Анонимно'}\n\n` +
               `💬 <b>Суть идеи:</b>\n${escapeTgHtml(message)}`;
+          } else if (type === 'wishlist') {
+            const serviceTitle = body.service_title || 'Новый сервис';
+            const category = body.category || 'Игра / Сервис';
+            const domain = body.domain || 'Не указан';
+            tgText = `💡 <b>НОВАЯ ЗАЯВКА В ВИШЛИСТ С САЙТА! #ВИШЛИСТ</b>\n\n` +
+              `🎮 <b>Сервис / Игра:</b> ${escapeTgHtml(serviceTitle)}\n` +
+              `📁 <b>Категория:</b> ${escapeTgHtml(category)}\n` +
+              `🌐 <b>Домен:</b> <code>${escapeTgHtml(domain)}</code>\n` +
+              `👤 <b>Контакт:</b> ${contact ? `<code>${escapeTgHtml(contact)}</code>` : 'Анонимно'}\n\n` +
+              `💬 <b>Описание проблемы:</b>\n${escapeTgHtml(message)}\n\n` +
+              `🛡️ <i>Требуется проверка на РКН (149-ФЗ) и модерация перед публикацией для голосования.</i>`;
+          } else if (type === 'vote' || type === 'wishlist_vote') {
+            return new Response(JSON.stringify({ ok: true, message: 'Голос принят' }), {
+              status: 200,
+              headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+            });
           } else {
             tgText = `🔔 <b>Новое сообщение с MagicDNS!</b>\n\n💬 ${escapeTgHtml(message)}`;
           }

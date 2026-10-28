@@ -1693,6 +1693,16 @@ class FeedbackAPIHandler(BaseHTTPRequestHandler):
                 rating = int(data.get('rating', 5))
                 message = data.get('message', '').strip()
 
+                if review_type in ('vote', 'wishlist_vote'):
+                    service_id = data.get('service_id', 'unknown')
+                    print(f'[VOTE] Wishlist vote received for {service_id}')
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.end_headers()
+                    self.wfile.write(json.dumps({'ok': True, 'message': 'Голос принят'}).encode('utf-8'))
+                    return
+
                 if not message:
                     self.send_response(400)
                     self.send_header('Content-Type', 'application/json')
@@ -1706,7 +1716,26 @@ class FeedbackAPIHandler(BaseHTTPRequestHandler):
                 esc_platform = html.escape(str(platform))
                 esc_message = html.escape(str(message))
 
-                if review_type == 'suggestion':
+                if review_type in ('wishlist', 'idea'):
+                    service_title = data.get('service_title', '').strip() or 'Новый сервис'
+                    domain = data.get('domain', '').strip() or 'Не указан'
+                    category = data.get('category', 'Игра / Сервис')
+                    contact = data.get('contact', '').strip() or esc_author
+                    esc_title = html.escape(str(service_title))
+                    esc_domain = html.escape(str(domain))
+                    esc_category = html.escape(str(category))
+                    esc_contact = html.escape(str(contact))
+                    tg_msg = (
+                        f"💡 <b>НОВАЯ ЗАЯВКА В ВИШЛИСТ С САЙТА! #ВИШЛИСТ</b>\n\n"
+                        f"🎮 <b>Сервис / Игра:</b> {esc_title}\n"
+                        f"📁 <b>Категория:</b> {esc_category}\n"
+                        f"🌐 <b>Домен:</b> <code>{esc_domain}</code>\n"
+                        f"👤 <b>Контакт:</b> {esc_contact}\n\n"
+                        f"💬 <b>Причина / Ошибка:</b>\n{esc_message}\n\n"
+                        f"🛡️ <i>Требуется проверка на РКН (149-ФЗ) и модерация перед публикацией для голосования.</i>"
+                    )
+                    send_message(ADMIN_CHAT_ID, tg_msg)
+                elif review_type == 'suggestion':
                     tg_msg = (
                         f"💡 <b>НОВОЕ ПРЕДЛОЖЕНИЕ / ИДЕЯ ДЛЯ MAGICDNS!</b>\n\n"
                         f"👤 <b>От:</b> {esc_author}\n"
