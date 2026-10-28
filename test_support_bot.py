@@ -148,5 +148,104 @@ class TestSupportBot(unittest.TestCase):
         self.assertIn("dl_ios_se", callbacks)
         self.assertIn("dl_ios_de", callbacks)
 
+    def test_feedback_api_wishlist_and_vote(self):
+        import io
+        from unittest.mock import patch, MagicMock
+
+        messages_sent = []
+        def mock_send(chat_id, text, reply_markup=None):
+            messages_sent.append((chat_id, text, reply_markup))
+
+        with patch.object(support_bot, 'send_message', side_effect=mock_send):
+            # 1. Wishlist vote
+            vote_body = json.dumps({'type': 'vote', 'service_id': 'konami'}).encode('utf-8')
+            h1 = support_bot.FeedbackAPIHandler.__new__(support_bot.FeedbackAPIHandler)
+            h1.path = '/api/feedback'
+            h1.headers = {'Content-Length': str(len(vote_body))}
+            h1.rfile = io.BytesIO(vote_body)
+            h1.wfile = io.BytesIO()
+            h1.send_response = MagicMock()
+            h1.send_header = MagicMock()
+            h1.end_headers = MagicMock()
+            h1.do_POST()
+            h1.send_response.assert_called_with(200)
+            resp = json.loads(h1.wfile.getvalue().decode('utf-8'))
+            self.assertTrue(resp.get('ok'))
+            self.assertEqual(resp.get('message'), 'Голос принят')
+            self.assertEqual(len(messages_sent), 0)
+
+            # 2. Wishlist proposal
+            wishlist_body = json.dumps({
+                'type': 'wishlist',
+                'service_title': 'EA FC 25',
+                'category': 'Игра',
+                'domain': 'ea.com',
+                'message': 'Ошибка авторизации EA Play',
+                'contact': '@gamer123'
+            }).encode('utf-8')
+            h2 = support_bot.FeedbackAPIHandler.__new__(support_bot.FeedbackAPIHandler)
+            h2.path = '/api/feedback'
+            h2.headers = {'Content-Length': str(len(wishlist_body))}
+            h2.rfile = io.BytesIO(wishlist_body)
+            h2.wfile = io.BytesIO()
+            h2.send_response = MagicMock()
+            h2.send_header = MagicMock()
+            h2.end_headers = MagicMock()
+            h2.do_POST()
+            h2.send_response.assert_called_with(200)
+            self.assertEqual(len(messages_sent), 1)
+            _, text2, _ = messages_sent[0]
+            self.assertIn('#ВИШЛИСТ', text2)
+            self.assertIn('EA FC 25', text2)
+            self.assertIn('ea.com', text2)
+            self.assertIn('@gamer123', text2)
+            self.assertIn('149-ФЗ', text2)
+
+            # 3. Idea (distinct from wishlist)
+            idea_body = json.dumps({
+                'type': 'idea',
+                'name': 'Иван',
+                'platform': 'iOS',
+                'message': 'Добавьте поддержку DoH3 на роутерах',
+                'contact': '@ivan'
+            }).encode('utf-8')
+            h3 = support_bot.FeedbackAPIHandler.__new__(support_bot.FeedbackAPIHandler)
+            h3.path = '/api/feedback'
+            h3.headers = {'Content-Length': str(len(idea_body))}
+            h3.rfile = io.BytesIO(idea_body)
+            h3.wfile = io.BytesIO()
+            h3.send_response = MagicMock()
+            h3.send_header = MagicMock()
+            h3.end_headers = MagicMock()
+            h3.do_POST()
+            h3.send_response.assert_called_with(200)
+            self.assertEqual(len(messages_sent), 2)
+            _, text3, _ = messages_sent[1]
+            self.assertIn('#ИДЕЯ', text3)
+            self.assertNotIn('#ВИШЛИСТ', text3)
+            self.assertIn('DoH3', text3)
+
+            # 4. Bug report
+            bug_body = json.dumps({
+                'type': 'bug',
+                'platform': 'Windows',
+                'message': 'Кнопка не нажимается в Firefox',
+                'contact': '@tester'
+            }).encode('utf-8')
+            h4 = support_bot.FeedbackAPIHandler.__new__(support_bot.FeedbackAPIHandler)
+            h4.path = '/api/feedback'
+            h4.headers = {'Content-Length': str(len(bug_body))}
+            h4.rfile = io.BytesIO(bug_body)
+            h4.wfile = io.BytesIO()
+            h4.send_response = MagicMock()
+            h4.send_header = MagicMock()
+            h4.end_headers = MagicMock()
+            h4.do_POST()
+            h4.send_response.assert_called_with(200)
+            self.assertEqual(len(messages_sent), 3)
+            _, text4, _ = messages_sent[2]
+            self.assertIn('#БАГ', text4)
+            self.assertNotIn('#ВИШЛИСТ', text4)
+
 if __name__ == '__main__':
     unittest.main()
