@@ -7018,20 +7018,23 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
             <dict>
                 <key>DNSProtocol</key>
                 <string>HTTPS</string>
-                <key>ServerURL</key>
-                <string>https://dns.magicdns.ru/dns-query</string>
                 <key>ServerAddresses</key>
                 <array>
                     <string>109.120.132.43</string>
                     <string>94.249.177.102</string>
+                    <string>2.56.175.196</string>
                 </array>
+                <key>ServerName</key>
+                <string>dns.magicdns.ru</string>
+                <key>ServerURL</key>
+                <string>https://dns.magicdns.ru/dns-query</string>
             </dict>
             <key>PayloadDescription</key>
-            <string>Настройка зашифрованного DoH MagicDNS для прямого доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без сторонних приложений и тоннелей</string>
+            <string>Шифрованный DNS MagicDNS (DoH) для доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без сторонних приложений.</string>
             <key>PayloadDisplayName</key>
-            <string>MagicDNS (AI Services DoH)</string>
+            <string>MagicDNS (DoH)</string>
             <key>PayloadIdentifier</key>
-            <string>ru.magicdns.profile</string>
+            <string>com.apple.dnsSettings.managed.76D07A5E-4B14-4B7C-906D-63851E9526C8</string>
             <key>PayloadType</key>
             <string>com.apple.dnsSettings.managed</string>
             <key>PayloadUUID</key>
@@ -7040,10 +7043,12 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
             <integer>1</integer>
         </dict>
     </array>
+    <key>PayloadDescription</key>
+    <string>Направляет DNS-запросы на MagicDNS по зашифрованному протоколу DoH. Удалить: Настройки → Основные → VPN и управление устройством.</string>
     <key>PayloadDisplayName</key>
-    <string>MagicDNS Профиль для нейросетей</string>
+    <string>MagicDNS</string>
     <key>PayloadIdentifier</key>
-    <string>ru.magicdns</string>
+    <string>ru.magicdns.profile</string>
     <key>PayloadOrganization</key>
     <string>MagicDNS</string>
     <key>PayloadScope</key>
@@ -7057,8 +7062,7 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
     <key>PayloadVersion</key>
     <integer>1</integer>
 </dict>
-</plist>
-'''
+</plist>'''
 
 # SEO files: robots.txt and sitemap.xml in root and public/
 import os

@@ -1451,7 +1451,7 @@ def generate_mobileconfig(variant="dual"):
         name = "MagicDNS (Германия)"
         desc = "Резервный немецкий узел MagicDNS DoH"
     else:
-        servers = ["109.120.132.43", "94.249.177.102"]
+        servers = ["109.120.132.43", "94.249.177.102", "2.56.175.196"]
         name = "MagicDNS (Швеция + Германия)"
         desc = "Двойной узел MagicDNS с автопереключением"
 
@@ -1472,6 +1472,8 @@ def generate_mobileconfig(variant="dual"):
                 <array>
 {server_tags}
                 </array>
+                <key>ServerName</key>
+                <string>dns.magicdns.ru</string>
                 <key>ServerURL</key>
                 <string>https://dns.magicdns.ru/dns-query</string>
             </dict>
@@ -1497,6 +1499,8 @@ def generate_mobileconfig(variant="dual"):
     <string>ru.magicdns.profile.{variant}</string>
     <key>PayloadOrganization</key>
     <string>MagicDNS</string>
+    <key>PayloadScope</key>
+    <string>System</string>
     <key>PayloadRemovalDisallowed</key>
     <false/>
     <key>PayloadType</key>
@@ -1585,7 +1589,7 @@ def run_dig_diagnostics(domain):
         lat = int((time.time() - t0) * 1000)
 
         if res_ips:
-            is_proxied = any(ip in ("109.120.132.43", "94.249.177.102", "2.56.179.170") for ip in res_ips)
+            is_proxied = any(ip in ("109.120.132.43", "94.249.177.102", "2.56.175.196") for ip in res_ips)
             ips_str = ", ".join(res_ips[:3])
             if is_proxied:
                 status_icon = "🟢"
