@@ -2677,9 +2677,10 @@ html_content = f'''<!DOCTYPE html>
 
     .news-grid,
     .reviews-grid {{
-      display: flex;
+      display: flex !important;
       flex-direction: row;
       flex-wrap: nowrap;
+      align-items: stretch;
       overflow-x: auto;
       overflow-y: hidden;
       scroll-snap-type: x mandatory;
@@ -2767,16 +2768,16 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     .carousel-nav-btn.prev {{
-      left: -22px;
+      left: -18px;
     }}
 
     .carousel-nav-btn.next {{
-      right: -22px;
+      right: -18px;
     }}
 
-    @media (max-width: 1140px) {{
-      .carousel-nav-btn.prev {{ left: -6px; }}
-      .carousel-nav-btn.next {{ right: -6px; }}
+    @media (max-width: 1140px) and (min-width: 769px) {{
+      .carousel-nav-btn.prev {{ left: 6px; }}
+      .carousel-nav-btn.next {{ right: 6px; }}
     }}
 
     @media (max-width: 768px) {{
@@ -7009,11 +7010,11 @@ sudo systemctl restart systemd-resolved</code></pre>
         }}
 
         emptyState.style.display = 'none';
-        grid.style.display = 'grid';
+        grid.style.display = 'flex';
         grid.innerHTML = '';
         if (headerBtn) headerBtn.classList.remove('hide-when-empty');
 
-        const reviews = reviewsExpanded ? allReviews : allReviews.slice(0, REVIEWS_PAGE_SIZE);
+        const reviews = allReviews;
 
         if (reviews.length === 1) {{
           grid.classList.add('single-item');
@@ -7103,22 +7104,8 @@ sudo systemctl restart systemd-resolved</code></pre>
           grid.appendChild(card);
         }});
 
-        if (loadMoreWrap && loadMoreBtn && loadMoreText) {{
-          if (allReviews.length > REVIEWS_PAGE_SIZE) {{
-            loadMoreWrap.style.display = 'flex';
-            const moreLabel = (I18N[currentLang] && I18N[currentLang].reviewsLoadMore) ? I18N[currentLang].reviewsLoadMore : 'Показать ещё отзывы';
-            const collapseLabel = (I18N[currentLang] && I18N[currentLang].reviewsCollapse) ? I18N[currentLang].reviewsCollapse : 'Свернуть отзывы';
-            if (reviewsExpanded) {{
-              loadMoreBtn.classList.add('expanded');
-              loadMoreText.textContent = collapseLabel;
-            }} else {{
-              loadMoreBtn.classList.remove('expanded');
-              const remaining = allReviews.length - REVIEWS_PAGE_SIZE;
-              loadMoreText.textContent = moreLabel + ' (' + remaining + ')';
-            }}
-          }} else {{
-            loadMoreWrap.style.display = 'none';
-          }}
+        if (loadMoreWrap) {{
+          loadMoreWrap.style.display = 'none';
         }}
 
         setupCarousel('reviews-grid', 'reviews-dots', 'reviews-prev', 'reviews-next', '.review-card');
