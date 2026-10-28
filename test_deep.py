@@ -112,8 +112,14 @@ test("Download buttons tactile feedback binding in JS", 'dlProfileBtn' in html)
 test("Procedural tactile feedback audio/haptics present", 'playTactileFeedback' in html and 'navigator.vibrate' in html and 'AudioContext' in html)
 
 # 12. Mobileconfig file validity
-with open(mobileconfig_path, 'r', encoding='utf-8') as f:
-    mc_content = f.read()
+with open(mobileconfig_path, 'rb') as f:
+    raw_mc = f.read()
+    if b'<?xml' in raw_mc:
+        xml_start = raw_mc.find(b'<?xml')
+        xml_end = raw_mc.find(b'</plist>') + len(b'</plist>')
+        mc_content = raw_mc[xml_start:xml_end].decode('utf-8', errors='ignore')
+    else:
+        mc_content = raw_mc.decode('utf-8', errors='ignore')
 
 try:
     ET.fromstring(mc_content)

@@ -3,7 +3,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 local_file = r'C:\Users\GreenFest\.gemini\antigravity\scratch\magicdns\support_bot.py'
 remote_file = '/root/magicdns_bot.py'
-host = '2.56.179.170'
+host = '2.56.175.196'
 user = 'root'
 pwd = '4Tq4kgsLoPH7'
 

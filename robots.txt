@@ -1,4 +1,10 @@
 User-agent: *
+
 Allow: /
 
+Disallow: /*?*
+
+
+
 Sitemap: https://magicdns.ru/sitemap.xml
+

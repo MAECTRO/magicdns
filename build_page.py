@@ -7471,10 +7471,11 @@ for path in ['profile.mobileconfig', os.path.join('public', 'profile.mobileconfi
         with open(path, 'w', encoding='utf-8') as f:
             f.write(mobileconfig_content)
 
-robots_content = """User-agent: *
-Allow: /
-
-Sitemap: https://magicdns.ru/sitemap.xml
+robots_content = """User-agent: *
+Allow: /
+Disallow: /*?*
+
+Sitemap: https://magicdns.ru/sitemap.xml
 """
 
 html_404_content = """<!DOCTYPE html>
