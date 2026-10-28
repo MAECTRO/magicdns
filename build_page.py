@@ -64,11 +64,16 @@ if os.path.exists(reviews_json_path):
 # Load community wishlist from wishlist.json
 wishlist_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'wishlist.json')
 wishlist_json_str = "[]"
+konami_votes = 142
 if os.path.exists(wishlist_json_path):
     try:
         with open(wishlist_json_path, 'r', encoding='utf-8') as f:
             wishlist_data = json.load(f)
             wishlist_json_str = json.dumps(wishlist_data, ensure_ascii=False)
+            if isinstance(wishlist_data, list):
+                konami_item = next((item for item in wishlist_data if item.get('id') == 'konami'), None)
+                if konami_item and 'votes' in konami_item:
+                    konami_votes = int(konami_item['votes'])
     except Exception as e:
         wishlist_json_str = "[]"
 
@@ -2556,6 +2561,20 @@ html_content = f'''<!DOCTYPE html>
       }}
       .wishlist-grid {{
         grid-template-columns: 1fr;
+        gap: 16px;
+      }}
+      .wishlist-card,
+      .wishlist-action-card {{
+        padding: 18px 16px;
+      }}
+      .wishlist-card-footer {{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }}
+      .wishlist-card-footer .btn-vote {{
+        width: 100%;
+        justify-content: center;
       }}
 
       /* Footer & Chat FAB */
@@ -3416,8 +3435,11 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     .step-icon {{
-      font-size: 1.15rem;
-      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--neon-mint);
+      opacity: 0.9;
     }}
 
     .step-title {{
@@ -6072,7 +6094,7 @@ sudo systemctl restart systemd-resolved</code></pre>
         </div>
         <button type="button" class="btn-neon-action btn-suggest-trigger" id="open-suggest-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6m-4 4h2M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg>
-          <span data-i18n="btnOpenSuggest">💡 Предложить свой сервис или игру</span>
+          <span data-i18n="btnOpenSuggest">Предложить свой сервис или игру</span>
         </button>
       </div>
 
@@ -6080,32 +6102,40 @@ sudo systemctl restart systemd-resolved</code></pre>
       <div class="wishlist-pipeline">
         <div class="pipeline-step">
           <div class="pipeline-step-top">
-            <span class="step-number">1. Предложение</span>
-            <span class="step-icon">💡</span>
+            <span class="step-number" data-i18n="wishlistStep1Num">1. Предложение</span>
+            <span class="step-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </span>
           </div>
           <h4 class="step-title" data-i18n="wishlistStep1Title">1. Ваше предложение</h4>
           <p class="step-desc" data-i18n="wishlistStep1Desc">Вы предлагаете нужный сервис или игру через форму</p>
         </div>
         <div class="pipeline-step">
           <div class="pipeline-step-top">
-            <span class="step-number">2. Проверка РКН</span>
-            <span class="step-icon">🛡️</span>
+            <span class="step-number" data-i18n="wishlistStep2Num">2. Проверка РКН</span>
+            <span class="step-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
           </div>
           <h4 class="step-title" data-i18n="wishlistStep2Title">2. Проверка на РКН</h4>
           <p class="step-desc" data-i18n="wishlistStep2Desc">Сверка с 149-ФЗ и закрытым белым списком сервиса</p>
         </div>
         <div class="pipeline-step">
           <div class="pipeline-step-top">
-            <span class="step-number">3. Модерация</span>
-            <span class="step-icon">⚙️</span>
+            <span class="step-number" data-i18n="wishlistStep3Num">3. Модерация</span>
+            <span class="step-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </span>
           </div>
           <h4 class="step-title" data-i18n="wishlistStep3Title">3. Модерация и тесты</h4>
-          <p class="step-desc" data-i18n="wishlistStep3Desc">Инженеры проверяют SNI-маршрутизацию и геолокацию узлов</p>
+          <p class="step-desc" data-i18n="wishlistStep3Desc">Админ проверяет SNI-маршрутизацию и геолокацию узлов</p>
         </div>
         <div class="pipeline-step">
           <div class="pipeline-step-top">
-            <span class="step-number">4. Голосование</span>
-            <span class="step-icon">🚀</span>
+            <span class="step-number" data-i18n="wishlistStep4Num">4. Голосование</span>
+            <span class="step-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+            </span>
           </div>
           <h4 class="step-title" data-i18n="wishlistStep4Title">4. Публикация в вишлист</h4>
           <p class="step-desc" data-i18n="wishlistStep4Desc">Сервис появляется в списке: сообщество голосует, топ идет в работу</p>
@@ -6119,7 +6149,7 @@ sudo systemctl restart systemd-resolved</code></pre>
           <div class="wishlist-card-top">
             <span class="wishlist-category-badge">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="8" cy="12" r="2"/><path d="M15 9v6m-3-3h6"/></svg>
-              <span>Игры и аккаунты</span>
+              <span data-i18n="konamiCategory">Игры и аккаунты</span>
             </span>
             <span class="wishlist-status-pill">
               <span class="status-dot" style="width: 7px; height: 7px; background: #fbbf24; border-radius: 50%; box-shadow: 0 0 8px #fbbf24;"></span>
@@ -6136,17 +6166,17 @@ sudo systemctl restart systemd-resolved</code></pre>
                 <span class="wishlist-card-domains">konami.com • konami.net</span>
               </div>
             </div>
-            <p class="wishlist-card-desc">Реальный запрос от игроков: устранение сетевых ошибок авторизации в Konami ID, синхронизация профилей eFootball и стабильный онлайн-матчмейкинг без лагов.</p>
+            <p class="wishlist-card-desc" data-i18n="konamiDesc">Реальный запрос от игроков: авторизация в Konami ID, синхронизация профилей eFootball и стабильный онлайн-матчмейкинг без задержек.</p>
           </div>
           <div class="wishlist-card-footer">
             <span class="wishlist-compliance-badge">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-              <span>100% белый список (149-ФЗ)</span>
+              <span data-i18n="wishlistComplianceBadge">100% белый список (149-ФЗ)</span>
             </span>
             <button type="button" class="btn-vote" id="vote-btn-konami" data-service-id="konami" aria-label="Поддержать Konami">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
               <span class="vote-text" data-i18n="btnVote">Поддержать</span>
-              <span class="vote-count" id="vote-count-konami">142</span>
+              <span class="vote-count" id="vote-count-konami">{konami_votes}</span>
             </button>
           </div>
         </article>
@@ -6155,13 +6185,15 @@ sudo systemctl restart systemd-resolved</code></pre>
         <article class="wishlist-action-card" id="wishlist-action-card" role="button" tabindex="0" aria-label="Предложить свой сервис или игру">
           <div class="wishlist-card-body">
             <div class="action-card-header">
-              <div class="action-card-icon">💡</div>
+              <div class="action-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              </div>
               <div>
-                <h3 class="action-card-title" data-i18n="wishlistActionCardTitle">💡 Предложить свой сервис или игру</h3>
-                <span class="wishlist-card-domains" style="color: var(--neon-mint);">Сбор реальных предложений</span>
+                <h3 class="action-card-title" data-i18n="wishlistActionCardTitle">Предложить свой сервис или игру</h3>
+                <span class="wishlist-card-domains" style="color: var(--neon-mint);" data-i18n="wishlistActionCardSubtitle">Сбор реальных предложений</span>
               </div>
             </div>
-            <p class="action-card-desc" data-i18n="wishlistActionCardDesc">Не нашли нужный сервис или игру? Отправьте заявку напрямую инженерам. После проверки на РКН и быстрой модерации она появится здесь для голосования.</p>
+            <p class="action-card-desc" data-i18n="wishlistActionCardDesc">Не нашли нужный сервис или игру? Отправьте заявку напрямую админу. После проверки на РКН и быстрой модерации она появится здесь для голосования.</p>
           </div>
           <div class="action-card-footer">
             <button type="button" class="btn-neon-action btn-action-card" id="action-card-suggest-btn">
@@ -6506,13 +6538,16 @@ sudo systemctl restart systemd-resolved</code></pre>
         <!-- Suggestion Type Segmented Chips -->
         <div class="feedback-type-group" role="radiogroup" aria-label="Тип сервиса">
           <button type="button" class="feedback-type-chip active" data-suggest-type="game" role="radio" aria-checked="true">
-            <span data-i18n="suggestTypeGame">🎮 Игра</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="8" cy="12" r="2"/><path d="M15 9v6m-3-3h6"/></svg>
+            <span data-i18n="suggestTypeGame">Игра</span>
           </button>
           <button type="button" class="feedback-type-chip" data-suggest-type="ai" role="radio" aria-checked="false">
-            <span data-i18n="suggestTypeAi">🤖 ИИ / Нейросеть</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a4 4 0 0 1 4 4v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2V6a4 4 0 0 1 4-4z"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/></svg>
+            <span data-i18n="suggestTypeAi">ИИ / Нейросеть</span>
           </button>
           <button type="button" class="feedback-type-chip" data-suggest-type="app" role="radio" aria-checked="false">
-            <span data-i18n="suggestTypeApp">💻 Программа / Сайт</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <span data-i18n="suggestTypeApp">Программа / Сайт</span>
           </button>
         </div>
 
@@ -6543,7 +6578,7 @@ sudo systemctl restart systemd-resolved</code></pre>
         <!-- Compliance Note -->
         <div class="compliance-note-box">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--neon-mint)" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-          <span data-i18n="suggestComplianceNote">🛡️ Все предложения проходят проверку на соответствие 149-ФЗ и белому списку. Сервис обрабатывает только легитимные ресурсы.</span>
+          <span data-i18n="suggestComplianceNote">Все предложения проходят проверку на соответствие 149-ФЗ и белому списку. Сервис обрабатывает только легитимные ресурсы.</span>
         </div>
 
         <!-- Submit Button -->
@@ -8098,6 +8133,7 @@ sudo systemctl restart systemd-resolved</code></pre>
       // Wishlist Voting Logic
       const voteKonamiBtn = document.getElementById('vote-btn-konami');
       const voteCountEl = document.getElementById('vote-count-konami');
+      const baseVotes = {konami_votes};
       let votedItems = [];
       try {{
         votedItems = JSON.parse(localStorage.getItem('magicdns_voted_wishlist') || '[]');
@@ -8115,10 +8151,16 @@ sudo systemctl restart systemd-resolved</code></pre>
           if (textSpan) {{
             textSpan.textContent = (I18N[currentLang] && I18N[currentLang].btnVoted) ? I18N[currentLang].btnVoted : 'Вы поддержали ✓';
           }}
+          if (voteCountEl) {{
+            voteCountEl.textContent = String(baseVotes + 1);
+          }}
         }} else {{
           voteKonamiBtn.classList.remove('voted');
           if (textSpan) {{
             textSpan.textContent = (I18N[currentLang] && I18N[currentLang].btnVote) ? I18N[currentLang].btnVote : 'Поддержать';
+          }}
+          if (voteCountEl) {{
+            voteCountEl.textContent = String(baseVotes);
           }}
         }}
       }}
@@ -8129,8 +8171,11 @@ sudo systemctl restart systemd-resolved</code></pre>
         voteKonamiBtn.addEventListener('click', function() {{
           playTactileFeedback(720, 0.08);
           const hasVoted = votedItems.indexOf('konami') !== -1;
+          const msgAlreadyVoted = (I18N[currentLang] && I18N[currentLang].toastAlreadyVoted) ? I18N[currentLang].toastAlreadyVoted : 'Вы уже поддержали этот запрос 👍';
+          const msgVoteSuccess = (I18N[currentLang] && I18N[currentLang].toastVoteSuccess) ? I18N[currentLang].toastVoteSuccess : 'Спасибо! Ваш голос учтён 👍';
+
           if (hasVoted) {{
-            showToast('Вы уже поддержали этот запрос 👍');
+            showToast(msgAlreadyVoted);
             return;
           }}
 
@@ -8140,15 +8185,13 @@ sudo systemctl restart systemd-resolved</code></pre>
           }} catch(e) {{}}
 
           if (voteCountEl) {{
-            let currentVotes = parseInt(voteCountEl.textContent || '142', 10);
-            if (isNaN(currentVotes)) currentVotes = 142;
-            voteCountEl.textContent = String(currentVotes + 1);
+            voteCountEl.textContent = String(baseVotes + 1);
             voteCountEl.style.transform = 'scale(1.25)';
             setTimeout(function() {{ voteCountEl.style.transform = ''; }}, 200);
           }}
 
           updateVoteButtonState();
-          showToast('Спасибо! Ваш голос учтён 👍');
+          showToast(msgVoteSuccess);
 
           try {{
             fetch('https://dns.magicdns.ru/api/feedback', {{
@@ -8177,11 +8220,32 @@ sudo systemctl restart systemd-resolved</code></pre>
           const submitBtn = document.getElementById('suggest-submit-btn');
 
           const title = nameInput ? nameInput.value.trim() : '';
-          const domain = domainInput ? domainInput.value.trim() : '';
+          let domain = domainInput ? domainInput.value.trim() : '';
           const reason = reasonInput ? reasonInput.value.trim() : '';
           const contact = contactInput ? contactInput.value.trim() : '';
 
           if (!title || !reason) return;
+
+          // Domain sanitization: remove protocol, path, and trailing slash
+          if (domain) {{
+            domain = domain.replace(/^https?:\\/\\//i, '').replace(/\\/.*$/, '').trim().toLowerCase();
+          }}
+
+          const msgSuggestSuccess = (I18N[currentLang] && I18N[currentLang].toastSuggestSuccess) ? I18N[currentLang].toastSuggestSuccess : 'Предложение отправлено на модерацию и проверку РКН! 💡';
+
+          // Anti-spam & abuse check
+          const spamRegex = /(казино|вулкан|1xbet|1win|ставки|договорн|крипт|заработ|легкие\\s*деньги|пассивный\\s*доход|секс|порно|визио|виагр|шлюх|prostitut|intim)/i;
+          const isGibberish = /^([a-zA-Zа-яА-Я0-9])\1{7,}$/.test(reason) || /^([a-zA-Zа-яА-Я0-9])\1{7,}$/.test(title);
+
+          if (spamRegex.test(reason) || spamRegex.test(title) || isGibberish) {{
+            toggleSuggestModal(false);
+            if (nameInput) nameInput.value = '';
+            if (domainInput) domainInput.value = '';
+            if (reasonInput) reasonInput.value = '';
+            if (contactInput) contactInput.value = '';
+            showToast(msgSuggestSuccess);
+            return;
+          }}
 
           playTactileFeedback(800, 0.06);
 
@@ -8231,7 +8295,7 @@ sudo systemctl restart systemd-resolved</code></pre>
             if (domainInput) domainInput.value = '';
             if (reasonInput) reasonInput.value = '';
             if (contactInput) contactInput.value = '';
-            showToast('Предложение отправлено на модерацию и проверку РКН! 💡');
+            showToast(msgSuggestSuccess);
           }});
         }});
       }}
@@ -8313,11 +8377,16 @@ for path in ['profile.mobileconfig', os.path.join('public', 'profile.mobileconfi
         with open(path, 'w', encoding='utf-8') as f:
             f.write(mobileconfig_content)
 
-robots_content = """User-agent: *
-Allow: /
-Disallow: /*?*
-
-Sitemap: https://magicdns.ru/sitemap.xml
+robots_content = """User-agent: *
+
+Allow: /
+
+Disallow: /*?*
+
+
+
+Sitemap: https://magicdns.ru/sitemap.xml
+
 """
 
 html_404_content = """<!DOCTYPE html>

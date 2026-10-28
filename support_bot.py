@@ -1716,7 +1716,7 @@ class FeedbackAPIHandler(BaseHTTPRequestHandler):
                 esc_platform = html.escape(str(platform))
                 esc_message = html.escape(str(message))
 
-                if review_type in ('wishlist', 'idea'):
+                if review_type == 'wishlist':
                     service_title = data.get('service_title', '').strip() or 'Новый сервис'
                     domain = data.get('domain', '').strip() or 'Не указан'
                     category = data.get('category', 'Игра / Сервис')
@@ -1735,12 +1735,24 @@ class FeedbackAPIHandler(BaseHTTPRequestHandler):
                         f"🛡️ <i>Требуется проверка на РКН (149-ФЗ) и модерация перед публикацией для голосования.</i>"
                     )
                     send_message(ADMIN_CHAT_ID, tg_msg)
-                elif review_type == 'suggestion':
+                elif review_type in ('idea', 'suggestion'):
+                    contact = data.get('contact', '').strip() or esc_author
+                    esc_contact = html.escape(str(contact))
                     tg_msg = (
-                        f"💡 <b>НОВОЕ ПРЕДЛОЖЕНИЕ / ИДЕЯ ДЛЯ MAGICDNS!</b>\n\n"
-                        f"👤 <b>От:</b> {esc_author}\n"
+                        f"💡 <b>НОВОЕ ПРЕДЛОЖЕНИЕ / ИДЕЯ ДЛЯ MAGICDNS! #ИДЕЯ</b>\n\n"
+                        f"👤 <b>От:</b> {esc_contact}\n"
                         f"💻 <b>Платформа:</b> {esc_platform}\n\n"
                         f"💬 <b>Текст идеи:</b>\n{esc_message}"
+                    )
+                    send_message(ADMIN_CHAT_ID, tg_msg)
+                elif review_type == 'bug':
+                    contact = data.get('contact', '').strip() or esc_author
+                    esc_contact = html.escape(str(contact))
+                    tg_msg = (
+                        f"🐛 <b>БАГ-РЕПОРТ С САЙТА! #БАГ</b>\n\n"
+                        f"💻 <b>Платформа:</b> {esc_platform}\n"
+                        f"👤 <b>Контакт:</b> {esc_contact}\n\n"
+                        f"💬 <b>Описание проблемы:</b>\n{esc_message}"
                     )
                     send_message(ADMIN_CHAT_ID, tg_msg)
                 else:

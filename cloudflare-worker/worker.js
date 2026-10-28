@@ -90,6 +90,13 @@ export default {
           });
         }
 
+        if (type === 'vote' || type === 'wishlist_vote') {
+          return new Response(JSON.stringify({ ok: true, message: 'Голос принят' }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+          });
+        }
+
         // If Telegram bot is configured, relay notification
         if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
           const escapeTgHtml = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -127,11 +134,6 @@ export default {
               `👤 <b>Контакт:</b> ${contact ? `<code>${escapeTgHtml(contact)}</code>` : 'Анонимно'}\n\n` +
               `💬 <b>Описание проблемы:</b>\n${escapeTgHtml(message)}\n\n` +
               `🛡️ <i>Требуется проверка на РКН (149-ФЗ) и модерация перед публикацией для голосования.</i>`;
-          } else if (type === 'vote' || type === 'wishlist_vote') {
-            return new Response(JSON.stringify({ ok: true, message: 'Голос принят' }), {
-              status: 200,
-              headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-            });
           } else {
             tgText = `🔔 <b>Новое сообщение с MagicDNS!</b>\n\n💬 ${escapeTgHtml(message)}`;
           }

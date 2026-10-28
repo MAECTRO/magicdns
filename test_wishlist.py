@@ -30,7 +30,7 @@ def test_wishlist():
     assert "Konami" in konami["title"], "Title must contain Konami"
     assert "eFootball" in konami["title"], "Title must contain eFootball"
     assert "Yu-Gi-Oh" in konami["title"], "Title must contain Yu-Gi-Oh"
-    assert "В обработке у команды 🟡" in konami["status_text"], "Status text must be 'В обработке у команды 🟡'"
+    assert "В обработке у команды" in konami["status_text"], "Status text must be 'В обработке у команды 🟡'"
 
     # 2. Verify index.html content
     with open(INDEX_HTML, 'r', encoding='utf-8') as f:
@@ -43,7 +43,7 @@ def test_wishlist():
     # Only Konami card
     assert 'id="card-konami"' in html, "Konami card missing"
     assert 'Konami (eFootball / PES / Yu-Gi-Oh)' in html, "Konami title missing in card"
-    assert 'В обработке у команды 🟡' in html, "Konami status missing"
+    assert 'В обработке у команды' in html, "Konami status missing"
     assert 'id="vote-btn-konami"' in html, "Konami vote button missing"
     assert 'id="vote-count-konami"' in html, "Konami vote count missing"
 
@@ -80,6 +80,25 @@ def test_wishlist():
     assert 'toggleSuggestModal' in html, "toggleSuggestModal function missing in JS"
     assert 'magicdns_voted_wishlist' in html, "localStorage voted wishlist key missing in JS"
     assert 'voteKonamiBtn' in html, "voteKonamiBtn binding missing in JS"
+
+    # i18n tags on pipeline and cards
+    assert 'data-i18n="wishlistStep1Num"' in html, "wishlistStep1Num i18n tag missing"
+    assert 'data-i18n="wishlistStep2Num"' in html, "wishlistStep2Num i18n tag missing"
+    assert 'data-i18n="wishlistStep3Num"' in html, "wishlistStep3Num i18n tag missing"
+    assert 'data-i18n="wishlistStep4Num"' in html, "wishlistStep4Num i18n tag missing"
+    assert 'data-i18n="konamiCategory"' in html, "konamiCategory i18n tag missing"
+    assert 'data-i18n="konamiDesc"' in html, "konamiDesc i18n tag missing"
+    assert 'data-i18n="wishlistComplianceBadge"' in html, "wishlistComplianceBadge i18n tag missing"
+    assert 'data-i18n="wishlistActionCardSubtitle"' in html, "wishlistActionCardSubtitle i18n tag missing"
+
+    # Domain sanitization and anti-spam protection in JS
+    assert 'domain.replace' in html, "Domain sanitization missing in JS"
+    assert 'spamRegex.test(reason)' in html, "Anti-spam check on proposal reason missing in JS"
+
+    # Sync between index.html and public/index.html
+    with open(PUBLIC_INDEX_HTML, 'r', encoding='utf-8') as f:
+        pub_html = f.read()
+    assert html == pub_html, "public/index.html does not match root index.html"
 
     print("ALL WISHLIST VERIFICATION CHECKS PASSED!")
 
