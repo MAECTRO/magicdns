@@ -2670,10 +2670,119 @@ html_content = f'''<!DOCTYPE html>
       margin: 0;
     }}
 
-    .news-grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    .carousel-wrapper {{
+      position: relative;
+      width: 100%;
+    }}
+
+    .news-grid,
+    .reviews-grid {{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
       gap: 18px;
+      padding: 6px 4px 14px 4px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      cursor: grab;
+    }}
+
+    .news-grid.is-dragging,
+    .reviews-grid.is-dragging {{
+      cursor: grabbing;
+      scroll-snap-type: none;
+      user-select: none;
+    }}
+
+    .news-grid::-webkit-scrollbar,
+    .reviews-grid::-webkit-scrollbar {{
+      display: none;
+    }}
+
+    .news-card,
+    .review-card {{
+      flex: 0 0 calc((100% - 36px) / 3);
+      min-width: calc((100% - 36px) / 3);
+      max-width: calc((100% - 36px) / 3);
+      scroll-snap-align: start;
+      scroll-snap-stop: normal;
+      box-sizing: border-box;
+    }}
+
+    @media (max-width: 1024px) and (min-width: 769px) {{
+      .news-card,
+      .review-card {{
+        flex: 0 0 calc((100% - 18px) / 2);
+        min-width: calc((100% - 18px) / 2);
+        max-width: calc((100% - 18px) / 2);
+      }}
+    }}
+
+    .carousel-nav-btn {{
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(14, 25, 44, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 255, 157, 0.28);
+      color: var(--neon-mint, #00ff9d);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 12px rgba(0, 255, 157, 0.15);
+      transition: all 0.25s ease;
+      opacity: 0.95;
+      user-select: none;
+      outline: none;
+    }}
+
+    .carousel-nav-btn:hover:not(:disabled) {{
+      background: rgba(0, 255, 157, 0.16);
+      border-color: rgba(0, 255, 157, 0.65);
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(0, 255, 157, 0.45);
+      transform: translateY(-50%) scale(1.08);
+    }}
+
+    .carousel-nav-btn:active:not(:disabled) {{
+      transform: translateY(-50%) scale(0.95);
+    }}
+
+    .carousel-nav-btn:disabled {{
+      opacity: 0.18;
+      cursor: not-allowed;
+      border-color: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted, #8b9bb4);
+      box-shadow: none;
+    }}
+
+    .carousel-nav-btn.prev {{
+      left: -22px;
+    }}
+
+    .carousel-nav-btn.next {{
+      right: -22px;
+    }}
+
+    @media (max-width: 1140px) {{
+      .carousel-nav-btn.prev {{ left: -6px; }}
+      .carousel-nav-btn.next {{ right: -6px; }}
+    }}
+
+    @media (max-width: 768px) {{
+      .carousel-nav-btn {{
+        display: none !important;
+      }}
     }}
 
     .news-card {{
@@ -2919,13 +3028,6 @@ html_content = f'''<!DOCTYPE html>
       white-space: nowrap;
     }}
 
-    .reviews-grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 18px;
-      width: 100%;
-    }}
-
     .reviews-grid.single-item {{
       display: flex;
       justify-content: flex-start;
@@ -2937,7 +3039,7 @@ html_content = f'''<!DOCTYPE html>
     }}
 
     .carousel-dots {{
-      display: none;
+      display: flex;
       justify-content: center;
       align-items: center;
       gap: 8px;
@@ -5429,8 +5531,16 @@ sudo systemctl restart systemd-resolved</code></pre>
         </div>
       </div>
 
-      <div class="news-grid" id="news-grid">
+      <div class="carousel-wrapper">
+        <button type="button" class="carousel-nav-btn prev" id="news-prev" aria-label="Предыдущие новости">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+        <div class="news-grid" id="news-grid">
 {news_cards_html}
+        </div>
+        <button type="button" class="carousel-nav-btn next" id="news-next" aria-label="Следующие новости">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
       </div>
       <div class="carousel-dots" id="news-dots" aria-label="Навигация по новостям"></div>
 
@@ -5500,7 +5610,15 @@ sudo systemctl restart systemd-resolved</code></pre>
             <span data-i18n="reviewsEmptyBtn">Написать первый отзыв</span>
           </button>
         </div>
-        <div class="reviews-grid" id="reviews-grid" style="display: none;"></div>
+        <div class="carousel-wrapper">
+          <button type="button" class="carousel-nav-btn prev" id="reviews-prev" style="display: none;" aria-label="Предыдущие отзывы">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <div class="reviews-grid" id="reviews-grid" style="display: none;"></div>
+          <button type="button" class="carousel-nav-btn next" id="reviews-next" style="display: none;" aria-label="Следующие отзывы">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
         <div class="carousel-dots" id="reviews-dots" style="display: none;" aria-label="Навигация по отзывам"></div>
         <div class="reviews-load-more-wrap" id="reviews-load-more-wrap" style="display: none;">
           <button type="button" class="btn-neon-action btn-load-more-reviews" id="btn-load-more-reviews">
@@ -6674,15 +6792,38 @@ sudo systemctl restart systemd-resolved</code></pre>
         return Array.isArray(DEFAULT_COMMUNITY_REVIEWS) ? DEFAULT_COMMUNITY_REVIEWS : [];
       }}
 
-      function setupCarouselDots(containerId, dotsId, itemSelector) {{
+      function setupCarousel(containerId, dotsId, prevBtnId, nextBtnId, itemSelector) {{
         const container = document.getElementById(containerId);
         const dotsWrap = document.getElementById(dotsId);
-        if (!container || !dotsWrap) return;
+        const prevBtn = prevBtnId ? document.getElementById(prevBtnId) : null;
+        const nextBtn = nextBtnId ? document.getElementById(nextBtnId) : null;
+        if (!container) return;
 
-        function updateDots() {{
-          const isMobile = window.innerWidth <= 768;
+        function updateNav() {{
           const items = container.querySelectorAll(itemSelector);
-          if (!isMobile || !items || items.length <= 1) {{
+          const maxScroll = container.scrollWidth - container.clientWidth;
+          const hasOverflow = maxScroll > 8;
+
+          if (prevBtn) {{
+            if (!hasOverflow || window.innerWidth <= 768) {{
+              prevBtn.style.display = 'none';
+            }} else {{
+              prevBtn.style.display = 'flex';
+              prevBtn.disabled = container.scrollLeft <= 4;
+            }}
+          }}
+
+          if (nextBtn) {{
+            if (!hasOverflow || window.innerWidth <= 768) {{
+              nextBtn.style.display = 'none';
+            }} else {{
+              nextBtn.style.display = 'flex';
+              nextBtn.disabled = container.scrollLeft >= (maxScroll - 4);
+            }}
+          }}
+
+          if (!dotsWrap) return;
+          if (!items || items.length <= 1 || !hasOverflow) {{
             dotsWrap.innerHTML = '';
             dotsWrap.style.display = 'none';
             return;
@@ -6702,7 +6843,7 @@ sudo systemctl restart systemd-resolved</code></pre>
                   playTactileFeedback(900, 0.04);
                   const firstItem = items[0];
                   if (firstItem) {{
-                    const gap = 14;
+                    const gap = window.innerWidth <= 768 ? 14 : 18;
                     const step = firstItem.offsetWidth + gap;
                     container.scrollTo({{ left: index * step, behavior: 'smooth' }});
                   }}
@@ -6714,11 +6855,14 @@ sudo systemctl restart systemd-resolved</code></pre>
 
           const firstItem = items[0];
           if (!firstItem) return;
-          const gap = 14;
+          const gap = window.innerWidth <= 768 ? 14 : 18;
           const step = firstItem.offsetWidth + gap;
           if (step <= 0) return;
 
           let activeIndex = Math.round(container.scrollLeft / step);
+          if (container.scrollLeft >= maxScroll - 4) {{
+            activeIndex = items.length - 1;
+          }}
           activeIndex = Math.max(0, Math.min(items.length - 1, activeIndex));
 
           const dots = dotsWrap.children;
@@ -6733,21 +6877,107 @@ sudo systemctl restart systemd-resolved</code></pre>
 
         if (!container.__carouselInit) {{
           container.__carouselInit = true;
+
+          // Mouse drag physics
+          let isDown = false;
+          let startX = 0;
+          let scrollStart = 0;
+          let dragged = false;
+          let lastX = 0;
+          let velocity = 0;
+
+          container.addEventListener('mousedown', function(e) {{
+            if (e.button !== 0) return;
+            isDown = true;
+            dragged = false;
+            startX = e.pageX - container.offsetLeft;
+            scrollStart = container.scrollLeft;
+            lastX = e.pageX;
+            velocity = 0;
+            container.classList.add('is-dragging');
+          }});
+
+          window.addEventListener('mousemove', function(e) {{
+            if (!isDown) return;
+            const x = e.pageX - container.offsetLeft;
+            const walk = x - startX;
+            if (Math.abs(walk) > 4) {{
+              dragged = true;
+            }}
+            velocity = e.pageX - lastX;
+            lastX = e.pageX;
+            container.scrollLeft = scrollStart - walk;
+          }});
+
+          window.addEventListener('mouseup', function() {{
+            if (!isDown) return;
+            isDown = false;
+            container.classList.remove('is-dragging');
+            if (Math.abs(velocity) > 2) {{
+              container.scrollBy({{ left: -velocity * 6, behavior: 'smooth' }});
+            }}
+          }});
+
+          container.addEventListener('click', function(e) {{
+            if (dragged) {{
+              e.preventDefault();
+              e.stopPropagation();
+              dragged = false;
+            }}
+          }}, true);
+
+          // Horizontal mouse wheel (no scroll trapping at boundaries)
+          container.addEventListener('wheel', function(e) {{
+            const maxScroll = container.scrollWidth - container.clientWidth;
+            if (maxScroll <= 8) return;
+            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {{
+              const atStart = container.scrollLeft <= 2 && e.deltaY < 0;
+              const atEnd = container.scrollLeft >= maxScroll - 2 && e.deltaY > 0;
+              if (!atStart && !atEnd) {{
+                e.preventDefault();
+                container.scrollBy({{ left: e.deltaY * 1.2, behavior: 'auto' }});
+              }}
+            }}
+          }}, {{ passive: false }});
+
+          // Navigation buttons click
+          if (prevBtn) {{
+            prevBtn.addEventListener('click', function() {{
+              playTactileFeedback(800, 0.04);
+              const firstItem = container.querySelector(itemSelector);
+              if (!firstItem) return;
+              const gap = window.innerWidth <= 768 ? 14 : 18;
+              const step = firstItem.offsetWidth + gap;
+              container.scrollBy({{ left: -step, behavior: 'smooth' }});
+            }});
+          }}
+
+          if (nextBtn) {{
+            nextBtn.addEventListener('click', function() {{
+              playTactileFeedback(900, 0.04);
+              const firstItem = container.querySelector(itemSelector);
+              if (!firstItem) return;
+              const gap = window.innerWidth <= 768 ? 14 : 18;
+              const step = firstItem.offsetWidth + gap;
+              container.scrollBy({{ left: step, behavior: 'smooth' }});
+            }});
+          }}
+
           let scrollRaf = null;
           container.addEventListener('scroll', function() {{
             if (scrollRaf) cancelAnimationFrame(scrollRaf);
-            scrollRaf = requestAnimationFrame(updateDots);
+            scrollRaf = requestAnimationFrame(updateNav);
           }}, {{ passive: true }});
 
           window.addEventListener('resize', function() {{
             if (scrollRaf) cancelAnimationFrame(scrollRaf);
-            scrollRaf = requestAnimationFrame(updateDots);
+            scrollRaf = requestAnimationFrame(updateNav);
           }}, {{ passive: true }});
         }}
 
-        updateDots();
-        setTimeout(updateDots, 60);
-        setTimeout(updateDots, 300);
+        updateNav();
+        setTimeout(updateNav, 60);
+        setTimeout(updateNav, 300);
       }}
 
       const REVIEWS_PAGE_SIZE = 6;
@@ -6769,6 +6999,10 @@ sudo systemctl restart systemd-resolved</code></pre>
           if (loadMoreWrap) loadMoreWrap.style.display = 'none';
           const revDots = document.getElementById('reviews-dots');
           if (revDots) revDots.style.display = 'none';
+          const revPrev = document.getElementById('reviews-prev');
+          if (revPrev) revPrev.style.display = 'none';
+          const revNext = document.getElementById('reviews-next');
+          if (revNext) revNext.style.display = 'none';
           grid.innerHTML = '';
           if (headerBtn) headerBtn.classList.add('hide-when-empty');
           return;
@@ -6887,7 +7121,7 @@ sudo systemctl restart systemd-resolved</code></pre>
           }}
         }}
 
-        setupCarouselDots('reviews-grid', 'reviews-dots', '.review-card');
+        setupCarousel('reviews-grid', 'reviews-dots', 'reviews-prev', 'reviews-next', '.review-card');
       }}
 
       // Load More Reviews Trigger
@@ -7054,7 +7288,7 @@ sudo systemctl restart systemd-resolved</code></pre>
         }});
       }}
 
-      setupCarouselDots('news-grid', 'news-dots', '.news-card');
+      setupCarousel('news-grid', 'news-dots', 'news-prev', 'news-next', '.news-card');
       renderReviews();
 
       // Dynamic live sync with reviews.json (no-store eliminates mobile browser caching)
