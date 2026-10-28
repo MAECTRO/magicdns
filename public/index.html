@@ -2379,8 +2379,55 @@
         text-align: center;
         gap: 10px;
       }
-      .news-grid {
-        grid-template-columns: 1fr;
+      .news-grid,
+      .reviews-grid {
+        display: flex !important;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 14px;
+        margin-left: -16px;
+        margin-right: -16px;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 6px;
+        padding-bottom: 14px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .news-grid::-webkit-scrollbar,
+      .reviews-grid::-webkit-scrollbar {
+        display: none;
+      }
+      .news-card,
+      .review-card {
+        flex: 0 0 85% !important;
+        min-width: 85% !important;
+        max-width: 85% !important;
+        scroll-snap-align: start;
+        scroll-snap-stop: normal;
+        box-sizing: border-box;
+        padding: 20px 18px !important;
+      }
+      .news-grid::after,
+      .reviews-grid::after {
+        content: '';
+        flex: 0 0 2px;
+        min-width: 2px;
+      }
+      .reviews-grid[style*="display: none"] {
+        display: none !important;
+      }
+      .reviews-grid.single-item .review-card {
+        flex: 0 0 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+      }
+      .carousel-dots {
+        display: flex;
       }
 
       /* Reviews Section */
@@ -2408,9 +2455,6 @@
       .reviews-empty-state {
         padding: 28px 16px;
         box-sizing: border-box;
-      }
-      .reviews-grid {
-        grid-template-columns: 1fr;
       }
 
       /* Footer & Chat FAB */
@@ -2465,6 +2509,13 @@
       .container {
         padding: 0 12px;
       }
+      .news-grid,
+      .reviews-grid {
+        margin-left: -12px;
+        margin-right: -12px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
       .params-subgrid {
         grid-template-columns: 1fr;
       }
@@ -2489,6 +2540,13 @@
     @media (max-width: 420px) {
       .container {
         padding: 0 10px;
+      }
+      .news-grid,
+      .reviews-grid {
+        margin-left: -10px;
+        margin-right: -10px;
+        padding-left: 10px;
+        padding-right: 10px;
       }
       .glass-config-card {
         padding: 14px 10px;
@@ -2813,6 +2871,41 @@
     .reviews-grid.single-item .review-card {
       max-width: 540px;
       width: 100%;
+    }
+
+    .carousel-dots {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0;
+      cursor: pointer;
+      transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.28s ease, border-color 0.28s ease, box-shadow 0.28s ease, border-radius 0.28s ease;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .carousel-dot:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .carousel-dot.active {
+      width: 24px;
+      border-radius: 12px;
+      background: var(--neon-mint, #00ff9d);
+      border-color: var(--neon-mint, #00ff9d);
+      box-shadow: 0 0 10px rgba(0, 255, 157, 0.55);
     }
 
     .review-card {
@@ -5308,6 +5401,7 @@ sudo systemctl restart systemd-resolved</code></pre>
           <p class="news-card-text">Добавлены готовые инструкции и протестирована работа DoH через шлюз https://magicdns.ru. Локальный трафик российских банков и Госуслуг идет напрямую от вашего провайдера на максимальной скорости.</p>
         </article>
       </div>
+      <div class="carousel-dots" id="news-dots" aria-label="Навигация по новостям"></div>
 
       <!-- Дружественные проекты / Партнёрский блок -->
       <div class="friends-community-banner" style="margin-top: 24px; padding: 22px 24px; background: linear-gradient(145deg, rgba(14, 25, 44, 0.75) 0%, rgba(8, 14, 25, 0.92) 100%); border: 1px solid rgba(0, 255, 157, 0.22); border-radius: 16px; backdrop-filter: blur(16px);">
@@ -5376,6 +5470,7 @@ sudo systemctl restart systemd-resolved</code></pre>
           </button>
         </div>
         <div class="reviews-grid" id="reviews-grid" style="display: none;"></div>
+        <div class="carousel-dots" id="reviews-dots" style="display: none;" aria-label="Навигация по отзывам"></div>
         <div class="reviews-load-more-wrap" id="reviews-load-more-wrap" style="display: none;">
           <button type="button" class="btn-neon-action btn-load-more-reviews" id="btn-load-more-reviews">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
@@ -6548,6 +6643,82 @@ sudo systemctl restart systemd-resolved</code></pre>
         return Array.isArray(DEFAULT_COMMUNITY_REVIEWS) ? DEFAULT_COMMUNITY_REVIEWS : [];
       }
 
+      function setupCarouselDots(containerId, dotsId, itemSelector) {
+        const container = document.getElementById(containerId);
+        const dotsWrap = document.getElementById(dotsId);
+        if (!container || !dotsWrap) return;
+
+        function updateDots() {
+          const isMobile = window.innerWidth <= 768;
+          const items = container.querySelectorAll(itemSelector);
+          if (!isMobile || !items || items.length <= 1) {
+            dotsWrap.innerHTML = '';
+            dotsWrap.style.display = 'none';
+            return;
+          }
+
+          dotsWrap.style.display = 'flex';
+
+          if (dotsWrap.children.length !== items.length) {
+            dotsWrap.innerHTML = '';
+            for (let i = 0; i < items.length; i++) {
+              const dot = document.createElement('button');
+              dot.type = 'button';
+              dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+              dot.setAttribute('aria-label', (i + 1) + ' / ' + items.length);
+              dot.addEventListener('click', (function(index) {
+                return function() {
+                  playTactileFeedback(900, 0.04);
+                  const firstItem = items[0];
+                  if (firstItem) {
+                    const gap = 14;
+                    const step = firstItem.offsetWidth + gap;
+                    container.scrollTo({ left: index * step, behavior: 'smooth' });
+                  }
+                };
+              })(i));
+              dotsWrap.appendChild(dot);
+            }
+          }
+
+          const firstItem = items[0];
+          if (!firstItem) return;
+          const gap = 14;
+          const step = firstItem.offsetWidth + gap;
+          if (step <= 0) return;
+
+          let activeIndex = Math.round(container.scrollLeft / step);
+          activeIndex = Math.max(0, Math.min(items.length - 1, activeIndex));
+
+          const dots = dotsWrap.children;
+          for (let i = 0; i < dots.length; i++) {
+            if (i === activeIndex) {
+              dots[i].classList.add('active');
+            } else {
+              dots[i].classList.remove('active');
+            }
+          }
+        }
+
+        if (!container.__carouselInit) {
+          container.__carouselInit = true;
+          let scrollRaf = null;
+          container.addEventListener('scroll', function() {
+            if (scrollRaf) cancelAnimationFrame(scrollRaf);
+            scrollRaf = requestAnimationFrame(updateDots);
+          }, { passive: true });
+
+          window.addEventListener('resize', function() {
+            if (scrollRaf) cancelAnimationFrame(scrollRaf);
+            scrollRaf = requestAnimationFrame(updateDots);
+          }, { passive: true });
+        }
+
+        updateDots();
+        setTimeout(updateDots, 60);
+        setTimeout(updateDots, 300);
+      }
+
       const REVIEWS_PAGE_SIZE = 6;
       let reviewsExpanded = false;
 
@@ -6565,6 +6736,8 @@ sudo systemctl restart systemd-resolved</code></pre>
           emptyState.style.display = 'flex';
           grid.style.display = 'none';
           if (loadMoreWrap) loadMoreWrap.style.display = 'none';
+          const revDots = document.getElementById('reviews-dots');
+          if (revDots) revDots.style.display = 'none';
           grid.innerHTML = '';
           if (headerBtn) headerBtn.classList.add('hide-when-empty');
           return;
@@ -6682,6 +6855,8 @@ sudo systemctl restart systemd-resolved</code></pre>
             loadMoreWrap.style.display = 'none';
           }
         }
+
+        setupCarouselDots('reviews-grid', 'reviews-dots', '.review-card');
       }
 
       // Load More Reviews Trigger
@@ -6848,6 +7023,7 @@ sudo systemctl restart systemd-resolved</code></pre>
         });
       }
 
+      setupCarouselDots('news-grid', 'news-dots', '.news-card');
       renderReviews();
 
       // Dynamic live sync with reviews.json (no-store eliminates mobile browser caching)
