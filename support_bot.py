@@ -346,8 +346,6 @@ PENDING_SITE_ALERTS = {}
 PENDING_REVIEWS_REPLIES = {}  # admin_chat_id -> review_id
 
 PENDING_USER_MESSAGES = {}  # user_id -> dict with pending message
-PENDING_ADMIN_ACTIONS = {}  # admin_chat_id -> action
-PENDING_DRAFTS = {}  # draft_id -> draft data
 
 
 
@@ -4213,35 +4211,6 @@ def main():
                                     edit_message(ADMIN_CHAT_ID, msg_id, f"⚠️ Ошибка при публикации: {html.escape(status_msg)}")
                         continue
 
-                    if data.startswith('draft_alert:'):
-                        draft_id = data.split(':', 1)[1]
-                        draft_data = PENDING_DRAFTS.pop(draft_id, None)
-                        if not draft_data:
-                            answer_callback(cq_id, "⚠️ Черновик устарел", alert=True)
-                            continue
-                        answer_callback(cq_id)
-                        edit_message(ADMIN_CHAT_ID, msg_id, f"⏳ Подготавливаю рассылку в боте:\n<i>«{html.escape(draft_data['text'][:80])}...»</i>")
-                        show_alert_preview(draft_data['text'], media_msg=draft_data.get('media_msg'))
-                        continue
-
-                    if data.startswith('draft_site:'):
-                        draft_id = data.split(':', 1)[1]
-                        draft_data = PENDING_DRAFTS.pop(draft_id, None)
-                        if not draft_data:
-                            answer_callback(cq_id, "⚠️ Черновик устарел", alert=True)
-                            continue
-                        answer_callback(cq_id)
-                        edit_message(ADMIN_CHAT_ID, msg_id, f"⏳ Подготавливаю баннер для сайта:\n<i>«{html.escape(draft_data['text'][:80])}...»</i>")
-                        show_sitealert_picker(draft_data['text'])
-                        continue
-
-                    if data.startswith('dismiss_draft:'):
-                        draft_id = data.split(':', 1)[1]
-                        PENDING_DRAFTS.pop(draft_id, None)
-                        delete_message(ADMIN_CHAT_ID, msg_id)
-                        answer_callback(cq_id, "Закрыто")
-                        continue
-
                     if data == 'clear_site_alert':
 
                         answer_callback(cq_id, "⏳ Снимаю оповещение с сайта...")
@@ -4548,27 +4517,26 @@ def main():
                         answer_callback(cq_id)
                         send_message(
                             ADMIN_CHAT_ID,
-                            "🌐 <b>Отправьте текст для баннера на сайте magicdns.ru в ответ на это сообщение:</b>\n\n"
-                            "<i>После отправки вы сможете кнопкой выбрать цвет баннера (🟢 зеленый, ⚠️ желтый, ℹ️ синий).</i>\n\n"
-                            "<i>Либо смахните любое готовое сообщение в чате и отправьте команду /sitealert</i>",
-                            reply_markup={"force_reply": True, "selective": True}
+                            "🌐 <b>Управление баннером на сайте magicdns.ru:</b>\n\n"
+                            "1. Напишите текст баннера в чат.\n"
+                            "2. <b>Смахните его (Ответить)</b> и отправьте команду <code>/sitealert</code>\n"
+                            "<i>(Бот покажет кнопки: 🟢 Зеленый, ⚠️ Желтый, ℹ️ Синий)</i>\n\n"
+                            "• Быстро с текстом: <code>/sitealert Текст</code>\n"
+                            "• Снять баннер: <code>/clearsitealert</code>"
                         )
-                        PENDING_ADMIN_ACTIONS[ADMIN_CHAT_ID] = "await_sitealert_text"
                         continue
 
                     if data == 'admin_alert_info':
                         answer_callback(cq_id)
                         send_message(
                             ADMIN_CHAT_ID,
-                            "🚨 <b>Отправьте текст для рассылки всем подписчикам бота в ответ на это сообщение:</b>\n\n"
-                            "<i>Перед отправкой бот покажет предпросмотр и кнопки подтверждения.</i>\n\n"
-                            "<i>Либо смахните любое готовое сообщение в чате и отправьте команду /alert</i>",
-                            reply_markup={"force_reply": True, "selective": True}
+                            "🚨 <b>Экстренная рассылка подписчикам:</b>\n\n"
+                            "1. Напишите текст оповещения в чат.\n"
+                            "2. <b>Смахните его (Ответить)</b> и отправьте команду <code>/alert</code>\n"
+                            "<i>(Бот покажет превью и кнопки подтверждения перед отправкой)</i>\n\n"
+                            "• Быстро с текстом: <code>/alert Текст оповещения</code>"
                         )
-                        PENDING_ADMIN_ACTIONS[ADMIN_CHAT_ID] = "await_alert_text"
                         continue
-
-
 
                     if data.startswith('rev_all_'):
 
@@ -4850,11 +4818,11 @@ def main():
                         if not alert_text and not media_msg:
                             send_message(
                                 ADMIN_CHAT_ID,
-                                "🚨 <b>Отправьте текст для рассылки всем подписчикам бота в ответ на это сообщение:</b>\n\n"
-                                "<i>(Или смахните готовое сообщение в чате и напишите /alert)</i>",
-                                reply_markup={"force_reply": True, "selective": True}
+                                "⚠️ <b>Как сделать рассылку в боте:</b>\n\n"
+                                "1. Напишите текст оповещения в этот чат.\n"
+                                "2. <b>Смахните его (Ответить)</b> и отправьте команду <code>/alert</code>\n\n"
+                                "<i>(Или отправьте сразу с текстом: <code>/alert Текст сообщения</code>)</i>"
                             )
-                            PENDING_ADMIN_ACTIONS[ADMIN_CHAT_ID] = "await_alert_text"
                             continue
 
                         show_alert_preview(alert_text, media_msg=media_msg, reply_to_msg_id=m.get('message_id'))
@@ -4877,12 +4845,13 @@ def main():
                         if not arg:
                             send_message(
                                 ADMIN_CHAT_ID,
-                                "🌐 <b>Отправьте текст баннера для сайта magicdns.ru в ответ на это сообщение:</b>\n\n"
-                                "<i>(После отправки вы сможете кнопкой выбрать цвет: 🟢 зеленый, ⚠️ желтый, ℹ️ синий)</i>\n\n"
-                                "<i>Либо смахните любое готовое сообщение и напишите /sitealert</i>",
-                                reply_markup={"force_reply": True, "selective": True}
+                                "🌐 <b>Как опубликовать баннер на сайте magicdns.ru:</b>\n\n"
+                                "1. Напишите текст баннера в этот чат.\n"
+                                "2. <b>Смахните его (Ответить)</b> и отправьте команду <code>/sitealert</code>\n"
+                                "<i>(Бот покажет кнопки: 🟢 Зеленый, ⚠️ Желтый, ℹ️ Синий)</i>\n\n"
+                                "<i>(Или отправьте сразу: <code>/sitealert Текст</code> / <code>/sitealert green Текст</code>)</i>\n\n"
+                                "• Снять баннер: <code>/clearsitealert</code>"
                             )
-                            PENDING_ADMIN_ACTIONS[ADMIN_CHAT_ID] = "await_sitealert_text"
                             continue
 
                         if arg.lower() in ['off', 'clear', 'stop', 'удалить', 'выкл', 'снять']:
@@ -5459,34 +5428,6 @@ def main():
 
                         # Check if admin is sending a reply to a review
 
-                        if sender_id == ADMIN_CHAT_ID and text.strip().lower() in ['/cancel', 'отмена', 'cancel']:
-                            if ADMIN_CHAT_ID in PENDING_ADMIN_ACTIONS:
-                                del PENDING_ADMIN_ACTIONS[ADMIN_CHAT_ID]
-                                send_message(ADMIN_CHAT_ID, "❌ Действие отменено.")
-                                continue
-                            if ADMIN_CHAT_ID in PENDING_REVIEWS_REPLIES:
-                                del PENDING_REVIEWS_REPLIES[ADMIN_CHAT_ID]
-                                send_message(ADMIN_CHAT_ID, "❌ Добавление ответа отменено.")
-                                continue
-
-                        if sender_id == ADMIN_CHAT_ID and ADMIN_CHAT_ID in PENDING_ADMIN_ACTIONS:
-                            action = PENDING_ADMIN_ACTIONS.pop(ADMIN_CHAT_ID)
-                            content_text = text.strip() or m.get('caption', '').strip()
-                            media = m if (m.get('photo') or m.get('document') or m.get('video')) else None
-
-                            if action == "await_alert_text":
-                                if not content_text and not media:
-                                    send_message(ADMIN_CHAT_ID, "⚠️ Текст рассылки пуст. Рассылка отменена.")
-                                    continue
-                                show_alert_preview(content_text, media_msg=media, reply_to_msg_id=m.get('message_id'))
-                                continue
-                            elif action == "await_sitealert_text":
-                                if not content_text:
-                                    send_message(ADMIN_CHAT_ID, "⚠️ Текст баннера пуст. Публикация отменена.")
-                                    continue
-                                show_sitealert_picker(content_text, reply_to_msg_id=m.get('message_id'))
-                                continue
-
                         if sender_id == ADMIN_CHAT_ID and ADMIN_CHAT_ID in PENDING_REVIEWS_REPLIES:
 
                             if text.strip().lower() in ['/cancel', 'отмена', 'cancel']:
@@ -5642,37 +5583,9 @@ def main():
                                         err_msg = f"⚠️ Ошибка отправки: {html.escape(raw_err)}"
 
                                     send_message(ADMIN_CHAT_ID, err_msg, reply_to_message_id=m['message_id'])
-
-
-
-        # Standalone message from Admin in private chat (not ticket reply, not command)
-                        if sender_id == ADMIN_CHAT_ID and chat_type == 'private':
-                            raw_content = text.strip() or m.get('caption', '').strip()
-                            if raw_content or m.get('photo') or m.get('document') or m.get('video'):
-                                draft_id = str(int(time.time() * 1000))
-                                PENDING_DRAFTS[draft_id] = {
-                                    "text": raw_content,
-                                    "media_msg": m if (m.get('photo') or m.get('document') or m.get('video')) else None,
-                                    "created_at": time.time()
-                                }
-                                prompt_text = (
-                                    f"📢 <b>Сообщение для оповещения:</b>\n\n"
-                                    f"<i>«{html.escape(raw_content[:200]) + ('...' if len(raw_content) > 200 else '')}»</i>\n\n"
-                                    f"<b>Что вы хотите с ним сделать?</b>"
-                                )
-                                draft_kb = {
-                                    "inline_keyboard": [
-                                        [
-                                            {"text": "🚨 Рассылка в боте (/alert)", "callback_data": f"draft_alert:{draft_id}"},
-                                            {"text": "🌐 Баннер на сайте (/sitealert)", "callback_data": f"draft_site:{draft_id}"}
-                                        ],
-                                        [
-                                            {"text": "❌ Ничего", "callback_data": f"dismiss_draft:{draft_id}"}
-                                        ]
-                                    ]
-                                }
-                                send_message(ADMIN_CHAT_ID, prompt_text, reply_to_message_id=m.get('message_id'), reply_markup=draft_kb)
                                 continue
+
+
 
         except Exception as e:
 
