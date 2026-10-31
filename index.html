@@ -4530,6 +4530,10 @@
     }
 
     /* Site Emergency Alert Banner */
+    .site-alert-banner.alert-success {
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.22) 0%, rgba(59, 130, 246, 0.25) 100%);
+      border-bottom: 2px solid rgba(16, 185, 129, 0.55);
+    }
     .site-alert-banner {
       position: relative;
       width: 100%;
@@ -5909,6 +5913,15 @@ sudo systemctl restart systemd-resolved</code></pre>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
         <div class="news-grid" id="news-grid">
+
+        <article class="news-card featured">
+          <div class="news-card-top">
+            <span class="news-tag featured">Восстановление</span>
+            <span class="news-date">31 октября 2026</span>
+          </div>
+          <h3 class="news-card-title">🟢 Все сервисы снова в строю: Google, Gemini и Antigravity работают стабильно</h3>
+          <p class="news-card-text">Сегодня штормило сервисы Google, Gemini и связанные с ними платформы из-за внезапной блокировки нашего рабочего диапазона IP со стороны Google. Мы оперативно перевели маршруты на резервные мощности, но во время переключения всплыли скрытые нестыковки во внутренних конфигурациях серверов, которые пришлось устранять на живой системе. Сейчас вся инфраструктура полностью приведена в порядок, протестирована и держит нагрузку без каких-либо ограничений. Приносим извинения за долгое ожидание!</p>
+        </article>
 
         <article class="news-card infra">
           <div class="news-card-top">
@@ -7989,8 +8002,15 @@ sudo systemctl restart systemd-resolved</code></pre>
               if (banner) banner.style.display = 'none';
               return;
             }
-            if (badge) badge.classList.add('status-degraded');
-            if (statusText) statusText.textContent = 'Внимание: техработы';
+            if (data.type === 'warning' || data.type === 'danger') {
+              if (badge) badge.classList.add('status-degraded');
+              if (statusText) statusText.textContent = 'Внимание: техработы';
+              if (banner) banner.classList.remove('alert-success');
+            } else {
+              if (badge) badge.classList.remove('status-degraded');
+              if (statusText) statusText.textContent = 'Работает стабильно';
+              if (banner) banner.classList.add('alert-success');
+            }
             if (banner && textElem) {
               var cleanMsg = (data.message || '').replace(/^(\s*⚠️\s*)+/g, '').replace(/(\s*⚠️\s*)+$/g, '').trim();
               textElem.innerHTML = cleanMsg;
