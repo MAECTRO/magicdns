@@ -337,6 +337,7 @@ subscribers_lock = threading.Lock()
 subscribers = {}
 
 PENDING_ALERTS = {}
+PENDING_SITE_ALERTS = {}
 
 PENDING_REVIEWS_REPLIES = {}  # admin_chat_id -> review_id
 
@@ -2370,13 +2371,13 @@ def update_github_file(file_path, content_str, commit_message):
 
 
 
-def set_site_alert(active, message=""):
+def set_site_alert(active, message="", alert_type="warning"):
 
     alert_data = {
 
         "active": active,
 
-        "type": "warning" if active else "info",
+        "type": alert_type if active else "info",
 
         "message": message.strip() if active else "",
 
@@ -4112,6 +4113,46 @@ def main():
 
 
 
+                    if data.startswith('pub_alert:'):
+                        parts = data.split(':')
+                        if len(parts) >= 3:
+                            draft_id = parts[1]
+                            action = parts[2]
+                            if action == 'cancel':
+                                PENDING_SITE_ALERTS.pop(draft_id, None)
+                                edit_message(ADMIN_CHAT_ID, msg_id, "❌ <b>Публикация баннера отменена.</b>")
+                                answer_callback(cq_id, "Отменено")
+                            else:
+                                text_to_pub = PENDING_SITE_ALERTS.pop(draft_id, None)
+                                if not text_to_pub:
+                                    answer_callback(cq_id, "⚠️ Черновик устарел или не найден", alert=True)
+                                    continue
+                                answer_callback(cq_id, "⏳ Публикую баннер на сайт...")
+                                ok, status_msg = set_site_alert(True, text_to_pub, alert_type=action)
+                                if ok:
+                                    type_names = {
+                                        'success': '🟢 Восстановление (зелёный)',
+                                        'warning': '⚠️ Авария / Техработы (жёлтый)',
+                                        'info': 'ℹ️ Информационный (синий)'
+                                    }
+                                    type_title = type_names.get(action, action)
+                                    alert_msg = (
+                                        f"✅ <b>ОПОВЕЩЕНИЕ ОПУБЛИКОВАНО НА САЙТЕ MAGICDNS.RU!</b>\n\n"
+                                        f"🎨 <b>Тип баннера:</b> {type_title}\n"
+                                        f"📢 <b>Текст на сайте:</b>\n{html.escape(text_to_pub)}\n\n"
+                                        f"🌐 <i>Баннер отображается вверху всех страниц сайта.</i>"
+                                    )
+                                    kb = {
+                                        "inline_keyboard": [
+                                            [{"text": "🔕 Снять оповещение с сайта", "callback_data": "clear_site_alert"}],
+                                            [{"text": "🌐 Открыть сайт", "url": "https://magicdns.ru"}]
+                                        ]
+                                    }
+                                    edit_message(ADMIN_CHAT_ID, msg_id, alert_msg, reply_markup=kb)
+                                else:
+                                    edit_message(ADMIN_CHAT_ID, msg_id, f"⚠️ Ошибка при публикации: {html.escape(status_msg)}")
+                        continue
+
                     if data == 'clear_site_alert':
 
                         answer_callback(cq_id, "⏳ Снимаю оповещение с сайта...")
@@ -4841,83 +4882,88 @@ def main():
 
 
                         if not arg:
-
                             site_guide = (
-
-                                "🌐 <b>Управление оповещением на сайте magicdns.ru:</b>\n\n"
-
-                                "• <b>Включить баннер на сайте:</b>\n"
-
-                                "<code>/sitealert Внимание! На шведском узле идут технические работы. Пожалуйста, используйте адрес 94.249.177.102</code>\n\n"
-
+                                "🌐 <b>Управление баннером на сайте magicdns.ru:</b>\n\n"
+                                "• <b>Интерактивная публикация с выбором цвета (кнопками):</b>\n"
+                                "<code>/sitealert Текст сообщения</code>\n"
+                                "<i>(Бот покажет кнопки: 🟢 Зеленый, ⚠️ Желтый, ℹ️ Синий)</i>\n\n"
+                                "• <b>Быстрая публикация сразу с цветом:</b>\n"
+                                "<code>/sitealert green Работа всех сервисов полностью восстановлена!</code>\n"
+                                "<code>/sitealert yellow Внимание! Ведутся технические работы.</code>\n"
+                                "<code>/sitealert blue Добавлена поддержка новых моделей DoH/DoT.</code>\n\n"
                                 "• <b>Снять баннер с сайта:</b>\n"
-
                                 "<code>/clearsitealert</code> (или <code>/sitealert off</code>)"
-
                             )
-
                             send_message(ADMIN_CHAT_ID, site_guide)
-
                             continue
-
-
 
                         if arg.lower() in ['off', 'clear', 'stop', 'удалить', 'выкл', 'снять']:
-
                             send_message(ADMIN_CHAT_ID, "⏳ Снимаю баннер с сайта...")
-
                             ok, status_msg = set_site_alert(False, "")
-
                             if ok:
-
                                 send_message(ADMIN_CHAT_ID, "🔕 <b>Оповещение успешно снято с сайта magicdns.ru!</b>\nБаннер отключен.")
-
                             else:
-
                                 send_message(ADMIN_CHAT_ID, f"⚠️ Ошибка при снятии: {status_msg}")
-
                             continue
 
+                        # Check for quick type prefix
+                        type_map = {
+                            'green': 'success', 'зеленый': 'success', 'зелёный': 'success', 'success': 'success', 'ок': 'success', 'ok': 'success', 'восстановление': 'success',
+                            'yellow': 'warning', 'желтый': 'warning', 'жёлтый': 'warning', 'warning': 'warning', 'авария': 'warning', 'техработы': 'warning', 'сбой': 'warning', 'red': 'warning', 'красный': 'warning',
+                            'blue': 'info', 'синий': 'info', 'info': 'info', 'инфо': 'info', 'анонс': 'info'
+                        }
 
+                        parts = arg.split(maxsplit=1)
+                        first_word = parts[0].lower().lstrip('/-')
 
-                        send_message(ADMIN_CHAT_ID, "⏳ Публикую оповещение на сайт magicdns.ru...")
+                        if first_word in type_map and len(parts) > 1 and parts[1].strip():
+                            chosen_type = type_map[first_word]
+                            text_to_pub = parts[1].strip()
+                            send_message(ADMIN_CHAT_ID, "⏳ Публикую оповещение на сайт magicdns.ru...")
+                            ok, status_msg = set_site_alert(True, text_to_pub, alert_type=chosen_type)
+                            if ok:
+                                type_names = {
+                                    'success': '🟢 Восстановление (зелёный)',
+                                    'warning': '⚠️ Авария / Техработы (жёлтый)',
+                                    'info': 'ℹ️ Информационный (синий)'
+                                }
+                                type_title = type_names.get(chosen_type, chosen_type)
+                                alert_msg = (
+                                    f"✅ <b>ОПОВЕЩЕНИЕ ОПУБЛИКОВАНО НА САЙТЕ MAGICDNS.RU!</b>\n\n"
+                                    f"🎨 <b>Тип баннера:</b> {type_title}\n"
+                                    f"📢 <b>Текст на сайте:</b>\n{html.escape(text_to_pub)}\n\n"
+                                    f"🌐 <i>Баннер отображается вверху всех страниц сайта.</i>"
+                                )
+                                kb = {
+                                    "inline_keyboard": [
+                                        [{"text": "🔕 Снять оповещение с сайта", "callback_data": "clear_site_alert"}],
+                                        [{"text": "🌐 Открыть сайт", "url": "https://magicdns.ru"}]
+                                    ]
+                                }
+                                send_message(ADMIN_CHAT_ID, alert_msg, reply_markup=kb)
+                            else:
+                                send_message(ADMIN_CHAT_ID, f"⚠️ Ошибка при публикации на сайт: {status_msg}")
+                            continue
 
-                        ok, status_msg = set_site_alert(True, arg)
+                        # Interactive buttons
+                        draft_id = str(int(time.time() * 1000))
+                        PENDING_SITE_ALERTS[draft_id] = arg.strip()
 
-                        if ok:
-
-                            alert_msg = (
-
-                                f"🚨 <b>ОПОВЕЩЕНИЕ ОПУБЛИКОВАНО НА САЙТЕ MAGICDNS.RU!</b>\n\n"
-
-                                f"📢 <b>Текст на сайте:</b>\n{arg}\n\n"
-
-                                f"🌐 <i>Баннер отображается вверху сайта для всех посетителей.</i>"
-
-                            )
-
-                            kb = {
-
-                                "inline_keyboard": [
-
-                                    [{"text": "🔕 Снять оповещение с сайта", "callback_data": "clear_site_alert"}],
-
-                                    [{"text": "🌐 Открыть сайт", "url": "https://magicdns.ru"}]
-
-                                ]
-
-                            }
-
-                            send_message(ADMIN_CHAT_ID, alert_msg, reply_markup=kb)
-
-                        else:
-
-                            send_message(ADMIN_CHAT_ID, f"⚠️ Ошибка при публикации на сайт: {status_msg}")
-
+                        draft_msg = (
+                            f"🌐 <b>Черновик баннера для сайта magicdns.ru:</b>\n\n"
+                            f"<i>«{html.escape(arg.strip())}»</i>\n\n"
+                            f"<b>Выберите тип и цвет баннера:</b>"
+                        )
+                        kb = {
+                            "inline_keyboard": [
+                                [{"text": "🟢 Восстановление (зелёный)", "callback_data": f"pub_alert:{draft_id}:success"}],
+                                [{"text": "⚠️ Авария / Техработы (жёлтый)", "callback_data": f"pub_alert:{draft_id}:warning"}],
+                                [{"text": "ℹ️ Инфо / Анонс (синий)", "callback_data": f"pub_alert:{draft_id}:info"}],
+                                [{"text": "❌ Отмена", "callback_data": f"pub_alert:{draft_id}:cancel"}]
+                            ]
+                        }
+                        send_message(ADMIN_CHAT_ID, draft_msg, reply_markup=kb)
                         continue
-
-
-
                     elif cmd in ['/clearsitealert', '/sitealertoff', 'снятьоповещение']:
 
                         if sender_id != ADMIN_CHAT_ID:
@@ -5611,4 +5657,3 @@ def main():
 if __name__ == '__main__':
 
     main()
-
