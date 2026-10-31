@@ -8325,7 +8325,7 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
                 <array>
                     <string>109.120.132.43</string>
                     <string>94.249.177.102</string>
-                    <string>2.56.175.196</string>
+                    <string>138.124.59.86</string>
                 </array>
                 <key>ServerName</key>
                 <string>dns.magicdns.ru</string>

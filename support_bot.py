@@ -2973,7 +2973,7 @@ def generate_mobileconfig(variant="dual"):
 
     else:
 
-        servers = ["109.120.132.43", "94.249.177.102", "2.56.175.196"]
+        servers = ["109.120.132.43", "94.249.177.102", "138.124.59.86"]
 
         name = "MagicDNS (Швеция + Германия)"
 
@@ -3249,7 +3249,7 @@ def run_dig_diagnostics(domain):
 
         if res_ips:
 
-            is_proxied = any(ip in ("109.120.132.43", "94.249.177.102", "2.56.175.196") for ip in res_ips)
+            is_proxied = any(ip in ("109.120.132.43", "94.249.177.102", "138.124.59.86") for ip in res_ips)
 
             ips_str = ", ".join(res_ips[:3])
 
