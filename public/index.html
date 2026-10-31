@@ -4530,26 +4530,65 @@
     }
 
     /* Site Emergency Alert Banner */
-    .site-alert-banner.alert-success {
-      background: linear-gradient(90deg, rgba(16, 185, 129, 0.22) 0%, rgba(59, 130, 246, 0.25) 100%);
-      border-bottom: 2px solid rgba(16, 185, 129, 0.55);
-    }
+    /* Site Alert Banner Base */
     .site-alert-banner {
       position: relative;
       width: 100%;
-      background: linear-gradient(90deg, rgba(245, 158, 11, 0.22) 0%, rgba(239, 68, 68, 0.25) 100%);
-      border-bottom: 2px solid rgba(245, 158, 11, 0.55);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
       color: #ffffff;
       z-index: 1000;
       animation: slideDownAlert 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
-    @keyframes slideDownAlert {
-      from { transform: translateY(-100%); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+    /* 1. Warning / Emergency / Degraded (Amber / Red) */
+    .site-alert-banner.alert-warning,
+    .site-alert-banner:not(.alert-success):not(.alert-info) {
+      background: linear-gradient(90deg, rgba(146, 64, 14, 0.72) 0%, rgba(185, 28, 28, 0.68) 100%);
+      border-bottom: 2px solid rgba(245, 158, 11, 0.85);
+      box-shadow: 0 4px 24px rgba(245, 158, 11, 0.25);
+    }
+    .site-alert-banner.alert-warning .site-alert-icon,
+    .site-alert-banner:not(.alert-success):not(.alert-info) .site-alert-icon {
+      filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.7));
+    }
+    .site-alert-banner.alert-warning .site-alert-text code,
+    .site-alert-banner:not(.alert-success):not(.alert-info) .site-alert-text code {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      color: #fde68a;
+    }
+
+    /* 2. Success / Recovery / Restored (Emerald / Mint) */
+    .site-alert-banner.alert-success {
+      background: linear-gradient(90deg, rgba(6, 78, 59, 0.85) 0%, rgba(4, 120, 87, 0.8) 50%, rgba(6, 95, 70, 0.85) 100%);
+      border-bottom: 2px solid rgba(52, 211, 153, 0.9);
+      box-shadow: 0 4px 24px rgba(16, 185, 129, 0.35);
+    }
+    .site-alert-banner.alert-success .site-alert-icon {
+      filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.8));
+    }
+    .site-alert-banner.alert-success .site-alert-text code {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(52, 211, 153, 0.6);
+      color: #a7f3d0;
+    }
+
+    /* 3. Info / Neutral (Blue / Indigo) */
+    .site-alert-banner.alert-info {
+      background: linear-gradient(90deg, rgba(30, 58, 138, 0.78) 0%, rgba(37, 99, 235, 0.7) 100%);
+      border-bottom: 2px solid rgba(96, 165, 250, 0.85);
+      box-shadow: 0 4px 24px rgba(59, 130, 246, 0.25);
+    }
+    .site-alert-banner.alert-info .site-alert-icon {
+      filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.8));
+    }
+    .site-alert-banner.alert-info .site-alert-text code {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(96, 165, 250, 0.6);
+      color: #bfdbfe;
     }
 
     .site-alert-inner {
@@ -4664,21 +4703,13 @@
 </head>
 <body>
 
-  <!-- Site Emergency Alert Banner -->
+    <!-- Site Emergency Alert Banner -->
   <aside id="site-alert-banner" class="site-alert-banner" style="display: none;" role="alert" aria-live="assertive">
     <div class="container site-alert-inner">
       <div class="site-alert-content">
-        <svg class="site-alert-icon site-alert-icon-left" width="18" height="18" viewBox="0 0 24 24" fill="rgba(245, 158, 11, 0.2)" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-          <line x1="12" y1="9" x2="12" y2="13"></line>
-          <line x1="12" y1="17" x2="12.01" y2="17"></line>
-        </svg>
+        <span class="site-alert-icon site-alert-icon-left" id="site-alert-icon-left"></span>
         <span id="site-alert-text" class="site-alert-text"></span>
-        <svg class="site-alert-icon site-alert-icon-right" width="18" height="18" viewBox="0 0 24 24" fill="rgba(245, 158, 11, 0.2)" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-          <line x1="12" y1="9" x2="12" y2="13"></line>
-          <line x1="12" y1="17" x2="12.01" y2="17"></line>
-        </svg>
+        <span class="site-alert-icon site-alert-icon-right" id="site-alert-icon-right"></span>
       </div>
       <button type="button" class="site-alert-close" id="site-alert-close-btn" aria-label="Закрыть оповещение" onclick="dismissSiteAlert()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -7984,7 +8015,7 @@ sudo systemctl restart systemd-resolved</code></pre>
       setupLegalModal('btn-open-terms', 'terms-modal', ['close-terms-btn', 'close-terms-btn-bottom']);
       setupLegalModal('btn-open-contact', 'contact-modal', ['close-contact-btn', 'close-contact-btn-bottom']);
 
-      function initSiteAlert() {
+            function initSiteAlert() {
         try {
           sessionStorage.removeItem('magicdns_dismissed_alert');
         } catch(e) {}
@@ -7996,23 +8027,48 @@ sudo systemctl restart systemd-resolved</code></pre>
             var statusText = document.querySelector('.status-text');
             var banner = document.getElementById('site-alert-banner');
             var textElem = document.getElementById('site-alert-text');
+            var iconLeft = document.getElementById('site-alert-icon-left');
+            var iconRight = document.getElementById('site-alert-icon-right');
+
             if (!data || !data.active || !data.message) {
               if (badge) badge.classList.remove('status-degraded');
               if (statusText) statusText.textContent = 'Работает стабильно';
               if (banner) banner.style.display = 'none';
               return;
             }
-            if (data.type === 'warning' || data.type === 'danger') {
-              if (badge) badge.classList.add('status-degraded');
-              if (statusText) statusText.textContent = 'Внимание: техработы';
-              if (banner) banner.classList.remove('alert-success');
-            } else {
+
+            var type = (data.type || 'warning').toLowerCase();
+            var iconWarning = '<svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(245, 158, 11, 0.2)" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+            var iconSuccess = '<svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(16, 185, 129, 0.25)" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+            var iconInfo = '<svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(59, 130, 246, 0.2)" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+
+            var iconHtml = iconWarning;
+            if (banner) {
+              banner.classList.remove('alert-warning', 'alert-success', 'alert-info');
+            }
+
+            if (type === 'success' || type === 'recovery' || type === 'resolved') {
               if (badge) badge.classList.remove('status-degraded');
               if (statusText) statusText.textContent = 'Работает стабильно';
               if (banner) banner.classList.add('alert-success');
+              iconHtml = iconSuccess;
+            } else if (type === 'info') {
+              if (badge) badge.classList.remove('status-degraded');
+              if (statusText) statusText.textContent = 'Работает стабильно';
+              if (banner) banner.classList.add('alert-info');
+              iconHtml = iconInfo;
+            } else {
+              if (badge) badge.classList.add('status-degraded');
+              if (statusText) statusText.textContent = 'Внимание: техработы';
+              if (banner) banner.classList.add('alert-warning');
+              iconHtml = iconWarning;
             }
+
+            if (iconLeft) iconLeft.innerHTML = iconHtml;
+            if (iconRight) iconRight.innerHTML = iconHtml;
+
             if (banner && textElem) {
-              var cleanMsg = (data.message || '').replace(/^(\s*⚠️\s*)+/g, '').replace(/(\s*⚠️\s*)+$/g, '').trim();
+              var cleanMsg = (data.message || '').replace(/^(\s*[⚠️🟢ℹ️]\s*)+/g, '').replace(/(\s*[⚠️🟢ℹ️]\s*)+$/g, '').trim();
               textElem.innerHTML = cleanMsg;
               banner.style.display = 'block';
             }
