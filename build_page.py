@@ -4724,8 +4724,13 @@ html_content = f'''<!DOCTYPE html>
 
     /* Native Sponsored Feed Card (РСЯ 'В ленте') */
     .native-ad-section {{
+      display: none;
       padding: 10px 0 32px;
       width: 100%;
+    }}
+    .native-ad-section.is-visible {{
+      display: block;
+      animation: fadeIn 0.25s ease-out;
     }}
     .native-ad-card {{
       background: linear-gradient(145deg, rgba(14, 25, 44, 0.75) 0%, rgba(8, 14, 25, 0.92) 100%);
@@ -6116,7 +6121,11 @@ sudo systemctl restart systemd-resolved</code></pre>
               window.yaContextCb.push(function() {{
                 Ya.Context.AdvManager.render({{
                   "blockId": "R-A-20315689-5",
-                  "renderTo": "yandex_rtb_R-A-20315689-5"
+                  "renderTo": "yandex_rtb_R-A-20315689-5",
+                  "onRender": function() {{
+                    var sec = document.getElementById('sponsored-feed');
+                    if (sec) sec.classList.add('is-visible');
+                  }}
                 }});
               }});
             </script>
