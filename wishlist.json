@@ -7,9 +7,9 @@
       "konami.com",
       "konami.net"
     ],
-    "status": "in_progress",
-    "status_text": "В обработке у команды 🟡",
-    "votes": 142,
+    "status": "completed",
+    "status_text": "Реализовано 🟢",
+    "votes": 143,
     "description": "Реальный запрос от игроков: авторизация в Konami ID, синхронизация профилей eFootball и стабильный онлайн-матчмейкинг без задержек.",
     "rkn_verified": true,
     "rkn_text": "100% белый список (149-ФЗ)",

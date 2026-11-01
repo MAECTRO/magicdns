@@ -6258,8 +6258,8 @@ sudo systemctl restart systemd-resolved</code></pre>
               <span data-i18n="konamiCategory">Игры и аккаунты</span>
             </span>
             <span class="wishlist-status-pill">
-              <span class="status-dot" style="width: 7px; height: 7px; background: #fbbf24; border-radius: 50%; box-shadow: 0 0 8px #fbbf24;"></span>
-              <span data-i18n="statusInProgress">В обработке у команды 🟡</span>
+              <span class="status-dot" style="width: 7px; height: 7px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 8px #00ff9d;"></span>
+              <span data-i18n="statusCompleted" style="color: #00ff9d; font-weight: 700;">Реализовано 🟢</span>
             </span>
           </div>
           <div class="wishlist-card-body">
@@ -6279,11 +6279,11 @@ sudo systemctl restart systemd-resolved</code></pre>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
               <span data-i18n="wishlistComplianceBadge">100% белый список (149-ФЗ)</span>
             </span>
-            <button type="button" class="btn-vote" id="vote-btn-konami" data-service-id="konami" aria-label="Поддержать Konami">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
-              <span class="vote-text" data-i18n="btnVote">Поддержать</span>
-              <span class="vote-count" id="vote-count-konami">{konami_votes}</span>
-            </button>
+            <div class="btn-vote voted" style="cursor: default; pointer-events: none; background: rgba(0, 255, 157, 0.12); border-color: rgba(0, 255, 157, 0.4); color: #00ff9d;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="vote-text" data-i18n="btnConnected">Подключено к сети ✓</span>
+              <span class="vote-count" id="vote-count-konami" style="background: rgba(0, 255, 157, 0.2); color: #fff;">143</span>
+            </div>
           </div>
         </article>
 
