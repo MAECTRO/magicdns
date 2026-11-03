@@ -7307,19 +7307,7 @@ sudo systemctl restart systemd-resolved</code></pre>
           appendMessage(query, 'user', false);
           showTyping();
 
-          // 1. Check local match first (instant offline response)
-          const localMatch = findLocalMatch(query);
-          if (localMatch) {
-            setTimeout(function() {
-              hideTyping();
-              appendMessage(localMatch, 'bot', true);
-              chatHistory.push({ role: 'user', text: query });
-              chatHistory.push({ role: 'model', text: localMatch.replace(/<[^>]*>/g, '') });
-            }, 350);
-            return;
-          }
-
-          // 2. Query Cloudflare Worker with timeout
+          // 1. Query Cloudflare Worker AI directly (zero static interception)
           let didRespond = false;
           const controller = window.AbortController ? new AbortController() : null;
           const fallbackMessages = {

@@ -1,42 +1,51 @@
 /**
- * MagicDNS Support Bot & Feedback Gateway — Cloudflare Workers AI
+ * MagicDNS 24/7 Smart Support Bot & Feedback Gateway — Cloudflare Workers AI
  * 
- * - Chat: Powered natively by Cloudflare Workers AI (@cf/meta/llama-3.1-8b-instruct-fast).
- * - Feedback: Handles user reviews, suggestions & bug reports.
- *   Optionally relays to Telegram if TELEGRAM_BOT_TOKEN & TELEGRAM_CHAT_ID are set.
+ * - Model: Meta Llama 3.3 70B Instruct (FP8 Fast) with auto-fallback to Llama 3.1 8B.
+ * - Dialogue Engine: Dynamic context-aware tech support engineer.
+ * - Feedback Gateway: Secure review/bug/wishlist moderation pipeline into Telegram.
  * 
- * 10,000 Neurons/day free.
- * ZERO API keys required for LLM inference!
+ * 100% Free on Cloudflare Workers AI (10,000 daily neurons free tier).
  */
 
-const SYSTEM_INSTRUCTION = `Ты — официальный технический AI-ассистент сервиса MagicDNS (сайт: magicdns.ru).
-Твоя задача — ёмко, технически грамотно и дружелюбно помогать пользователям настраивать DNS-шлюз и решать вопросы с доступом к AI-сервисам (Claude AI, Gemini, Google AI Studio, Antigravity, ChatGPT) без VPN.
+const SYSTEM_INSTRUCTION = `Ты — живой, технически грамотный и вежливый инженер поддержки сервиса MagicDNS (сайт: magicdns.ru).
+Твоя цель — реально вникнуть в ситуацию пользователя и помочь ему настроить доступ или решить проблему, а не отделываться шаблонными копипастами.
 
-Главные факты о MagicDNS:
-1. Как работает: MagicDNS — это двухшлюзовый SmartDNS с SNI-маршрутизацией (IP: 109.120.132.43 и 94.249.177.102). Они работают параллельно с балансировкой и отказоустойчивостью. Шлюз оптимизирует маршрутизацию только для запросов к зарубежным AI-сервисам с региональными ограничениями через европейские узлы.
-2. Российские сайты и банки: Трафик к Сбербанку, Т-Банку, Госуслугам, маркетплейсам и обычным сайтам НЕ идет через шлюз — он резолвится локально и идет напрямую от провайдера на максимальной скорости.
-3. Протоколы и адреса:
-   - DoH (DNS-over-HTTPS): https://dns.magicdns.ru/dns-query
-   - DoT (DNS-over-TLS): dns.magicdns.ru
-   - Обычный IPv4 DNS (для роутеров и ПК без DoH/DoT):
-     * Основной DNS: 109.120.132.43
-     * Резервный DNS: 94.249.177.102
-   - Профиль iOS / macOS (.mobileconfig): https://magicdns.ru/profile.mobileconfig
-4. Настройка устройств:
-   - iOS / iPadOS / macOS: Скачать профиль с сайта (https://magicdns.ru/profile.mobileconfig), разрешить в «Настройки -> Основные -> VPN и управление устройством» и нажать «Установить». Если не открывает — передернуть авиарежим на 5 секунд (сброс кэша DNS).
-   - Android: Настройки -> Сеть и интернет -> Персональный DNS-сервер (Private DNS) -> ввести: dns.magicdns.ru.
-   - Windows 11: Параметры -> Сеть и интернет -> Wi-Fi / Ethernet -> Назначение DNS -> Вручную -> IPv4: Вкл -> Предпочитаемый DNS: 109.120.132.43 (или 94.249.177.102) -> Шифрование DNS: Только шифрованный (DNS через HTTPS) -> Шаблон DoH: https://dns.magicdns.ru/dns-query
-   - Роутеры без DoH (Keenetic, TP-Link, D-Link, Asus, MikroTik, Tenda, Zyxel): В веб-интерфейсе роутера в настройках WAN/DHCP прописать Основной DNS: 109.120.132.43, Резервный DNS: 94.249.177.102. Все устройства в домашней сети Wi-Fi автоматически получат доступ к ИИ.
-5. Отключение:
-   - iOS: Настройки -> VPN и управление устройством -> DNS -> выбрать «Автоматически».
-   - Android: Персональный DNS -> Выкл.
-   - Windows: Назначение DNS -> Автоматически (DHCP).
-6. Безопасность и логи: Логи запросов не сохраняются, весь DNS-трафик зашифрован по TLS 1.3.
+КЛЮЧЕВЫЕ ПРИНЦИПЫ ОБЩЕНИЯ (СТРОГО):
+1. ВНИМАТЕЛЬНО СЛЕДИ ЗА КОНТЕКСТОМ ДИАЛОГА. Читай предыдущие сообщения. Если пользователь спорит, переспрашивает («а почему?», «а на роутере?», «а если наоборот?») — отвечай логично и последовательно, опираясь на то, о чем уже шла речь. Никогда не противоречь своим прошлым словам.
+2. ДИАГНОСТИРУЙ, А НЕ СПАМЬ. Если человек пишет «не работает» или «ошибка» — не вываливай всю инструкцию заново. Назови 1-2 самые вероятные причины (сброс кэша DNS через авиарежим/перезагрузку Wi-Fi, опечатка в IP, блокировка провайдером) или задай один короткий уточняющий вопрос.
+3. ЧЕЛОВЕЧЕСКИЙ ТОН. Пиши простым языком, емко и по делу. Без навязчивого спискобесия, без роботизированных приветствий («Конечно! Рад помочь!») и без канцелярщины.
+4. ЯЗЫК: Отвечай на языке пользователя (русский, английский и др.).
 
-Правила общения:
-- Отвечай на том же языке, на котором пишет пользователь (русский, английский, китайский или турецкий), кратко, без воды, канцелярщины и нейро-штампов.
-- Сразу давай конкретные адреса и шаги.
-- Если вопрос не относится к MagicDNS, сети, DNS или AI-сервисам, вежливо верни разговор к теме MagicDNS.`;
+ЗНАНИЯ О СЕРВИСЕ MAGICDNS:
+- Что это: Умный SmartDNS-шлюз для доступа к зарубежным нейросетям (ChatGPT, Claude AI, Gemini, Google AI Studio, Midjourney, Canva, Antigravity) без VPN.
+- Цена: Сервис 100% бесплатный. Никаких платных подписок или скрытых тарифов, проект живет на добровольные донаты сообщества (CloudTips).
+- Законность и РКН: Сервис работает строго по закону РФ. Он перенаправляет запросы исключительно к зарубежным ИИ, которые сами ограничили доступ пользователям из РФ. Сервис НЕ используется и не предназначен для открытия сайтов, запрещенных в РФ.
+- Безопасность и банки: Трафик к Сбербанку, Т-Банку, Госуслугам, маркетплейсам и обычным сайтам НЕ идет через шлюз — он резолвится напрямую провайдером без задержек. Логи не ведутся.
+
+АКТУАЛЬНЫЕ НАСТРОЙКИ (СЕРВЕРЫ В ГЕРМАНИИ И ФИНЛЯНДИИ):
+- DoH (DNS-over-HTTPS, скрытый стелс-эндпоинт): https://api.magicdns.ru/sync
+  (Также поддерживается стандартный путь: https://api.magicdns.ru/dns-query)
+- DoT (DNS-over-TLS, для Android): api.magicdns.ru
+- Обычный IPv4 DNS (для Windows, ТВ и роутеров):
+  * Основной (Primary): 109.120.177.170 (Франкфурт, Германия)
+  * Резервный (Secondary): 94.249.177.102 (Финляндия / Германия)
+- Профиль iOS / macOS: https://magicdns.ru/profile.mobileconfig
+
+ТИПОВЫЕ РЕШЕНИЯ ПРОБЛЕМ:
+- iOS / Safari: Чаще всего дело в старом кэше DNS. Решение: включить авиарежим на 5 секунд и выключить, либо закрыть Safari из многозадачности. Проверить в «Настройки -> Основные -> VPN и управление устройством -> DNS», что выбран MagicDNS.
+- Android: «Настройки -> Сеть и интернет -> Персональный DNS-сервер» -> вбить: api.magicdns.ru. Если пишет «нет подключения» — провайдер фильтрует порт 853, тогда лучше настроить DoH в браузере Chrome/Яндекс.
+- Windows 10/11: В свойствах сетевого адаптера IPv4 прописать Основной: 109.120.177.170, Резервный: 94.249.177.102. Если нужен DoH в браузере: Настройки браузера -> Безопасность -> Использовать безопасный DNS -> Свой -> https://api.magicdns.ru/sync.
+- Роутеры (Keenetic, TP-Link, MikroTik, Asus): В настройках WAN/DHCP прописать Основной: 109.120.177.170, Резервный: 94.249.177.102. Перезагрузить роутер или переподключить Wi-Fi.
+- Как отключить: на iOS переключить DNS на «Автоматически», на Android выключить «Персональный DNS», на Windows вернуть получение DNS по DHCP.`;
+
+function escapeTgHtml(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
 
 export default {
   async fetch(request, env, ctx) {
@@ -52,69 +61,39 @@ export default {
       });
     }
 
-    // 2. Only allow POST requests
     if (request.method !== 'POST') {
       return new Response(JSON.stringify({ error: 'Method not allowed' }), {
         status: 405,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
     const url = new URL(request.url);
 
-    // 3. Handle Feedback & Review Submissions
+    // 2. Handle Feedback / Review / Bug report endpoint
     if (url.pathname === '/feedback') {
       try {
         const body = await request.json();
-        const type = body.type || 'review';
-        const rating = Math.max(1, Math.min(5, Number(body.rating) || 5));
-        const platform = body.platform || 'Windows';
-        const contact = body.contact || '';
+        const type = body.type || 'feedback';
         const message = (body.message || '').trim();
+        const author = (body.author || '').trim();
+        const contact = (body.contact || '').trim();
+        const rating = parseInt(body.rating, 10) || 5;
+        const platform = body.platform || 'Не указана';
 
-        // Spam & abuse filter
-        const spamRegex = /(казино|вулкан|1xbet|1win|ставки|договорн|крипт|заработ|легкие\s*деньги|пассивный\s*доход|секс|порно|визио|виагр|шлюх|prostitut|intim)/i;
-        const urlRegex = /(https?:\/\/|www\.|t\.me\/|bit\.ly\/|tinyurl|\.xyz\/|\.top\/)/i;
-        const isGibberish = /^([a-zA-Zа-яА-Я0-9])\1{7,}$/.test(message);
-
-        if (spamRegex.test(message) || (urlRegex.test(message) && type === 'review') || isGibberish) {
-          return new Response(JSON.stringify({ ok: true, message: 'Отзыв принят' }), {
-            status: 200,
-            headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*',
-            },
-          });
-        }
-
-        if (type === 'vote' || type === 'wishlist_vote') {
-          return new Response(JSON.stringify({ ok: true, message: 'Голос принят' }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-          });
-        }
-
-        // If Telegram bot is configured, relay notification
         if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
-          const escapeTgHtml = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-          const safeAuthor = (contact ? contact.replace(/^@/, '') : 'Аноним');
-          const approveCmd = `python add_review.py ${JSON.stringify(safeAuthor)} ${JSON.stringify(platform)} ${rating} ${JSON.stringify(message)}`;
-
           let tgText = '';
+
           if (type === 'review') {
-            tgText = `⭐ <b>НОВЫЙ ОТЗЫВ С САЙТА!</b> #ОТЗЫВ\n\n` +
-              `👤 <b>Автор:</b> ${contact ? `<code>${escapeTgHtml(contact)}</code>` : 'Аноним'}\n` +
+            const stars = '⭐'.repeat(Math.min(5, Math.max(1, rating)));
+            tgText = `🌟 <b>НОВЫЙ ОТЗЫВ С САЙТА!</b>\n\n` +
+              `👤 <b>Автор:</b> ${escapeTgHtml(author || 'Аноним')}\n` +
+              `⭐ <b>Оценка:</b> ${stars} (${rating}/5)\n` +
               `💻 <b>Платформа:</b> ${escapeTgHtml(platform)}\n` +
-              `⭐️ <b>Оценка:</b> ${'★'.repeat(rating)} (${rating}/5)\n\n` +
-              `💬 <b>Текст:</b>\n${escapeTgHtml(message)}\n\n` +
-              `━━━━━━━━━━━━━━━━━━━\n` +
-              `👉 <b>Опубликовать на сайт (в 1 клик):</b>\n` +
-              `<code>${escapeTgHtml(approveCmd)}</code>`;
+              `📱 <b>Контакт:</b> ${contact ? `<code>${escapeTgHtml(contact)}</code>` : 'Не указан'}\n\n` +
+              `💬 <b>Текст:</b>\n${escapeTgHtml(message)}`;
           } else if (type === 'bug') {
-            tgText = `🐛 <b>БАГ-РЕПОРТ С САЙТА!</b> #БАГ\n\n` +
+            tgText = `🐞 <b>СООБЩЕНИЕ ОБ ОШИБКЕ С САЙТА!</b> #БАГ\n\n` +
               `💻 <b>Платформа:</b> ${escapeTgHtml(platform)}\n` +
               `👤 <b>Контакт:</b> ${contact ? `<code>${escapeTgHtml(contact)}</code>` : 'Анонимно'}\n\n` +
               `💬 <b>Описание проблемы:</b>\n${escapeTgHtml(message)}`;
@@ -164,7 +143,7 @@ export default {
       }
     }
 
-    // 4. Handle Chat AI Questions (Default Endpoint)
+    // 3. Handle Intelligent AI Chat
     try {
       const body = await request.json();
       const userMessage = (body.message || '').trim();
@@ -176,13 +155,14 @@ export default {
         });
       }
 
-      // Build conversation messages for Cloudflare Workers AI
+      // Build conversation messages for Workers AI
       const messages = [
         { role: 'system', content: SYSTEM_INSTRUCTION }
       ];
 
+      // Keep up to 8 conversation history turns for strong multi-turn reasoning
       if (Array.isArray(body.history)) {
-        for (const item of body.history.slice(-6)) {
+        for (const item of body.history.slice(-8)) {
           if (item.role && item.text) {
             messages.push({
               role: item.role === 'user' ? 'user' : 'assistant',
@@ -194,19 +174,22 @@ export default {
 
       messages.push({ role: 'user', content: userMessage });
 
-      // Run Cloudflare Workers AI natively
+      // Run Cloudflare Workers AI: Llama 3.3 70B (Primary) -> Llama 3.1 8B (Fallback)
       let aiResponse;
       try {
-        aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct-fast', {
+        aiResponse = await env.AI.run('@cf/meta/llama-3.3-70b-instruct-fp8-fast', {
           messages: messages,
-          max_tokens: 500,
-          temperature: 0.3,
+          max_tokens: 600,
+          temperature: 0.6,
+          top_p: 0.9,
         });
-      } catch (errFast) {
-        aiResponse = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
+      } catch (err70B) {
+        console.warn('Fallback to 8B due to:', err70B);
+        aiResponse = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
           messages: messages,
           max_tokens: 500,
-          temperature: 0.3,
+          temperature: 0.6,
+          top_p: 0.9,
         });
       }
 
