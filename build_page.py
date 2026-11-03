@@ -4722,17 +4722,12 @@ html_content = f'''<!DOCTYPE html>
       }}
     }}
 
-    /* Native Sponsored Feed Card (РСЯ 'В ленте') */
-    .native-ad-section {{
-      display: none;
+    /* Promo / Sponsor Container */
+    .sponsor-wrapper {{
       padding: 10px 0 32px;
       width: 100%;
     }}
-    .native-ad-section.is-visible {{
-      display: block;
-      animation: fadeIn 0.25s ease-out;
-    }}
-    .native-ad-card {{
+    .promo-card {{
       background: linear-gradient(145deg, rgba(14, 25, 44, 0.75) 0%, rgba(8, 14, 25, 0.92) 100%);
       border: 1px solid rgba(0, 255, 157, 0.2);
       border-radius: var(--radius-lg, 18px);
@@ -4741,52 +4736,41 @@ html_content = f'''<!DOCTYPE html>
       -webkit-backdrop-filter: blur(16px);
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 16px rgba(0, 255, 157, 0.05);
       transition: border-color var(--transition-smooth, 0.2s ease), box-shadow var(--transition-smooth, 0.2s ease);
-      min-height: 120px;
+      min-height: 100px;
       position: relative;
     }}
-    .native-ad-card:hover {{
+    .promo-card:hover {{
       border-color: rgba(0, 255, 157, 0.35);
       box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), 0 0 22px rgba(0, 255, 157, 0.1);
     }}
-    .native-ad-header {{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 14px;
-    }}
-    .native-ad-tag {{
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--neon-mint);
-      background: rgba(0, 255, 157, 0.08);
-      padding: 4px 12px;
-      border-radius: var(--radius-pill, 999px);
-      border: 1px solid rgba(0, 255, 157, 0.25);
-    }}
-    .native-ad-subtext {{
-      font-size: 0.8rem;
-      color: var(--text-muted, #8b9bb4);
-      font-weight: 500;
-    }}
-    .native-ad-slot {{
+    .promo-content-slot {{
       width: 100%;
       min-height: 90px;
       display: flex;
       justify-content: center;
       align-items: center;
     }}
-    .native-ad-slot > div:empty {{
-      display: none;
+    .fallback-card {{
+      text-align: center;
+      padding: 18px 16px;
+    }}
+    .fallback-card p {{
+      color: #94a3b8;
+      font-size: 0.95rem;
+      margin: 0;
+      line-height: 1.5;
+    }}
+    .fallback-card a {{
+      color: var(--neon-mint);
+      text-decoration: underline;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }}
+    .fallback-card a:hover {{
+      color: #ffffff;
     }}
     @media (max-width: 768px) {{
-      .native-ad-card {{
+      .promo-card {{
         padding: 16px 14px;
       }}
     }}
@@ -4809,7 +4793,7 @@ html_content = f'''<!DOCTYPE html>
 
   <!-- Yandex.RTB Loader -->
   <script>window.yaContextCb=window.yaContextCb||[]</script>
-  <script src="https://yandex.ru/ads/system/context.js" async></script>
+  <script src="/lib/partner-core.js" async></script>
 
 </head>
 <body>
@@ -6102,37 +6086,41 @@ sudo systemctl restart systemd-resolved</code></pre>
 
     </section>
 
-    <!-- 4.4. Native Sponsored Block (РСЯ 'В ленте') -->
-    <section class="native-ad-section" id="sponsored-feed">
+    <!-- 4.4. Sponsor & Fallback Section -->
+    <div class="sponsor-wrapper">
       <div class="container">
-        <div class="native-ad-card">
-          <div class="native-ad-header">
-            <div class="native-ad-tag">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              <span>Спонсорский блок</span>
-            </div>
-            <span class="native-ad-subtext">Поддержка независимой инфраструктуры MagicDNS</span>
-          </div>
-          <div class="native-ad-slot">
-            <!-- Yandex.RTB R-A-20315689-5 -->
-            <div id="yandex_rtb_R-A-20315689-5" style="width: 100%;"></div>
-            <script>
-              window.yaContextCb = window.yaContextCb || [];
-              window.yaContextCb.push(function() {{
-                Ya.Context.AdvManager.render({{
-                  "blockId": "R-A-20315689-5",
-                  "renderTo": "yandex_rtb_R-A-20315689-5",
-                  "onRender": function() {{
-                    var sec = document.getElementById('sponsored-feed');
-                    if (sec) sec.classList.add('is-visible');
-                  }}
-                }});
-              }});
-            </script>
+        <div class="promo-card">
+          <div id="promo-content-slot" class="promo-content-slot"></div>
+          
+          <!-- Fallback if ad could not load or blocked -->
+          <div id="promo-fallback" style="display: none;" class="fallback-card">
+            <p>Понравился сервис? <a href="https://pay.cloudtips.ru/p/596a95a5" target="_blank" rel="noopener">Поддержите проект</a> или подпишитесь на наш <a href="https://t.me/magicdns_alert_bot" target="_blank" rel="noopener">Telegram-канал</a>.</p>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+    <script>
+      window.yaContextCb = window.yaContextCb || [];
+      window.yaContextCb.push(function() {{
+        Ya.Context.AdvManager.render({{
+          "blockId": "R-A-20315689-5",
+          "renderTo": "promo-content-slot",
+          "onError": function(data) {{
+            showFallback();
+          }}
+        }});
+      }});
+      setTimeout(function() {{
+        var slot = document.getElementById("promo-content-slot");
+        if (!slot || slot.children.length === 0 || slot.offsetHeight === 0) {{
+          showFallback();
+        }}
+      }}, 2000);
+      function showFallback() {{
+        var fb = document.getElementById("promo-fallback");
+        if (fb) fb.style.display = "block";
+      }}
+    </script>
 
     <!-- 4.5. Community Reviews & Suggestions Section -->
     <section class="reviews-section" id="reviews">
