@@ -1,6 +1,6 @@
 {
-  "active": false,
+  "active": true,
   "type": "info",
-  "message": "",
-  "updated_at": 1793452857
+  "message": "Внимание: в ближайшее время запланирован плановый переезд на новые независимые европейские серверы. Следите за обновлениями в официальном боте <a href=\"https://t.me/magicdns_alert_bot\" target=\"_blank\" rel=\"noopener\" style=\"color: #00ff9d; text-decoration: underline; font-weight: 600;\">@magicdns_alert_bot</a>.",
+  "updated_at": 1793705263
 }
