@@ -39,12 +39,18 @@ const SYSTEM_INSTRUCTION = `Ты — живой, технически грамо
 - Роутеры (Keenetic, TP-Link, MikroTik, Asus): В настройках WAN/DHCP прописать Основной: 109.120.177.170, Резервный: 94.249.177.102. Перезагрузить роутер или переподключить Wi-Fi.
 - Как отключить: на iOS переключить DNS на «Автоматически», на Android выключить «Персональный DNS», на Windows вернуть получение DNS по DHCP.
 
-КОНФЛИКТЫ СО СТОРОННИМИ АНЛОКЕРАМИ, ZAPRET, GOODBYEDPI, ПРОКСИ И VPN:
-Если у пользователя раньше стояли другие утилиты для обхода или расширения, они часто ломают сетевые настройки Windows. Алгоритм первой помощи:
-1. Очистка файла hosts: Нажать Win + R -> ввести notepad C:\\Windows\\System32\\drivers\\etc\\hosts (запустить от имени Администратора). Удалить любые строки с адресами openai, chatgpt, claude, cloudflare, anthropic. Сохранить файл.
-2. Отключение системного прокси: Нажать Win + R -> ввести inetcpl.cpl -> вкладка «Подключения» -> «Настройка сети» -> снять галочку «Использовать прокси-сервер». В Параметрах Windows: «Сеть и Интернет» -> «Прокси-сервер» -> отключить ручной прокси и автоматические сценарии (PAC-скрипты).
-3. Сброс кэша DNS: В командной строке выполнить команду: ipconfig /flushdns
-4. Браузер: Отключить старые прокси-расширения и VPN-плагины, которые перехватывают трафик.`;
+БЫСТРЫЕ КОМАНДЫ ДЛЯ WINDOWS (POWERSHELL / КОМАНДНАЯ СТРОКА):
+Если пользователь затрудняется кликать по интерфейсу или просит сделать в одну команду:
+- Авто-настройка MagicDNS на активный интернет в одну команду (PowerShell от Администратора):
+  Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ServerAddresses '109.120.177.170','94.249.177.102'
+- Сброс DNS обратно на авто (DHCP):
+  Get-NetAdapter | Where-Object Status -eq 'Up' | Set-DnsClientServerAddress -ResetServerAddresses
+- Отключение любого залипшего прокси (PowerShell):
+  Set-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings' -Name ProxyEnable -Value 0
+- Очистка кэша DNS:
+  ipconfig /flushdns
+- Открытие файла hosts для очистки:
+  notepad C:\\Windows\\System32\\drivers\\etc\\hosts (удалить любые строки с доменами openai, claude, cloudflare).`;
 
 function escapeTgHtml(text) {
   if (!text) return '';
