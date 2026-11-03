@@ -1,6 +1,6 @@
 {
   "active": true,
   "type": "info",
-  "message": "Текущие серверы работают в штатном режиме. Переезд на новые независимые узлы состоится ориентировочно завтра (4 ноября) около 21:00, возможно раньше. Следите за обновлениями в боте <a href=\"https://t.me/magicdns_alert_bot\" target=\"_blank\" rel=\"noopener\" style=\"color: #00ff9d; text-decoration: underline; font-weight: 600;\">@magicdns_alert_bot</a>.",
-  "updated_at": 1793738501
+  "message": "Текущие серверы работают в штатном режиме. Переезд на новые независимые узлы состоится ориентировочно завтра (4 ноября) около 21:00, возможно раньше. Следите за обновлениями на сайте и в боте <a href=\"https://t.me/magicdns_alert_bot\" target=\"_blank\" rel=\"noopener\" style=\"color: #00ff9d; text-decoration: underline; font-weight: 600;\">@magicdns_alert_bot</a>.",
+  "updated_at": 1793739000
 }
