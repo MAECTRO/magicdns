@@ -1,6 +1,6 @@
 {
-  "active": true,
+  "active": false,
   "type": "info",
-  "message": "Переезд на новые независимые серверы завершен. Если вы настраивали MagicDNS ранее — обязательно обновите адреса в настройках своих устройств, старые узлы больше не работают. Инструкции доступны в разделе <a href=\"#setup\" style=\"color: #00ff9d; text-decoration: underline; font-weight: 600;\">Настройка</a>.",
-  "updated_at": 1793813375
+  "message": "",
+  "updated_at": 1793814833
 }
