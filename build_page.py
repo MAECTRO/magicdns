@@ -21,9 +21,9 @@ def get_svg_qr(data):
     return svg
 
 # Generate QR codes for the 4 platform configurations
-qr_windows = get_svg_qr('https://dns.magicdns.ru/dns-query')
+qr_windows = get_svg_qr('https://api.magicdns.ru/sync')
 qr_ios = get_svg_qr('https://magicdns.ru/profile.mobileconfig')
-qr_android = get_svg_qr('dns.magicdns.ru')
+qr_android = get_svg_qr('api.magicdns.ru')
 
 # Load news and announcements from news.json
 news_json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'news.json')
@@ -5363,8 +5363,8 @@ html_content = f'''<!DOCTYPE html>
             <div class="input-field-group">
               <span class="input-field-label" data-i18n="winDohLabel">Шаблон DoH:</span>
               <div class="code-input-box">
-                <code class="code-input-text" id="val-win-doh">https://dns.magicdns.ru/dns-query</code>
-                <button class="btn-inline-copy" data-clipboard="https://dns.magicdns.ru/dns-query" title="Скопировать DoH" aria-label="Скопировать DoH">
+                <code class="code-input-text" id="val-win-doh">https://api.magicdns.ru/sync</code>
+                <button class="btn-inline-copy" data-clipboard="https://api.magicdns.ru/sync" title="Скопировать DoH" aria-label="Скопировать DoH">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
@@ -5374,8 +5374,8 @@ html_content = f'''<!DOCTYPE html>
               <div class="input-field-group">
                 <span class="input-field-label" data-i18n="winPrimaryIpv4Label">Основной IPv4:</span>
                 <div class="code-input-box">
-                  <code class="code-input-text" id="val-win-ipv4-primary">109.120.132.43</code>
-                  <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Скопировать Основной IPv4" aria-label="Скопировать Основной IPv4">
+                  <code class="code-input-text" id="val-win-ipv4-primary">109.120.177.170</code>
+                  <button class="btn-inline-copy" data-clipboard="109.120.177.170" title="Скопировать Основной IPv4" aria-label="Скопировать Основной IPv4">
                     <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     <span data-i18n="btnCopy">Копировать</span>
                   </button>
@@ -5385,8 +5385,8 @@ html_content = f'''<!DOCTYPE html>
               <div class="input-field-group">
                 <span class="input-field-label" data-i18n="winSecondaryIpv4Label">Резервный IPv4:</span>
                 <div class="code-input-box">
-                  <code class="code-input-text" id="val-win-ipv4-secondary">94.249.177.102</code>
-                  <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Скопировать Резервный IPv4" aria-label="Скопировать Резервный IPv4">
+                  <code class="code-input-text" id="val-win-ipv4-secondary">45.88.163.92</code>
+                  <button class="btn-inline-copy" data-clipboard="45.88.163.92" title="Скопировать Резервный IPv4" aria-label="Скопировать Резервный IPv4">
                     <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     <span data-i18n="btnCopy">Копировать</span>
                   </button>
@@ -5396,12 +5396,12 @@ html_content = f'''<!DOCTYPE html>
 
             <div class="config-tip-box">
               <svg class="config-tip-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-              <span class="config-tip-text" data-i18n="winDohTip">Важно для Windows 11: шаблон DoH (https://dns.magicdns.ru/dns-query) нужно вставить дважды — и для Основного, и для Резервного IPv4 (с шифрованием «Только через HTTPS»).</span>
+              <span class="config-tip-text" data-i18n="winDohTip">Важно для Windows 11: шаблон DoH (https://api.magicdns.ru/sync) нужно вставить дважды — и для Основного, и для Резервного IPv4 (с шифрованием «Только через HTTPS»).</span>
             </div>
             <div class="card-actions-row">
-              <button class="btn-neon-action" data-clipboard="https://dns.magicdns.ru/dns-query" data-i18n="btnCopyDoH">Скопировать DoH</button>
-              <button class="btn-dark-action" data-clipboard="109.120.132.43" data-i18n="btnCopyPrimaryIpv4">Скопировать Основной IPv4</button>
-              <button class="btn-dark-action" data-clipboard="94.249.177.102" data-i18n="btnCopySecondaryIpv4">Скопировать Резервный IPv4</button>
+              <button class="btn-neon-action" data-clipboard="https://api.magicdns.ru/sync" data-i18n="btnCopyDoH">Скопировать DoH</button>
+              <button class="btn-dark-action" data-clipboard="109.120.177.170" data-i18n="btnCopyPrimaryIpv4">Скопировать Основной IPv4</button>
+              <button class="btn-dark-action" data-clipboard="45.88.163.92" data-i18n="btnCopySecondaryIpv4">Скопировать Резервный IPv4</button>
             </div>
           </div>
           <div class="card-right-column">
@@ -5457,8 +5457,8 @@ html_content = f'''<!DOCTYPE html>
                 <div class="input-field-group">
                   <span class="input-field-label" data-i18n="macPrimaryIpv4Label">Основной IPv4 (macOS):</span>
                   <div class="code-input-box">
-                    <code class="code-input-text" id="val-mac-ipv4-primary">109.120.132.43</code>
-                    <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Скопировать Основной IPv4" aria-label="Скопировать Основной IPv4">
+                    <code class="code-input-text" id="val-mac-ipv4-primary">109.120.177.170</code>
+                    <button class="btn-inline-copy" data-clipboard="109.120.177.170" title="Скопировать Основной IPv4" aria-label="Скопировать Основной IPv4">
                       <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                       <span data-i18n="btnCopy">Копировать</span>
                     </button>
@@ -5467,8 +5467,8 @@ html_content = f'''<!DOCTYPE html>
                 <div class="input-field-group">
                   <span class="input-field-label" data-i18n="macSecondaryIpv4Label">Резервный IPv4 (macOS):</span>
                   <div class="code-input-box">
-                    <code class="code-input-text" id="val-mac-ipv4-secondary">94.249.177.102</code>
-                    <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Скопировать Резервный IPv4" aria-label="Скопировать Резервный IPv4">
+                    <code class="code-input-text" id="val-mac-ipv4-secondary">45.88.163.92</code>
+                    <button class="btn-inline-copy" data-clipboard="45.88.163.92" title="Скопировать Резервный IPv4" aria-label="Скопировать Резервный IPv4">
                       <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                       <span data-i18n="btnCopy">Копировать</span>
                     </button>
@@ -5476,9 +5476,9 @@ html_content = f'''<!DOCTYPE html>
                 </div>
               </div>
               <div class="card-actions-row" style="margin-top: 10px;">
-                <button class="btn-dark-action" data-clipboard="109.120.132.43" data-i18n="btnCopyPrimaryIpv4">Скопировать Основной IPv4</button>
-                <button class="btn-dark-action" data-clipboard="94.249.177.102" data-i18n="btnCopySecondaryIpv4">Скопировать Резервный IPv4</button>
-                <button class="btn-dark-action" data-clipboard="109.120.132.43&#10;94.249.177.102" data-i18n="btnCopyBoth">Скопировать оба IP</button>
+                <button class="btn-dark-action" data-clipboard="109.120.177.170" data-i18n="btnCopyPrimaryIpv4">Скопировать Основной IPv4</button>
+                <button class="btn-dark-action" data-clipboard="45.88.163.92" data-i18n="btnCopySecondaryIpv4">Скопировать Резервный IPv4</button>
+                <button class="btn-dark-action" data-clipboard="109.120.177.170&#10;45.88.163.92" data-i18n="btnCopyBoth">Скопировать оба IP</button>
               </div>
             </div>
           </div>
@@ -5505,13 +5505,13 @@ html_content = f'''<!DOCTYPE html>
               <span class="card-badge" data-i18n="androidBadge">Порт 853 TLS • Android 9+</span>
             </div>
             <p class="card-instruction" data-i18n="androidDesc">
-              Настройка частного DNS на Android для Gemini и ChatGPT. Открой Настройки → Подключения (или Сеть и интернет) → Персональный DNS-сервер → Введи имя хоста dns.magicdns.ru и нажми Сохранить.
+              Настройка частного DNS на Android для Gemini и ChatGPT. Открой Настройки → Подключения (или Сеть и интернет) → Персональный DNS-сервер → Введи имя хоста api.magicdns.ru и нажми Сохранить.
             </p>
             <div class="input-field-group">
               <span class="input-field-label" data-i18n="androidHostLabel">Имя хоста провайдера частного DNS:</span>
               <div class="code-input-box">
-                <code class="code-input-text" id="val-android-host">dns.magicdns.ru</code>
-                <button class="btn-inline-copy" data-clipboard="dns.magicdns.ru" title="Скопировать хост" aria-label="Скопировать хост">
+                <code class="code-input-text" id="val-android-host">api.magicdns.ru</code>
+                <button class="btn-inline-copy" data-clipboard="api.magicdns.ru" title="Скопировать хост" aria-label="Скопировать хост">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
@@ -5563,8 +5563,8 @@ html_content = f'''<!DOCTYPE html>
                 <div class="input-field-group">
                   <span class="input-field-label">Основной DNS / DoT:</span>
                   <div class="code-input-box">
-                    <code class="code-input-text" id="val-linux-primary">94.249.177.102</code>
-                    <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Скопировать Основной DNS" aria-label="Скопировать Основной DNS">
+                    <code class="code-input-text" id="val-linux-primary">45.88.163.92</code>
+                    <button class="btn-inline-copy" data-clipboard="45.88.163.92" title="Скопировать Основной DNS" aria-label="Скопировать Основной DNS">
                       <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                       <span data-i18n="btnCopy">Копировать</span>
                     </button>
@@ -5574,8 +5574,8 @@ html_content = f'''<!DOCTYPE html>
                 <div class="input-field-group">
                   <span class="input-field-label">Резервный DNS / DoT:</span>
                   <div class="code-input-box">
-                    <code class="code-input-text" id="val-linux-secondary">109.120.132.43</code>
-                    <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Скопировать Резервный DNS" aria-label="Скопировать Резервный DNS">
+                    <code class="code-input-text" id="val-linux-secondary">109.120.177.170</code>
+                    <button class="btn-inline-copy" data-clipboard="109.120.177.170" title="Скопировать Резервный DNS" aria-label="Скопировать Резервный DNS">
                       <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                       <span data-i18n="btnCopy">Копировать</span>
                     </button>
@@ -5585,8 +5585,8 @@ html_content = f'''<!DOCTYPE html>
                 <div class="input-field-group">
                   <span class="input-field-label">TLS Hostname (DoT):</span>
                   <div class="code-input-box">
-                    <code class="code-input-text" id="val-linux-hostname">dns.magicdns.ru</code>
-                    <button class="btn-inline-copy" data-clipboard="dns.magicdns.ru" title="Скопировать Hostname" aria-label="Скопировать Hostname">
+                    <code class="code-input-text" id="val-linux-hostname">api.magicdns.ru</code>
+                    <button class="btn-inline-copy" data-clipboard="api.magicdns.ru" title="Скопировать Hostname" aria-label="Скопировать Hostname">
                       <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                       <span data-i18n="btnCopy">Копировать</span>
                     </button>
@@ -5596,8 +5596,8 @@ html_content = f'''<!DOCTYPE html>
                 <div class="input-field-group">
                   <span class="input-field-label">DoH URL (HTTPS):</span>
                   <div class="code-input-box">
-                    <code class="code-input-text" id="val-linux-doh">https://dns.magicdns.ru/dns-query</code>
-                    <button class="btn-inline-copy" data-clipboard="https://dns.magicdns.ru/dns-query" title="Скопировать DoH" aria-label="Скопировать DoH">
+                    <code class="code-input-text" id="val-linux-doh">https://api.magicdns.ru/sync</code>
+                    <button class="btn-inline-copy" data-clipboard="https://api.magicdns.ru/sync" title="Скопировать DoH" aria-label="Скопировать DoH">
                       <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                       <span data-i18n="btnCopy">Копировать</span>
                     </button>
@@ -5628,7 +5628,7 @@ html_content = f'''<!DOCTYPE html>
                   <span style="font-size: 0.78rem; color: var(--neon-mint); font-family: var(--font-mono, monospace); font-weight: 600;">bash (терминал)</span>
                   <button class="btn-inline-copy" data-clipboard="sudo mkdir -p /etc/systemd/resolved.conf.d &amp;&amp; sudo tee /etc/systemd/resolved.conf.d/magicdns.conf &lt;&lt; 'EOF'
 [Resolve]
-DNS=94.249.177.102#dns.magicdns.ru 109.120.132.43#dns.magicdns.ru
+DNS=45.88.163.92#api.magicdns.ru 109.120.177.170#api.magicdns.ru
 FallbackDNS=1.1.1.1 8.8.8.8
 DNSOverTLS=yes
 EOF
@@ -5639,7 +5639,7 @@ sudo systemctl restart systemd-resolved" title="Скопировать всю к
                 </div>
                 <pre style="margin: 0; padding: 12px 14px; font-family: var(--font-mono, monospace); font-size: 0.84rem; color: #a5f3fc; line-height: 1.5; overflow-x: auto; white-space: pre-wrap; word-break: break-all;"><code>sudo mkdir -p /etc/systemd/resolved.conf.d &amp;&amp; sudo tee /etc/systemd/resolved.conf.d/magicdns.conf &lt;&lt; 'EOF'
 [Resolve]
-DNS=94.249.177.102#dns.magicdns.ru 109.120.132.43#dns.magicdns.ru
+DNS=45.88.163.92#api.magicdns.ru 109.120.177.170#api.magicdns.ru
 FallbackDNS=1.1.1.1 8.8.8.8
 DNSOverTLS=yes
 EOF
@@ -5657,7 +5657,7 @@ sudo systemctl restart systemd-resolved</code></pre>
                       <span data-i18n="btnCopy">Копировать</span>
                     </button>
                   </div>
-                  <span style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; display: block;">В выводе должно быть: <code>DNS over TLS: yes</code> и адреса <code>94.249.177.102</code>, <code>109.120.132.43</code></span>
+                  <span style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; display: block;">В выводе должно быть: <code>DNS over TLS: yes</code> и адреса <code>45.88.163.92</code>, <code>109.120.177.170</code></span>
                 </div>
 
                 <div class="input-field-group">
@@ -5692,8 +5692,8 @@ sudo systemctl restart systemd-resolved</code></pre>
                     <li>В строке «Метод» выберите: <b>Автоматически (DHCP, только адрес)</b>.</li>
                     <li>В поле «DNS-серверы» введите через запятую:
                       <div class="code-input-box" style="margin: 6px 0;">
-                        <code class="code-input-text">94.249.177.102, 109.120.132.43</code>
-                        <button class="btn-inline-copy" data-clipboard="94.249.177.102, 109.120.132.43" title="Скопировать DNS" aria-label="Скопировать DNS">
+                        <code class="code-input-text">45.88.163.92, 109.120.177.170</code>
+                        <button class="btn-inline-copy" data-clipboard="45.88.163.92, 109.120.177.170" title="Скопировать DNS" aria-label="Скопировать DNS">
                           <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                         </button>
                       </div>
@@ -5714,8 +5714,8 @@ sudo systemctl restart systemd-resolved</code></pre>
                     <li>Переключите тумблер DNS из режима «Автоматически» в <b>ручной</b>.</li>
                     <li>В строку впишите:
                       <div class="code-input-box" style="margin: 6px 0;">
-                        <code class="code-input-text">94.249.177.102, 109.120.132.43</code>
-                        <button class="btn-inline-copy" data-clipboard="94.249.177.102, 109.120.132.43" title="Скопировать DNS" aria-label="Скопировать DNS">
+                        <code class="code-input-text">45.88.163.92, 109.120.177.170</code>
+                        <button class="btn-inline-copy" data-clipboard="45.88.163.92, 109.120.177.170" title="Скопировать DNS" aria-label="Скопировать DNS">
                           <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                         </button>
                       </div>
@@ -5743,8 +5743,8 @@ sudo systemctl restart systemd-resolved</code></pre>
               </ol>
 
               <div class="code-input-box">
-                <code class="code-input-text">https://dns.magicdns.ru/dns-query</code>
-                <button class="btn-inline-copy" data-clipboard="https://dns.magicdns.ru/dns-query" title="Скопировать DoH" aria-label="Скопировать DoH">
+                <code class="code-input-text">https://api.magicdns.ru/sync</code>
+                <button class="btn-inline-copy" data-clipboard="https://api.magicdns.ru/sync" title="Скопировать DoH" aria-label="Скопировать DoH">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
@@ -5782,8 +5782,8 @@ sudo systemctl restart systemd-resolved</code></pre>
               <div class="input-field-group">
                 <span class="input-field-label" data-i18n="routerPrimaryLabel">Основной DNS:</span>
                 <div class="code-input-box">
-                  <code class="code-input-text" id="val-router-primary">109.120.132.43</code>
-                  <button class="btn-inline-copy" data-clipboard="109.120.132.43" title="Скопировать Основной DNS" aria-label="Скопировать Основной DNS">
+                  <code class="code-input-text" id="val-router-primary">109.120.177.170</code>
+                  <button class="btn-inline-copy" data-clipboard="109.120.177.170" title="Скопировать Основной DNS" aria-label="Скопировать Основной DNS">
                     <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     <span data-i18n="btnCopy">Копировать</span>
                   </button>
@@ -5793,8 +5793,8 @@ sudo systemctl restart systemd-resolved</code></pre>
               <div class="input-field-group">
                 <span class="input-field-label" data-i18n="routerSecondaryLabel">Резервный DNS:</span>
                 <div class="code-input-box">
-                  <code class="code-input-text" id="val-router-secondary">94.249.177.102</code>
-                  <button class="btn-inline-copy" data-clipboard="94.249.177.102" title="Скопировать Резервный DNS" aria-label="Скопировать Резервный DNS">
+                  <code class="code-input-text" id="val-router-secondary">45.88.163.92</code>
+                  <button class="btn-inline-copy" data-clipboard="45.88.163.92" title="Скопировать Резервный DNS" aria-label="Скопировать Резервный DNS">
                     <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     <span data-i18n="btnCopy">Копировать</span>
                   </button>
@@ -5803,9 +5803,9 @@ sudo systemctl restart systemd-resolved</code></pre>
             </div>
 
             <div class="card-actions-row router-actions-row">
-              <button class="btn-neon-action" data-clipboard="109.120.132.43" data-i18n="btnCopyPrimary">Скопировать Основной DNS</button>
-              <button class="btn-dark-action" data-clipboard="94.249.177.102" data-i18n="btnCopySecondary">Скопировать Резервный DNS</button>
-              <button class="btn-dark-action" data-clipboard="109.120.132.43&#10;94.249.177.102" data-i18n="btnCopyBoth">Скопировать оба IP</button>
+              <button class="btn-neon-action" data-clipboard="109.120.177.170" data-i18n="btnCopyPrimary">Скопировать Основной DNS</button>
+              <button class="btn-dark-action" data-clipboard="45.88.163.92" data-i18n="btnCopySecondary">Скопировать Резервный DNS</button>
+              <button class="btn-dark-action" data-clipboard="109.120.177.170&#10;45.88.163.92" data-i18n="btnCopyBoth">Скопировать оба IP</button>
             </div>
           </div>
         </div>
@@ -7095,7 +7095,7 @@ sudo systemctl restart systemd-resolved</code></pre>
           resultBox.style.display = 'none';
           progressWrap.style.display = 'block';
           progressFill.style.width = '10%';
-          progressLog.textContent = (I18N[currentLang] && I18N[currentLang].checkerRunning) ? I18N[currentLang].checkerRunning : 'Опрос DNS-резолвера 109.120.132.43...';
+          progressLog.textContent = (I18N[currentLang] && I18N[currentLang].checkerRunning) ? I18N[currentLang].checkerRunning : 'Опрос DNS-резолвера 109.120.177.170...';
 
           // Launch probes
           const probePromises = AI_SERVICES_LIST.map(function(item) {{
@@ -7313,7 +7313,7 @@ sudo systemctl restart systemd-resolved</code></pre>
           return langAnswers.adblock || faqAnswers.adblock;
         }}
         if (lower.indexOf('ip') !== -1 || lower.indexOf('айпи') !== -1 || lower.indexOf('адрес') !== -1 || lower.indexOf('address') !== -1) {{
-          return 'Адреса MagicDNS:<br>• DoH URL: <code>https://dns.magicdns.ru/dns-query</code><br>• DoT хост: <code>dns.magicdns.ru</code><br>• IPv4 шлюзов: <code>109.120.132.43</code> / <code>94.249.177.102</code>';
+          return 'Адреса MagicDNS:<br>• DoH URL: <code>https://api.magicdns.ru/sync</code><br>• DoT хост: <code>api.magicdns.ru</code><br>• IPv4 шлюзов: <code>109.120.177.170</code> / <code>45.88.163.92</code>';
         }}
         return null;
       }}
@@ -7975,7 +7975,7 @@ sudo systemctl restart systemd-resolved</code></pre>
             if (controller) controller.abort();
           }}, 4000);
 
-          fetch('https://dns.magicdns.ru/api/feedback', {{
+          fetch('https://api.magicdns.ru/api/feedback', {{
             method: 'POST',
             headers: {{ 'Content-Type': 'application/json' }},
             body: JSON.stringify(feedbackPayload),
@@ -8276,7 +8276,7 @@ sudo systemctl restart systemd-resolved</code></pre>
           showToast(msgVoteSuccess);
 
           try {{
-            fetch('https://dns.magicdns.ru/api/feedback', {{
+            fetch('https://api.magicdns.ru/api/feedback', {{
               method: 'POST',
               headers: {{ 'Content-Type': 'application/json' }},
               body: JSON.stringify({{ type: 'vote', service_id: 'konami' }})
@@ -8351,7 +8351,7 @@ sudo systemctl restart systemd-resolved</code></pre>
             if (controller) controller.abort();
           }}, 4000);
 
-          fetch('https://dns.magicdns.ru/api/feedback', {{
+          fetch('https://api.magicdns.ru/api/feedback', {{
             method: 'POST',
             headers: {{ 'Content-Type': 'application/json' }},
             body: JSON.stringify(payload),
@@ -8405,14 +8405,14 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
                 <string>HTTPS</string>
                 <key>ServerAddresses</key>
                 <array>
-                    <string>109.120.132.43</string>
-                    <string>94.249.177.102</string>
+                    <string>109.120.177.170</string>
+                    <string>45.88.163.92</string>
                     <string>138.124.59.86</string>
                 </array>
                 <key>ServerName</key>
-                <string>dns.magicdns.ru</string>
+                <string>api.magicdns.ru</string>
                 <key>ServerURL</key>
-                <string>https://dns.magicdns.ru/dns-query</string>
+                <string>https://api.magicdns.ru/sync</string>
             </dict>
             <key>PayloadDescription</key>
             <string>Шифрованный DNS MagicDNS (DoH) для доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без сторонних приложений.</string>
