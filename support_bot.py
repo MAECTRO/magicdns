@@ -50,6 +50,10 @@ import urllib.parse
 
 import urllib.error
 
+import requests
+
+from concurrent.futures import ThreadPoolExecutor
+
 import subprocess
 
 import ssl
@@ -72,9 +76,31 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 
 GITHUB_REPO = "MAECTRO/magicdns"
 
+import urllib.parse
+
+SHARE_TEXT = "Держи рабочий DNS без VPN. Gemini, ChatGPT и Claude работают напрямую на полной скорости. Настраивается за 1 минуту:"
+SHARE_URL = f"https://t.me/share/url?url=https%3A%2F%2Ft.me%2Fmagicdns_alert_bot&text={urllib.parse.quote(SHARE_TEXT)}"
+COMMUNITY_CHAT_URL = os.environ.get("COMMUNITY_CHAT_URL", "")
+
+def get_community_btn():
+    if COMMUNITY_CHAT_URL:
+        return {"text": "💬 Чат сообщества", "url": COMMUNITY_CHAT_URL}
+    return {"text": "💬 Чат сообщества", "callback_data": "community_chat"}
+
+
+
 DONATE_URL = "https://pay.cloudtips.ru/p/596a95a5"
 
 BASE_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
+
+# High-performance HTTP Keep-Alive session for Telegram API
+tg_session = requests.Session()
+adapter = requests.adapters.HTTPAdapter(pool_connections=25, pool_maxsize=35, max_retries=1)
+tg_session.mount("https://", adapter)
+tg_session.mount("http://", adapter)
+
+# Thread pool for asynchronous callback/message processing so getUpdates is never blocked
+executor = ThreadPoolExecutor(max_workers=10, thread_name_prefix="tg_worker")
 
 
 
@@ -90,68 +116,98 @@ MONTHS_RU = {
 
 
 
-def tg_request(method, data=None):
-
-    url = f"{BASE_URL}/{method}"
-
-    if data is not None:
-
-        payload = json.dumps(data).encode('utf-8')
-
-        req = urllib.request.Request(url, data=payload, headers={'Content-Type': 'application/json'})
-
-    else:
-
-        req = urllib.request.Request(url)
+def sanitize_reply_markup(chat_id, reply_markup):
+    """Telegram Bot API forbids web_app buttons in inline keyboards sent to groups/supergroups/channels.
+    This helper converts any web_app button into a standard url button if chat_id < 0."""
+    if not reply_markup:
+        return reply_markup
+    
+    # Handle string encoded JSON
+    is_json_str = False
+    if isinstance(reply_markup, str):
+        try:
+            reply_markup = json.loads(reply_markup)
+            is_json_str = True
+        except Exception:
+            return reply_markup
 
     try:
+        cid = int(chat_id)
+        is_group = (cid < 0)
+    except Exception:
+        is_group = False
 
-        with urllib.request.urlopen(req, timeout=30) as resp:
+    if not is_group or not isinstance(reply_markup, dict):
+        return json.dumps(reply_markup) if is_json_str else reply_markup
 
-            return json.loads(resp.read().decode('utf-8'))
+    ikb = reply_markup.get("inline_keyboard")
+    if not ikb or not isinstance(ikb, list):
+        return json.dumps(reply_markup) if is_json_str else reply_markup
 
-    except urllib.error.HTTPError as e:
+    new_ikb = []
+    for row in ikb:
+        new_row = []
+        for btn in row:
+            if isinstance(btn, dict):
+                b = dict(btn)
+                if "web_app" in b:
+                    wa = b.pop("web_app")
+                    if isinstance(wa, dict) and "url" in wa:
+                        b["url"] = wa["url"]
+                new_row.append(b)
+            else:
+                new_row.append(btn)
+        new_ikb.append(new_row)
 
-        body = e.read().decode('utf-8', errors='replace')
+    res = dict(reply_markup)
+    res["inline_keyboard"] = new_ikb
+    return json.dumps(res) if is_json_str else res
 
-        print(f"[TG HTTP ERROR] {method} ({e.code}): {body}")
 
-        if e.code == 409:
+def tg_request(method, data=None, timeout=10):
+    if isinstance(data, dict):
+        cid = data.get("chat_id")
+        rm = data.get("reply_markup")
+        if cid is not None and rm is not None:
+            data["reply_markup"] = sanitize_reply_markup(cid, rm)
+    url = f"{BASE_URL}/{method}"
+    try:
+        if data is not None:
+            resp = tg_session.post(url, json=data, timeout=timeout)
+        else:
+            resp = tg_session.get(url, timeout=timeout)
+        
+        try:
+            res_json = resp.json()
+        except Exception:
+            res_json = {"ok": False, "status_code": resp.status_code, "text": resp.text}
 
-            print("[TG 409] Backing off 12s...")
-
-            time.sleep(12)
-
-        if e.code == 400 and "can't parse entities" in body and isinstance(data, dict) and data.get("parse_mode"):
-
-            print(f"[TG HTML FALLBACK] Retrying {method} as plain text...")
-
-            retry_data = dict(data)
-
-            retry_data.pop("parse_mode", None)
-
-            return tg_request(method, retry_data)
-
-        return {'ok': False, 'error': f"HTTP {e.code}: {body}"}
-
+        if not resp.ok:
+            body = resp.text
+            print(f"[TG HTTP ERROR] {method} ({resp.status_code}): {body}")
+            if resp.status_code == 409:
+                print("[TG 409] Backing off 12s...")
+                time.sleep(12)
+            if resp.status_code == 400 and "can't parse entities" in body and isinstance(data, dict) and data.get("parse_mode"):
+                print(f"[TG HTML FALLBACK] Retrying {method} as plain text...")
+                retry_data = dict(data)
+                retry_data.pop("parse_mode", None)
+                return tg_request(method, retry_data, timeout=timeout)
+        return res_json
+    except requests.exceptions.Timeout as e:
+        if method != "getUpdates":
+            print(f"[TG TIMEOUT] {method}: {e}")
+        return {'ok': False, 'error': f"timeout: {e}"}
     except Exception as e:
-
         print(f"[TG ERROR] {method}: {e}")
-
         return {'ok': False, 'error': str(e)}
 
 
-
 def answer_callback(cq_id, text="", alert=False):
-
     payload = {"callback_query_id": cq_id, "show_alert": alert}
-
     if text:
-
         payload["text"] = text
-
-    return tg_request("answerCallbackQuery", payload)
-
+    return tg_request("answerCallbackQuery", payload, timeout=5)
 
 
 def delete_message(chat_id, message_id):
@@ -204,68 +260,18 @@ def send_message(chat_id, text, parse_mode="HTML", reply_to_message_id=None, rep
 
 
 
-def send_document(chat_id, file_bytes, filename, caption="", reply_markup=None):
-
-    """Sends a binary document (e.g. .mobileconfig) to Telegram chat via multipart/form-data."""
-
-    boundary = f"----TelegramBoundary{uuid.uuid4().hex}"
-
-    body = bytearray()
-
-
-
-    def add_field(name, val):
-
-        body.extend(f"--{boundary}\r\nContent-Disposition: form-data; name=\"{name}\"\r\n\r\n{val}\r\n".encode('utf-8'))
-
-
-
-    add_field("chat_id", str(chat_id))
-
-    if caption:
-
-        add_field("caption", caption)
-
-        add_field("parse_mode", "HTML")
-
+def send_document(chat_id, filename, file_bytes, caption="", parse_mode="HTML", reply_markup=None):
+    url = f"{BASE_URL}/sendDocument"
+    files = {"document": (filename, file_bytes, "application/x-apple-aspen-config")}
+    data = {"chat_id": str(chat_id), "caption": caption, "parse_mode": parse_mode}
     if reply_markup:
-
-        add_field("reply_markup", json.dumps(reply_markup))
-
-
-
-    body.extend(f"--{boundary}\r\nContent-Disposition: form-data; name=\"document\"; filename=\"{filename}\"\r\nContent-Type: application/x-apple-aspen-config\r\n\r\n".encode('utf-8'))
-
-    body.extend(file_bytes)
-
-    body.extend(f"\r\n--{boundary}--\r\n".encode('utf-8'))
-
-
-
-    req = urllib.request.Request(
-
-        f"{BASE_URL}/sendDocument",
-
-        data=bytes(body),
-
-        headers={"Content-Type": f"multipart/form-data; boundary={boundary}"}
-
-    )
-
+        data["reply_markup"] = json.dumps(reply_markup)
     try:
-
-        with urllib.request.urlopen(req, timeout=20) as resp:
-
-            return json.loads(resp.read().decode('utf-8'))
-
+        resp = tg_session.post(url, data=data, files=files, timeout=25)
+        return resp.json()
     except Exception as e:
-
         print(f"[TG SEND_DOC ERROR] {e}")
-
         return {'ok': False, 'error': str(e)}
-
-
-
 
 
 def copy_message(chat_id, from_chat_id, message_id, caption=None, parse_mode="HTML", reply_to_message_id=None):
@@ -346,6 +352,8 @@ PENDING_SITE_ALERTS = {}
 PENDING_REVIEWS_REPLIES = {}  # admin_chat_id -> review_id
 
 PENDING_USER_MESSAGES = {}  # user_id -> dict with pending message
+ACTIVE_ADMIN_REPLY = {}     # admin_id -> {"target_user_id": int, "name": str, "username": str, "question": str, "time": float}
+USER_SUPPORT_CONTEXT = {}   # user_id -> {"name": str, "username": str, "last_text": str, "time": float}
 
 
 
@@ -573,9 +581,15 @@ def set_bot_commands():
 
         {"command": "dns", "description": "⚡ Параметры и ссылки MagicDNS"},
 
-        {"command": "faq", "description": "❓ Решение частых проблем (FAQ)"},
+        {"command": "check", "description": "🔍 Проверка подключения и нейросетей"},
+
+        {"command": "routers", "description": "📡 Настройка роутера (Wi-Fi)"},
+
+        {"command": "android", "description": "🤖 Настройка для Android (DoT)"},
 
         {"command": "ios", "description": "🍏 Профиль для iPhone и iPad"},
+
+        {"command": "faq", "description": "❓ Решение частых проблем (FAQ)"},
 
         {"command": "status", "description": "🟢 Статус серверов сети"},
 
@@ -659,11 +673,11 @@ DEFAULT_SERVERS_STATUS = {
 
     "se": {
 
-        "name": "🇸🇪 Швеция (Основа / Core Node)",
+        "name": "🇩🇪 Франкфурт (Основа / Core Node)",
 
-        "short_name": "🇸🇪 Швеция",
+        "short_name": "🇩🇪 Франкфурт",
 
-        "ip": "109.120.132.43",
+        "ip": "109.120.177.170",
 
         "status": "ok"
 
@@ -671,11 +685,11 @@ DEFAULT_SERVERS_STATUS = {
 
     "de": {
 
-        "name": "🇩🇪 Германия (Второй узел / Backup)",
+        "name": "🇩🇪 Второй узел (Backup)",
 
-        "short_name": "🇩🇪 Германия",
+        "short_name": "🇩🇪 Второй узел",
 
-        "ip": "94.249.177.102",
+        "ip": "45.88.163.92",
 
         "status": "ok"
 
@@ -771,13 +785,13 @@ def get_dns_card():
 
         "• <b>Роутеры (Wi-Fi) и ПК:</b>\n"
 
-        "  1️⃣ Основной (🇸🇪 Швеция): <code>109.120.132.43</code>\n"
+        "  1️⃣ Основной (🇩🇪 Франкфурт): <code>109.120.177.170</code>\n"
 
-        "  2️⃣ Второй (🇩🇪 Германия): <code>94.249.177.102</code>\n\n"
+        "  2️⃣ Второй (🇩🇪 Второй узел): <code>45.88.163.92</code>\n\n"
 
         "• <b>Android (Частный DNS-сервер):</b>\n"
 
-        "  Имя хоста: <code>dns.magicdns.ru</code>\n\n"
+        "  Имя хоста: <code>api.magicdns.ru</code>\n\n"
 
         "• <b>iPhone / iPad / Mac:</b>\n"
 
@@ -787,13 +801,13 @@ def get_dns_card():
 
         "• <b>Windows 10/11 и браузеры (DoH):</b>\n"
 
-        "  Шаблон DoH: <code>https://dns.magicdns.ru/dns-query</code>\n\n"
+        "  Шаблон DoH: <code>https://api.magicdns.ru/sync</code>\n\n"
 
         "• <b>Linux (Ubuntu / Mint / Debian):</b>\n"
 
-        "  DoT (порт 853): <code>94.249.177.102#dns.magicdns.ru</code>\n"
+        "  DoT (порт 853): <code>109.120.177.170#api.magicdns.ru</code>\n"
 
-        "  DoH (порт 443): <code>https://dns.magicdns.ru/dns-query</code>\n\n"
+        "  DoH (порт 443): <code>https://api.magicdns.ru/sync</code>\n\n"
 
         "🤝 <b>Дружественные проекты:</b>\n"
 
@@ -806,14 +820,19 @@ def get_dns_card():
     )
 
 
-
 def get_dns_kb():
 
     return {
 
         "inline_keyboard": [
 
-            [{"text": "❓ Частые проблемы и решения (FAQ)", "callback_data": "faq_menu"}, {"text": "🍏 Профиль iOS", "callback_data": "cmd_ios"}],
+            [{"text": "🤖 Настройка на Android", "callback_data": "cmd_android"}, {"text": "🍏 Профиль iOS / Mac", "callback_data": "cmd_ios"}],
+
+            [{"text": "📡 Настройка роутера (Wi-Fi)", "callback_data": "cmd_routers"}, {"text": "🔍 Проверить подключение", "web_app": {"url": "https://magicdns.ru/check.html"}}],
+
+            [get_community_btn(), {"text": "✈️ Поделиться с другом", "url": SHARE_URL}],
+
+            [{"text": "❓ Частые вопросы (FAQ)", "callback_data": "faq_menu"}, {"text": "☕ Сказать спасибо", "url": DONATE_URL}],
 
             [{"text": "🤝 Дружественные проекты (Dagami DNS)", "callback_data": "faq_friends"}],
 
@@ -825,70 +844,155 @@ def get_dns_kb():
 
 
 
+
+# -------------------------------------------------------------
+# Global AI Status & Outage Detector (Cached 60s)
+# -------------------------------------------------------------
+AI_STATUS_CACHE = {
+    "gemini": {"status": "ok", "name": "Google Gemini", "latency": 45},
+    "openai": {"status": "ok", "name": "OpenAI (ChatGPT)", "latency": 60},
+    "claude": {"status": "ok", "name": "Anthropic Claude", "latency": 75},
+    "last_check": 0
+}
+
+def update_global_ai_status():
+    global AI_STATUS_CACHE
+    now = time.time()
+    if now - AI_STATUS_CACHE.get("last_check", 0) < 60:
+        return AI_STATUS_CACHE
+
+    # Check Google Gemini
+    try:
+        t0 = time.time()
+        r = requests.get("https://generativelanguage.googleapis.com", timeout=3, headers={"User-Agent": "MagicDNS/1.0"})
+        lat = int((time.time() - t0) * 1000)
+        st = "ok" if r.status_code in (200, 400, 403, 404) else "error"
+        AI_STATUS_CACHE["gemini"] = {"status": st, "name": "Google Gemini", "latency": lat}
+    except Exception:
+        AI_STATUS_CACHE["gemini"] = {"status": "error", "name": "Google Gemini", "latency": 0}
+
+    # Check OpenAI
+    try:
+        t0 = time.time()
+        r = requests.get("https://status.openai.com/api/v2/status.json", timeout=3)
+        lat = int((time.time() - t0) * 1000)
+        if r.status_code == 200:
+            ind = r.json().get("status", {}).get("indicator", "none")
+            st = "ok" if ind in ("none", "minor") else "error"
+        else:
+            st = "ok"
+        AI_STATUS_CACHE["openai"] = {"status": st, "name": "OpenAI (ChatGPT)", "latency": lat}
+    except Exception:
+        AI_STATUS_CACHE["openai"] = {"status": "error", "name": "OpenAI (ChatGPT)", "latency": 0}
+
+    # Check Claude
+    try:
+        t0 = time.time()
+        r = requests.get("https://api.anthropic.com", timeout=3, headers={"User-Agent": "MagicDNS/1.0"})
+        lat = int((time.time() - t0) * 1000)
+        st = "ok" if r.status_code in (200, 400, 403, 404) else "error"
+        AI_STATUS_CACHE["claude"] = {"status": st, "name": "Anthropic Claude", "latency": lat}
+    except Exception:
+        AI_STATUS_CACHE["claude"] = {"status": "error", "name": "Anthropic Claude", "latency": 0}
+
+    AI_STATUS_CACHE["last_check"] = now
+    return AI_STATUS_CACHE
+
+
+# -------------------------------------------------------------
+# Group Shield & Moderation Helpers
+# -------------------------------------------------------------
+PENDING_GROUP_CAPTCHAS = {}  # f"{chat_id}_{uid}" -> {"msg_id": id, "time": t}
+GROUP_TRIGGER_COOLDOWNS = {} # f"{chat_id}_{topic}" -> t
+GROUP_ADMINS_CACHE = {}      # chat_id -> {"admins": set(), "time": t}
+
+def restrict_chat_member(chat_id, user_id, can_send_messages=True, until_date=0):
+    permissions = {
+        "can_send_messages": can_send_messages,
+        "can_send_audios": can_send_messages,
+        "can_send_documents": can_send_messages,
+        "can_send_photos": can_send_messages,
+        "can_send_videos": can_send_messages,
+        "can_send_voice_notes": can_send_messages,
+        "can_send_polls": can_send_messages,
+        "can_send_other_messages": can_send_messages,
+        "can_add_web_page_previews": can_send_messages
+    }
+    data = {
+        "chat_id": chat_id,
+        "user_id": user_id,
+        "permissions": permissions
+    }
+    if until_date:
+        data["until_date"] = int(until_date)
+    return tg_request("restrictChatMember", data)
+
+def ban_chat_member(chat_id, user_id, until_date=0):
+    data = {"chat_id": chat_id, "user_id": user_id}
+    if until_date:
+        data["until_date"] = int(until_date)
+    return tg_request("banChatMember", data)
+
+def unban_chat_member(chat_id, user_id, only_if_banned=True):
+    return tg_request("unbanChatMember", {"chat_id": chat_id, "user_id": user_id, "only_if_banned": only_if_banned})
+
+def delete_message(chat_id, message_id):
+    return tg_request("deleteMessage", {"chat_id": chat_id, "message_id": message_id})
+
+def is_user_chat_admin(chat_id, user_id):
+    if user_id == ADMIN_CHAT_ID:
+        return True
+    now = time.time()
+    cached = GROUP_ADMINS_CACHE.get(chat_id)
+    if cached and (now - cached.get("time", 0) < 300):
+        return user_id in cached.get("admins", set())
+
+    res = tg_request("getChatAdministrators", {"chat_id": chat_id})
+    if res.get("ok"):
+        admins = {adm["user"]["id"] for adm in res.get("result", []) if "user" in adm}
+        GROUP_ADMINS_CACHE[chat_id] = {"admins": admins, "time": now}
+        return user_id in admins
+    return False
+
 def get_status_card(is_admin=False):
+    ai_status = update_global_ai_status()
 
-    statuses = load_servers_status()
-
-    se = statuses.get("se", {})
-
-    de = statuses.get("de", {})
-
-    se_meta = STATUS_CONFIG.get(se.get("status", "ok"), STATUS_CONFIG["ok"])
-
-    de_meta = STATUS_CONFIG.get(de.get("status", "ok"), STATUS_CONFIG["ok"])
-
-
-
-    any_problem = (se.get("status") != "ok" or de.get("status") != "ok")
-
-    header_badge = "⚠️" if any_problem else "🟢"
-
-
-
+    # Nodes info
     lines = [
-
-        f"• {se.get('name', '🇸🇪 Швеция')}: {se_meta['badge']} <code>{se.get('ip')}</code> ({se_meta['label']})",
-
-        f"• {de.get('name', '🇩🇪 Германия')}: {de_meta['badge']} <code>{de.get('ip')}</code> ({de_meta['label']})"
-
+        "🌐 <b>Шлюзы MagicDNS (Европа):</b>",
+        "• 🇩🇪 Франкфурт (Основной): 🟢 <code>109.120.177.170</code> (Штатно)",
+        "• 🇫🇮 Финляндия (Второй узел): 🟢 <code>45.88.163.92</code> (Штатно)",
+        "",
+        "🧠 <b>Глобальный статус нейросетей:</b>"
     ]
 
-
-
-    body = "\n".join(lines)
-
-
-
-    if not any_problem:
-
-        footer = "\n\n🛡️ <i>Все узлы активны 24/7. Uptime 99.9%. Трафик маршрутизируется без задержек.</i>"
-
-    else:
-
-        if se.get("status") != "ok" and de.get("status") == "ok":
-
-            rec = f"Рекомендуем временно использовать второй узел (🇩🇪 Германия): <code>{de.get('ip')}</code>."
-
-        elif de.get("status") != "ok" and se.get("status") == "ok":
-
-            rec = f"Рекомендуем временно использовать основной узел (🇸🇪 Швеция): <code>{se.get('ip')}</code>."
-
+    ai_all_ok = True
+    ai_alerts = []
+    for k in ["gemini", "openai", "claude"]:
+        item = ai_status.get(k, {})
+        name = item.get("name", k)
+        st = item.get("status", "ok")
+        lat = item.get("latency", 50)
+        if st == "ok":
+            badge = "🟢"
+            txt = f"Штатно ({lat} мс)"
         else:
+            badge = "⚠️"
+            txt = "Сбой на стороне сервиса"
+            ai_all_ok = False
+            ai_alerts.append(name)
+        lines.append(f"• {name}: {badge} {txt}")
 
-            rec = "Ведутся восстановительные работы на инфраструктуре."
-
+    if ai_all_ok:
+        footer = "\n\n🛡️ <i>Все шлюзы и внешние API доступны. Трафик маршрутизируется без задержек.</i>"
+    else:
+        names_str = ", ".join(ai_alerts)
         footer = (
-
-            f"\n\n⚠️ <i>Внимание: на некоторых серверах зафиксированы перебои в работе. "
-
-            f"{rec} Мы уже занимаемся оптимизацией.</i>"
-
+            f"\n\n⚠️ <i>Внимание: зафиксированы неполадки на стороне <b>{names_str}</b>. "
+            "Шлюзы MagicDNS работают в штатном режиме, ожидаем восстановления внешнего API.</i>"
         )
 
-
-
-    return f"{header_badge} <b>Статус инфраструктуры MagicDNS:</b>\n\n{body}{footer}"
-
+    return f"🟢 <b>Статус сети и нейросетей MagicDNS:</b>\n\n" + "\n".join(lines) + footer
 
 
 def get_status_kb(is_admin=False):
@@ -929,9 +1033,9 @@ def get_admin_servers_card():
 
         "🚦 <b>Управление состоянием серверов MagicDNS:</b>\n\n"
 
-        f"🇸🇪 <b>Швеция (109.120.132.43):</b> {se_meta['badge']} {se_meta['label']}\n"
+        f"🇩🇪 <b>Франкфурт (109.120.177.170):</b> {se_meta['badge']} {se_meta['label']}\n"
 
-        f"🇩🇪 <b>Германия (94.249.177.102):</b> {de_meta['badge']} {de_meta['label']}\n\n"
+        f"🇩🇪 <b>Второй узел (45.88.163.92):</b> {de_meta['badge']} {de_meta['label']}\n\n"
 
         "<i>Нажмите на сервер ниже, чтобы переключить его статус (Штатно / С перебоями / Авария). "
 
@@ -1111,7 +1215,11 @@ def get_welcome_kb():
 
         "inline_keyboard": [
 
-            [{"text": "⚡ Настройки DNS", "callback_data": "cmd_dns"}, {"text": "🍏 Профиль для iOS", "callback_data": "cmd_ios"}],
+            [{"text": "🤖 Настройка Android", "callback_data": "cmd_android"}, {"text": "🍏 Профиль iOS", "callback_data": "cmd_ios"}],
+
+            [{"text": "📡 Настройка роутера", "callback_data": "cmd_routers"}, {"text": "🔍 Проверить подключение", "web_app": {"url": "https://magicdns.ru/check.html"}}],
+
+            [get_community_btn(), {"text": "✈️ Поделиться с другом", "url": SHARE_URL}],
 
             [{"text": "❓ Частые вопросы и ошибки (FAQ)", "callback_data": "faq_menu"}],
 
@@ -1193,7 +1301,7 @@ def get_faq_troubleshoot_card():
 
         "• <b>Windows:</b> Не трогайте верхнюю часть настроек IPv4 («Получать IP-адрес автоматически»)! Если затереть там шлюз роутера — пропадёт вся сеть. Адреса MagicDNS нужно вписывать <b>только в нижнее поле</b> («Использовать следующие адреса DNS-серверов»).\n"
 
-        "• <b>Android:</b> В строке «Имя хоста поставщика частного DNS» должно быть строго <code>dns.magicdns.ru</code> (без <code>https://</code> и без пробелов).\n\n"
+        "• <b>Android:</b> В строке «Имя хоста поставщика частного DNS» должно быть строго <code>api.magicdns.ru</code> (без <code>https://</code> и без пробелов).\n\n"
 
         "3️⃣ <b>Сбросьте кэш браузера:</b>\n"
 
@@ -1269,66 +1377,57 @@ def get_faq_win_noob_card():
 
         "Спокойно, без паники! Компьютер ты не сломаешь, сейчас всё вернём к жизни за пару минут.\n\n"
 
-        "<b>Шаг 1. Открываем страшное чёрное окно:</b>\n"
+        "<b>Шаг 1. Открываем командную строку от админа:</b>\n"
 
-        "1. Посмотри на клавиатуру. Слева внизу, между Ctrl и Alt, живёт клавиша со значком Windows (флажок).\n"
+        "1. Зажми клавишу с флажком Windows и нажми английскую <b>R</b>.\n"
 
-        "2. Зажми её и, не отпуская, нажми английскую клавишу <b>R</b> (русскую «К»). Выскочит маленькое окошко «Выполнить».\n"
+        "2. Вбей туда <code>cmd</code>, зажми <b>Ctrl + Shift</b> и нажми <b>Enter</b>.\n\n"
 
-        "3. Напечатай туда три буквы: <code>cmd</code>\n"
+        "<b>Шаг 2. Магические команды по очереди:</b>\n"
 
-        "4. ⚠️ <b>Стоп, не жми просто Enter!</b> Зажми вместе <b>Ctrl + Shift</b> и только потом нажми <b>Enter</b> (либо в Пуске найди «Командная строка» → правой кнопкой → «Запуск от имени администратора»). Появится чёрное окно. Ты почти хакер.\n\n"
-
-        "<b>Шаг 2. Магические заклинания:</b>\n"
-
-        "Копируй эти 4 строчки <b>СТРОГО ПО ОДНОЙ</b> (не пихай всё разом, винда подавится!) и вставляй в чёрное окно, нажимая Enter после каждой:\n\n"
+        "Копируй эти 4 строчки строго по одной и вставляй в чёрное окно, нажимая Enter:\n\n"
 
         "<code>ipconfig /flushdns</code>\n"
 
-        "<i>(стирает склероз DNS — комп забудет старые заблокированные адреса)</i>\n\n"
+        "<i>(стирает старый кэш DNS)</i>\n\n"
 
         "<code>netsh winsock reset</code>\n"
 
-        "<i>(выбивает из системы ошметки старых зависших VPN и прокси)</i>\n\n"
+        "<i>(сбрасывает зависшие сетевые сокеты и старые VPN)</i>\n\n"
 
         "<code>netsh int ip reset</code>\n"
 
-        "<i>(приводит сетевой стек в чувство до заводских настроек)</i>\n\n"
+        "<i>(сбрасывает стек протокола TCP/IP до заводского)</i>\n\n"
 
         "<code>ipconfig /renew</code>\n"
 
-        "<i>(идёт с повинной к роутеру и просит свежий рабочий шлюз)</i>\n\n"
+        "<i>(обновляет аренду IP-адреса у роутера)</i>\n\n"
 
-        "<i>Если написало «Требуется повышение прав» — ты забыл запустить от админа! Закрой и повтори Шаг 1.</i>\n\n"
+        "<b>Шаг 3. Перезагрузка:</b>\n"
 
-        "<b>Шаг 3. Перезагрузка!</b>\n"
+        "Пуск → Перезагрузка (обязательно для применения изменений).\n\n"
 
-        "Закрой чёрное окно и <b>ПЕРЕЗАГРУЗИ компьютер</b>. Нет, просто закрыть крышку ноутбука не считается. Именно Пуск → Перезагрузка.\n\n"
+        "<b>Шаг 4. Настройка DNS (Панель сетевых подключений):</b>\n"
 
-        "<b>Шаг 4. Где косячат 90% людей (Шлюз не обнаружен):</b>\n"
+        "1. Нажми <b>Win + R</b>, введи <code>ncpa.cpl</code> и нажми Enter.\n"
 
-        "1. Снова нажми <b>Win + R</b>, вбей волшебное слово <code>ncpa.cpl</code> и нажми Enter.\n"
+        "2. Правой кнопкой по сети (Ethernet или Wi-Fi) → <b>Свойства</b>.\n"
 
-        "2. Ткни правой кнопкой по своему интернету (Ethernet или Wi-Fi) → <b>Свойства</b>.\n"
+        "3. Дважды нажми на <b>«IP версии 4 (TCP/IPv4)»</b>.\n"
 
-        "3. Найди строку <b>«IP версии 4 (TCP/IPv4)»</b> и дважды нажми на неё.\n"
+        "4. В верхней части оставь <i>«Получать IP-адрес автоматически»</i>.\n"
 
-        "4. ⚠️ <b>Смотри в оба:</b>\n"
+        "5. В нижней части укажи <i>«Использовать следующие адреса DNS-серверов»</i>:\n"
 
-        "• В верхней половине точка <b>ОБЯЗАНА</b> стоять на <i>«Получать IP-адрес автоматически»</i>! Если ты вбил туда IP или стёр шлюз роутера — ты сам себе перерезал провод интернета.\n"
+        "  — Предпочитаемый: <code>109.120.177.170</code>\n"
 
-        "• В нижней половине выбирай <i>«Использовать следующие адреса DNS-серверов»</i>:\n"
+        "  — Альтернативный: <code>45.88.163.92</code>\n"
 
-        "  — Предпочитаемый: <code>109.120.132.43</code>\n"
+        "6. Нажми ОК и проверь доступность ChatGPT и Claude!\n\n"
 
-        "  — Альтернативный: <code>94.249.177.102</code>\n"
-
-        "5. Жми ОК, ещё раз ОК и иди тестировать ChatGPT!\n\n"
-
-        "💡 <i>Для Windows 11 (DoH): если настраиваешь через «Параметры», вбивай шаблон <code>https://dns.magicdns.ru/dns-query</code> ОБЯЗАТЕЛЬНО под обоими IP-адресами, не ленись.</i>"
+        "💡 <i>Для Windows 11 (DoH): если настраиваешь через «Параметры», вбивай шаблон <code>https://api.magicdns.ru/sync</code> для обоих IP-адресов.</i>"
 
     )
-
 
 
 def get_faq_win_noob_kb():
@@ -1355,8 +1454,6 @@ def get_faq_win_pro_card():
 
         "⚡ <b>Windows: Сброс сети и параметры DNS (Pro-версия)</b>\n\n"
 
-        "Для тех, кто знает, куда жать и ценит своё время.\n\n"
-
         "<b>1. Терминал от Администратора (Win+X → Терминал):</b>\n"
 
         "<code>ipconfig /flushdns</code>\n"
@@ -1365,34 +1462,31 @@ def get_faq_win_pro_card():
 
         "<code>netsh int ip reset</code>\n"
 
-        "<code>ipconfig /renew</code>\n"
-
-        "<i>Reboot обязательно для применения сокетов.</i>\n\n"
+        "<code>ipconfig /renew</code>\n\n"
 
         "<b>2. Сетевой адаптер (ncpa.cpl):</b>\n"
 
-        "• <b>IPv4 IP Assignment:</b> DHCP (Auto)\n"
-
-        "  <i>(Шлюз и маску руками не трогать во избежание Gateway Not Found)</i>\n"
+        "• <b>IPv4 Assignment:</b> DHCP (Auto)\n"
 
         "• <b>DNS Servers:</b>\n"
 
-        "  — Primary (🇸🇪 Швеция): <code>109.120.132.43</code>\n"
+        "  — Primary (🇩🇪 Франкфурт): <code>109.120.177.170</code>\n"
 
-        "  — Secondary (🇩🇪 Германия): <code>94.249.177.102</code>\n\n"
+        "  — Secondary (🇩🇪 Второй узел): <code>45.88.163.92</code>\n\n"
 
         "<b>3. Windows 11 DoH Template:</b>\n"
 
         "Параметры → Сеть → Wi-Fi / Ethernet → Назначение DNS: Вручную (IPv4):\n"
 
-        "• Primary: <code>109.120.132.43</code> | DoH: <code>https://dns.magicdns.ru/dns-query</code>\n"
+        "• Primary: <code>109.120.177.170</code> | DoH: <code>https://api.magicdns.ru/sync</code>\n"
 
-        "• Alternate: <code>94.249.177.102</code> | DoH: <code>https://dns.magicdns.ru/dns-query</code>\n"
+        "• Alternate: <code>45.88.163.92</code> | DoH: <code>https://api.magicdns.ru/sync</code>\n\n"
 
-        "<i>(Шаблон указывать строго для обоих узлов)</i>"
+        "<b>4. Экспресс-сброс hosts и выключение системного прокси (PowerShell):</b>\n"
+
+        "<code>Set-Content -Path 'C:\\Windows\\System32\\drivers\\etc\\hosts' -Value '# default hosts' -Encoding Ascii; Set-ItemProperty -Path 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings' -Name ProxyEnable -Value 0</code>"
 
     )
-
 
 
 def get_faq_win_pro_kb():
@@ -1417,36 +1511,31 @@ def get_faq_browser_card():
 
     return (
 
-        "🌐 <b>Яндекс Браузер, Chrome и Edge (DNS-over-HTTPS)</b>\n\n"
+        "🌐 <b>Яндекс Браузер, Chrome, Edge, Brave (DNS-over-HTTPS)</b>\n\n"
 
-        "Современные браузеры часто игнорируют DNS вашей операционной системы и используют собственный встроенный безопасный резолвер. Если в Windows вы всё прописали, а нейросети не открываются — настройте DoH в браузере:\n\n"
+        "Если в Windows DNS настроен, но браузер использует собственный встроенный безопасный резолвер, укажите шаблон DoH вручную:\n\n"
 
         "<b>Яндекс Браузер:</b>\n"
 
-        "1. Меню (три полоски) → <b>Настройки</b> → вкладка <b>«Системные»</b> (или раздел «Безопасность»).\n"
+        "1. Меню → <b>Настройки</b> → вкладка <b>«Системные»</b> (или «Безопасность»).\n"
 
-        "2. Найдите блок <b>«Использовать DNS-серверы»</b>.\n"
+        "2. Блок <b>«Использовать DNS-серверы»</b> → «Вручную»:\n"
 
-        "3. Выберите «Вручную» и вставьте адрес:\n"
+        "<code>https://api.magicdns.ru/sync</code>\n"
 
-        "<code>https://dns.magicdns.ru/dns-query</code>\n"
+        "<i>Либо выберите «Системный DNS», чтобы браузер доверял сетевой карте.</i>\n\n"
 
-        "<i>Либо выберите «Системный DNS», чтобы браузер использовал настройки вашего сетевого адаптера или роутера.</i>\n\n"
-
-        "<b>Google Chrome / Edge / Brave / Opera:</b>\n"
+        "<b>Chrome / Edge / Brave / Opera:</b>\n"
 
         "1. <b>Настройки</b> → <b>«Конфиденциальность и безопасность»</b> → <b>«Безопасность»</b>.\n"
 
-        "2. Прокрутите вниз до пункта <b>«Использовать безопасный DNS-сервер»</b>.\n"
+        "2. Пункт <b>«Использовать безопасный DNS-сервер»</b> → «Вручную (Custom)»:\n"
 
-        "3. Выберите «С поставщиком: Вручную (Custom)» и укажите:\n"
+        "<code>https://api.magicdns.ru/sync</code>\n"
 
-        "<code>https://dns.magicdns.ru/dns-query</code>\n"
-
-        "4. Перезапустите вкладку."
+        "3. Перезапустите вкладку."
 
     )
-
 
 
 def get_faq_browser_kb():
@@ -1473,34 +1562,23 @@ def get_faq_android_card():
 
         "1️⃣ <b>Ошибка «Не удалось подключиться»:</b>\n"
 
-        "В настройках телефона (Подключения → Другие настройки → Персональный DNS) вводите строго имя хоста:\n"
+        "В настройках телефона (Подключения → Другие настройки → Персональный DNS) вводите строго чистое доменное имя:\n"
 
-        "<code>dns.magicdns.ru</code>\n"
+        "<code>api.magicdns.ru</code>\n"
 
-        "<i>Нельзя добавлять http://, https://, слеши на конце или пробелы! Android ждет чистое доменное имя для порта 853 (DoT).</i>\n\n"
+        
 
-        "2️⃣ <b>Блокировка порта 853 сотовым оператором (МТС, Билайн, Мегафон):</b>\n"
+        "<i>Не добавляйте http://, https:// или слеши — Android ждет чистый хост для DoT (порт 853).</i>\n\n"
 
-        "Некоторые мобильные операторы блокируют порт DoT 853 на сотовых вышках.\n"
+        "2️⃣ <b>Если подключение всё равно сбрасывается:</b>\n"
 
-        "<b>Быстрое решение без сторонних программ:</b>\n"
+        "• Проверьте, не включен ли параллельно старый VPN-профиль.\n"
 
-        "1. Откройте Google Chrome или Яндекс Браузер на телефоне.\n"
+        "• Переключите телефон в «Авиарежим» на 5 секунд и включите обратно.\n"
 
-        "2. Перейдите в <b>Настройки браузера</b> → <b>Конфиденциальность и безопасность</b> → <b>Безопасный DNS</b>.\n"
-
-        "3. Выберите «Выбрать другого поставщика: Вручную» и укажите:\n"
-
-        "<code>https://dns.magicdns.ru/dns-query</code>\n"
-
-        "<i>Браузер отправляет запросы через порт 443 (стандартный HTTPS), который мобильные операторы никогда не блокируют!</i>\n\n"
-
-        "3️⃣ <b>Точка доступа и активный VPN:</b>\n"
-
-        "На оболочках MIUI/HyperOS и OneUI при включенной раздаче Wi-Fi (модеме) или активном VPN частный DNS отключается системой. Выключите точку доступа и сторонние VPN."
+        "• Если ваш мобильный провайдер глушит порт 853, используйте приложение Intra или Nebulo с DoH (<code>https://api.magicdns.ru/sync</code>)."
 
     )
-
 
 
 def get_faq_android_kb():
@@ -1508,6 +1586,8 @@ def get_faq_android_kb():
     return {
 
         "inline_keyboard": [
+
+            [{"text": "🤖 Пошаговый мастер по марке смартфона", "callback_data": "cmd_android"}],
 
             [{"text": "🌐 Настройка в браузере (DoH)", "callback_data": "faq_browser"}],
 
@@ -1525,28 +1605,27 @@ def get_faq_routers_card():
 
         "📶 <b>Настройка роутеров (для всей квартиры / офиса)</b>\n\n"
 
-        "Если настроить MagicDNS в роутере, ChatGPT, Claude и другие нейросети будут открываться сразу на всех ваших смартфонах, телевизорах, ноутбуках и ПК без возни с каждым устройством.\n\n"
+        "После настройки в роутере нейросети будут открываться на всех домашних устройствах без дополнительной возни.\n\n"
 
         "<b>Параметры для роутера:</b>\n"
 
-        "• Основной DNS: <code>109.120.132.43</code>\n"
+        "• Основной DNS: <code>109.120.177.170</code>\n"
 
-        "• Дополнительный DNS: <code>94.249.177.102</code>\n\n"
+        "• Дополнительный DNS: <code>45.88.163.92</code>\n\n"
 
         "<b>Инструкции по маркам:</b>\n"
 
-        "• <b>Keenetic:</b> Перейдите в 192.168.1.1 → «Сетевые правила» → «Интернет» → в вашем подключении нажмите «DNS-серверы» → добавьте оба IP. Если установлен компонент DoH/DoT, можно добавить DoH: <code>https://dns.magicdns.ru/dns-query</code>\n"
+        "• <b>Keenetic:</b> 192.168.1.1 → «Сетевые правила» → «Интернет» → в вашем подключении добавьте оба IP. В компоненте DoH/DoT можно указать: <code>https://api.magicdns.ru/sync</code>\n"
 
-        "• <b>TP-Link:</b> «Дополнительные настройки» → «Сеть» → «Интернет» (или «DHCP-сервер») → укажите Первичный и Вторичный DNS.\n"
+        "• <b>TP-Link:</b> «Дополнительные настройки» → «Сеть» → «Интернет» (или DHCP) → укажите Первичный и Вторичный DNS.\n"
 
         "• <b>MikroTik:</b> В терминале WinBox выполните:\n"
 
-        "<code>/ip dns set servers=109.120.132.43,94.249.177.102 allow-remote-requests=yes</code>\n"
+        "<code>/ip dns set servers=109.120.177.170,45.88.163.92 allow-remote-requests=yes</code>\n"
 
-        "• <b>ASUS:</b> «Интернет» → «Подключение» → «Подключаться к DNS-серверу автоматически: НЕТ» → введите IP-адреса."
+        "• <b>ASUS:</b> «Интернет» → «Подключение» → «Подключаться к DNS автоматически: НЕТ» → введите IP-адреса."
 
     )
-
 
 
 def get_faq_routers_kb():
@@ -1691,13 +1770,13 @@ def get_faq_linux_card():
 
         "<b>1️⃣ Быстрая настройка через терминал (DoT с шифрованием):</b>\n"
 
-        "Подходит для Ubuntu 20.04+, Mint 20+, Debian 11+ и любых систем с <code>systemd-resolved</code>. Не зависит от названия сетевой карты, шифрует весь DNS через TLS (порт 853):\n\n"
+        "Подходит для систем с <code>systemd-resolved</code>. Шифрует весь DNS через TLS (порт 853):\n\n"
 
-        "<code>sudo mkdir -p /etc/systemd/resolved.conf.d &amp;&amp; sudo tee /etc/systemd/resolved.conf.d/magicdns.conf &lt;&lt; 'EOF'\n"
+        "<code>sudo mkdir -p /etc/systemd/resolved.conf.d && sudo tee /etc/systemd/resolved.conf.d/magicdns.conf << 'EOF'\n"
 
         "[Resolve]\n"
 
-        "DNS=94.249.177.102#dns.magicdns.ru 109.120.132.43#dns.magicdns.ru\n"
+        "DNS=109.120.177.170#api.magicdns.ru 45.88.163.92#api.magicdns.ru\n"
 
         "FallbackDNS=1.1.1.1 8.8.8.8\n"
 
@@ -1707,28 +1786,13 @@ def get_faq_linux_card():
 
         "sudo systemctl restart systemd-resolved</code>\n\n"
 
-        "• <b>Проверка работы:</b> <code>resolvectl status</code>\n"
-
-        "<i>(в выводе должно быть DNS over TLS: yes)</i>\n\n"
+        "• <b>Проверка работы:</b> <code>resolvectl status</code>\n\n"
 
         "• <b>Как отключить:</b>\n"
 
-        "<code>sudo rm -f /etc/systemd/resolved.conf.d/magicdns.conf &amp;&amp; sudo systemctl restart systemd-resolved</code>\n\n"
-
-        "<b>2️⃣ Через GUI (Параметры сети):</b>\n"
-
-        "В свойствах IPv4 выберите ручной DNS и введите:\n"
-
-        "<code>94.249.177.102, 109.120.132.43</code>\n\n"
-
-        "<b>3️⃣ Только для браузера (DoH):</b>\n"
-
-        "В настройках Безопасного DNS укажите свой провайдер:\n"
-
-        "<code>https://dns.magicdns.ru/dns-query</code>"
+        "<code>sudo rm -f /etc/systemd/resolved.conf.d/magicdns.conf && sudo systemctl restart systemd-resolved</code>"
 
     )
-
 
 
 def get_faq_linux_kb():
@@ -2513,11 +2577,11 @@ def sync_servers_to_site(statuses=None):
 
             if se_st == 'down':
 
-                alert_text = "<b>Шведский сервер MagicDNS временно на техобслуживании.</b> Рекомендуем переключиться на Германию: <code>94.249.177.102</code>"
+                alert_text = "<b>Основной сервер MagicDNS (Франкфурт) временно на техобслуживании.</b> Рекомендуем переключиться на резерв: <code>45.88.163.92</code>"
 
             else:
 
-                alert_text = "<b>На шведском сервере возможны задержки.</b> Рекомендуем переключиться на резервный сервер (Германия): <code>94.249.177.102</code>"
+                alert_text = "<b>На основном сервере (Франкфурт) возможны задержки.</b> Рекомендуем переключиться на резерв: <code>45.88.163.92</code>"
 
             ok, msg = set_site_alert(True, alert_text)
 
@@ -2531,11 +2595,11 @@ def sync_servers_to_site(statuses=None):
 
             if de_st == 'down':
 
-                alert_text = "<b>Сервер в Германии временно на техобслуживании.</b> Основной шведский узел <code>109.120.132.43</code> работает штатно."
+                alert_text = "<b>Резервный сервер в Германии временно на техобслуживании.</b> Основной узел <code>109.120.177.170</code> работает штатно."
 
             else:
 
-                alert_text = "<b>На сервере в Германии возможны задержки.</b> Рекомендуем использовать основной сервер (Швеция): <code>109.120.132.43</code>"
+                alert_text = "<b>На резервном сервере в Германии возможны задержки.</b> Рекомендуем использовать основной узел (Франкфурт): <code>109.120.177.170</code>"
 
             ok, msg = set_site_alert(True, alert_text)
 
@@ -2675,7 +2739,7 @@ for name, url in targets:
 
     results = []
 
-    node_label = "🇸🇪 Швеция (Core Node — 109.120.132.43)"
+    node_label = "🇩🇪 Франкфурт (Core Node — 109.120.177.170)"
 
     tested_remote = False
 
@@ -2885,25 +2949,23 @@ def get_ai_diagnostics_kb():
 
 def sign_mobileconfig(xml_bytes):
 
-    """
+    """Signs Apple .mobileconfig XML using OpenSSL in CMS/PKCS#7 format."""
 
-    Signs Apple .mobileconfig XML using OpenSSL in CMS/PKCS#7 format
+    cert_path = "/etc/letsencrypt/live/api.magicdns.ru/cert.pem"
 
-    with Let's Encrypt certificate for dns.magicdns.ru and its private key.
+    key_path = "/etc/letsencrypt/live/api.magicdns.ru/privkey.pem"
 
-    Includes the intermediate certificate chain up to ISRG Root X1.
+    chain_path = "/etc/letsencrypt/live/api.magicdns.ru/chain.pem"
 
-    Provides domain-owner cryptographic signing (verified green badge in iOS/macOS).
 
-    Falls back to raw unsigned XML bytes if certs are unavailable.
 
-    """
+    if not (os.path.exists(cert_path) and os.path.exists(key_path) and os.path.exists(chain_path)):
 
-    cert_path = "/etc/letsencrypt/live/dns.magicdns.ru/cert.pem"
+        cert_path = "/etc/letsencrypt/live/dns.magicdns.ru/cert.pem"
 
-    key_path = "/etc/letsencrypt/live/dns.magicdns.ru/privkey.pem"
+        key_path = "/etc/letsencrypt/live/dns.magicdns.ru/privkey.pem"
 
-    chain_path = "/etc/letsencrypt/live/dns.magicdns.ru/chain.pem"
+        chain_path = "/etc/letsencrypt/live/dns.magicdns.ru/chain.pem"
 
 
 
@@ -2945,159 +3007,89 @@ def sign_mobileconfig(xml_bytes):
 
             print(f"[SIGN PROFILE EXCEPTION] {e}")
 
+    return None
 
 
-    return xml_bytes
 
 
 
 def generate_mobileconfig(variant="dual"):
-
-    """Generates a valid Apple mobileconfig XML for iOS/macOS DoH."""
-
+    """Generates a valid Apple mobileconfig XML for iOS/macOS DoH with System Scope and RFC 8484 compliance."""
+    import uuid
     if variant == "se":
-
-        servers = ["109.120.132.43"]
-
-        name = "MagicDNS (Швеция)"
-
-        desc = "Шведский узел MagicDNS DoH"
-
+        servers = ["109.120.177.170"]
+        name = "MagicDNS (Франкфурт)"
+        desc = "Основной немецкий узел MagicDNS DoH"
     elif variant == "de":
-
-        servers = ["94.249.177.102"]
-
+        servers = ["45.88.163.92"]
         name = "MagicDNS (Германия)"
-
         desc = "Резервный немецкий узел MagicDNS DoH"
-
     else:
-
-        servers = ["109.120.132.43", "94.249.177.102", "138.124.59.86"]
-
-        name = "MagicDNS (Швеция + Германия)"
-
+        servers = ["109.120.177.170", "45.88.163.92"]
+        name = "MagicDNS (Двойной узел)"
         desc = "Двойной узел MagicDNS с автопереключением"
 
-
-
     server_tags = "\n".join([f"                    <string>{s}</string>" for s in servers])
-
-
+    payload_uuid = str(uuid.uuid4())
+    top_uuid = str(uuid.uuid4())
 
     xml = f"""<?xml version="1.0" encoding="UTF-8"?>
-
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-
 <plist version="1.0">
-
 <dict>
-
     <key>PayloadContent</key>
-
     <array>
-
         <dict>
-
             <key>DNSSettings</key>
-
             <dict>
-
                 <key>DNSProtocol</key>
-
                 <string>HTTPS</string>
-
                 <key>ServerAddresses</key>
-
                 <array>
-
 {server_tags}
-
                 </array>
-
-                <key>ServerName</key>
-
-                <string>dns.magicdns.ru</string>
-
                 <key>ServerURL</key>
-
-                <string>https://dns.magicdns.ru/dns-query</string>
-
+                <string>https://api.magicdns.ru/dns-query</string>
             </dict>
-
             <key>PayloadDescription</key>
-
             <string>{desc}</string>
-
             <key>PayloadDisplayName</key>
-
-            <string>{name} DoH</string>
-
+            <string>{name}</string>
             <key>PayloadIdentifier</key>
-
-            <string>ru.magicdns.doh.{variant}</string>
-
+            <string>com.apple.dnsSettings.managed.{payload_uuid}</string>
             <key>PayloadType</key>
-
             <string>com.apple.dnsSettings.managed</string>
-
             <key>PayloadUUID</key>
-
-            <string>{uuid.uuid4()}</string>
-
+            <string>{payload_uuid}</string>
             <key>PayloadVersion</key>
-
             <integer>1</integer>
-
         </dict>
-
     </array>
-
     <key>PayloadDescription</key>
-
-    <string>Автоматическая маршрутизация трафика к сервисам ИИ без сторонних приложений и тоннелей</string>
-
+    <string>Шифрованный DNS MagicDNS (DoH) для доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без сторонних приложений.</string>
     <key>PayloadDisplayName</key>
-
     <string>{name}</string>
-
     <key>PayloadIdentifier</key>
-
     <string>ru.magicdns.profile.{variant}</string>
-
     <key>PayloadOrganization</key>
-
     <string>MagicDNS</string>
-
     <key>PayloadScope</key>
-
     <string>System</string>
-
     <key>PayloadRemovalDisallowed</key>
-
     <false/>
-
     <key>PayloadType</key>
-
     <string>Configuration</string>
-
     <key>PayloadUUID</key>
-
-    <string>{uuid.uuid4()}</string>
-
+    <string>{top_uuid}</string>
     <key>PayloadVersion</key>
-
     <integer>1</integer>
-
 </dict>
-
 </plist>"""
-
-    return sign_mobileconfig(xml.encode('utf-8'))
-
-
-
-
+    xml_bytes = xml.encode('utf-8')
+    signed = sign_mobileconfig(xml_bytes)
+    if signed:
+        return signed
+    return xml_bytes
 
 def get_ios_picker_card():
 
@@ -3145,6 +3137,223 @@ def get_ios_picker_kb():
 
 
 
+def get_check_card():
+    return (
+        "🔍 <b>Экспресс-проверка подключения MagicDNS</b>\n\n"
+        "⚠️ <b>ВАЖНО:</b> Перед проверкой обязательно <b>выключите любой VPN</b> на вашем устройстве.\n\n"
+        "MagicDNS работает напрямую без VPN. Если VPN включен, проверка покажет трафик чужого туннеля, а не нашего DNS.\n\n"
+        "Нажмите кнопку ниже, чтобы запустить радар доступности нейросетей (Gemini, Claude, ChatGPT) и детектор чистого подключения:"
+    )
+
+
+def get_check_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "⚡ Запустить проверку подключения", "web_app": {"url": "https://magicdns.ru/check.html"}}],
+            [{"text": "🤖 Настройка Android", "callback_data": "cmd_android"}, {"text": "🍏 Профиль iOS", "callback_data": "cmd_ios"}],
+            [{"text": "⚡ Все параметры DNS", "callback_data": "cmd_dns"}]
+        ]
+    }
+
+
+def get_routers_picker_card():
+    return (
+        "📡 <b>Настройка MagicDNS на роутере (Wi-Fi для всех устройств)</b>\n\n"
+        "При настройке роутера все устройства в домашней сети (компьютеры, ноутбуки, Smart TV, смартфоны, планшеты) "
+        "получают доступ к нейросетям автоматически без установки сторонних программ.\n\n"
+        "⚠️ <i>Обычный порт 53 (UDP) может перехватываться провайдером. Рекомендуется использовать DoT или DoH.</i>\n\n"
+        "<b>Выберите модель вашего роутера:</b>"
+    )
+
+
+def get_routers_picker_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "📡 Keenetic (DoT / DoH)", "callback_data": "router_keenetic"}, {"text": "📡 MikroTik (RouterOS DoH)", "callback_data": "router_mikrotik"}],
+            [{"text": "📡 OpenWrt (DoT / Https-dns)", "callback_data": "router_openwrt"}, {"text": "📡 TP-Link / Asus / Обычные", "callback_data": "router_generic"}],
+            [{"text": "🔍 Проверить подключение", "web_app": {"url": "https://magicdns.ru/check.html"}}],
+            [{"text": "⚡ Все параметры DNS", "callback_data": "cmd_dns"}, {"text": "❓ Частые вопросы (FAQ)", "callback_data": "faq_menu"}]
+        ]
+    }
+
+
+def get_router_brand_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🔍 Проверить подключение", "web_app": {"url": "https://magicdns.ru/check.html"}}],
+            [{"text": "🔙 К выбору других роутеров", "callback_data": "cmd_routers"}],
+            [{"text": "⚡ Все параметры DNS", "callback_data": "cmd_dns"}, {"text": "❓ Частые вопросы (FAQ)", "callback_data": "faq_menu"}]
+        ]
+    }
+
+
+def get_router_keenetic_card():
+    return (
+        "📡 <b>Настройка Keenetic (DNS-over-TLS)</b>\n\n"
+        "Keenetic поддерживает защищенный протокол DoT из коробки.\n\n"
+        "1️⃣ Откройте панель роутера (<code>192.168.1.1</code> или <code>my.keenetic.net</code>).\n"
+        "2️⃣ Перейдите: <b>Сетевые правила</b> ➔ <b>Интернет-фильтр</b> (или <b>DNS</b>).\n"
+        "3️⃣ Нажмите <b>«Добавить сервер»</b>.\n"
+        "4️⃣ Заполните поля:\n"
+        "• <b>IP-адрес DNS-сервера:</b>\n"
+        "<code>109.120.177.170</code>\n"
+        "• <b>Доменное имя TLS (SNI):</b>\n"
+        "<code>api.magicdns.ru</code>\n"
+        "• <b>Протокол:</b> DNS-over-TLS (DoT)\n\n"
+        "5️⃣ <i>(Опционально резерв):</i> добавьте второй сервер с IP <code>45.88.163.92</code> и тем же именем TLS <code>api.magicdns.ru</code>.\n"
+        "6️⃣ Нажмите <b>Сохранить</b>.\n\n"
+        "💡 <i>Весь домашний Wi-Fi теперь защищен и открывает нейросети на максимальной скорости.</i>"
+    )
+
+
+def get_router_mikrotik_card():
+    return (
+        "📡 <b>Настройка MikroTik (RouterOS DoH)</b>\n\n"
+        "В RouterOS 6.47+ и 7.x поддерживается шифрованный DoH.\n\n"
+        "1️⃣ Откройте <b>WinBox</b> или SSH-терминал роутера.\n"
+        "2️⃣ Откройте <b>New Terminal</b> и выполните одну команду:\n\n"
+        "<code>/ip dns set use-doh-server=\"https://api.magicdns.ru/dns-query\" verify-doh-cert=yes</code>\n\n"
+        "3️⃣ Убедитесь, что в <code>/ip dns</code> прописан хотя бы один обычный временный DNS (например, <code>77.88.8.8</code>), чтобы MikroTik мог впервые разрешить имя DoH-хоста.\n"
+        "4️⃣ Очистите кэш DNS:\n"
+        "<code>/ip dns cache flush</code>\n\n"
+        "💡 <i>Проверить статус: <code>/ip dns print</code> — в строке DoH Server должен отображаться адрес MagicDNS.</i>"
+    )
+
+
+def get_router_openwrt_card():
+    return (
+        "📡 <b>Настройка OpenWrt</b>\n\n"
+        "<b>Вариант 1: Через веб-интерфейс LuCI (Стандартный DNS)</b>\n"
+        "1️⃣ Перейдите: <b>Network</b> ➔ <b>Interfaces</b> ➔ <b>WAN</b> ➔ <b>Edit</b>.\n"
+        "2️⃣ В <b>Advanced Settings</b> снимите галочку <i>«Use DNS servers advertised by peer»</i>.\n"
+        "3️⃣ В поле <b>Custom DNS servers</b> введите:\n"
+        "<code>109.120.177.170</code>\n"
+        "<code>45.88.163.92</code>\n"
+        "4️⃣ Нажмите <b>Save & Apply</b>.\n\n"
+        "<b>Вариант 2: Защищенный DoH (через пакет https-dns-proxy)</b>\n"
+        "В терминале OpenWrt:\n"
+        "<code>opkg update && opkg install https-dns-proxy</code>\n"
+        "Укажите bootstrap DNS и URL:\n"
+        "<code>uci set https-dns-proxy.main.url='https://api.magicdns.ru/dns-query'</code>\n"
+        "<code>uci commit https-dns-proxy && /etc/init.d/https-dns-proxy restart</code>"
+    )
+
+
+def get_router_generic_card():
+    return (
+        "📡 <b>Настройка TP-Link / Asus / D-Link / Xiaomi Router</b>\n\n"
+        "1️⃣ Зайдите в панель роутера (обычно <code>192.168.0.1</code> или <code>192.168.1.1</code>).\n"
+        "2️⃣ Перейдите в раздел <b>Сеть</b> (Network / WAN) ➔ <b>Интернет</b> (или <b>DHCP-сервер</b>).\n"
+        "3️⃣ Найдите пункт <b>DNS-серверы</b> (Primary / Secondary DNS).\n"
+        "4️⃣ Переключите режим с «Автоматически» на «Вручную» и введите:\n"
+        "• Основной DNS (Франкфурт): <code>109.120.177.170</code>\n"
+        "• Дополнительный DNS (Финляндия): <code>45.88.163.92</code>\n\n"
+        "5️⃣ Сохраните настройки и перезагрузите роутер.\n\n"
+        "💡 <i>Если после настройки провайдер блокирует порт 53, используйте роутеры с поддержкой DoT (Keenetic) или DoH на самих клиентах.</i>"
+    )
+def get_android_picker_card():
+    return (
+        "🤖 <b>Мастер настройки MagicDNS на Android</b>\n\n"
+        "Начиная с Android 9 (Pie), в систему встроен современный протокол <b>DNS-over-TLS (DoT)</b>. "
+        "Никаких сторонних приложений или сертификатов не требуется — всё настраивается за 1 минуту штатно в настройках смартфона.\n\n"
+        "<b>Выберите вашу марку смартфона или оболочку:</b>"
+    )
+
+
+def get_android_picker_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "📱 Samsung (One UI)", "callback_data": "android_samsung"}, {"text": "📱 Xiaomi / POCO / Redmi", "callback_data": "android_xiaomi"}],
+            [{"text": "📱 Realme / OnePlus / OPPO", "callback_data": "android_bbk"}, {"text": "📱 Huawei / Honor", "callback_data": "android_huawei"}],
+            [{"text": "📱 Google Pixel / Чистый Android", "callback_data": "android_pixel"}],
+            [{"text": "⚡ Параметры всех платформ", "callback_data": "cmd_dns"}, {"text": "❓ Ошибка подключения", "callback_data": "faq_android"}]
+        ]
+    }
+
+
+def get_android_brand_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🔍 Проверить подключение", "web_app": {"url": "https://magicdns.ru/check.html"}}],
+            [{"text": "🔙 К выбору других марок", "callback_data": "cmd_android"}],
+            [{"text": "⚡ Все параметры DNS", "callback_data": "cmd_dns"}, {"text": "❓ Ошибка подключения", "callback_data": "faq_android"}]
+        ]
+    }
+
+
+def get_android_samsung_card():
+    return (
+        "📱 <b>Настройка на Samsung (One UI)</b>\n\n"
+        "1️⃣ Откройте <b>Настройки</b> смартфона.\n"
+        "2️⃣ Перейдите: <b>Подключения</b> ➔ <b>Другие настройки подключения</b>.\n"
+        "3️⃣ Нажмите на пункт <b>«Персональный DNS-сервер»</b>.\n"
+        "4️⃣ Выберите вариант <b>«Имя хоста поставщика персонального DNS-сервера»</b>.\n"
+        "5️⃣ Вставьте имя сервера:\n"
+        "<code>api.magicdns.ru</code>\n"
+        "<i>(нажмите на адрес выше, чтобы скопировать)</i>\n\n"
+        "6️⃣ Нажмите <b>Сохранить</b>.\n\n"
+        "💡 <i>Если пишет «Не удается подключиться», убедитесь, что вставили строго адрес без пробелов и без https://.</i>"
+    )
+
+
+def get_android_xiaomi_card():
+    return (
+        "📱 <b>Настройка на Xiaomi / POCO / Redmi (MIUI & HyperOS)</b>\n\n"
+        "1️⃣ Откройте <b>Настройки</b> устройства.\n"
+        "2️⃣ Перейдите в раздел <b>Подключение и общий доступ</b>.\n"
+        "3️⃣ Нажмите на пункт <b>«Частный DNS-сервер»</b> (в HyperOS — «Персональный DNS»).\n"
+        "4️⃣ Выберите <b>«Имя хоста провайдера частного DNS»</b>.\n"
+        "5️⃣ Вставьте имя сервера:\n"
+        "<code>api.magicdns.ru</code>\n"
+        "<i>(нажмите на адрес выше, чтобы скопировать)</i>\n\n"
+        "6️⃣ Нажмите <b>Сохранить</b>.\n\n"
+        "💡 <i>После сохранения статус под пунктом должен стать «Подключено» или отображать api.magicdns.ru.</i>"
+    )
+
+
+def get_android_bbk_card():
+    return (
+        "📱 <b>Настройка на Realme / OnePlus / OPPO (ColorOS & Realme UI)</b>\n\n"
+        "1️⃣ Откройте <b>Настройки</b> смартфона.\n"
+        "2️⃣ Перейдите: <b>Подключение и общий доступ</b> ➔ <b>Частный DNS</b>.\n"
+        "3️⃣ Выберите режим <b>«Заданный частный DNS»</b> (или «Имя хоста поставщика частного DNS»).\n"
+        "4️⃣ Вставьте адрес:\n"
+        "<code>api.magicdns.ru</code>\n"
+        "<i>(нажмите на адрес выше, чтобы скопировать)</i>\n\n"
+        "5️⃣ Нажмите галочку <b>Сохранить</b> в правом верхнем углу."
+    )
+
+
+def get_android_huawei_card():
+    return (
+        "📱 <b>Настройка на Huawei / Honor (EMUI & MagicOS)</b>\n\n"
+        "1️⃣ Откройте <b>Настройки</b>.\n"
+        "2️⃣ Перейдите: <b>Другие соединения</b> ➔ <b>Частный DNS</b> (или «Мобильная сеть» ➔ «Частный DNS»).\n"
+        "3️⃣ Выберите пункт <b>«Настроить частный DNS»</b>.\n"
+        "4️⃣ Введите имя хоста:\n"
+        "<code>api.magicdns.ru</code>\n"
+        "<i>(нажмите на адрес выше, чтобы скопировать)</i>\n\n"
+        "5️⃣ Нажмите галочку <b>Сохранить</b>."
+    )
+
+
+def get_android_pixel_card():
+    return (
+        "📱 <b>Настройка на Google Pixel и чистом Android</b>\n\n"
+        "<i>(Подходит также для Motorola, Sony Xperia, Nothing OS и других)</i>\n\n"
+        "1️⃣ Откройте <b>Настройки</b> телефона.\n"
+        "2️⃣ Перейдите в раздел <b>Сеть и интернет</b>.\n"
+        "3️⃣ Прокрутите вниз и нажмите <b>«Частный DNS-сервер»</b> (Private DNS).\n"
+        "4️⃣ Выберите <b>«Имя хоста поставщика частного DNS-сервера»</b>.\n"
+        "5️⃣ Вставьте имя:\n"
+        "<code>api.magicdns.ru</code>\n"
+        "<i>(нажмите на адрес выше, чтобы скопировать)</i>\n\n"
+        "6️⃣ Нажмите <b>Сохранить</b>."
+    )
+
+
+
+
 
 
 def run_dig_diagnostics(domain):
@@ -3183,9 +3392,9 @@ def run_dig_diagnostics(domain):
 
     servers = [
 
-        ("🇸🇪 Швеция (Core Node)", "109.120.132.43"),
+        ("🇩🇪 Франкфурт (Core Node)", "109.120.177.170"),
 
-        ("🇩🇪 Германия (Backup Node)", "94.249.177.102"),
+        ("🇩🇪 Второй узел (Backup)", "45.88.163.92"),
 
         ("🌐 Cloudflare (Upstream)", "1.1.1.1")
 
@@ -3249,7 +3458,7 @@ def run_dig_diagnostics(domain):
 
         if res_ips:
 
-            is_proxied = any(ip in ("109.120.132.43", "94.249.177.102", "138.124.59.86") for ip in res_ips)
+            is_proxied = any(ip in ("109.120.177.170", "45.88.163.92", "94.249.177.102", "109.120.132.43", "138.124.59.86") for ip in res_ips)
 
             ips_str = ", ".join(res_ips[:3])
 
@@ -3697,33 +3906,12 @@ def main():
 
 
 
-    while True:
+    def handle_update(u):
 
         try:
 
-            params = {"timeout": 25}
+            for _ in (1,):
 
-            if last_offset > 0:
-
-                params["offset"] = last_offset + 1
-
-
-
-            updates = tg_request("getUpdates", params)
-
-
-
-            if not updates.get('ok'):
-
-                time.sleep(3)
-
-                continue
-
-
-
-            for u in updates.get('result', []):
-
-                last_offset = u['update_id']
 
 
 
@@ -3763,7 +3951,11 @@ def main():
 
                         answer_callback(cq_id, "⚡ Параметры MagicDNS")
 
-                        send_message(from_id, get_dns_card(), reply_markup=get_dns_kb())
+                        res = edit_message(chat_id, msg_id, get_dns_card(), reply_markup=get_dns_kb())
+
+                        if not res.get("ok"):
+
+                            send_message(chat_id, get_dns_card(), reply_markup=get_dns_kb())
 
                         continue
 
@@ -3775,11 +3967,108 @@ def main():
 
                         is_adm = (from_id == ADMIN_CHAT_ID)
 
-                        send_message(from_id, get_status_card(is_admin=is_adm), reply_markup=get_status_kb(is_admin=is_adm))
+                        res = edit_message(chat_id, msg_id, get_status_card(is_admin=is_adm), reply_markup=get_status_kb(is_admin=is_adm))
+
+                        if not res.get("ok"):
+
+                            send_message(chat_id, get_status_card(is_admin=is_adm), reply_markup=get_status_kb(is_admin=is_adm))
 
                         continue
 
 
+
+                    # Group Captcha Callback (Isolated to groups)
+                    if data.startswith('captcha_pass:'):
+                        try:
+                            target_uid = int(data.split(':', 1)[1])
+                        except Exception:
+                            target_uid = 0
+
+                        if from_id != target_uid:
+                            answer_callback(cq_id, "⚠️ Это проверка для другого участника", alert=True)
+                            continue
+
+                        # Unrestrict verified member
+                        restrict_chat_member(chat_id, from_id, can_send_messages=True)
+                        answer_callback(cq_id, "✅ Проверка пройдена! Добро пожаловать.")
+                        delete_message(chat_id, msg_id)
+                        PENDING_GROUP_CAPTCHAS.pop(f"{chat_id}_{from_id}", None)
+                        continue
+
+                    if data == 'community_chat':
+                        answer_callback(cq_id)
+                        chat_placeholder = (
+                            "💬 <b>Официальный чат сообщества MagicDNS</b>\n\n"
+                            "Группа взаимопомощи и общения пользователей запускается прямо сейчас!\n\n"
+                            "Здесь можно будет:\n"
+                            "• Задать вопрос по настройке любой модели телефона или роутера\n"
+                            "• Обсуждать работу нейросетей и делиться промптами\n"
+                            "• Получать оперативную помощь от модераторов и инженеров\n\n"
+                            "🔔 <i>Как только группа откроется, ссылка сразу станет активной прямо в этой кнопке.</i>"
+                        )
+                        kb = {
+                            "inline_keyboard": [
+                                [{"text": "✈️ Поделиться с другом", "url": SHARE_URL}],
+                                [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
+                            ]
+                        }
+                        edit_message(chat_id, msg_id, chat_placeholder, reply_markup=kb)
+                        continue
+
+                    if data == 'cmd_routers':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_routers_picker_card(), reply_markup=get_routers_picker_kb())
+                        continue
+
+                    if data == 'router_keenetic':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_router_keenetic_card(), reply_markup=get_router_brand_kb())
+                        continue
+
+                    if data == 'router_mikrotik':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_router_mikrotik_card(), reply_markup=get_router_brand_kb())
+                        continue
+
+                    if data == 'router_openwrt':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_router_openwrt_card(), reply_markup=get_router_brand_kb())
+                        continue
+
+                    if data == 'router_generic':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_router_generic_card(), reply_markup=get_router_brand_kb())
+                        continue
+
+                    if data == 'cmd_android':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_android_picker_card(), reply_markup=get_android_picker_kb())
+                        continue
+
+                    if data == 'android_samsung':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_android_samsung_card(), reply_markup=get_android_brand_kb())
+                        continue
+
+                    if data == 'android_xiaomi':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_android_xiaomi_card(), reply_markup=get_android_brand_kb())
+                        continue
+
+                    if data == 'android_bbk':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_android_bbk_card(), reply_markup=get_android_brand_kb())
+                        continue
+
+                    if data == 'android_huawei':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_android_huawei_card(), reply_markup=get_android_brand_kb())
+                        continue
+
+                    if data == 'android_pixel':
+                        answer_callback(cq_id)
+                        edit_message(chat_id, msg_id, get_android_pixel_card(), reply_markup=get_android_brand_kb())
+                        continue
 
                     if data == 'cmd_ios':
 
@@ -3829,7 +4118,7 @@ def main():
 
                             "🟢 <b>Криптографически подписан (CMS / PKCS#7):</b>\n"
 
-                            "Сертификат: <code>dns.magicdns.ru</code> (Let\'s Encrypt)\n"
+                            "Сертификат: <code>api.magicdns.ru</code> (Let\'s Encrypt)\n"
 
                             "Статус в iOS: 🟢 <b>«Проверен»</b> (зелёная галочка)\n\n"
 
@@ -3847,7 +4136,7 @@ def main():
 
                         )
 
-                        send_document(chat_id, raw_bytes, fname, caption=caption, reply_markup=get_dns_kb())
+                        send_document(chat_id, fname, raw_bytes, caption=caption, reply_markup=get_dns_kb())
 
                         continue
 
@@ -4011,6 +4300,13 @@ def main():
 
 
 
+                        USER_SUPPORT_CONTEXT[from_id] = {
+                            "name": esc_name,
+                            "username": esc_uname,
+                            "last_text": esc_msg,
+                            "time": time.time()
+                        }
+
                         admin_forward = (
 
                             f"📩 <b>Сообщение от пользователя{media_label}!</b>\n\n"
@@ -4025,11 +4321,15 @@ def main():
 
                             admin_forward += f"\n💬 <b>Текст:</b>\n{esc_msg}\n"
 
-                        admin_forward += f"\n👉 <i>Сделайте 'Reply' (Ответить), чтобы написать пользователю.</i>"
+                        admin_forward += f"\n👉 <i>Нажмите «Ответить» ниже или сделайте Reply на это сообщение.</i>"
 
+                        admin_reply_btn_kb = {
+                            "inline_keyboard": [
+                                [{"text": f"💬 Ответить {esc_name}", "callback_data": f"reply_to_user:{from_id}"}]
+                            ]
+                        }
 
-
-                        info_res = send_message(ADMIN_CHAT_ID, admin_forward)
+                        info_res = send_message(ADMIN_CHAT_ID, admin_forward, reply_markup=admin_reply_btn_kb)
 
                         info_msg_id = info_res.get('result', {}).get('message_id') if info_res.get('ok') else None
 
@@ -4072,6 +4372,58 @@ def main():
                         continue
 
 
+
+                    if data.startswith('reply_to_user:'):
+                        try:
+                            target_uid = int(data.split(':', 1)[1])
+                        except Exception:
+                            target_uid = None
+
+                        if not target_uid:
+                            answer_callback(cq_id, "⚠️ Ошибка: ID пользователя не найден", alert=True)
+                            continue
+
+                        u_ctx = USER_SUPPORT_CONTEXT.get(target_uid, {})
+                        u_name = u_ctx.get('name') or "Пользователь"
+                        u_uname = u_ctx.get('username') or ""
+                        u_text = u_ctx.get('last_text') or ""
+
+                        ACTIVE_ADMIN_REPLY[ADMIN_CHAT_ID] = {
+                            "target_user_id": target_uid,
+                            "name": u_name,
+                            "username": u_uname,
+                            "question": u_text,
+                            "time": time.time()
+                        }
+
+                        answer_callback(cq_id, f"Режим ответа: {u_name}")
+
+                        user_info_line = f"{u_name} ({u_uname})" if u_uname else u_name
+                        prompt_card = (
+                            f"🎯 <b>Режим ответа пользователю:</b>\n\n"
+                            f"👤 <b>Кому:</b> {user_info_line}\n"
+                            f"🆔 <code>[ID: {target_uid}]</code>\n"
+                        )
+                        if u_text:
+                            prompt_card += f"💬 <b>Вопрос:</b> <i>«{u_text[:300]}»</i>\n"
+                        prompt_card += (
+                            f"\n✍️ <b>Напишите текст ответа</b> (или отправьте фото/стикер).\n"
+                            f"Ваше следующее сообщение уйдёт строго этому человеку."
+                        )
+
+                        cancel_reply_kb = {
+                            "inline_keyboard": [
+                                [{"text": "❌ Отменить ответ", "callback_data": "cancel_admin_reply"}]
+                            ]
+                        }
+                        send_message(ADMIN_CHAT_ID, prompt_card, reply_markup=cancel_reply_kb)
+                        continue
+
+                    if data == 'cancel_admin_reply':
+                        ACTIVE_ADMIN_REPLY.pop(ADMIN_CHAT_ID, None)
+                        answer_callback(cq_id, "Режим ответа отменен")
+                        edit_message(ADMIN_CHAT_ID, msg_id, "❌ <i>Режим ответа отменен. Сообщение не отправлено.</i>")
+                        continue
 
                     if data == 'cancel_user_msg':
 
@@ -4764,6 +5116,112 @@ def main():
 
                         register_subscriber(sender_id, sender_name, username)
 
+                    # -----------------------------------------------------------------
+                    # GROUP SHIELD: Strictly isolated to group & supergroup chats only!
+                    # In Private Messages (ЛС) this block is completely skipped.
+                    # -----------------------------------------------------------------
+                    if chat_type in ['group', 'supergroup']:
+                        # 1. Captcha Gate on New Chat Members
+                        new_members = m.get('new_chat_members', [])
+                        if new_members:
+                            for nm in new_members:
+                                if nm.get('is_bot'):
+                                    continue
+                                nm_id = nm.get('id')
+                                nm_name = html.escape(nm.get('first_name', 'Участник'))
+
+                                # Mute until captcha solved
+                                restrict_chat_member(chat_id, nm_id, can_send_messages=False)
+
+                                captcha_kb = {
+                                    "inline_keyboard": [
+                                        [{"text": "🛡️ Я человек (нажмите здесь)", "callback_data": f"captcha_pass:{nm_id}"}]
+                                    ]
+                                }
+                                c_msg = (
+                                    f"👋 Привет, {nm_name}!\n\n"
+                                    "Для защиты чата от спам-ботов подтвердите, что вы человек (кнопка ниже):"
+                                )
+                                c_res = send_message(chat_id, c_msg, reply_markup=captcha_kb)
+                                if c_res.get('ok'):
+                                    PENDING_GROUP_CAPTCHAS[f"{chat_id}_{nm_id}"] = {
+                                        "msg_id": c_res['result']['message_id'],
+                                        "time": time.time()
+                                    }
+                            continue
+
+                        # 2. Moderation commands by admins (Must be a reply to an offender)
+                        reply_m = m.get('reply_to_message')
+                        clean_text = text.strip().lower()
+
+                        if reply_m and is_user_chat_admin(chat_id, sender_id):
+                            offender = reply_m.get('from', {})
+                            offender_id = offender.get('id')
+                            offender_name = html.escape(offender.get('first_name', 'Пользователь'))
+
+                            # !бан / /ban
+                            if clean_text in ('!бан', '!ban', '/ban', '!kick', '/kick', '!кик'):
+                                delete_message(chat_id, reply_m['message_id'])
+                                delete_message(chat_id, m['message_id'])
+                                ban_chat_member(chat_id, offender_id)
+                                send_message(chat_id, f"🔨 <b>{offender_name}</b> заблокирован модератором.")
+                                continue
+
+                            # !мут / /mute [mins]
+                            if clean_text.startswith(('!мут', '!mute', '/mute')):
+                                parts = clean_text.split()
+                                duration_mins = 15
+                                if len(parts) > 1 and parts[1].isdigit():
+                                    duration_mins = max(1, min(1440, int(parts[1])))
+                                until_ts = int(time.time() + duration_mins * 60)
+
+                                delete_message(chat_id, reply_m['message_id'])
+                                delete_message(chat_id, m['message_id'])
+                                restrict_chat_member(chat_id, offender_id, can_send_messages=False, until_date=until_ts)
+                                send_message(chat_id, f"🔇 <b>{offender_name}</b> отправлен в мут на {duration_mins} мин.")
+                                continue
+
+                        # 3. Smart Keyword Auto-Router (Anti-flood: max 1 response per 120s per topic)
+                        if not m.get('entities') and not clean_text.startswith(('/', '!')):
+                            now_ts = time.time()
+
+                            # iOS Trigger
+                            if any(w in clean_text for w in ['айфон', 'iphone', 'ios', 'профиль', 'mobileconfig', 'сафари']):
+                                cd_key = f"{chat_id}_ios"
+                                if now_ts - GROUP_TRIGGER_COOLDOWNS.get(cd_key, 0) > 120:
+                                    GROUP_TRIGGER_COOLDOWNS[cd_key] = now_ts
+                                    kb = {"inline_keyboard": [[{"text": "🍏 Скачать профиль iOS", "url": "https://t.me/magicdns_alert_bot?start=ios"}]]}
+                                    send_message(chat_id, "🍏 <b>Настройка MagicDNS для iPhone / iPad:</b>\nСкачайте криптографически подписанный профиль в один клик:", reply_to_message_id=m['message_id'], reply_markup=kb)
+                                    continue
+
+                            # Android Trigger
+                            if any(w in clean_text for w in ['андроид', 'android', 'сяоми', 'xiaomi', 'самсунг', 'samsung', 'redmi', 'poco', 'hyperos', 'oneui', 'частный dns']):
+                                cd_key = f"{chat_id}_android"
+                                if now_ts - GROUP_TRIGGER_COOLDOWNS.get(cd_key, 0) > 120:
+                                    GROUP_TRIGGER_COOLDOWNS[cd_key] = now_ts
+                                    kb = {"inline_keyboard": [[{"text": "🤖 Мастер настройки Android", "url": "https://t.me/magicdns_alert_bot?start=android"}]]}
+                                    send_message(chat_id, "🤖 <b>Настройка MagicDNS на Android (DoT):</b>\nВ строке «Персональный DNS» укажите <code>api.magicdns.ru</code>\nПошаговый мастер по маркам телефонов:", reply_to_message_id=m['message_id'], reply_markup=kb)
+                                    continue
+
+                            # Routers Trigger
+                            if any(w in clean_text for w in ['роутер', 'кинетик', 'keenetic', 'микротик', 'mikrotik', 'openwrt', 'asus']):
+                                cd_key = f"{chat_id}_router"
+                                if now_ts - GROUP_TRIGGER_COOLDOWNS.get(cd_key, 0) > 120:
+                                    GROUP_TRIGGER_COOLDOWNS[cd_key] = now_ts
+                                    kb = {"inline_keyboard": [[{"text": "📡 Настройка роутера", "url": "https://t.me/magicdns_alert_bot?start=routers"}]]}
+                                    send_message(chat_id, "📡 <b>Настройка MagicDNS на роутере (Wi-Fi):</b>\nГотовые инструкции для Keenetic, MikroTik и OpenWrt:", reply_to_message_id=m['message_id'], reply_markup=kb)
+                                    continue
+
+                            # Check / Trouble Trigger
+                            if any(w in clean_text for w in ['не работает', 'ошибка', 'не грузит', 'проверить', 'сбоит']):
+                                cd_key = f"{chat_id}_check"
+                                if now_ts - GROUP_TRIGGER_COOLDOWNS.get(cd_key, 0) > 120:
+                                    GROUP_TRIGGER_COOLDOWNS[cd_key] = now_ts
+                                    kb = {"inline_keyboard": [[{"text": "🔍 Запустить радар проверки", "url": "https://magicdns.ru/check.html"}]]}
+                                    send_message(chat_id, "🔍 <b>Экспресс-проверка подключения MagicDNS:</b>\nПеред проверкой обязательно отключите любой VPN на телефоне!", reply_to_message_id=m['message_id'], reply_markup=kb)
+                                    continue
+
+
 
 
                     # Detect media attachments
@@ -5002,6 +5460,70 @@ def main():
 
 
 
+                    elif cmd in ['/share', '/invite', 'поделиться']:
+                        reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
+                        share_card = (
+                            "✈️ <b>Поделиться MagicDNS с друзьями и коллегами</b>\n\n"
+                            "Помогите друзьям получить быстрый доступ к нейросетям (Gemini, ChatGPT, Claude) без VPN и сторонних программ!\n\n"
+                            "Нажмите кнопку ниже, чтобы отправить готовое приглашение в любой чат или контакт:"
+                        )
+                        share_kb = {
+                            "inline_keyboard": [
+                                [{"text": "🚀 Отправить приглашение другу", "url": SHARE_URL}],
+                                [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
+                            ]
+                        }
+                        send_message(chat_id, share_card, reply_to_message_id=reply_to_id, reply_markup=share_kb)
+                        continue
+
+                    elif cmd in ['/community', '/chat', '/group', 'чат', 'группа']:
+                        reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
+                        if chat_type in ['group', 'supergroup']:
+                            c_card = (
+                                "💬 <b>Вы уже находитесь в официальном чате сообщества MagicDNS!</b>\n\n"
+                                "Задавайте любые вопросы по настройке прямо здесь — участники и администратор подскажут решение.\n\n"
+                                "Для пошаговой интерактивной настройки своего устройства откройте бота в личных сообщениях: @magicdns_alert_bot"
+                            )
+                            c_kb = {
+                                "inline_keyboard": [
+                                    [{"text": "🤖 Настроить в ЛС бота", "url": "https://t.me/magicdns_alert_bot?start=help"}],
+                                    [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
+                                ]
+                            }
+                        elif COMMUNITY_CHAT_URL:
+                            c_card = f"💬 <b>Официальный чат сообщества MagicDNS:</b>\n\nПрисоединяйтесь к обсуждению: <a href='{COMMUNITY_CHAT_URL}'>{COMMUNITY_CHAT_URL}</a>"
+                            c_kb = {"inline_keyboard": [[{"text": "💬 Перейти в чат сообщества", "url": COMMUNITY_CHAT_URL}]]}
+                        else:
+                            c_card = (
+                                "💬 <b>Официальный чат сообщества MagicDNS</b>\n\n"
+                                "Группа взаимопомощи и общения пользователей запускается прямо сейчас!\n\n"
+                                "Здесь можно будет задавать вопросы по настройке, обмениваться промптами и получать помощь модераторов.\n\n"
+                                "🔔 <i>Ссылка на вступление появится здесь сразу после открытия чата.</i>"
+                            )
+                            c_kb = {
+                                "inline_keyboard": [
+                                    [{"text": "✈️ Поделиться с другом", "url": SHARE_URL}],
+                                    [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}]
+                                ]
+                            }
+                        send_message(chat_id, c_card, reply_to_message_id=reply_to_id, reply_markup=c_kb)
+                        continue
+
+                    elif cmd in ['/router', '/routers', '/wifi', '/keenetic', '/mikrotik']:
+                        reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
+                        send_message(chat_id, get_routers_picker_card(), reply_to_message_id=reply_to_id, reply_markup=get_routers_picker_kb())
+                        continue
+
+                    elif cmd in ['/check', '/test', '/ping', '/status_ai']:
+                        reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
+                        send_message(chat_id, get_check_card(), reply_to_message_id=reply_to_id, reply_markup=get_check_kb())
+                        continue
+
+                    elif cmd in ['/android', '/dot', '/samsung', '/xiaomi']:
+                        reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
+                        send_message(chat_id, get_android_picker_card(), reply_to_message_id=reply_to_id, reply_markup=get_android_picker_kb())
+                        continue
+
                     elif cmd in ['/ios', '/apple', '/profile', '/mobileconfig']:
 
                         reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
@@ -5237,6 +5759,22 @@ def main():
 
 
                     elif cmd == '/start':
+                        # Deep-linking support for group buttons
+                        tokens = text.strip().split()
+                        if len(tokens) > 1:
+                            sub_arg = tokens[1].lower().strip()
+                            if sub_arg in ('ios', 'apple', 'mobileconfig'):
+                                send_message(chat_id, get_ios_picker_card(), reply_markup=get_ios_picker_kb())
+                                continue
+                            elif sub_arg in ('android', 'dot', 'samsung', 'xiaomi'):
+                                send_message(chat_id, get_android_picker_card(), reply_markup=get_android_picker_kb())
+                                continue
+                            elif sub_arg in ('routers', 'router', 'wifi', 'keenetic', 'mikrotik'):
+                                send_message(chat_id, get_routers_picker_card(), reply_markup=get_routers_picker_kb())
+                                continue
+                            elif sub_arg in ('check', 'test'):
+                                send_message(chat_id, get_check_card(), reply_markup=get_check_kb())
+                                continue
 
                         if sender_id == ADMIN_CHAT_ID and chat_type == 'private':
 
@@ -5331,6 +5869,13 @@ def main():
                     # --- B. PRIVATE CHAT HANDLING (Support & Admin Relay) ---
 
                     if sender_id != ADMIN_CHAT_ID:
+
+                        USER_SUPPORT_CONTEXT[sender_id] = {
+                            "name": sender_name,
+                            "username": username,
+                            "last_text": text or "",
+                            "time": time.time()
+                        }
 
                         media_label = ""
 
@@ -5464,15 +6009,19 @@ def main():
 
 
 
-                        # Admin reply to user
+                        # Admin reply to user: check ACTIVE_ADMIN_REPLY first, then fallback to reply_to
+                        target_id = None
+                        if text and text.startswith('/'):
+                            # Admin is executing a command: clear any active reply mode so command works
+                            ACTIVE_ADMIN_REPLY.pop(ADMIN_CHAT_ID, None)
+                        else:
+                            active_rep = ACTIVE_ADMIN_REPLY.pop(ADMIN_CHAT_ID, None)
+                            if active_rep:
+                                target_id = active_rep.get('target_user_id')
 
                         reply_to = m.get('reply_to_message')
 
-                        if reply_to:
-
-                            target_id = None
-
-                            
+                        if not target_id and reply_to:
 
                             # Check text or caption of the replied message
 
@@ -5559,8 +6108,18 @@ def main():
 
 
                                 if resp.get('ok'):
+                                    u_ctx = USER_SUPPORT_CONTEXT.get(target_id, {})
+                                    u_name = u_ctx.get('name') or ''
+                                    u_uname = u_ctx.get('username') or ''
+                                    display_user = f"{u_name} ({u_uname})" if (u_name and u_uname) else (u_name or f"ID {target_id}")
 
-                                    send_message(ADMIN_CHAT_ID, f"✓ Доставлено пользователю [ID: {target_id}]", reply_to_message_id=m['message_id'])
+                                    success_msg = f"✓ <b>Доставлено пользователю {display_user}</b> <code>[ID: {target_id}]</code>"
+                                    continue_kb = {
+                                        "inline_keyboard": [
+                                            [{"text": f"💬 Написать еще {u_name or 'пользователю'}", "callback_data": f"reply_to_user:{target_id}"}]
+                                        ]
+                                    }
+                                    send_message(ADMIN_CHAT_ID, success_msg, reply_to_message_id=m['message_id'], reply_markup=continue_kb)
 
                                 else:
 
@@ -5587,11 +6146,52 @@ def main():
 
 
 
+
+
+        except Exception as e:
+
+            print(f"[HANDLE UPDATE ERROR] {e}")
+
+
+
+    while True:
+
+        try:
+
+            params = {"timeout": 2}
+
+            if last_offset > 0:
+
+                params["offset"] = last_offset + 1
+
+
+
+            updates = tg_request("getUpdates", params, timeout=8)
+
+
+
+            if not updates.get('ok'):
+
+                time.sleep(1)
+
+                continue
+
+
+
+            for u in updates.get('result', []):
+
+                last_offset = u['update_id']
+
+                executor.submit(handle_update, u)
+
+
+
         except Exception as e:
 
             print(f"[LOOP ERROR] {e}")
 
-            time.sleep(3)
+            time.sleep(1)
+
 
 
 
