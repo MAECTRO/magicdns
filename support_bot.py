@@ -939,19 +939,24 @@ def unban_chat_member(chat_id, user_id, only_if_banned=True):
 def delete_message(chat_id, message_id):
     return tg_request("deleteMessage", {"chat_id": chat_id, "message_id": message_id})
 
-def is_user_chat_admin(chat_id, user_id):
-    if user_id == ADMIN_CHAT_ID:
+def is_user_chat_admin(chat_id, user_id, sender_chat_id=None):
+    # Telegram Anonymous Admin Bot ID (1087968824) is always an admin
+    if user_id in (ADMIN_CHAT_ID, 1087968824):
+        return True
+    if sender_chat_id is not None and sender_chat_id == chat_id:
         return True
     now = time.time()
     cached = GROUP_ADMINS_CACHE.get(chat_id)
     if cached and (now - cached.get("time", 0) < 300):
-        return user_id in cached.get("admins", set())
+        return (user_id in cached.get("admins", set())) or (sender_chat_id == chat_id)
 
     res = tg_request("getChatAdministrators", {"chat_id": chat_id})
     if res.get("ok"):
         admins = {adm["user"]["id"] for adm in res.get("result", []) if "user" in adm}
+        admins.add(ADMIN_CHAT_ID)
+        admins.add(1087968824)
         GROUP_ADMINS_CACHE[chat_id] = {"admins": admins, "time": now}
-        return user_id in admins
+        return (user_id in admins) or (sender_chat_id == chat_id)
     return False
 
 def get_status_card(is_admin=False):
@@ -5154,6 +5159,10 @@ def main():
 
                     sender_id = sender.get('id')
 
+                    sender_chat = m.get('sender_chat', {})
+
+                    sender_chat_id = sender_chat.get('id')
+
                     sender_name = sender.get('first_name', '')
 
                     username = f"@{sender.get('username')}" if sender.get('username') else "без юзернейма"
@@ -5204,10 +5213,15 @@ def main():
                         reply_m = m.get('reply_to_message')
                         clean_text = text.strip().lower()
 
-                        if reply_m and is_user_chat_admin(chat_id, sender_id):
+                        if reply_m and is_user_chat_admin(chat_id, sender_id, sender_chat_id):
                             offender = reply_m.get('from', {})
                             offender_id = offender.get('id')
+                            offender_chat_id = reply_m.get('sender_chat', {}).get('id')
                             offender_name = html.escape(offender.get('first_name', 'Пользователь'))
+
+                            if is_user_chat_admin(chat_id, offender_id, offender_chat_id):
+                                send_message(chat_id, "⚠️ <i>Нельзя применить команду к администратору группы.</i>", reply_to_message_id=m['message_id'])
+                                continue
 
                             # !бан / /ban
                             if clean_text in ('!бан', '!ban', '/ban', '!kick', '/kick', '!кик'):
@@ -5501,7 +5515,7 @@ def main():
                     elif cmd in ['/admin', '/menu', '/mod', 'админ', 'панель', 'мод', 'модерация']:
                         reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
                         if chat_type in ['group', 'supergroup']:
-                            if is_user_chat_admin(chat_id, sender_id):
+                            if is_user_chat_admin(chat_id, sender_id, sender_chat_id):
                                 send_message(chat_id, get_group_mod_card(), reply_to_message_id=reply_to_id, reply_markup=get_group_mod_kb())
                                 if sender_id == ADMIN_CHAT_ID:
                                     send_message(ADMIN_CHAT_ID, get_admin_panel_card(), reply_markup=get_admin_panel_kb())
