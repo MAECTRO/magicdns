@@ -262,7 +262,8 @@ def send_message(chat_id, text, parse_mode="HTML", reply_to_message_id=None, rep
 
 def send_document(chat_id, filename, file_bytes, caption="", parse_mode="HTML", reply_markup=None):
     url = f"{BASE_URL}/sendDocument"
-    files = {"document": (filename, file_bytes, "application/x-apple-aspen-config")}
+    mime = "application/x-apple-aspen-config" if filename.endswith(".mobileconfig") else "application/octet-stream"
+    files = {"document": (filename, file_bytes, mime)}
     data = {"chat_id": str(chat_id), "caption": caption, "parse_mode": parse_mode}
     if reply_markup:
         data["reply_markup"] = json.dumps(reply_markup)
@@ -965,6 +966,35 @@ def unmute_chat_member(chat_id, user_id):
         "permissions": permissions,
         "use_independent_chat_permissions": True
     })
+
+def send_bat_tool(chat_id, reply_to_id=None):
+    caption = (
+        "💻 <b>Помощник настройки MagicDNS для Windows</b>\n\n"
+        "Открытый скрипт (батник) для автоматической настройки и устранения сбоев:\n\n"
+        "• <b>1. Настроить MagicDNS:</b> пропишет адреса 109.120.177.170 и 45.88.163.92 на активном адаптере\n"
+        "• <b>2. Очистить hosts:</b> сделает бэкап <code>hosts.bak</code> и снимет блокировки ChatGPT/Claude\n"
+        "• <b>3. Сброс сети:</b> выполнит flushdns и сброс Winsock (лечит ошибки сокетов)\n"
+        "• <b>4. Отключить прокси:</b> выключит системный ProxyEnable в реестре, если остался от VPN\n"
+        "• <b>5. Экспресс-тест:</b> проверка пинга и резолва ChatGPT прямо в окне консоли\n"
+        "• <b>6. Откат на DHCP:</b> возврат сетевых настроек на автомат от роутера\n\n"
+        "🛡 <i>Безопасность: скрипт содержит только стандартные команды Windows (netsh, ipconfig, reg). Никаких сторонних программ не ставится. Исходный код открыт — можно открыть блокнотом и проверить каждую строку перед запуском.</i>"
+    )
+    kb = {
+        "inline_keyboard": [
+            [{"text": "🔍 Проверить подключение", "url": "https://magicdns.ru/check.html"}],
+            [{"text": "🌐 Скачать с сайта (прямая ссылка)", "url": "https://magicdns.ru/fix.bat"}]
+        ]
+    }
+    tool_path = "/root/magicdns_tool.bat"
+    if os.path.exists(tool_path):
+        try:
+            with open(tool_path, "rb") as f:
+                f_bytes = f.read()
+            send_document(chat_id, "magicdns_tool.bat", f_bytes, caption=caption, reply_markup=kb)
+            return
+        except Exception as e:
+            print(f"[SEND BAT ERROR] {e}")
+    send_message(chat_id, caption, reply_to_message_id=reply_to_id, reply_markup=kb)
 
 def get_cheat_reset_card():
     return (
@@ -5290,6 +5320,13 @@ def main():
                         is_mod = is_user_chat_admin(chat_id, sender_id, sender_chat_id)
 
                         # --- QUICK SUPPORT CHEATSHEETS (Available for admins & users) ---
+                        if clean_text in ('!бат', '!скрипт', '!bat', '!tool', '!fix', '/bat', '/fix'):
+                            target_reply = reply_m['message_id'] if reply_m else m['message_id']
+                            send_bat_tool(chat_id, reply_to_id=target_reply)
+                            if reply_m and is_mod:
+                                delete_message(chat_id, m['message_id'])
+                            continue
+
                         if clean_text in ('!сброс', '!hosts', '!хостс', '!reset', '/reset', '/hosts'):
                             target_reply = reply_m['message_id'] if reply_m else m['message_id']
                             send_message(chat_id, get_cheat_reset_card(), reply_to_message_id=target_reply, reply_markup=get_cheat_reset_kb())
