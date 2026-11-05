@@ -1,332 +1,104 @@
 @echo off
+setlocal
 chcp 65001 >nul
 title MagicDNS Assistant for Windows
 
-:: ============================================================
-:: MagicDNS Assistant (Windows 10 / 11)
-:: Официальный инструмент быстрой настройки и диагностики сети
-:: Открытый исходный код: только стандартные команды Windows (netsh, ipconfig).
-:: Никаких сторонних программ не скачивается и не устанавливается.
-:: ============================================================
-
-:: 1. Проверка прав Администратора
+:: Auto-Elevation: if not admin, ask for elevation via UAC
 net session >nul 2>&1
 if %errorlevel% neq 0 (
-    cls
-    echo ======================================================================
-    echo                ТРЕБУЮТСЯ ПРАВА АДМИНИСТРАТОРА
-    echo ======================================================================
-    echo.
-    echo  Чтобы Windows разрешила настроить параметры сети и DNS,
-    echo  скрипт необходимо запустить от имени Администратора:
-    echo.
-    echo  1. Закройте это окно.
-    echo  2. Нажмите правой кнопкой мыши по файлу magicdns_tool.bat.
-    echo  3. Выберите: "Запуск от имени администратора".
-    echo.
-    echo ======================================================================
-    pause
+    echo [i] Запрашиваем права Администратора...
+    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process cmd -ArgumentList '/c `"`"%~f0`"`"' -Verb RunAs"
     exit /b
 )
 
 :MENU
 cls
 echo ======================================================================
-echo                MagicDNS Assistant - Помощник по настройке сети
-echo                         Официальный сайт: magicdns.ru
+echo                MagicDNS Assistant - Быстрая настройка сети
+echo                         Сайт: https://magicdns.ru
 echo ======================================================================
 echo.
-echo  Этот инструмент использует только встроенные системные утилиты Windows
-echo  (netsh, ipconfig). Он полностью прозрачен, безопасен и обратим.
-echo.
-echo  [1] Настроить MagicDNS (быстрый доступ к ChatGPT, Claude, Gemini)
-echo      -- Пропишет официальные DNS (109.120.177.170 и 45.88.163.92).
-echo.
-echo  [2] Очистить файл hosts от мусора и блокировок
-echo      -- Создаст резервную копию hosts.bak и удалит остатки старых VPN.
-echo.
-echo  [3] Полный сброс сетевого стека и кэша DNS
-echo      -- Выполнит flushdns, сброс Winsock и TCP/IP (лечит ошибки сети).
-echo.
-echo  [4] Отключить зависший системный прокси Windows
-echo      -- Выключит параметр ProxyEnable в реестре, если остался от VPN.
-echo.
-echo  [5] Проверить подключение и пинг до шлюза MagicDNS
-echo      -- Протестирует доступность серверов прямо в этой консоли.
-echo.
-echo  [6] Вернуть стандартные настройки (Откат на авто-DNS / DHCP)
-echo      -- Вернет все настройки адаптера к состоянию "по умолчанию".
-echo.
+echo  [1] Настроить MagicDNS (доступ к ChatGPT, Claude, Gemini)
+echo  [2] Очистить файл hosts и отключить чужие прокси
+echo  [3] Полный сброс сети и кэша DNS (flushdns, winsock reset)
+echo  [4] Проверить доступность шлюзов MagicDNS
+echo  [5] Сброс на стандартный DNS (DHCP от роутера)
 echo  [0] Выход
 echo.
 echo ======================================================================
-set /p choice="Выберите номер действия (0-6) и нажмите Enter: "
+set "CHOICE="
+set /p CHOICE="Выберите пункт (1-5, 0 - выход): "
 
-if "%choice%"=="1" goto SETUP_DNS
-if "%choice%"=="2" goto CLEAN_HOSTS
-if "%choice%"=="3" goto RESET_STACK
-if "%choice%"=="4" goto DISABLE_PROXY
-if "%choice%"=="5" goto TEST_CONNECTION
-if "%choice%"=="6" goto RESET_DHCP
-if "%choice%"=="0" exit /b
-
-echo Неверный выбор. Пожалуйста, введите цифру от 0 до 6.
-timeout /t 2 >nul
+if "%CHOICE%"=="1" goto DO_SETUP
+if "%CHOICE%"=="2" goto DO_HOSTS
+if "%CHOICE%"=="3" goto DO_RESET
+if "%CHOICE%"=="4" goto DO_TEST
+if "%CHOICE%"=="5" goto DO_DHCP
+if "%CHOICE%"=="0" exit /b
 goto MENU
 
-:: ============================================================
-:: 1. НАСТРОЙКА MAGICDNS
-:: ============================================================
-:SETUP_DNS
+:DO_SETUP
 cls
-echo ======================================================================
-echo                     [1] НАСТРОЙКА MAGICDNS
-echo ======================================================================
+echo [1/2] Настройка MagicDNS на активном подключении...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses '109.120.177.170','45.88.163.92' }; Clear-DnsClientCache; Write-Host 'Успешно! MagicDNS установлен.' -ForegroundColor Green"
 echo.
-echo  Что будет сделано:
-echo  1. Скрипт определит ваше активное подключение (Wi-Fi или Ethernet).
-echo  2. Пропишет адреса MagicDNS:
-echo     - Основной (Франкфурт):  109.120.177.170
-echo     - Второй узел (Европа): 45.88.163.92
-echo  3. Очистит системный кэш DNS для применения изменений.
-echo.
-echo  Ваши личные файлы, программы и пароли НЕ затрагиваются.
-echo ======================================================================
-set /p confirm="Продолжить? (Y/N, по умолчанию Y): "
-if /i "%confirm%"=="N" goto MENU
-
-echo.
-echo [1/3] Поиск активных сетевых адаптеров...
-for /f "tokens=3,4*" %%A in ('netsh interface show interface ^| findstr /C:"Connected" /C:"Подключен"') do (
-    set "ADAPTER=%%C"
-    if not defined ADAPTER set "ADAPTER=%%B"
-    if not defined ADAPTER set "ADAPTER=%%A"
-)
-
-if not defined ADAPTER (
-    echo [ОШИБКА] Не удалось автоматически определить активное подключение.
-    echo Пожалуйста, укажите имя адаптера (например, "Беспроводная сеть" или "Ethernet"):
-    set /p ADAPTER="Имя подключения: "
-)
-
-echo [2/3] Настройка DNS на подключении "%ADAPTER%"...
-netsh interface ip set dns name="%ADAPTER%" static 109.120.177.170 primary validate=no >nul 2>&1
-netsh interface ip add dns name="%ADAPTER%" 45.88.163.92 index=2 validate=no >nul 2>&1
-
-echo [3/3] Сброс системного кэша DNS...
-ipconfig /flushdns >nul 2>&1
-
-echo.
-echo ======================================================================
-echo  УСПЕШНО! MagicDNS настроен на подключении: %ADAPTER%
-echo  Теперь нейросети (ChatGPT, Claude, Gemini) доступны напрямую без VPN.
-echo ======================================================================
-echo.
-pause
-goto MENU
-
-:: ============================================================
-:: 2. ОЧИСТКА ФАЙЛА HOSTS
-:: ============================================================
-:CLEAN_HOSTS
-cls
-echo ======================================================================
-echo                [2] ОЧИСТКА ФАЙЛА HOSTS ОТ БЛОКИРОВОК
-echo ======================================================================
-echo.
-echo  Зачем это нужно:
-echo  Многие старые VPN, сторонние утилиты или кряки прописывают в системный
-echo  файл hosts блокировки или перенаправления для доменов openai.com,
-echo  chatgpt.com, claude.ai или google.com.
-echo.
-echo  Что будет сделано:
-echo  1. Скрипт создаст резервную копию: hosts.bak
-echo  2. Запишет стандартный чистый файл hosts от Microsoft.
-echo ======================================================================
-set /p confirm="Очистить файл hosts? (Y/N, по умолчанию Y): "
-if /i "%confirm%"=="N" goto MENU
-
-echo.
-echo [1/2] Создание резервной копии hosts.bak...
-if exist "%SystemRoot%\System32\drivers\etc\hosts" (
-    copy /y "%SystemRoot%\System32\drivers\etc\hosts" "%SystemRoot%\System32\drivers\etc\hosts.bak" >nul 2>&1
-    echo Резервная копия сохранена: %SystemRoot%\System32\drivers\etc\hosts.bak
-)
-
-echo [2/2] Запись чистого эталонного файла hosts...
-(
-    echo # Copyright ^(c^) 1993-2009 Microsoft Corp.
-    echo #
-    echo # This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
-    echo # Cleaned by MagicDNS Assistant
-    echo 127.0.0.1       localhost
-    echo ::1             localhost
-) > "%SystemRoot%\System32\drivers\etc\hosts"
-
-ipconfig /flushdns >nul 2>&1
-
-echo.
-echo ======================================================================
-echo  УСПЕШНО! Файл hosts очищен от сторонних блокировок.
-echo  Если понадобится восстановить старый файл, он сохранен в hosts.bak.
-echo ======================================================================
-echo.
-pause
-goto MENU
-
-:: ============================================================
-:: 3. ПОЛНЫЙ СБРОС СЕТЕВОГО СТЕКА
-:: ============================================================
-:RESET_STACK
-cls
-echo ======================================================================
-echo                  [3] СБРОС СЕТЕВОГО СТЕКА И КЭША
-echo ======================================================================
-echo.
-echo  Зачем это нужно:
-echo  Если страницы не открываются, вылетают ошибки "DNS_PROBE_FINISHED"
-echo  или "ERR_CONNECTION_RESET", системный кэш сокетов поврежден.
-echo.
-echo  Что будет сделано:
-echo  1. ipconfig /flushdns (очистка кэша DNS)
-echo  2. netsh winsock reset (сброс каталога Winsock)
-echo  3. netsh int ip reset (перезапуск стека TCP/IP)
-echo.
-echo  После выполнения операции рекомендуется перезагрузить компьютер.
-echo ======================================================================
-set /p confirm="Выполнить сетевой сброс? (Y/N, по умолчанию Y): "
-if /i "%confirm%"=="N" goto MENU
-
-echo.
-echo [1/3] Очистка кэша DNS...
+echo [2/2] Сброс кэша DNS...
 ipconfig /flushdns
 echo.
-echo [2/3] Сброс каталога Winsock...
-netsh winsock reset
+echo ======================================================================
+echo  Готово! MagicDNS активен. Доступ к нейросетям открыт.
+echo ======================================================================
 echo.
-echo [3/3] Сброс протокола TCP/IP...
+pause
+goto MENU
+
+:DO_HOSTS
+cls
+echo [1/2] Очистка файла hosts...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Copy-Item $env:SystemRoot\System32\drivers\etc\hosts $env:SystemRoot\System32\drivers\etc\hosts.bak -Force -ErrorAction SilentlyContinue; Set-Content -Path $env:SystemRoot\System32\drivers\etc\hosts -Value '# Cleaned by MagicDNS`n127.0.0.1 localhost`n::1 localhost' -Encoding Ascii; Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings' -Name ProxyEnable -Value 0 -ErrorAction SilentlyContinue; Clear-DnsClientCache; Write-Host 'Успешно! Бэкап сохранен в hosts.bak, файл hosts чист, прокси выключен.' -ForegroundColor Green"
+echo.
+echo ======================================================================
+echo  Готово! Файл hosts очищен от сторонних блокировок.
+echo ======================================================================
+echo.
+pause
+goto MENU
+
+:DO_RESET
+cls
+echo Выполняется полный сброс сетевого стека Windows...
+echo.
+ipconfig /flushdns
+netsh winsock reset
 netsh int ip reset
 echo.
 echo ======================================================================
-echo  Сброс успешно выполнен!
-echo  Пожалуйста, перезагрузите компьютер для вступления изменений в силу.
+echo  Сброс завершен! Рекомендуется перезагрузить компьютер.
 echo ======================================================================
 echo.
 pause
 goto MENU
 
-:: ============================================================
-:: 4. ОТКЛЮЧЕНИЕ СИСТЕМНОГО ПРОКСИ
-:: ============================================================
-:DISABLE_PROXY
+:DO_TEST
 cls
-echo ======================================================================
-echo               [4] ОТКЛЮЧЕНИЕ ЗАВИСШИХ СИСТЕМНЫХ ПРОКСИ
-echo ======================================================================
+echo Проверка пинга до шлюзов MagicDNS...
 echo.
-echo  Зачем это нужно:
-echo  Некоторые VPN при аварийном закрытии или удалении забывают снять
-echo  настройку "Использовать прокси-сервер" в Windows.
-echo  Из-за этого браузеры пытаются слать трафик на несуществующий 127.0.0.1
-echo  и сайты не открываются.
+echo [1/2] Франкфурт (109.120.177.170):
+ping -n 3 109.120.177.170
 echo.
-echo  Что будет сделано:
-echo  Скрипт переключит системный параметр ProxyEnable в значение 0 (Выключено).
-echo ======================================================================
-set /p confirm="Отключить прокси? (Y/N, по умолчанию Y): "
-if /i "%confirm%"=="N" goto MENU
-
-echo.
-echo Отключение системного прокси в реестре Windows...
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f >nul 2>&1
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyServer /t REG_SZ /d "" /f >nul 2>&1
-
-echo.
-echo ======================================================================
-echo  УСПЕШНО! Системный прокси отключен.
-echo  Браузеры теперь выходят в сеть напрямую.
-echo ======================================================================
+echo [2/2] Второй узел (45.88.163.92):
+ping -n 3 45.88.163.92
 echo.
 pause
 goto MENU
 
-:: ============================================================
-:: 5. ТЕСТ ПОДКЛЮЧЕНИЯ И ПИНГА
-:: ============================================================
-:TEST_CONNECTION
+:DO_DHCP
 cls
-echo ======================================================================
-echo                 [5] ЭКСПРЕСС-ТЕСТ СОЕДИНЕНИЯ С MAGICDNS
-echo ======================================================================
-echo.
-echo [1/3] Проверка пинга до основного шлюза (109.120.177.170)...
-ping -n 3 109.120.177.170 | findstr /C:"TTL=" /C:"Среднее" /C:"Average"
-if %errorlevel% equ 0 (
-    echo -- Шлюз во Франкфурте доступен!
-) else (
-    echo -- Внимание: эхо-ответ от шлюза задерживается или блокируется провайдером.
-)
-
-echo.
-echo [2/3] Проверка пинга до второго узла (45.88.163.92)...
-ping -n 3 45.88.163.92 | findstr /C:"TTL=" /C:"Среднее" /C:"Average"
-if %errorlevel% equ 0 (
-    echo -- Второй узел доступен!
-)
-
-echo.
-echo [3/3] Тест DNS-резолва ChatGPT через MagicDNS...
-nslookup chatgpt.com 109.120.177.170 >nul 2>&1
-if %errorlevel% equ 0 (
-    echo -- DNS-резолв работает безупречно! Маршрутизация активна.
-) else (
-    echo -- Ошибка резолва. Проверьте подключение к интернету.
-)
-
+echo Возврат сетевых настроек на авто-получение (DHCP)...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-NetAdapter | Where-Object { $_.Status -eq 'Up' } | ForEach-Object { Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ResetServerAddresses }; Clear-DnsClientCache; Write-Host 'Успешно! Настройки возвращены на автоматические (DHCP).' -ForegroundColor Green"
 echo.
 echo ======================================================================
-echo  Тестирование завершено.
-echo  Для полной веб-диагностики откройте: https://magicdns.ru/check.html
-echo ======================================================================
-echo.
-pause
-goto MENU
-
-:: ============================================================
-:: 6. ОТКАТ НА ДЕФОЛТ (DHCP)
-:: ============================================================
-:RESET_DHCP
-cls
-echo ======================================================================
-echo               [6] ОТКАТ К СТАНДАРТНЫМ НАСТРОЙКАМ (DHCP)
-echo ======================================================================
-echo.
-echo  Что будет сделано:
-echo  Скрипт вернет получение DNS в режим "Автоматически" (от вашего роутера).
-echo  Все адреса MagicDNS будут сняты.
-echo ======================================================================
-set /p confirm="Вернуть стандартный DNS? (Y/N, по умолчанию Y): "
-if /i "%confirm%"=="N" goto MENU
-
-echo.
-for /f "tokens=3,4*" %%A in ('netsh interface show interface ^| findstr /C:"Connected" /C:"Подключен"') do (
-    set "ADAPTER=%%C"
-    if not defined ADAPTER set "ADAPTER=%%B"
-    if not defined ADAPTER set "ADAPTER=%%A"
-)
-
-if not defined ADAPTER (
-    echo [ОШИБКА] Не удалось определить адаптер.
-    set /p ADAPTER="Введите имя адаптера вручную: "
-)
-
-echo Сброс DNS на подключении "%ADAPTER%" в автоматический режим...
-netsh interface ip set dns name="%ADAPTER%" source=dhcp >nul 2>&1
-ipconfig /flushdns >nul 2>&1
-
-echo.
-echo ======================================================================
-echo  УСПЕШНО! Настройки сброшены на стандартные (DHCP от роутера).
+echo  Готово! DNS сброшен на стандартный от роутера.
 echo ======================================================================
 echo.
 pause
