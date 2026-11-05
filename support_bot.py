@@ -1147,6 +1147,49 @@ def get_donate_kb():
 
 
 
+def get_group_rules_card():
+    return (
+        "📋 <b>Правила официального сообщества MagicDNS:</b>\n\n"
+        "1️⃣ <b>Тематика чата:</b>\n"
+        "Обсуждаем настройку Smart DNS, доступ к нейросетям (ChatGPT, Claude, Gemini), игровым сервисам и решение технических сетевых вопросов.\n\n"
+        "2️⃣ <b>Спам и реклама:</b>\n"
+        "Любая реклама каналов, услуг, реферальные ссылки и спам — немедленный бан навсегда без предупреждения.\n\n"
+        "3️⃣ <b>Уважение и порядок:</b>\n"
+        "Запрещены оскорбления, токсичность, мат и переход на личности. Мы здесь, чтобы помогать друг другу.\n\n"
+        "4️⃣ <b>Безопасность:</b>\n"
+        "Никогда не публикуйте в общем чате свои пароли, секретные ключи или токены доступа.\n\n"
+        "🛡 <i>Нарушителей модераторы наказывают командами <code>!бан</code> и <code>!мут</code></i>"
+    )
+
+def get_group_rules_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "⚡ Параметры MagicDNS", "callback_data": "cmd_dns"}],
+            [{"text": "🔍 Проверить подключение", "url": "https://magicdns.ru/check.html"}]
+        ]
+    }
+
+def get_group_mod_card():
+    return (
+        "🛡 <b>Панель модерации группы MagicDNS:</b>\n\n"
+        "Все модераторы группы могут управлять порядком прямо в чате через команды в ответ (Reply) на сообщение нарушителя:\n\n"
+        "• <code>!бан</code> или <code>/ban</code> (ответом) — удаляет спам и навсегда банит спамера\n"
+        "• <code>!мут 30</code> или <code>/mute 30</code> (ответом) — запрещает писать на 30 минут (можно указать любое число минут)\n"
+        "• <code>!кик</code> или <code>/kick</code> (ответом) — исключает пользователя из чата\n\n"
+        "🤖 <b>Автоматическая защита группы:</b>\n"
+        "• <b>Антиспам-капча:</b> новые участники при входе автоматически глушатся, пока не нажмут кнопку подтверждения\n"
+        "• <b>Умный автоответчик:</b> бот сам подсказывает инструкции по ключевым словам (<i>айфон, андроид, роутер</i>)\n\n"
+        "⚙️ <i>Управление серверами, сайтом и рассылкой доступно владельцу в личных сообщениях бота: @magicdns_alert_bot (/admin)</i>"
+    )
+
+def get_group_mod_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🤖 Открыть меню в ЛС бота", "url": "https://t.me/magicdns_alert_bot?start=admin"}],
+            [{"text": "📋 Правила группы", "callback_data": "cmd_rules"}]
+        ]
+    }
+
 def get_help_card():
 
     return (
@@ -3947,6 +3990,13 @@ def main():
 
                     # Public callback queries (Available for ALL users)
 
+                    if data == 'cmd_rules':
+                        answer_callback(cq_id, "📋 Правила сообщества")
+                        res = edit_message(chat_id, msg_id, get_group_rules_card(), reply_markup=get_group_rules_kb())
+                        if not res.get("ok"):
+                            send_message(chat_id, get_group_rules_card(), reply_markup=get_group_rules_kb())
+                        continue
+
                     if data == 'cmd_dns':
 
                         answer_callback(cq_id, "⚡ Параметры MagicDNS")
@@ -5448,15 +5498,22 @@ def main():
 
 
 
-                    elif cmd in ['/admin', '/menu', 'админ', 'панель']:
-
-                        if sender_id != ADMIN_CHAT_ID:
-
+                    elif cmd in ['/admin', '/menu', '/mod', 'админ', 'панель', 'мод', 'модерация']:
+                        reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
+                        if chat_type in ['group', 'supergroup']:
+                            if is_user_chat_admin(chat_id, sender_id):
+                                send_message(chat_id, get_group_mod_card(), reply_to_message_id=reply_to_id, reply_markup=get_group_mod_kb())
+                                if sender_id == ADMIN_CHAT_ID:
+                                    send_message(ADMIN_CHAT_ID, get_admin_panel_card(), reply_markup=get_admin_panel_kb())
+                            else:
+                                send_message(chat_id, "❌ <i>Команды модерации доступны только администраторам группы.</i>", reply_to_message_id=reply_to_id)
                             continue
-
-                        send_message(ADMIN_CHAT_ID, get_admin_panel_card(), reply_markup=get_admin_panel_kb())
-
-                        continue
+                        else:
+                            if sender_id != ADMIN_CHAT_ID:
+                                send_message(chat_id, "❌ <i>Панель управления серверами доступна только владельцу сервиса.</i>")
+                                continue
+                            send_message(ADMIN_CHAT_ID, get_admin_panel_card(), reply_markup=get_admin_panel_kb())
+                            continue
 
 
 
@@ -5744,16 +5801,16 @@ def main():
 
 
 
-                    elif cmd in ['/rules', '/help', 'помощь', 'правила']:
-
+                    elif cmd in ['/rules', 'правила']:
                         reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
+                        send_message(chat_id, get_group_rules_card(), reply_to_message_id=reply_to_id, reply_markup=get_group_rules_kb())
+                        continue
 
+                    elif cmd in ['/help', 'помощь', 'команды', 'справка']:
+                        reply_to_id = m['message_id'] if chat_type in ['group', 'supergroup'] else None
                         send_message(chat_id, get_help_card(), reply_to_message_id=reply_to_id, reply_markup=get_help_kb())
-
                         if sender_id == ADMIN_CHAT_ID and chat_type == 'private':
-
                             send_message(ADMIN_CHAT_ID, get_admin_panel_card(), reply_markup=get_admin_panel_kb())
-
                         continue
 
 
