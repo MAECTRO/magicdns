@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MagicDNS Inspector — Экспресс-проверка</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #070d14;
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #00ff9d;
+      --accent-glow: rgba(0, 255, 157, 0.2);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.12);
+      --danger-border: rgba(239, 68, 68, 0.35);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.12);
+      --warning-border: rgba(245, 158, 11, 0.35);
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.12);
+      --success-border: rgba(16, 185, 129, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 10px 0 6px;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      background: var(--accent-glow);
+      border: 1px solid rgba(0, 255, 157, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .vpn-warning-card {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      display: none;
+    }
+
+    .vpn-warning-card.active {
+      display: block;
+      animation: pulseAlert 0.4s ease-out;
+    }
+
+    @keyframes pulseAlert {
+      0% { transform: scale(0.97); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .alert-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--warning);
+      margin-bottom: 6px;
+    }
+
+    .alert-text {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .alert-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-family: monospace;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .network-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      font-size: 13px;
+    }
+
+    .net-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .net-isp {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .net-ip {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    .status-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .tag-clean {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid var(--success-border);
+    }
+
+    .tag-vpn {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+
+    .radar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .radar-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .radar-target {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .radar-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #475569;
+    }
+
+    .radar-dot.pinging {
+      background: var(--warning);
+      box-shadow: 0 0 8px var(--warning);
+      animation: blink 0.8s infinite alternate;
+    }
+
+    .radar-dot.ok {
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .radar-dot.fail {
+      background: var(--danger);
+      box-shadow: 0 0 8px var(--danger);
+    }
+
+    @keyframes blink {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+
+    .radar-status {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-family: monospace;
+    }
+
+    .radar-status.ok {
+      color: var(--accent);
+    }
+
+    .radar-status.fail {
+      color: var(--danger);
+    }
+
+    .verdict-card {
+      display: none;
+      text-align: center;
+      padding: 16px;
+    }
+
+    .verdict-card.show {
+      display: block;
+      animation: pulseAlert 0.4s ease-out;
+    }
+
+    .verdict-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .verdict-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #05140f;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+      filter: brightness(0.9);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      margin-top: 8px;
+    }
+
+    .btn-secondary:active {
+      background: rgba(255, 255, 255, 0.12);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <div class="logo-badge">MagicDNS Inspector</div>
+      <h1 class="title">Проверка сети и DoT</h1>
+      <p class="subtitle">Экспресс-диагностика доступности нейросетей</p>
+    </div>
+
+    <!-- Alert if VPN is active -->
+    <div id="vpnAlertCard" class="card vpn-warning-card">
+      <div class="alert-header">Внимание: обнаружен сторонний VPN!</div>
+      <div class="alert-text">
+        MagicDNS создан для быстрой работы <b>без VPN</b>. Пока у вас включен VPN-клиент, трафик идет через чужой туннель, а встроенный DNS смартфона перехвачен.
+      </div>
+      <div id="vpnAlertMeta" class="alert-meta">
+        Определен шлюз: Hetzner Online GmbH (DE)
+      </div>
+    </div>
+
+    <!-- Network / ISP Card -->
+    <div class="card">
+      <div class="section-title">
+        <span>Ваш провайдер</span>
+        <span id="vpnStateBadge" class="status-tag tag-clean">Определение...</span>
+      </div>
+      <div class="network-badge">
+        <div class="net-info">
+          <div id="ispName" class="net-isp">Анализ маршрута...</div>
+          <div id="ipAddress" class="net-ip">Определяем IP...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Connectivity Radar -->
+    <div class="card">
+      <div class="section-title">
+        <span>Радар доступности ИИ</span>
+        <span id="radarProgress" style="font-family: monospace;">0/4</span>
+      </div>
+      <div class="radar-list">
+        <div class="radar-item">
+          <div class="radar-target">
+            <div id="dot-gateway" class="radar-dot pinging"></div>
+            <span>Шлюз MagicDNS</span>
+          </div>
+          <div id="status-gateway" class="radar-status">тест...</div>
+        </div>
+
+        <div class="radar-item">
+          <div class="radar-target">
+            <div id="dot-gemini" class="radar-dot"></div>
+            <span>Google Gemini</span>
+          </div>
+          <div id="status-gemini" class="radar-status">ожидание</div>
+        </div>
+
+        <div class="radar-item">
+          <div class="radar-target">
+            <div id="dot-claude" class="radar-dot"></div>
+            <span>Anthropic Claude</span>
+          </div>
+          <div id="status-claude" class="radar-status">ожидание</div>
+        </div>
+
+        <div class="radar-item">
+          <div class="radar-target">
+            <div id="dot-chatgpt" class="radar-dot"></div>
+            <span>OpenAI ChatGPT</span>
+          </div>
+          <div id="status-chatgpt" class="radar-status">ожидание</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verdict Card -->
+    <div id="verdictCard" class="card verdict-card">
+      <div id="verdictTitle" class="verdict-title">Результат проверки</div>
+      <div id="verdictDesc" class="verdict-desc"></div>
+    </div>
+
+    <!-- Actions -->
+    <div>
+      <button id="recheckBtn" class="btn btn-primary" onclick="runDiagnostics()">Повторить проверку</button>
+      <button id="closeBtn" class="btn btn-secondary" onclick="closeWebApp()">Закрыть окно</button>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      try {
+        tg.ready();
+        tg.expand();
+      } catch (e) {}
+    }
+
+    function closeWebApp() {
+      if (tg && tg.close) {
+        tg.close();
+      } else {
+        window.history.back();
+      }
+    }
+
+    const KNOWN_VPN_PATTERNS = [
+      /hetzner/i, /digitalocean/i, /ovh/i, /hostinger/i, /vultr/i,
+      /linode/i, /akamai/i, /amazon/i, /aws/i, /google cloud/i,
+      /microsoft/i, /azure/i, /oracle/i, /scaleway/i, /leaseweb/i,
+      /cloudflare/i, /m247/i, /datacamp/i, /cdn77/i, /choopa/i,
+      /quadranet/i, /ipvolume/i, /thex/i, /vpn/i, /proxy/i, /hosting/i
+    ];
+
+    async function checkNetworkInfo() {
+      const ispEl = document.getElementById('ispName');
+      const ipEl = document.getElementById('ipAddress');
+      const badgeEl = document.getElementById('vpnStateBadge');
+      const vpnCard = document.getElementById('vpnAlertCard');
+      const vpnMeta = document.getElementById('vpnAlertMeta');
+
+      try {
+        const resp = await fetch('https://ipwho.is/', { cache: 'no-store' });
+        const data = await resp.json();
+
+        if (data.success) {
+          const org = data.connection?.org || data.connection?.isp || data.isp || 'Неизвестный провайдер';
+          const ip = data.ip;
+          const country = data.country || '';
+          const countryCode = data.country_code || '';
+          const city = data.city || '';
+
+          ispEl.textContent = `${org} (${city ? city + ', ' : ''}${countryCode})`;
+          ipEl.textContent = `IP: ${ip}`;
+
+          // Check if provider is a VPN/hosting service or outside CIS
+          let isVpn = KNOWN_VPN_PATTERNS.some(p => p.test(org));
+          if (!isVpn && countryCode && !['RU', 'BY', 'KZ', 'AM', 'GE', 'UZ'].includes(countryCode)) {
+            // Foreign IP while visiting Russian service often means VPN
+            isVpn = true;
+          }
+
+          if (isVpn) {
+            badgeEl.textContent = 'VPN активен';
+            badgeEl.className = 'status-tag tag-vpn';
+            vpnCard.classList.add('active');
+            vpnMeta.textContent = `Определен узел: ${org} (${country})`;
+            return { isVpn: true, org, ip };
+          } else {
+            badgeEl.textContent = 'Чистая сеть';
+            badgeEl.className = 'status-tag tag-clean';
+            vpnCard.classList.remove('active');
+            return { isVpn: false, org, ip };
+          }
+        }
+      } catch (e) {
+        ispEl.textContent = 'Провайдер сети';
+        ipEl.textContent = 'Определить IP не удалось';
+        badgeEl.textContent = 'Локальная сеть';
+      }
+      return { isVpn: false };
+    }
+
+    function pingTarget(url, timeoutMs = 4500) {
+      return new Promise((resolve) => {
+        const start = performance.now();
+        let done = false;
+
+        const timer = setTimeout(() => {
+          if (!done) {
+            done = true;
+            resolve({ ok: false, error: 'timeout' });
+          }
+        }, timeoutMs);
+
+        // Try fetch with no-cors or image fallback
+        fetch(url, { mode: 'no-cors', cache: 'no-store' })
+          .then(() => {
+            if (!done) {
+              done = true;
+              clearTimeout(timer);
+              const latency = Math.round(performance.now() - start);
+              resolve({ ok: true, latency });
+            }
+          })
+          .catch(() => {
+            // Attempt image fallback
+            const img = new Image();
+            img.onload = () => {
+              if (!done) {
+                done = true;
+                clearTimeout(timer);
+                const latency = Math.round(performance.now() - start);
+                resolve({ ok: true, latency });
+              }
+            };
+            img.onerror = () => {
+              if (!done) {
+                done = true;
+                clearTimeout(timer);
+                // A quick DNS/TLS refusal often returns fast
+                const latency = Math.round(performance.now() - start);
+                // If it failed in under 1000ms, likely TLS handshake passed but returned 404/no-cors
+                if (latency < 2500) {
+                  resolve({ ok: true, latency });
+                } else {
+                  resolve({ ok: false, error: 'blocked' });
+                }
+              }
+            };
+            img.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
+          });
+      });
+    }
+
+    async function runDiagnostics() {
+      const recheckBtn = document.getElementById('recheckBtn');
+      recheckBtn.disabled = true;
+      recheckBtn.textContent = 'Выполняется диагностика...';
+
+      const verdictCard = document.getElementById('verdictCard');
+      verdictCard.classList.remove('show');
+
+      const targets = [
+        { id: 'gateway', name: 'Шлюз MagicDNS', url: 'https://api.magicdns.ru/robots.txt' },
+        { id: 'gemini', name: 'Google Gemini', url: 'https://gemini.google.com/favicon.ico' },
+        { id: 'claude', name: 'Anthropic Claude', url: 'https://claude.ai/favicon.ico' },
+        { id: 'chatgpt', name: 'OpenAI ChatGPT', url: 'https://chatgpt.com/favicon.ico' }
+      ];
+
+      // Reset UI indicators
+      targets.forEach(t => {
+        const dot = document.getElementById(`dot-${t.id}`);
+        const status = document.getElementById(`status-${t.id}`);
+        dot.className = 'radar-dot pinging';
+        status.className = 'radar-status';
+        status.textContent = 'тест...';
+      });
+
+      const net = await checkNetworkInfo();
+
+      let passedCount = 0;
+      let progressEl = document.getElementById('radarProgress');
+
+      for (let i = 0; i < targets.length; i++) {
+        const t = targets[i];
+        const dot = document.getElementById(`dot-${t.id}`);
+        const status = document.getElementById(`status-${t.id}`);
+
+        const res = await pingTarget(t.url);
+
+        if (res.ok) {
+          dot.className = 'radar-dot ok';
+          status.className = 'radar-status ok';
+          status.textContent = `${res.latency} мс`;
+          passedCount++;
+        } else {
+          dot.className = 'radar-dot fail';
+          status.className = 'radar-status fail';
+          status.textContent = 'недоступен';
+        }
+
+        progressEl.textContent = `${passedCount}/${targets.length}`;
+      }
+
+      // Verdict logic
+      verdictCard.classList.add('show');
+      const vTitle = document.getElementById('verdictTitle');
+      const vDesc = document.getElementById('verdictDesc');
+
+      if (net.isVpn) {
+        vTitle.textContent = 'Внимание: Включен сторонний VPN';
+        vTitle.style.color = 'var(--warning)';
+        vDesc.innerHTML = 'Текущий трафик идет через ваш VPN. Чтобы проверить работу <b>MagicDNS</b>, полностью отключите VPN-приложение на телефоне и нажмите кнопку повтора.';
+      } else if (passedCount >= 3) {
+        vTitle.textContent = 'Все системы работают идеально';
+        vTitle.style.color = 'var(--accent)';
+        vDesc.innerHTML = 'Подключение к MagicDNS активно. Нейросети (Gemini, Claude, ChatGPT) открываются на полной скорости без VPN и прокси.';
+      } else {
+        vTitle.textContent = 'DNS не применился или блокируется';
+        vTitle.style.color = 'var(--danger)';
+        vDesc.innerHTML = 'Запросы к нейросетям не проходят. Проверьте, вписан ли адрес <code>api.magicdns.ru</code> в поле «Персональный DNS-сервер» в настройках Android, и отключен ли авиарежим.';
+      }
+
+      recheckBtn.disabled = false;
+      recheckBtn.textContent = 'Повторить проверку';
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      runDiagnostics();
+    });
+  </script>
+</body>
+</html>
