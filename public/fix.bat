@@ -2,7 +2,7 @@
 chcp 65001 >nul
 title MagicDNS Assistant for Windows
 
-powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://magicdns.ru/fix.ps1 | iex"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$b = (New-Object System.Net.WebClient).DownloadData('https://magicdns.ru/fix.ps1'); iex [System.Text.Encoding]::UTF8.GetString($b)"
 if %errorlevel% neq 0 (
     echo.
     echo ======================================================================
