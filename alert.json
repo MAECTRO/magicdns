@@ -1,6 +1,6 @@
 {
-  "active": true,
-  "type": "warning",
-  "message": "⛔️Провожу тех.работы, могут быть отвалы⛔️",
-  "updated_at": 1793898396
+  "active": false,
+  "type": "info",
+  "message": "",
+  "updated_at": 1793902375
 }
