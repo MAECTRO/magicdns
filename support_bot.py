@@ -927,6 +927,69 @@ def restrict_chat_member(chat_id, user_id, can_send_messages=True, until_date=0)
         data["until_date"] = int(until_date)
     return tg_request("restrictChatMember", data)
 
+WARNS_FILE = "/root/group_warns.json"
+GROUP_WARNS = {}
+
+def load_group_warns():
+    global GROUP_WARNS
+    if os.path.exists(WARNS_FILE):
+        try:
+            with open(WARNS_FILE, "r", encoding="utf-8") as f:
+                GROUP_WARNS = json.load(f)
+            print(f"[WARNS LOAD] Loaded {len(GROUP_WARNS)} warn records")
+        except Exception as e:
+            print(f"[WARNS LOAD ERROR] {e}")
+            GROUP_WARNS = {}
+
+def save_group_warns():
+    try:
+        with open(WARNS_FILE, "w", encoding="utf-8") as f:
+            json.dump(GROUP_WARNS, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[WARNS SAVE ERROR] {e}")
+
+def unmute_chat_member(chat_id, user_id):
+    permissions = {
+        "can_send_messages": True,
+        "can_send_media_messages": True,
+        "can_send_polls": True,
+        "can_send_other_messages": True,
+        "can_add_web_page_previews": True,
+        "can_change_info": False,
+        "can_invite_users": True,
+        "can_pin_messages": False
+    }
+    return tg_request("restrictChatMember", {
+        "chat_id": chat_id,
+        "user_id": user_id,
+        "permissions": permissions,
+        "use_independent_chat_permissions": True
+    })
+
+def get_cheat_reset_card():
+    return (
+        "🛠 <b>Сброс файла hosts и сетевых настроек Windows:</b>\n\n"
+        "Если сервисы или нейросети не открываются даже после смены DNS, чаще всего мешают старые остатки VPN, кэш DNS или записи в файле hosts.\n\n"
+        "1️⃣ <b>Быстрый сброс сетевого стека и кэша DNS:</b>\n"
+        "Откройте <b>Командную строку (CMD) от имени Администратора</b> и выполните:\n"
+        "<code>ipconfig /flushdns && netsh winsock reset && netsh int ip reset</code>\n"
+        "<i>(скопируйте строчку целиком, вставьте в консоль и перезагрузите ПК)</i>\n\n"
+        "2️⃣ <b>Очистка файла hosts (PowerShell от Администратора):</b>\n"
+        "<code>Set-Content -Path 'C:\\Windows\\System32\\drivers\\etc\\hosts' -Value '# clean hosts' -Encoding Ascii</code>\n"
+        "<i>Либо откройте файл <code>C:\\Windows\\System32\\drivers\\etc\\hosts</code> блокнотом и сотрите строки с упоминанием openai, google, claude, bing.</i>\n\n"
+        "3️⃣ <b>Для macOS / Linux:</b>\n"
+        "Сброс кэша DNS на Mac: <code>sudo killall -HUP mDNSResponder</code>\n"
+        "Проверка файла hosts: <code>sudo nano /etc/hosts</code>"
+    )
+
+def get_cheat_reset_kb():
+    return {
+        "inline_keyboard": [
+            [{"text": "🔍 Проверить подключение", "url": "https://magicdns.ru/check.html"}],
+            [{"text": "⚡ Все параметры MagicDNS", "callback_data": "cmd_dns"}]
+        ]
+    }
+
 def ban_chat_member(chat_id, user_id, until_date=0):
     data = {"chat_id": chat_id, "user_id": user_id}
     if until_date:
@@ -1176,15 +1239,26 @@ def get_group_rules_kb():
 
 def get_group_mod_card():
     return (
-        "🛡 <b>Панель модерации группы MagicDNS:</b>\n\n"
-        "Все модераторы группы могут управлять порядком прямо в чате через команды в ответ (Reply) на сообщение нарушителя:\n\n"
-        "• <code>!бан</code> или <code>/ban</code> (ответом) — удаляет спам и навсегда банит спамера\n"
-        "• <code>!мут 30</code> или <code>/mute 30</code> (ответом) — запрещает писать на 30 минут (можно указать любое число минут)\n"
-        "• <code>!кик</code> или <code>/kick</code> (ответом) — исключает пользователя из чата\n\n"
-        "🤖 <b>Автоматическая защита группы:</b>\n"
-        "• <b>Антиспам-капча:</b> новые участники при входе автоматически глушатся, пока не нажмут кнопку подтверждения\n"
-        "• <b>Умный автоответчик:</b> бот сам подсказывает инструкции по ключевым словам (<i>айфон, андроид, роутер</i>)\n\n"
-        "⚙️ <i>Управление серверами, сайтом и рассылкой доступно владельцу в личных сообщениях бота: @magicdns_alert_bot (/admin)</i>"
+        "🛡 <b>Панель модерации и быстрых ответов MagicDNS:</b>\n\n"
+        "⚡ <b>Быстрые шпоры для саппорта (ответом на вопрос):</b>\n"
+        "• <code>!сброс</code> или <code>!hosts</code> — сброс файла hosts и сетевого стека Windows/Mac\n"
+        "• <code>!андроид</code> или <code>!дот</code> — мастер настройки Android (DoT) с адресом <code>api.magicdns.ru</code>\n"
+        "• <code>!айфон</code> или <code>!ios</code> — криптографический профиль для iPhone / Mac\n"
+        "• <code>!роутер</code> — конфиги Keenetic, MikroTik, OpenWrt\n"
+        "• <code>!вин</code> — настройка Windows 10/11 DoH\n"
+        "• <code>!чек</code> — экспресс-тест подключения к серверам и ИИ\n\n"
+        "🔨 <b>Модерация чата (ответом на сообщение нарушителя):</b>\n"
+        "• <code>!бан</code> или <code>/ban</code> — удалить спам и забанить нарушителя\n"
+        "• <code>!разбан [ID]</code> — разблокировать пользователя\n"
+        "• <code>!мут 30</code> или <code>/mute 30</code> — ограничить отправку сообщений на N минут\n"
+        "• <code>!размут</code> или <code>/unmute</code> — досрочно снять мут\n"
+        "• <code>!кик</code> — выгнать из чата\n"
+        "• <code>!варн [причина]</code> — выдать предупреждение (на 3/3 — автомут на 24 часа)\n"
+        "• <code>!снятьварн</code> — снять одно предупреждение\n"
+        "• <code>!варны</code> — посмотреть активные предупреждения\n"
+        "• <code>!чистка 5</code> или <code>!del 5</code> — удалить пачкой последние N сообщений спамера\n"
+        "• <code>!инфо</code> или <code>!whois</code> — карточка нарушителя (ID, имя, варны, статус)\n\n"
+        "🤖 <i>Антиспам-капча на входе и автоответчик по ключевым словам активны.</i>"
     )
 
 def get_group_mod_kb():
@@ -3945,6 +4019,7 @@ def main():
 
 
     load_subscribers()
+    load_group_warns()
 
     set_bot_commands()
 
@@ -5209,41 +5284,186 @@ def main():
                                     }
                             continue
 
-                        # 2. Moderation commands by admins (Must be a reply to an offender)
+                        # 2. Quick Support Cheatsheets & Moderation Commands
                         reply_m = m.get('reply_to_message')
                         clean_text = text.strip().lower()
+                        is_mod = is_user_chat_admin(chat_id, sender_id, sender_chat_id)
 
-                        if reply_m and is_user_chat_admin(chat_id, sender_id, sender_chat_id):
-                            offender = reply_m.get('from', {})
-                            offender_id = offender.get('id')
-                            offender_chat_id = reply_m.get('sender_chat', {}).get('id')
-                            offender_name = html.escape(offender.get('first_name', 'Пользователь'))
-
-                            if is_user_chat_admin(chat_id, offender_id, offender_chat_id):
-                                send_message(chat_id, "⚠️ <i>Нельзя применить команду к администратору группы.</i>", reply_to_message_id=m['message_id'])
-                                continue
-
-                            # !бан / /ban
-                            if clean_text in ('!бан', '!ban', '/ban', '!kick', '/kick', '!кик'):
-                                delete_message(chat_id, reply_m['message_id'])
+                        # --- QUICK SUPPORT CHEATSHEETS (Available for admins & users) ---
+                        if clean_text in ('!сброс', '!hosts', '!хостс', '!reset', '/reset', '/hosts'):
+                            target_reply = reply_m['message_id'] if reply_m else m['message_id']
+                            send_message(chat_id, get_cheat_reset_card(), reply_to_message_id=target_reply, reply_markup=get_cheat_reset_kb())
+                            if reply_m and is_mod:
                                 delete_message(chat_id, m['message_id'])
-                                ban_chat_member(chat_id, offender_id)
-                                send_message(chat_id, f"🔨 <b>{offender_name}</b> заблокирован модератором.")
-                                continue
+                            continue
 
-                            # !мут / /mute [mins]
-                            if clean_text.startswith(('!мут', '!mute', '/mute')):
+                        if clean_text in ('!андроид', '!android', '!дот', '!dot', '/dot', '/android'):
+                            target_reply = reply_m['message_id'] if reply_m else m['message_id']
+                            send_message(chat_id, get_android_picker_card(), reply_to_message_id=target_reply, reply_markup=get_android_picker_kb())
+                            if reply_m and is_mod:
+                                delete_message(chat_id, m['message_id'])
+                            continue
+
+                        if clean_text in ('!айфон', '!ios', '!профиль', '!apple', '/ios'):
+                            target_reply = reply_m['message_id'] if reply_m else m['message_id']
+                            send_message(chat_id, get_ios_picker_card(), reply_to_message_id=target_reply, reply_markup=get_ios_picker_kb())
+                            if reply_m and is_mod:
+                                delete_message(chat_id, m['message_id'])
+                            continue
+
+                        if clean_text in ('!роутер', '!router', '!роутеры', '/router', '/routers'):
+                            target_reply = reply_m['message_id'] if reply_m else m['message_id']
+                            send_message(chat_id, get_routers_picker_card(), reply_to_message_id=target_reply, reply_markup=get_routers_picker_kb())
+                            if reply_m and is_mod:
+                                delete_message(chat_id, m['message_id'])
+                            continue
+
+                        if clean_text in ('!вин', '!win', '!windows', '/win', '/windows'):
+                            target_reply = reply_m['message_id'] if reply_m else m['message_id']
+                            send_message(chat_id, get_faq_win_pro_card(), reply_to_message_id=target_reply, reply_markup=get_faq_win_pro_kb())
+                            if reply_m and is_mod:
+                                delete_message(chat_id, m['message_id'])
+                            continue
+
+                        if clean_text in ('!чек', '!check', '!тест', '!test', '/check', '/test'):
+                            target_reply = reply_m['message_id'] if reply_m else m['message_id']
+                            check_card = (
+                                "🔍 <b>Проверка вашего подключения к MagicDNS:</b>\n\n"
+                                "Нажмите кнопку ниже, чтобы проверить ваш DNS, выявить утечки сторонних VPN/хостингов и измерить пинг до серверов ИИ:"
+                            )
+                            send_message(chat_id, check_card, reply_to_message_id=target_reply, reply_markup=get_check_kb())
+                            if reply_m and is_mod:
+                                delete_message(chat_id, m['message_id'])
+                            continue
+
+                        # --- MODERATION COMMANDS (Strictly restricted to chat admins) ---
+                        if is_mod:
+                            # 1. Unban by ID or reply: !разбан / /unban [user_id]
+                            if clean_text.startswith(('!разбан', '!unban', '/unban')):
                                 parts = clean_text.split()
-                                duration_mins = 15
+                                target_uid = None
                                 if len(parts) > 1 and parts[1].isdigit():
-                                    duration_mins = max(1, min(1440, int(parts[1])))
-                                until_ts = int(time.time() + duration_mins * 60)
+                                    target_uid = int(parts[1])
+                                elif reply_m:
+                                    target_uid = reply_m.get('from', {}).get('id')
 
-                                delete_message(chat_id, reply_m['message_id'])
-                                delete_message(chat_id, m['message_id'])
-                                restrict_chat_member(chat_id, offender_id, can_send_messages=False, until_date=until_ts)
-                                send_message(chat_id, f"🔇 <b>{offender_name}</b> отправлен в мут на {duration_mins} мин.")
+                                if target_uid:
+                                    unban_chat_member(chat_id, target_uid)
+                                    delete_message(chat_id, m['message_id'])
+                                    send_message(chat_id, f"🔓 Пользователь <code>{target_uid}</code> разблокирован модератором.")
+                                else:
+                                    send_message(chat_id, "⚠️ Укажите ID или ответьте на сообщение: <code>!разбан 123456789</code>", reply_to_message_id=m['message_id'])
                                 continue
+
+                            # For reply-based mod actions:
+                            if reply_m:
+                                offender = reply_m.get('from', {})
+                                offender_id = offender.get('id')
+                                offender_chat_id = reply_m.get('sender_chat', {}).get('id')
+                                offender_name = html.escape(offender.get('first_name', 'Пользователь'))
+                                warn_key = f"{chat_id}_{offender_id}"
+
+                                if is_user_chat_admin(chat_id, offender_id, offender_chat_id):
+                                    send_message(chat_id, "⚠️ <i>Нельзя применить команду к администратору группы.</i>", reply_to_message_id=m['message_id'])
+                                    continue
+
+                                # !бан / /ban / !кик / /kick
+                                if clean_text in ('!бан', '!ban', '/ban', '!kick', '/kick', '!кик'):
+                                    delete_message(chat_id, reply_m['message_id'])
+                                    delete_message(chat_id, m['message_id'])
+                                    ban_chat_member(chat_id, offender_id)
+                                    send_message(chat_id, f"🔨 <b>{offender_name}</b> заблокирован модератором.")
+                                    continue
+
+                                # !мут / /mute [минуты]
+                                if clean_text.startswith(('!мут', '!mute', '/mute')):
+                                    parts = clean_text.split()
+                                    duration_mins = 15
+                                    if len(parts) > 1 and parts[1].isdigit():
+                                        duration_mins = max(1, min(1440, int(parts[1])))
+                                    until_ts = int(time.time() + duration_mins * 60)
+
+                                    delete_message(chat_id, reply_m['message_id'])
+                                    delete_message(chat_id, m['message_id'])
+                                    restrict_chat_member(chat_id, offender_id, can_send_messages=False, until_date=until_ts)
+                                    send_message(chat_id, f"🔇 <b>{offender_name}</b> отправлен в мут на {duration_mins} мин.")
+                                    continue
+
+                                # !размут / /unmute
+                                if clean_text in ('!размут', '!unmute', '/unmute'):
+                                    delete_message(chat_id, m['message_id'])
+                                    unmute_chat_member(chat_id, offender_id)
+                                    send_message(chat_id, f"🔊 <b>{offender_name}</b> размучен модератором.")
+                                    continue
+
+                                # !варн / /warn [причина]
+                                if clean_text.startswith(('!варн', '!warn', '/warn')):
+                                    parts = text.strip().split(None, 1)
+                                    reason = parts[1] if len(parts) > 1 else "нарушение правил чата"
+                                    cur_warns = GROUP_WARNS.get(warn_key, 0) + 1
+                                    delete_message(chat_id, reply_m['message_id'])
+                                    delete_message(chat_id, m['message_id'])
+
+                                    if cur_warns < 3:
+                                        GROUP_WARNS[warn_key] = cur_warns
+                                        save_group_warns()
+                                        send_message(chat_id, f"⚠️ <b>{offender_name}</b> получил предупреждение [<b>{cur_warns}/3</b>]!\nПричина: <i>{html.escape(reason)}</i>\n<i>На 3/3 предупреждениях — мут на 24 часа.</i>")
+                                    else:
+                                        GROUP_WARNS[warn_key] = 0
+                                        save_group_warns()
+                                        until_ts = int(time.time() + 86400)
+                                        restrict_chat_member(chat_id, offender_id, can_send_messages=False, until_date=until_ts)
+                                        send_message(chat_id, f"🔇 <b>{offender_name}</b> набрал 3/3 предупреждений и отправлен в мут на 24 часа!\nПричина: <i>{html.escape(reason)}</i>")
+                                    continue
+
+                                # !снятьварн / /unwarn
+                                if clean_text in ('!снятьварн', '!unwarn', '/unwarn'):
+                                    delete_message(chat_id, m['message_id'])
+                                    cur_warns = max(0, GROUP_WARNS.get(warn_key, 0) - 1)
+                                    GROUP_WARNS[warn_key] = cur_warns
+                                    save_group_warns()
+                                    send_message(chat_id, f"🛡 С <b>{offender_name}</b> снято предупреждение (активно: <b>{cur_warns}/3</b>).")
+                                    continue
+
+                                # !варны / /warns
+                                if clean_text in ('!варны', '!warns', '/warns'):
+                                    delete_message(chat_id, m['message_id'])
+                                    cur_warns = GROUP_WARNS.get(warn_key, 0)
+                                    send_message(chat_id, f"📋 У пользователя <b>{offender_name}</b> активных предупреждений: <b>{cur_warns}/3</b>.")
+                                    continue
+
+                                # !чистка [N] / !del [N] / !purge [N]
+                                if clean_text.startswith(('!чистка', '!del', '!purge', '/del', '/purge')):
+                                    parts = clean_text.split()
+                                    del_count = 5
+                                    if len(parts) > 1 and parts[1].isdigit():
+                                        del_count = max(1, min(25, int(parts[1])))
+                                    base_mid = reply_m['message_id']
+                                    delete_message(chat_id, m['message_id'])
+                                    deleted_real = 0
+                                    for i in range(del_count):
+                                        res = delete_message(chat_id, base_mid - i)
+                                        if res.get('ok'):
+                                            deleted_real += 1
+                                    send_message(chat_id, f"🧹 Удалено последних сообщений: <b>{deleted_real}</b>.")
+                                    continue
+
+                                # !инфо / !whois / /info
+                                if clean_text in ('!инфо', '!whois', '/info', '/whois'):
+                                    delete_message(chat_id, m['message_id'])
+                                    cur_warns = GROUP_WARNS.get(warn_key, 0)
+                                    off_un = f"@{offender.get('username')}" if offender.get('username') else "нет юзернейма"
+                                    is_off_adm = is_user_chat_admin(chat_id, offender_id, offender_chat_id)
+                                    info_card = (
+                                        f"👤 <b>Досье пользователя:</b>\n\n"
+                                        f"• <b>Имя:</b> {offender_name}\n"
+                                        f"• <b>Telegram ID:</b> <code>{offender_id}</code>\n"
+                                        f"• <b>Юзернейм:</b> {off_un}\n"
+                                        f"• <b>Предупреждения:</b> {cur_warns}/3\n"
+                                        f"• <b>Статус админа:</b> {'Да' if is_off_adm else 'Нет'}"
+                                    )
+                                    send_message(chat_id, info_card, reply_to_message_id=reply_m['message_id'])
+                                    continue
 
                         # 3. Smart Keyword Auto-Router (Anti-flood: max 1 response per 120s per topic)
                         if not m.get('entities') and not clean_text.startswith(('/', '!')):
