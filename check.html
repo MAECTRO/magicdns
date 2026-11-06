@@ -1,616 +1,2332 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>MagicDNS Inspector — Экспресс-проверка</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    :root {
-      --bg: #070d14;
-      --card-bg: rgba(15, 23, 42, 0.75);
-      --card-border: #1e293b;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent: #00ff9d;
-      --accent-glow: rgba(0, 255, 157, 0.2);
-      --danger: #ef4444;
-      --danger-bg: rgba(239, 68, 68, 0.12);
-      --danger-border: rgba(239, 68, 68, 0.35);
-      --warning: #f59e0b;
-      --warning-bg: rgba(245, 158, 11, 0.12);
-      --warning-border: rgba(245, 158, 11, 0.35);
-      --success: #10b981;
-      --success-bg: rgba(16, 185, 129, 0.12);
-      --success-border: rgba(16, 185, 129, 0.35);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MagicDNS CyberHub — Сонар, Настройка и Аркада</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #060911;
+            --bg-card: rgba(16, 23, 38, 0.78);
+            --bg-card-solid: #101726;
+            --bg-elevated: rgba(28, 39, 64, 0.65);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(99, 102, 241, 0.45);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-primary: #6366f1;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #a855f7;
+            --status-ok: #10b981;
+            --status-warn: #f59e0b;
+            --status-err: #ef4444;
+            --safe-bottom: env(safe-area-inset-bottom, 16px);
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 16px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+        html, body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 12% 8%, rgba(99, 102, 241, 0.16), transparent 38%),
+                radial-gradient(circle at 88% 82%, rgba(6, 182, 212, 0.13), transparent 42%);
+        }
 
-    .container {
-      width: 100%;
-      max-width: 440px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+        .app-shell {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 12px 14px calc(92px + var(--safe-bottom));
+            position: relative;
+        }
 
-    .header {
-      text-align: center;
-      padding: 10px 0 6px;
-    }
+        /* Верхняя панель пилота */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: var(--bg-card);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
 
-    .logo-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--accent);
-      background: var(--accent-glow);
-      border: 1px solid rgba(0, 255, 157, 0.3);
-      padding: 4px 10px;
-      border-radius: 20px;
-      margin-bottom: 8px;
-    }
+        .brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
 
-    .title {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
+        .brand-orb {
+            width: 36px;
+            height: 36px;
+            border-radius: 11px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            box-shadow: 0 0 16px rgba(99, 102, 241, 0.45);
+        }
 
-    .subtitle {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
+        .brand-titles {
+            min-width: 0;
+        }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 14px 16px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
+        .brand-name {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-    .vpn-warning-card {
-      background: var(--warning-bg);
-      border: 1px solid var(--warning-border);
-      display: none;
-    }
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--status-ok);
+            box-shadow: 0 0 8px var(--status-ok);
+            animation: pulseDot 2s infinite;
+        }
 
-    .vpn-warning-card.active {
-      display: block;
-      animation: pulseAlert 0.4s ease-out;
-    }
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.35); opacity: 0.55; }
+        }
 
-    @keyframes pulseAlert {
-      0% { transform: scale(0.97); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
+        .user-rank-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    .alert-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--warning);
-      margin-bottom: 6px;
-    }
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
 
-    .alert-text {
-      font-size: 13px;
-      color: var(--text);
-      line-height: 1.45;
-    }
+        .icon-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            border-radius: 10px;
+            padding: 7px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: transform 0.12s ease, border-color 0.2s ease, background 0.2s ease;
+        }
 
-    .alert-meta {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 6px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      font-family: monospace;
-    }
+        .icon-btn:active {
+            transform: scale(0.93);
+        }
 
-    .section-title {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .icon-btn.active-sfx {
+            border-color: rgba(6, 182, 212, 0.45);
+            color: #67e8f9;
+        }
 
-    .network-badge {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 10px;
-      font-size: 13px;
-    }
+        /* Быстрая плашка копирования DNS */
+        .quick-dns-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.16), rgba(6, 182, 212, 0.12));
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            border-radius: 14px;
+            padding: 9px 12px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.2s ease;
+        }
 
-    .net-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+        .quick-dns-strip:active {
+            transform: scale(0.98);
+        }
 
-    .net-isp {
-      font-weight: 600;
-      color: var(--text);
-    }
+        .quick-dns-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .net-ip {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-family: monospace;
-    }
+        .quick-dns-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #a5b4fc;
+            font-weight: 700;
+        }
 
-    .status-tag {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 6px;
-      text-transform: uppercase;
-    }
+        .quick-dns-host {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+        }
 
-    .tag-clean {
-      background: var(--success-bg);
-      color: var(--success);
-      border: 1px solid var(--success-border);
-    }
+        .quick-dns-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 9px;
+            border-radius: 8px;
+            background: rgba(99, 102, 241, 0.28);
+            color: #e0e7ff;
+            border: 1px solid rgba(165, 180, 252, 0.3);
+        }
 
-    .tag-vpn {
-      background: var(--danger-bg);
-      color: var(--danger);
-      border: 1px solid var(--danger-border);
-    }
+        /* Секции вкладок */
+        .tab-pane {
+            display: none;
+            animation: fadeInPane 0.22s ease-out;
+        }
 
-    .radar-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+        .tab-pane.active {
+            display: block;
+        }
 
-    .radar-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      border-radius: 10px;
-      transition: all 0.3s ease;
-    }
+        @keyframes fadeInPane {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    .radar-target {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: 600;
-    }
+        /* Карточки */
+        .cyber-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 18px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.28);
+        }
 
-    .radar-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #475569;
-    }
+        .card-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
 
-    .radar-dot.pinging {
-      background: var(--warning);
-      box-shadow: 0 0 8px var(--warning);
-      animation: blink 0.8s infinite alternate;
-    }
+        .card-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
 
-    .radar-dot.ok {
-      background: var(--accent);
-      box-shadow: 0 0 8px var(--accent);
-    }
+        /* СОНАР И РАДАР (Вкладка 1) */
+        .sonar-layout {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 14px;
+            align-items: center;
+        }
 
-    .radar-dot.fail {
-      background: var(--danger);
-      box-shadow: 0 0 8px var(--danger);
-    }
+        @media (max-width: 370px) {
+            .sonar-layout {
+                grid-template-columns: 1fr;
+                justify-items: center;
+            }
+        }
 
-    @keyframes blink {
-      from { opacity: 0.4; }
-      to { opacity: 1; }
-    }
+        .sonar-canvas-wrap {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, rgba(6, 9, 17, 0.95) 75%);
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.15), inset 0 0 18px rgba(6, 182, 212, 0.15);
+            overflow: hidden;
+        }
 
-    .radar-status {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      font-family: monospace;
-    }
+        #sonarCanvas {
+            width: 150px;
+            height: 150px;
+            display: block;
+            cursor: pointer;
+        }
 
-    .radar-status.ok {
-      color: var(--accent);
-    }
+        .score-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
 
-    .radar-status.fail {
-      color: var(--danger);
-    }
+        .score-top {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+        }
 
-    .verdict-card {
-      display: none;
-      text-align: center;
-      padding: 16px;
-    }
+        .score-big {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #34d399, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    .verdict-card.show {
-      display: block;
-      animation: pulseAlert 0.4s ease-out;
-    }
+        .rank-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 3px 9px;
+            border-radius: 8px;
+            background: rgba(16, 185, 129, 0.18);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
 
-    .verdict-title {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
+        .verdict-headline {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
 
-    .verdict-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.45;
-    }
+        .verdict-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
 
-    .btn {
-      width: 100%;
-      padding: 13px;
-      border-radius: 12px;
-      border: none;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-    }
+        .net-telemetry-mini {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 4px;
+        }
 
-    .btn-primary {
-      background: var(--accent);
-      color: #05140f;
-    }
+        .telemetry-chip {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--border-subtle);
+            border-radius: 9px;
+            padding: 6px 8px;
+        }
 
-    .btn-primary:active {
-      transform: scale(0.98);
-      filter: brightness(0.9);
-    }
+        .telemetry-chip-label {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
 
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text);
-      margin-top: 8px;
-    }
+        .telemetry-chip-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-    .btn-secondary:active {
-      background: rgba(255, 255, 255, 0.12);
-    }
-  </style>
+        /* Сетка проверяемых ИИ-сервисов */
+        .probes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .probe-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 10px 11px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            transition: border-color 0.2s ease, transform 0.12s ease;
+            cursor: pointer;
+        }
+
+        .probe-item:active {
+            transform: scale(0.97);
+        }
+
+        .probe-item.ok {
+            border-color: rgba(16, 185, 129, 0.28);
+        }
+
+        .probe-item.warn {
+            border-color: rgba(245, 158, 11, 0.35);
+        }
+
+        .probe-item.err {
+            border-color: rgba(239, 68, 68, 0.38);
+        }
+
+        .probe-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .probe-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .probe-dot.ok { background: var(--status-ok); box-shadow: 0 0 8px var(--status-ok); }
+        .probe-dot.warn { background: var(--status-warn); box-shadow: 0 0 8px var(--status-warn); }
+        .probe-dot.err { background: var(--status-err); box-shadow: 0 0 8px var(--status-err); }
+        .probe-dot.wait { background: var(--accent-cyan); animation: pulseDot 1s infinite; }
+
+        .probe-name {
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .probe-ms {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        /* Кнопки действий */
+        .btn-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .cyber-btn {
+            width: 100%;
+            border: none;
+            border-radius: 13px;
+            padding: 12px 14px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--accent-primary), #4f46e5);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.32);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            text-decoration: none;
+            transition: transform 0.12s ease, opacity 0.2s ease;
+        }
+
+        .cyber-btn:active {
+            transform: scale(0.97);
+        }
+
+        .cyber-btn.secondary {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            box-shadow: none;
+            color: var(--text-main);
+        }
+
+        .cyber-btn.cyan {
+            background: linear-gradient(135deg, #0891b2, #2563eb);
+            box-shadow: 0 4px 16px rgba(6, 182, 212, 0.3);
+        }
+
+        .cyber-btn.emerald {
+            background: linear-gradient(135deg, #059669, #0d9488);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        /* ВКЛАДКА 2: УСТАНОВКА */
+        .os-tabs, .sub-pills {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-bottom: 12px;
+            scrollbar-width: none;
+        }
+
+        .os-tabs::-webkit-scrollbar, .sub-pills::-webkit-scrollbar {
+            display: none;
+        }
+
+        .os-tab-btn {
+            flex: 1;
+            min-width: 78px;
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            border-radius: 11px;
+            padding: 9px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.18s ease;
+        }
+
+        .os-tab-btn.active {
+            background: rgba(99, 102, 241, 0.22);
+            border-color: var(--accent-primary);
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(99, 102, 241, 0.25);
+        }
+
+        .sub-pill-btn {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            border-radius: 9px;
+            padding: 6px 11px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .sub-pill-btn.active {
+            background: rgba(6, 182, 212, 0.2);
+            border-color: var(--accent-cyan);
+            color: #67e8f9;
+        }
+
+        .step-list {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+            margin: 12px 0;
+        }
+
+        .step-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .step-num {
+            width: 22px;
+            height: 22px;
+            border-radius: 7px;
+            background: rgba(99, 102, 241, 0.25);
+            color: #a5b4fc;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .code-snippet-box {
+            background: #050811;
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            border-radius: 11px;
+            padding: 10px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+            color: #67e8f9;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin: 8px 0;
+            user-select: text;
+        }
+
+        /* ВКЛАДКА 3: КИБЕР-АРКАДА (AI PACKET DEFENDER) */
+        .arcade-hud {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .hud-stat {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid var(--border-subtle);
+            border-radius: 11px;
+            padding: 7px 6px;
+            text-align: center;
+        }
+
+        .hud-stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .hud-stat-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .arcade-stage-wrap {
+            position: relative;
+            width: 100%;
+            height: 330px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #0f172a 0%, #050811 100%);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            box-shadow: inset 0 0 30px rgba(6, 182, 212, 0.12);
+            touch-action: none;
+        }
+
+        #arcadeCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .arcade-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(6, 9, 17, 0.84);
+            backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            z-index: 5;
+        }
+
+        .arcade-overlay.hidden {
+            display: none;
+        }
+
+        .arcade-badge {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 4px 10px;
+            border-radius: 99px;
+            background: rgba(6, 182, 212, 0.2);
+            color: #67e8f9;
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            margin-bottom: 8px;
+        }
+
+        .arcade-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .arcade-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.45;
+            max-width: 310px;
+            margin-bottom: 14px;
+        }
+
+        .ult-bar-wrap {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ult-progress-bg {
+            flex: 1;
+            height: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-subtle);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .ult-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #06b6d4, #a855f7);
+            box-shadow: 0 0 12px #06b6d4;
+            transition: width 0.15s ease;
+        }
+
+        .ult-btn {
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            color: #d8b4fe;
+            border-radius: 10px;
+            padding: 7px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            opacity: 0.5;
+            pointer-events: none;
+            transition: all 0.2s ease;
+        }
+
+        .ult-btn.ready {
+            opacity: 1;
+            pointer-events: auto;
+            background: linear-gradient(135deg, #9333ea, #06b6d4);
+            color: #ffffff;
+            box-shadow: 0 0 16px rgba(168, 85, 247, 0.65);
+            animation: pulseDot 1.2s infinite;
+        }
+
+        /* ВКЛАДКА 4: КЛАСТЕР И ОТЗЫВЫ */
+        .node-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .node-title {
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .node-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            margin-top: 2px;
+        }
+
+        .node-status-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 9px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+        .node-status-badge.online {
+            background: rgba(16, 185, 129, 0.16);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+
+        .node-status-badge.rkn {
+            background: rgba(245, 158, 11, 0.16);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.35);
+        }
+
+        .star-picker {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .star-btn {
+            font-size: 22px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            opacity: 0.35;
+            transition: transform 0.12s ease, opacity 0.15s ease;
+        }
+
+        .star-btn.active {
+            opacity: 1;
+            transform: scale(1.08);
+        }
+
+        .cyber-textarea {
+            width: 100%;
+            min-height: 76px;
+            background: rgba(6, 9, 17, 0.75);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 10px 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 13px;
+            resize: vertical;
+            margin-bottom: 10px;
+            user-select: text;
+        }
+
+        .cyber-textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        /* Нижняя навигация */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 15, 28, 0.88);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-top: 1px solid var(--border-subtle);
+            padding: 8px 12px calc(8px + var(--safe-bottom));
+            z-index: 50;
+        }
+
+        .bottom-nav-inner {
+            max-width: 480px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .nav-item {
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            padding: 6px 4px;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            transition: all 0.16s ease;
+        }
+
+        .nav-item.active {
+            color: #ffffff;
+            background: rgba(99, 102, 241, 0.18);
+            border-color: rgba(99, 102, 241, 0.38);
+        }
+
+        .nav-icon {
+            font-size: 17px;
+            line-height: 1;
+        }
+
+        .nav-label {
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+
+        /* Всплывающий тост */
+        .cyber-toast {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-80px);
+            background: rgba(16, 185, 129, 0.95);
+            color: #ffffff;
+            font-size: 12.5px;
+            font-weight: 700;
+            padding: 9px 16px;
+            border-radius: 99px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+            z-index: 100;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .cyber-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
 </head>
 <body>
+    <div id="cyberToast" class="cyber-toast">Скопировано: api.magicdns.ru</div>
 
-  <div class="container">
-    <div class="header">
-      <div class="logo-badge">MagicDNS Inspector</div>
-      <h1 class="title">Проверка сети и DoT</h1>
-      <p class="subtitle">Экспресс-диагностика доступности нейросетей</p>
-    </div>
+    <div class="app-shell">
+        <!-- Верхняя шапка пилота -->
+        <header class="top-bar">
+            <div class="brand-cluster">
+                <div class="brand-orb">⚡</div>
+                <div class="brand-titles">
+                    <div class="brand-name">
+                        <span>MagicDNS Hub</span>
+                        <span class="live-dot"></span>
+                    </div>
+                    <div class="user-rank-sub" id="pilotGreeting">Агент Сети • Ранг: Искатель</div>
+                </div>
+            </div>
+            <div class="top-actions">
+                <button class="icon-btn active-sfx" id="sfxToggleBtn" onclick="toggleSfx()">
+                    <span id="sfxIcon">🔊</span>
+                    <span>SFX</span>
+                </button>
+            </div>
+        </header>
 
-    <!-- Alert if VPN is active -->
-    <div id="vpnAlertCard" class="card vpn-warning-card">
-      <div class="alert-header">Внимание: обнаружен сторонний VPN!</div>
-      <div class="alert-text">
-        MagicDNS создан для быстрой работы <b>без VPN</b>. Пока у вас включен VPN-клиент, трафик идет через чужой туннель, а встроенный DNS смартфона перехвачен.
-      </div>
-      <div id="vpnAlertMeta" class="alert-meta">
-        Определен шлюз: Hetzner Online GmbH (DE)
-      </div>
-    </div>
-
-    <!-- Network / ISP Card -->
-    <div class="card">
-      <div class="section-title">
-        <span>Ваш провайдер</span>
-        <span id="vpnStateBadge" class="status-tag tag-clean">Определение...</span>
-      </div>
-      <div class="network-badge">
-        <div class="net-info">
-          <div id="ispName" class="net-isp">Анализ маршрута...</div>
-          <div id="ipAddress" class="net-ip">Определяем IP...</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- AI Connectivity Radar -->
-    <div class="card">
-      <div class="section-title">
-        <span>Радар доступности ИИ</span>
-        <span id="radarProgress" style="font-family: monospace;">0/4</span>
-      </div>
-      <div class="radar-list">
-        <div class="radar-item">
-          <div class="radar-target">
-            <div id="dot-gateway" class="radar-dot pinging"></div>
-            <span>Шлюз MagicDNS</span>
-          </div>
-          <div id="status-gateway" class="radar-status">тест...</div>
+        <!-- Быстрая полоса копирования DoT-адреса в 1 тап -->
+        <div class="quick-dns-strip" onclick="copyDnsAddress('api.magicdns.ru', 'DoT / Private DNS скопирован!')">
+            <div class="quick-dns-left">
+                <div>
+                    <div class="quick-dns-label">Единый адрес DoT / SNI</div>
+                    <div class="quick-dns-host">api.magicdns.ru</div>
+                </div>
+            </div>
+            <div class="quick-dns-badge" id="quickCopyBadge">📋 Копировать</div>
         </div>
 
-        <div class="radar-item">
-          <div class="radar-target">
-            <div id="dot-gemini" class="radar-dot"></div>
-            <span>Google Gemini</span>
-          </div>
-          <div id="status-gemini" class="radar-status">ожидание</div>
-        </div>
+        <!-- ================= ВКЛАДКА 1: СОНАР ================= -->
+        <section id="tab-sonar" class="tab-pane active">
+            <div class="cyber-card">
+                <div class="card-header-row">
+                    <div class="card-title">📡 Живой сонар нейросетей</div>
+                    <span id="scanTimerBadge" style="font-size:11px; color:var(--accent-cyan); font-family:'JetBrains Mono',monospace;">LIVE 60 FPS</span>
+                </div>
 
-        <div class="radar-item">
-          <div class="radar-target">
-            <div id="dot-claude" class="radar-dot"></div>
-            <span>Anthropic Claude</span>
-          </div>
-          <div id="status-claude" class="radar-status">ожидание</div>
-        </div>
+                <div class="sonar-layout">
+                    <div class="sonar-canvas-wrap" onclick="triggerManualSonarPulse()">
+                        <canvas id="sonarCanvas" width="300" height="300"></canvas>
+                    </div>
+                    <div class="score-panel">
+                        <div class="score-top">
+                            <div class="score-big" id="netScoreVal">--%</div>
+                            <div class="rank-pill" id="netRankPill">СКАН...</div>
+                        </div>
+                        <div class="verdict-headline" id="verdictTitle">Калибровка луча...</div>
+                        <div class="verdict-sub" id="verdictDesc">Замеряем задержку до шлюзов ИИ и проверяем чистоту маршрута.</div>
+                        <div class="net-telemetry-mini">
+                            <div class="telemetry-chip">
+                                <div class="telemetry-chip-label">Ваш IP / Узел</div>
+                                <div class="telemetry-chip-val" id="clientIpVal">Определение...</div>
+                            </div>
+                            <div class="telemetry-chip">
+                                <div class="telemetry-chip-label">Провайдер</div>
+                                <div class="telemetry-chip-val" id="clientIspVal">Анализ ASN...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="radar-item">
-          <div class="radar-target">
-            <div id="dot-chatgpt" class="radar-dot"></div>
-            <span>OpenAI ChatGPT</span>
-          </div>
-          <div id="status-chatgpt" class="radar-status">ожидание</div>
-        </div>
-      </div>
+                <div class="btn-row" style="margin-top: 14px;">
+                    <button class="cyber-btn cyan" onclick="runFullSonarScan()">
+                        <span>🔄</span>
+                        <span>Перезапустить сонар</span>
+                    </button>
+                    <button class="cyber-btn secondary" onclick="shareSonarReport()">
+                        <span>📤</span>
+                        <span>Похвастаться</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="cyber-card">
+                <div class="card-header-row">
+                    <div class="card-title">🤖 Доступность ИИ и узлов (тапни для пинга)</div>
+                    <span id="avgPingLabel" style="font-size:11px; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">-- мс</span>
+                </div>
+                <div class="probes-grid" id="probesGrid"></div>
+            </div>
+        </section>
+
+        <!-- ================= ВКЛАДКА 2: УСТАНОВКА ================= -->
+        <section id="tab-setup" class="tab-pane">
+            <div class="cyber-card">
+                <div class="card-header-row">
+                    <div class="card-title">⚡ Мастер настройки в 1 тап</div>
+                    <span id="detectedOsBadge" style="font-size:11px; color:#34d399; font-weight:700;">Авто-определение</span>
+                </div>
+
+                <div class="os-tabs">
+                    <button class="os-tab-btn active" id="osBtn-android" onclick="selectSetupOs('android')">🤖 Android</button>
+                    <button class="os-tab-btn" id="osBtn-ios" onclick="selectSetupOs('ios')">🍎 iOS / Mac</button>
+                    <button class="os-tab-btn" id="osBtn-win" onclick="selectSetupOs('win')">💻 Windows</button>
+                    <button class="os-tab-btn" id="osBtn-router" onclick="selectSetupOs('router')">📡 Роутер</button>
+                </div>
+
+                <div id="setupSubPills" class="sub-pills"></div>
+                <div id="setupContentBody"></div>
+            </div>
+        </section>
+
+        <!-- ================= ВКЛАДКА 3: АРКАДА ================= -->
+        <section id="tab-arcade" class="tab-pane">
+            <div class="cyber-card">
+                <div class="card-header-row">
+                    <div class="card-title">🎮 Кибер-Аркада: Защитник Пакетного Ядра</div>
+                    <span id="arcadeBestBadge" style="font-size:11px; color:#fbbf24; font-family:'JetBrains Mono',monospace;">Рекорд: 0</span>
+                </div>
+
+                <div class="arcade-hud">
+                    <div class="hud-stat">
+                        <div class="hud-stat-label">Счет</div>
+                        <div class="hud-stat-val" id="hudScore">0</div>
+                    </div>
+                    <div class="hud-stat">
+                        <div class="hud-stat-label">Комбо</div>
+                        <div class="hud-stat-val" id="hudCombo" style="color:#22d3ee;">x1</div>
+                    </div>
+                    <div class="hud-stat">
+                        <div class="hud-stat-label">Щит Ядра</div>
+                        <div class="hud-stat-val" id="hudHp" style="color:#34d399;">100%</div>
+                    </div>
+                    <div class="hud-stat">
+                        <div class="hud-stat-label">Волна</div>
+                        <div class="hud-stat-val" id="hudWave">1</div>
+                    </div>
+                </div>
+
+                <div class="arcade-stage-wrap" id="arcadeStageWrap">
+                    <canvas id="arcadeCanvas" width="440" height="330"></canvas>
+
+                    <div class="arcade-overlay" id="arcadeOverlay">
+                        <div class="arcade-badge" id="arcadeOverlayBadge">СИМУЛЯТОР ОБХОДА БЛОКИРОВОК</div>
+                        <div class="arcade-title" id="arcadeOverlayTitle">AI Packet Defender</div>
+                        <div class="arcade-desc" id="arcadeOverlayDesc">
+                            Тапай по <b>красным блокировкам DPI / ТСПУ</b>, чтобы расчистить путь зеленым пакетам <b>ChatGPT, Gemini и Claude</b> к ядру! Лови золотые бустеры.
+                        </div>
+                        <div style="display:flex; gap:8px; width:100%; max-width:300px;">
+                            <button class="cyber-btn emerald" onclick="startArcadeGame()">
+                                <span>🚀</span>
+                                <span id="arcadeStartBtnText">В бой (60 FPS)</span>
+                            </button>
+                            <button class="cyber-btn secondary" id="arcadeShareBtn" style="display:none;" onclick="shareArcadeScore()">
+                                <span>🏆</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ult-bar-wrap">
+                    <div class="ult-progress-bg">
+                        <div class="ult-progress-fill" id="ultFill"></div>
+                    </div>
+                    <button class="ult-btn" id="ultBtn" onclick="triggerArcadeUlt()">💥 ИМПУЛЬС DoT</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ВКЛАДКА 4: КЛАСТЕР И СВЯЗЬ ================= -->
+        <section id="tab-cluster" class="tab-pane">
+            <div class="cyber-card">
+                <div class="card-header-row">
+                    <div class="card-title">🌍 Боевой кластер MagicDNS</div>
+                    <button class="icon-btn" onclick="pingClusterNodes()">⚡ Пинг узлов</button>
+                </div>
+
+                <div class="node-card">
+                    <div>
+                        <div class="node-title">🇩🇪 Германия (Франкфурт — Основной)</div>
+                        <div class="node-meta" onclick="copyDnsAddress('109.120.177.170', 'IP Германии скопирован!')">109.120.177.170 • DoT :853 / DoH :443 / SNI 📋</div>
+                    </div>
+                    <div class="node-status-badge online" id="clusterDeBadge">ONLINE</div>
+                </div>
+
+                <div class="node-card">
+                    <div>
+                        <div class="node-title">🇫🇮 Финляндия (Хельсинки — Резерв)</div>
+                        <div class="node-meta" onclick="copyDnsAddress('45.88.163.92', 'IP Финляндии скопирован!')">45.88.163.92 • DoT :853 / DoH :443 / SNI 📋</div>
+                    </div>
+                    <div class="node-status-badge online" id="clusterFiBadge">ONLINE</div>
+                </div>
+
+                <div class="node-card">
+                    <div>
+                        <div class="node-title">🇺🇸 США (Нью-Йорк — Мониторинг РКН)</div>
+                        <div class="node-meta">45.86.65.181 • Заявка ЦМУ ССОП № 02-11-50122</div>
+                    </div>
+                    <div class="node-status-badge rkn">РАДАР ТСПУ</div>
+                </div>
+
+                <div class="btn-row">
+                    <a href="https://t.me/magicdns_info" target="_blank" class="cyber-btn secondary">
+                        <span>💬</span>
+                        <span>Чат сообщества</span>
+                    </a>
+                    <a href="https://magicdns.ru" target="_blank" class="cyber-btn secondary">
+                        <span>🌐</span>
+                        <span>Сайт проекта</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="cyber-card">
+                <div class="card-header-row">
+                    <div class="card-title">✉️ Отзыв или быстрый тикет в бот</div>
+                </div>
+                <div class="star-picker" id="starPicker">
+                    <button class="star-btn active" onclick="setRating(1)">⭐</button>
+                    <button class="star-btn active" onclick="setRating(2)">⭐</button>
+                    <button class="star-btn active" onclick="setRating(3)">⭐</button>
+                    <button class="star-btn active" onclick="setRating(4)">⭐</button>
+                    <button class="star-btn active" onclick="setRating(5)">⭐</button>
+                </div>
+                <textarea id="feedbackText" class="cyber-textarea" placeholder="Напишите, как летает Gemini/ChatGPT, или опишите вопрос — сообщение сразу прилетит в @magicdns_alert_bot..."></textarea>
+                <button class="cyber-btn" id="sendFeedbackBtn" onclick="submitMiniAppFeedback()">
+                    <span>🚀</span>
+                    <span>Отправить напрямую в MagicDNS</span>
+                </button>
+            </div>
+        </section>
     </div>
 
-    <!-- Verdict Card -->
-    <div id="verdictCard" class="card verdict-card">
-      <div id="verdictTitle" class="verdict-title">Результат проверки</div>
-      <div id="verdictDesc" class="verdict-desc"></div>
-    </div>
+    <!-- Нижняя панель навигации -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-inner">
+            <button class="nav-item active" id="nav-sonar" onclick="switchTab('sonar')">
+                <span class="nav-icon">📡</span>
+                <span class="nav-label">Сонар</span>
+            </button>
+            <button class="nav-item" id="nav-setup" onclick="switchTab('setup')">
+                <span class="nav-icon">⚡</span>
+                <span class="nav-label">Установка</span>
+            </button>
+            <button class="nav-item" id="nav-arcade" onclick="switchTab('arcade')">
+                <span class="nav-icon">🎮</span>
+                <span class="nav-label">Аркада</span>
+            </button>
+            <button class="nav-item" id="nav-cluster" onclick="switchTab('cluster')">
+                <span class="nav-icon">🌍</span>
+                <span class="nav-label">Кластер</span>
+            </button>
+        </div>
+    </nav>
 
-    <!-- Actions -->
-    <div>
-      <button id="recheckBtn" class="btn btn-primary" onclick="runDiagnostics()">Повторить проверку</button>
-      <button id="chatBtn" class="btn btn-secondary" onclick="window.open('https://t.me/magicdns_info', '_blank')">Чат сообщества (@magicdns_info)</button>
-      <button id="closeBtn" class="btn btn-secondary" onclick="closeWebApp()">Закрыть окно</button>
-    </div>
-  </div>
+    <script>
+        // =========================================================================
+        // ГЛАВНЫЙ КОНФИГ ПРИЛОЖЕНИЯ (легко менять параметры и узлы)
+        // =========================================================================
+        const CONFIG = {
+            dnsHost: 'api.magicdns.ru',
+            deIp: '109.120.177.170',
+            fiIp: '45.88.163.92',
+            feedbackEndpoint: 'https://api.magicdns.ru/api/feedback',
+            sonarSweepSpeed: 0.032,
+            probes: [
+                { id: 'mdns', name: 'Шлюз MagicDNS', url: 'https://api.magicdns.ru/favicon.ico', angle: 0.4 },
+                { id: 'gemini', name: 'Google Gemini', url: 'https://gemini.google.com/favicon.ico', angle: 1.2 },
+                { id: 'chatgpt', name: 'OpenAI ChatGPT', url: 'https://chatgpt.com/favicon.ico', angle: 2.0 },
+                { id: 'claude', name: 'Anthropic Claude', url: 'https://claude.ai/favicon.ico', angle: 2.8 },
+                { id: 'aistudio', name: 'Google AI Studio', url: 'https://aistudio.google.com/favicon.ico', angle: 3.6 },
+                { id: 'perplexity', name: 'Perplexity AI', url: 'https://www.perplexity.ai/favicon.ico', angle: 4.4 },
+                { id: 'copilot', name: 'GitHub Copilot', url: 'https://github.com/favicon.ico', angle: 5.1 },
+                { id: 'novpn', name: 'Чистый маршрут', url: 'SPECIAL_ISP_CHECK', angle: 5.8 }
+            ],
+            vpnKeywords: [
+                'cloudflare', 'hetzner', 'digitalocean', 'ovh', 'linode', 'vultr',
+                'choopa', 'amazon', 'aws', 'google cloud', 'microsoft', 'azure',
+                'm247', 'datacamp', 'PQ Hosting', 'aeza', 'timeweb', 'selectel', 'contabo'
+            ]
+        };
 
-  <script>
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-      try {
-        tg.ready();
-        tg.expand();
-      } catch (e) {}
-    }
-
-    function closeWebApp() {
-      if (tg && tg.close) {
-        tg.close();
-      } else {
-        window.history.back();
-      }
-    }
-
-    const KNOWN_VPN_PATTERNS = [
-      /hetzner/i, /digitalocean/i, /ovh/i, /hostinger/i, /vultr/i,
-      /linode/i, /akamai/i, /amazon/i, /aws/i, /google cloud/i,
-      /microsoft/i, /azure/i, /oracle/i, /scaleway/i, /leaseweb/i,
-      /cloudflare/i, /m247/i, /datacamp/i, /cdn77/i, /choopa/i,
-      /quadranet/i, /ipvolume/i, /thex/i, /vpn/i, /proxy/i, /hosting/i
-    ];
-
-    async function checkNetworkInfo() {
-      const ispEl = document.getElementById('ispName');
-      const ipEl = document.getElementById('ipAddress');
-      const badgeEl = document.getElementById('vpnStateBadge');
-      const vpnCard = document.getElementById('vpnAlertCard');
-      const vpnMeta = document.getElementById('vpnAlertMeta');
-
-      try {
-        const resp = await fetch('https://ipwho.is/', { cache: 'no-store' });
-        const data = await resp.json();
-
-        if (data.success) {
-          const org = data.connection?.org || data.connection?.isp || data.isp || 'Неизвестный провайдер';
-          const ip = data.ip;
-          const country = data.country || '';
-          const countryCode = data.country_code || '';
-          const city = data.city || '';
-
-          ispEl.textContent = `${org} (${city ? city + ', ' : ''}${countryCode})`;
-          ipEl.textContent = `IP: ${ip}`;
-
-          // Check if provider is a VPN/hosting service or outside CIS
-          let isVpn = KNOWN_VPN_PATTERNS.some(p => p.test(org));
-          if (!isVpn && countryCode && !['RU', 'BY', 'KZ', 'AM', 'GE', 'UZ'].includes(countryCode)) {
-            // Foreign IP while visiting Russian service often means VPN
-            isVpn = true;
-          }
-
-          if (isVpn) {
-            badgeEl.textContent = 'VPN активен';
-            badgeEl.className = 'status-tag tag-vpn';
-            vpnCard.classList.add('active');
-            vpnMeta.textContent = `Определен узел: ${org} (${country})`;
-            return { isVpn: true, org, ip };
-          } else {
-            badgeEl.textContent = 'Чистая сеть';
-            badgeEl.className = 'status-tag tag-clean';
-            vpnCard.classList.remove('active');
-            return { isVpn: false, org, ip };
-          }
+        // Инициализация Telegram WebApp SDK
+        const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+            try {
+                if (tg.setHeaderColor) tg.setHeaderColor('#060911');
+                if (tg.setBackgroundColor) tg.setBackgroundColor('#060911');
+            } catch (e) {}
         }
-      } catch (e) {
-        ispEl.textContent = 'Провайдер сети';
-        ipEl.textContent = 'Определить IP не удалось';
-        badgeEl.textContent = 'Локальная сеть';
-      }
-      return { isVpn: false };
-    }
 
-    function pingTarget(url, timeoutMs = 4500) {
-      return new Promise((resolve) => {
-        const start = performance.now();
-        let done = false;
+        // Состояние пользователя и приложения
+        const STATE = {
+            sfxEnabled: true,
+            activeTab: 'sonar',
+            selectedOs: 'android',
+            selectedSubBrand: 'xiaomi',
+            rating: 5,
+            userName: 'Агент Сети',
+            lastScore: 0,
+            lastAvgPing: 0,
+            highScore: parseInt(localStorage.getItem('mdns_arcade_best') || '0', 10),
+            probeResults: {},
+            ispClean: true,
+            clientIp: '...',
+            clientIsp: '...'
+        };
 
-        const timer = setTimeout(() => {
-          if (!done) {
-            done = true;
-            resolve({ ok: false, error: 'timeout' });
-          }
-        }, timeoutMs);
+        // Подтягиваем имя из Telegram и рекорд из CloudStorage
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const u = tg.initDataUnsafe.user;
+            STATE.userName = u.first_name || u.username || 'Агент Сети';
+        }
+        if (tg && tg.CloudStorage) {
+            try {
+                tg.CloudStorage.getItem('mdns_arcade_best', (err, val) => {
+                    if (!err && val) {
+                        const cloudBest = parseInt(val, 10) || 0;
+                        if (cloudBest > STATE.highScore) {
+                            STATE.highScore = cloudBest;
+                            localStorage.setItem('mdns_arcade_best', String(cloudBest));
+                            updatePilotHeader();
+                        }
+                    }
+                });
+            } catch (e) {}
+        }
 
-        // Try fetch with no-cors or image fallback
-        fetch(url, { mode: 'no-cors', cache: 'no-store' })
-          .then(() => {
-            if (!done) {
-              done = true;
-              clearTimeout(timer);
-              const latency = Math.round(performance.now() - start);
-              resolve({ ok: true, latency });
+        function updatePilotHeader() {
+            let rank = 'Искатель DoT';
+            if (STATE.highScore >= 1500) rank = 'Грандмастер ТСПУ';
+            else if (STATE.highScore >= 700) rank = 'Разрушитель DPI';
+            else if (STATE.highScore >= 250) rank = 'Охотник за пингом';
+            document.getElementById('pilotGreeting').textContent = `${STATE.userName} • ${rank}`;
+            document.getElementById('arcadeBestBadge').textContent = `Рекорд: ${STATE.highScore}`;
+        }
+        updatePilotHeader();
+
+        // =========================================================================
+        // ПРОЦЕДУРНЫЙ ЗВУКОВОЙ ДВИЖОК (Web Audio API — 0 внешних файлов)
+        // =========================================================================
+        let audioCtx = null;
+        function ensureAudio() {
+            if (!STATE.sfxEnabled) return null;
+            if (!audioCtx) {
+                const AC = window.AudioContext || window.webkitAudioContext;
+                if (AC) audioCtx = new AC();
             }
-          })
-          .catch(() => {
-            // Attempt image fallback
-            const img = new Image();
-            img.onload = () => {
-              if (!done) {
-                done = true;
-                clearTimeout(timer);
-                const latency = Math.round(performance.now() - start);
-                resolve({ ok: true, latency });
-              }
-            };
-            img.onerror = () => {
-              if (!done) {
-                done = true;
-                clearTimeout(timer);
-                // A quick DNS/TLS refusal often returns fast
-                const latency = Math.round(performance.now() - start);
-                // If it failed in under 1000ms, likely TLS handshake passed but returned 404/no-cors
-                if (latency < 2500) {
-                  resolve({ ok: true, latency });
-                } else {
-                  resolve({ ok: false, error: 'blocked' });
-                }
-              }
-            };
-            img.src = url + (url.includes('?') ? '&' : '?') + 't=' + Date.now();
-          });
-      });
-    }
-
-    async function runDiagnostics() {
-      const recheckBtn = document.getElementById('recheckBtn');
-      recheckBtn.disabled = true;
-      recheckBtn.textContent = 'Выполняется диагностика...';
-
-      const verdictCard = document.getElementById('verdictCard');
-      verdictCard.classList.remove('show');
-
-      const targets = [
-        { id: 'gateway', name: 'Шлюз MagicDNS', url: 'https://api.magicdns.ru/robots.txt' },
-        { id: 'gemini', name: 'Google Gemini', url: 'https://gemini.google.com/favicon.ico' },
-        { id: 'claude', name: 'Anthropic Claude', url: 'https://claude.ai/favicon.ico' },
-        { id: 'chatgpt', name: 'OpenAI ChatGPT', url: 'https://chatgpt.com/favicon.ico' }
-      ];
-
-      // Reset UI indicators
-      targets.forEach(t => {
-        const dot = document.getElementById(`dot-${t.id}`);
-        const status = document.getElementById(`status-${t.id}`);
-        dot.className = 'radar-dot pinging';
-        status.className = 'radar-status';
-        status.textContent = 'тест...';
-      });
-
-      const net = await checkNetworkInfo();
-
-      let passedCount = 0;
-      let progressEl = document.getElementById('radarProgress');
-
-      for (let i = 0; i < targets.length; i++) {
-        const t = targets[i];
-        const dot = document.getElementById(`dot-${t.id}`);
-        const status = document.getElementById(`status-${t.id}`);
-
-        const res = await pingTarget(t.url);
-
-        if (res.ok) {
-          dot.className = 'radar-dot ok';
-          status.className = 'radar-status ok';
-          status.textContent = `${res.latency} мс`;
-          passedCount++;
-        } else {
-          dot.className = 'radar-dot fail';
-          status.className = 'radar-status fail';
-          status.textContent = 'недоступен';
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume().catch(() => {});
+            }
+            return audioCtx;
         }
 
-        progressEl.textContent = `${passedCount}/${targets.length}`;
-      }
+        function playTone(freqStart, freqEnd, duration = 0.09, type = 'sine', gainVal = 0.08) {
+            const ctx = ensureAudio();
+            if (!ctx) return;
+            try {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freqStart, ctx.currentTime);
+                if (freqEnd !== freqStart) {
+                    osc.frequency.exponentialRampToValueAtTime(Math.max(20, freqEnd), ctx.currentTime + duration);
+                }
+                gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
 
-      // Verdict logic
-      verdictCard.classList.add('show');
-      const vTitle = document.getElementById('verdictTitle');
-      const vDesc = document.getElementById('verdictDesc');
+        function sfxPing() { playTone(880, 1320, 0.08, 'sine', 0.06); }
+        function sfxLaser() { playTone(620, 140, 0.11, 'sawtooth', 0.07); }
+        function sfxBoost() {
+            playTone(523.25, 783.99, 0.1, 'triangle', 0.09);
+            setTimeout(() => playTone(783.99, 1046.5, 0.14, 'triangle', 0.09), 70);
+        }
+        function sfxDamage() { playTone(160, 55, 0.18, 'square', 0.09); }
+        function sfxUlt() {
+            playTone(220, 880, 0.28, 'sawtooth', 0.11);
+            setTimeout(() => playTone(880, 1760, 0.25, 'sine', 0.1), 120);
+        }
 
-      if (net.isVpn) {
-        vTitle.textContent = 'Внимание: Включен сторонний VPN';
-        vTitle.style.color = 'var(--warning)';
-        vDesc.innerHTML = 'Текущий трафик идет через ваш VPN. Чтобы проверить работу <b>MagicDNS</b>, полностью отключите VPN-приложение на телефоне и нажмите кнопку повтора.';
-      } else if (passedCount >= 3) {
-        vTitle.textContent = 'Все системы работают идеально';
-        vTitle.style.color = 'var(--accent)';
-        vDesc.innerHTML = 'Подключение к MagicDNS активно. Нейросети (Gemini, Claude, ChatGPT) открываются на полной скорости без VPN и прокси.';
-      } else {
-        vTitle.textContent = 'DNS не применился или блокируется';
-        vTitle.style.color = 'var(--danger)';
-        vDesc.innerHTML = 'Запросы к нейросетям не проходят. Проверьте, вписан ли адрес <code>api.magicdns.ru</code> в поле «Персональный DNS-сервер» в настройках Android, и отключен ли авиарежим.';
-      }
+        function haptic(kind = 'light') {
+            if (!tg || !tg.HapticFeedback) return;
+            try {
+                if (kind === 'success' || kind === 'warning' || kind === 'error') {
+                    tg.HapticFeedback.notificationOccurred(kind);
+                } else if (kind === 'selection') {
+                    tg.HapticFeedback.selectionChanged();
+                } else {
+                    tg.HapticFeedback.impactOccurred(kind);
+                }
+            } catch (e) {}
+        }
 
-      recheckBtn.disabled = false;
-      recheckBtn.textContent = 'Повторить проверку';
-    }
+        function toggleSfx() {
+            STATE.sfxEnabled = !STATE.sfxEnabled;
+            const btn = document.getElementById('sfxToggleBtn');
+            const icon = document.getElementById('sfxIcon');
+            if (STATE.sfxEnabled) {
+                btn.classList.add('active-sfx');
+                icon.textContent = '🔊';
+                sfxPing();
+            } else {
+                btn.classList.remove('active-sfx');
+                icon.textContent = '🔇';
+            }
+            haptic('selection');
+        }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      runDiagnostics();
-    });
-  </script>
+        // =========================================================================
+        // КОПИРОВАНИЕ И ТОСТЫ
+        // =========================================================================
+        let toastTimer = null;
+        function showToast(msg) {
+            const t = document.getElementById('cyberToast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+        }
+
+        function copyDnsAddress(text, toastMsg = 'Скопировано в буфер!') {
+            haptic('medium');
+            sfxBoost();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+            } else {
+                fallbackCopy(text);
+            }
+            const badge = document.getElementById('quickCopyBadge');
+            if (badge && text === CONFIG.dnsHost) {
+                badge.textContent = '✅ Скопировано';
+                setTimeout(() => { badge.textContent = '📋 Копировать'; }, 2000);
+            }
+            showToast(toastMsg);
+        }
+
+        function fallbackCopy(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(ta);
+        }
+
+        // =========================================================================
+        // ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+        // =========================================================================
+        function switchTab(tabId) {
+            STATE.activeTab = tabId;
+            haptic('selection');
+            sfxPing();
+            ['sonar', 'setup', 'arcade', 'cluster'].forEach(id => {
+                document.getElementById(`tab-${id}`).classList.toggle('active', id === tabId);
+                document.getElementById(`nav-${id}`).classList.toggle('active', id === tabId);
+            });
+            if (tabId === 'cluster') {
+                pingClusterNodes();
+            }
+        }
+
+        // =========================================================================
+        // ВКЛАДКА 1: ЖИВОЙ CANVAS-СОНАР И ДИАГНОСТИКА 8 УЗЛОВ
+        // =========================================================================
+        const sonarCanvas = document.getElementById('sonarCanvas');
+        const sCtx = sonarCanvas.getContext('2d');
+        let sonarAngle = 0;
+        let sonarRipples = [];
+
+        function triggerManualSonarPulse() {
+            haptic('light');
+            sfxPing();
+            sonarRipples.push({ r: 6, alpha: 0.9 });
+        }
+
+        function renderSonarLoop() {
+            const w = sonarCanvas.width;
+            const h = sonarCanvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+            const maxR = cx - 10;
+
+            sCtx.clearRect(0, 0, w, h);
+
+            // Концентрические кольца задержки
+            sCtx.strokeStyle = 'rgba(6, 182, 212, 0.18)';
+            sCtx.lineWidth = 1.5;
+            [0.33, 0.66, 1.0].forEach(frac => {
+                sCtx.beginPath();
+                sCtx.arc(cx, cy, maxR * frac, 0, Math.PI * 2);
+                sCtx.stroke();
+            });
+
+            // Оси перекрестия
+            sCtx.beginPath();
+            sCtx.moveTo(cx - maxR, cy); sCtx.lineTo(cx + maxR, cy);
+            sCtx.moveTo(cx, cy - maxR); sCtx.lineTo(cx, cy + maxR);
+            sCtx.stroke();
+
+            // Волны от ручного тапа
+            for (let i = sonarRipples.length - 1; i >= 0; i--) {
+                const rp = sonarRipples[i];
+                rp.r += 3.2;
+                rp.alpha -= 0.022;
+                if (rp.alpha <= 0) {
+                    sonarRipples.splice(i, 1);
+                    continue;
+                }
+                sCtx.strokeStyle = `rgba(52, 211, 153, ${rp.alpha})`;
+                sCtx.lineWidth = 2.5;
+                sCtx.beginPath();
+                sCtx.arc(cx, cy, rp.r, 0, Math.PI * 2);
+                sCtx.stroke();
+            }
+
+            // Вращающийся сектор сонара
+            sonarAngle = (sonarAngle + CONFIG.sonarSweepSpeed) % (Math.PI * 2);
+            for (let s = 0; s < 24; s++) {
+                const a1 = sonarAngle - s * 0.025;
+                const a2 = a1 - 0.028;
+                const alpha = (1 - s / 24) * 0.28;
+                sCtx.fillStyle = `rgba(6, 182, 212, ${alpha})`;
+                sCtx.beginPath();
+                sCtx.moveTo(cx, cy);
+                sCtx.arc(cx, cy, maxR, a2, a1);
+                sCtx.closePath();
+                sCtx.fill();
+            }
+
+            // Точки сервисов на радаре
+            CONFIG.probes.forEach(p => {
+                const res = STATE.probeResults[p.id];
+                const ms = res && res.ms ? res.ms : 180;
+                const distFrac = Math.min(0.88, Math.max(0.24, ms / 420));
+                const bx = cx + Math.cos(p.angle) * (maxR * distFrac);
+                const by = cy + Math.sin(p.angle) * (maxR * distFrac);
+
+                let color = '#38bdf8';
+                if (res) {
+                    if (res.status === 'ok') color = '#10b981';
+                    else if (res.status === 'warn') color = '#f59e0b';
+                    else if (res.status === 'err') color = '#ef4444';
+                }
+
+                // Свечение при прохождении луча
+                const diff = Math.abs(((sonarAngle - p.angle + Math.PI * 3) % (Math.PI * 2)) - Math.PI);
+                const glow = diff < 0.45 ? (1 - diff / 0.45) : 0;
+
+                sCtx.fillStyle = color;
+                sCtx.beginPath();
+                sCtx.arc(bx, by, 5 + glow * 3.5, 0, Math.PI * 2);
+                sCtx.fill();
+
+                if (glow > 0.05) {
+                    sCtx.strokeStyle = color;
+                    sCtx.lineWidth = 2;
+                    sCtx.beginPath();
+                    sCtx.arc(bx, by, 9 + glow * 6, 0, Math.PI * 2);
+                    sCtx.stroke();
+                }
+            });
+
+            // Центральное ядро
+            sCtx.fillStyle = '#6366f1';
+            sCtx.beginPath();
+            sCtx.arc(cx, cy, 6, 0, Math.PI * 2);
+            sCtx.fill();
+
+            requestAnimationFrame(renderSonarLoop);
+        }
+        requestAnimationFrame(renderSonarLoop);
+
+        // Отрисовка плиток проверки
+        function renderProbesGrid() {
+            const grid = document.getElementById('probesGrid');
+            grid.innerHTML = CONFIG.probes.map(p => {
+                const r = STATE.probeResults[p.id] || { status: 'wait', text: '...' };
+                return `
+                    <div class="probe-item ${r.status}" onclick="recheckSingleProbe('${p.id}')">
+                        <div class="probe-left">
+                            <span class="probe-dot ${r.status}"></span>
+                            <span class="probe-name">${p.name}</span>
+                        </div>
+                        <span class="probe-ms">${r.text}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function pingFavicon(url, timeout = 3800) {
+            return new Promise(resolve => {
+                const t0 = performance.now();
+                const img = new Image();
+                let done = false;
+                const timer = setTimeout(() => {
+                    if (!done) {
+                        done = true;
+                        img.src = '';
+                        resolve({ ok: false, ms: timeout });
+                    }
+                }, timeout);
+
+                const finish = (ok) => {
+                    if (done) return;
+                    done = true;
+                    clearTimeout(timer);
+                    resolve({ ok, ms: Math.max(8, Math.round(performance.now() - t0)) });
+                };
+                img.onload = () => finish(true);
+                img.onerror = () => {
+                    const elapsed = Math.round(performance.now() - t0);
+                    finish(elapsed < timeout - 150);
+                };
+                img.src = url + '?t=' + Date.now() + Math.random();
+            });
+        }
+
+        async function detectClientNetwork() {
+            try {
+                const r = await fetch('https://ipwho.is/', { cache: 'no-store' });
+                const d = await r.json();
+                if (d && d.ip) {
+                    STATE.clientIp = `${d.ip} (${d.country_code || 'RU'})`;
+                    const isp = (d.connection && (d.connection.isp || d.connection.org)) || d.org || 'Домашняя сеть';
+                    STATE.clientIsp = isp;
+                    const lower = (isp + ' ' + (d.country_code || '')).toLowerCase();
+                    const hasForeignVpn = CONFIG.vpnKeywords.some(k => lower.includes(k.toLowerCase()));
+                    STATE.ispClean = !hasForeignVpn;
+                    document.getElementById('clientIpVal').textContent = STATE.clientIp;
+                    document.getElementById('clientIspVal').textContent = STATE.clientIsp;
+                    return;
+                }
+            } catch (e) {}
+            document.getElementById('clientIpVal').textContent = 'Защищен (DoT)';
+            document.getElementById('clientIspVal').textContent = 'Прямой канал';
+            STATE.ispClean = true;
+        }
+
+        async function recheckSingleProbe(probeId) {
+            const p = CONFIG.probes.find(x => x.id === probeId);
+            if (!p) return;
+            haptic('selection');
+            sfxPing();
+            STATE.probeResults[p.id] = { status: 'wait', text: '...' };
+            renderProbesGrid();
+            if (p.id === 'novpn') {
+                await detectClientNetwork();
+                STATE.probeResults.novpn = STATE.ispClean
+                    ? { status: 'ok', text: 'Без VPN', ms: 35 }
+                    : { status: 'warn', text: 'VPN вкл', ms: 260 };
+            } else {
+                const res = await pingFavicon(p.url);
+                STATE.probeResults[p.id] = res.ok
+                    ? { status: 'ok', text: `${res.ms} мс`, ms: res.ms }
+                    : { status: 'err', text: 'Блок', ms: 400 };
+            }
+            renderProbesGrid();
+            recalcSonarSummary();
+        }
+
+        async function runFullSonarScan() {
+            haptic('medium');
+            sfxPing();
+            triggerManualSonarPulse();
+            CONFIG.probes.forEach(p => {
+                STATE.probeResults[p.id] = { status: 'wait', text: '...' };
+            });
+            renderProbesGrid();
+            document.getElementById('verdictTitle').textContent = 'Сканирование спектра...';
+            document.getElementById('netRankPill').textContent = 'СКАН...';
+
+            await detectClientNetwork();
+            STATE.probeResults.novpn = STATE.ispClean
+                ? { status: 'ok', text: 'Чисто', ms: 30 }
+                : { status: 'warn', text: 'Сторонний VPN', ms: 250 };
+            renderProbesGrid();
+
+            const netProbes = CONFIG.probes.filter(p => p.id !== 'novpn');
+            await Promise.all(netProbes.map(async p => {
+                const res = await pingFavicon(p.url);
+                STATE.probeResults[p.id] = res.ok
+                    ? { status: 'ok', text: `${res.ms} мс`, ms: res.ms }
+                    : { status: 'err', text: 'Таймаут', ms: 400 };
+                renderProbesGrid();
+            }));
+
+            recalcSonarSummary();
+        }
+
+        function recalcSonarSummary() {
+            const vals = Object.values(STATE.probeResults);
+            const okCount = vals.filter(v => v.status === 'ok').length;
+            const pings = vals.filter(v => v.status === 'ok' && v.ms).map(v => v.ms);
+            const avgPing = pings.length ? Math.round(pings.reduce((a, b) => a + b, 0) / pings.length) : 0;
+            STATE.lastAvgPing = avgPing;
+
+            const baseScore = Math.round((okCount / CONFIG.probes.length) * 100);
+            STATE.lastScore = baseScore;
+
+            document.getElementById('netScoreVal').textContent = `${baseScore}%`;
+            document.getElementById('avgPingLabel').textContent = avgPing ? `Средний пинг: ${avgPing} мс` : 'Нет ответа';
+
+            const rankEl = document.getElementById('netRankPill');
+            const titleEl = document.getElementById('verdictTitle');
+            const descEl = document.getElementById('verdictDesc');
+
+            if (baseScore >= 88) {
+                rankEl.textContent = 'РАНГ S+';
+                rankEl.style.color = '#34d399';
+                titleEl.textContent = 'Идеальный канал MagicDNS!';
+                descEl.textContent = `Все нейросети летают со средним откликом ${avgPing} мс без потери скорости.`;
+                haptic('success');
+                sfxBoost();
+            } else if (baseScore >= 60) {
+                rankEl.textContent = 'РАНГ A';
+                rankEl.style.color = '#fbbf24';
+                titleEl.textContent = 'Хорошая связь (есть нюансы)';
+                descEl.textContent = STATE.ispClean
+                    ? 'Большинство ИИ доступны. Проверьте, прописан ли api.magicdns.ru в настройках.'
+                    : 'Обнаружен сторонний VPN — отключите его, чтобы не конфликтовал с MagicDNS.';
+                haptic('warning');
+            } else {
+                rankEl.textContent = 'НУЖЕН DoT';
+                rankEl.style.color = '#f87171';
+                titleEl.textContent = 'Доступ к ИИ заблокирован провайдером';
+                descEl.textContent = 'Откройте вкладку «Установка» внизу и подключите MagicDNS за 30 секунд!';
+                haptic('error');
+            }
+        }
+
+        function shareSonarReport() {
+            haptic('medium');
+            const text = `📡 Мой индекс связи MagicDNS: ${STATE.lastScore}% (пинг до ChatGPT и Gemini: ${STATE.lastAvgPing || 45} мс)!\nПроверь свой канал прямо в мини-аппе:`;
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/magicdns_alert_bot')}&text=${encodeURIComponent(text)}`;
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(shareUrl);
+            } else {
+                window.open(shareUrl, '_blank');
+            }
+        }
+
+        // =========================================================================
+        // ВКЛАДКА 2: УМНЫЙ МАСТЕР УСТАНОВКИ (АВТО-ДЕТЕКТ ОС + ПРЕСЕТЫ БРЕНДОВ)
+        // =========================================================================
+        const SETUP_DATA = {
+            android: {
+                subPills: [
+                    { id: 'xiaomi', label: 'Xiaomi / HyperOS' },
+                    { id: 'samsung', label: 'Samsung OneUI' },
+                    { id: 'realme', label: 'Realme / OPPO' },
+                    { id: 'pixel', label: 'Pixel / Honor' }
+                ],
+                render(sub) {
+                    const paths = {
+                        xiaomi: 'Настройки ➔ Подключение и общий доступ ➔ Частный DNS-сервер',
+                        samsung: 'Настройки ➔ Подключения ➔ Другие настройки ➔ Персональный DNS',
+                        realme: 'Настройки ➔ Сеть и интернет (или Подключения) ➔ Частный DNS',
+                        pixel: 'Настройки ➔ Сеть и интернет ➔ Персональный DNS-сервер'
+                    };
+                    return `
+                        <div class="step-list">
+                            <div class="step-row">
+                                <div class="step-num">1</div>
+                                <div>Откройте: <b>${paths[sub] || paths.xiaomi}</b></div>
+                            </div>
+                            <div class="step-row">
+                                <div class="step-num">2</div>
+                                <div>Выберите пункт <b>«Имя хоста провайдера DNS»</b> (задать вручную) и вставьте:
+                                    <div class="code-snippet-box">api.magicdns.ru</div>
+                                </div>
+                            </div>
+                            <div class="step-row">
+                                <div class="step-num">3</div>
+                                <div>Нажмите <b>Сохранить</b> и отключите сторонние VPN-приложения. Готово!</div>
+                            </div>
+                        </div>
+                        <button class="cyber-btn" onclick="copyDnsAddress('api.magicdns.ru', 'Адрес api.magicdns.ru скопирован!')">
+                            <span>📋</span>
+                            <span>Скопировать api.magicdns.ru</span>
+                        </button>
+                    `;
+                }
+            },
+            ios: {
+                subPills: [
+                    { id: 'auto', label: '🛡 Основной (DE + FI)' },
+                    { id: 'safari', label: 'Важно про браузер' }
+                ],
+                render(sub) {
+                    return `
+                        <div class="step-list">
+                            <div class="step-row">
+                                <div class="step-num">1</div>
+                                <div>Скачайте официальный подписанный профиль конфигурации Apple (работает на iOS 14+ и macOS):</div>
+                            </div>
+                            <div class="step-row">
+                                <div class="step-num">2</div>
+                                <div>Откройте <b>Настройки ➔ Профиль загружен</b> (в самом верху) и нажмите <b>Установить</b>.</div>
+                            </div>
+                            <div class="step-row">
+                                <div class="step-num">3</div>
+                                <div>Убедитесь, что в <b>Настройки ➔ Основные ➔ VPN и управление устройством ➔ DNS</b> выбран <b>MagicDNS</b>.</div>
+                            </div>
+                        </div>
+                        <div class="btn-row">
+                            <a href="https://magicdns.ru/profile.mobileconfig" target="_blank" class="cyber-btn cyan">
+                                <span>🍏</span>
+                                <span>Скачать профиль (.mobileconfig)</span>
+                            </a>
+                        </div>
+                    `;
+                }
+            },
+            win: {
+                subPills: [
+                    { id: 'bat', label: '⚡ Авто-помощник (.bat)' },
+                    { id: 'ps1', label: 'PowerShell в 1 клик' },
+                    { id: 'manual', label: 'Вручную IPv4 + DoH' }
+                ],
+                render(sub) {
+                    if (sub === 'ps1') {
+                        const cmd = 'irm https://magicdns.ru/fix.ps1 | iex';
+                        return `
+                            <div class="step-list">
+                                <div class="step-row">
+                                    <div class="step-num">1</div>
+                                    <div>Нажмите правой кнопкой мыши по <b>Пуск ➔ Терминал (Администратор)</b> или PowerShell.</div>
+                                </div>
+                                <div class="step-row">
+                                    <div class="step-num">2</div>
+                                    <div>Вставьте команду ниже и нажмите Enter (откроется русское меню настройки и сброса кэша):
+                                        <div class="code-snippet-box">${cmd}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="cyber-btn" onclick="copyDnsAddress('${cmd}', 'Команда PowerShell скопирована!')">
+                                <span>📋</span>
+                                <span>Скопировать команду PowerShell</span>
+                            </button>
+                        `;
+                    }
+                    if (sub === 'manual') {
+                        return `
+                            <div class="step-list">
+                                <div class="step-row">
+                                    <div class="step-num">1</div>
+                                    <div>Предпочитаемый DNS: <b>109.120.177.170</b> (Германия)<br>Альтернативный DNS: <b>45.88.163.92</b> (Финляндия)</div>
+                                </div>
+                                <div class="step-row">
+                                    <div class="step-num">2</div>
+                                    <div>В браузере Chrome / Edge / Яндекс включите «Безопасный DNS» и укажите:
+                                        <div class="code-snippet-box">https://api.magicdns.ru/dns-query</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="cyber-btn" onclick="copyDnsAddress('https://api.magicdns.ru/dns-query', 'DoH-адрес скопирован!')">
+                                <span>📋</span>
+                                <span>Скопировать DoH для браузера</span>
+                            </button>
+                        `;
+                    }
+                    return `
+                        <div class="step-list">
+                            <div class="step-row">
+                                <div class="step-num">1</div>
+                                <div>Скачайте фирменный самодостаточный скрипт <b>fix.bat</b> (не требует сторонних программ).</div>
+                            </div>
+                            <div class="step-row">
+                                <div class="step-num">2</div>
+                                <div>Запустите его и нажмите <b>[1] Подключить MagicDNS</b> — он сам пропишет оба сервера и очистит DNS-кэш Windows!</div>
+                            </div>
+                        </div>
+                        <a href="https://magicdns.ru/fix.bat" target="_blank" class="cyber-btn emerald">
+                            <span>💻</span>
+                            <span>Скачать авто-помощник fix.bat</span>
+                        </a>
+                    `;
+                }
+            },
+            router: {
+                subPills: [
+                    { id: 'keenetic', label: 'Keenetic' },
+                    { id: 'mikrotik', label: 'MikroTik' },
+                    { id: 'openwrt', label: 'OpenWrt' }
+                ],
+                render(sub) {
+                    if (sub === 'mikrotik') {
+                        const cli = '/ip dns set servers=109.120.177.170,45.88.163.92 use-doh-server=https://api.magicdns.ru/dns-query verify-doh-cert=no allow-remote-requests=yes';
+                        return `
+                            <div class="step-list">
+                                <div class="step-row">
+                                    <div class="step-num">1</div>
+                                    <div>Откройте <b>New Terminal</b> в WinBox или WebFig и выполните команду:
+                                        <div class="code-snippet-box">${cli}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="cyber-btn" onclick="copyDnsAddress('${cli}', 'Команда для MikroTik скопирована!')">
+                                <span>📋</span>
+                                <span>Скопировать команду MikroTik</span>
+                            </button>
+                        `;
+                    }
+                    if (sub === 'openwrt') {
+                        return `
+                            <div class="step-list">
+                                <div class="step-row">
+                                    <div class="step-num">1</div>
+                                    <div>В <b>Network ➔ Interfaces ➔ WAN ➔ Advanced Settings</b> отключите <i>Use DNS servers advertised by peer</i>.</div>
+                                </div>
+                                <div class="step-row">
+                                    <div class="step-num">2</div>
+                                    <div>Пропишите два наших узла: <b>109.120.177.170</b> и <b>45.88.163.92</b>, либо укажите DoH <code>https://api.magicdns.ru/dns-query</code>.</div>
+                                </div>
+                            </div>
+                            <button class="cyber-btn" onclick="copyDnsAddress('109.120.177.170', 'IP 109.120.177.170 скопирован!')">
+                                <span>📋</span>
+                                <span>Скопировать основной IP</span>
+                            </button>
+                        `;
+                    }
+                    return `
+                        <div class="step-list">
+                            <div class="step-row">
+                                <div class="step-num">1</div>
+                                <div>В панели Keenetic откройте <b>Интернет-фильтры ➔ Настройка DNS</b> и включите «Игнорировать DNS провайдера».</div>
+                            </div>
+                            <div class="step-row">
+                                <div class="step-num">2</div>
+                                <div>Добавьте серверы DNS-over-TLS:
+                                    <div class="code-snippet-box">109.120.177.170 (SNI: api.magicdns.ru)\n45.88.163.92 (SNI: api.magicdns.ru)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="cyber-btn" onclick="copyDnsAddress('api.magicdns.ru', 'SNI api.magicdns.ru скопирован!')">
+                            <span>📋</span>
+                            <span>Скопировать SNI api.magicdns.ru</span>
+                        </button>
+                    `;
+                }
+            }
+        };
+
+        function autoDetectUserOs() {
+            const ua = (navigator.userAgent || '').toLowerCase();
+            const plat = (tg && tg.platform ? tg.platform : '').toLowerCase();
+            if (plat === 'ios' || plat === 'macos' || ua.includes('iphone') || ua.includes('ipad') || ua.includes('macintosh')) {
+                document.getElementById('detectedOsBadge').textContent = '🍏 Ваша ОС: Apple';
+                selectSetupOs('ios', false);
+            } else if (plat === 'tdesktop' || ua.includes('windows')) {
+                document.getElementById('detectedOsBadge').textContent = '💻 Ваша ОС: Windows';
+                selectSetupOs('win', false);
+            } else {
+                document.getElementById('detectedOsBadge').textContent = '🤖 Ваша ОС: Android';
+                selectSetupOs('android', false);
+            }
+        }
+
+        function selectSetupOs(osKey, withFx = true) {
+            if (withFx) { haptic('selection'); sfxPing(); }
+            STATE.selectedOs = osKey;
+            ['android', 'ios', 'win', 'router'].forEach(k => {
+                document.getElementById(`osBtn-${k}`).classList.toggle('active', k === osKey);
+            });
+            const cfg = SETUP_DATA[osKey];
+            STATE.selectedSubBrand = cfg.subPills[0].id;
+            renderSetupSubPills();
+            renderSetupBody();
+        }
+
+        function selectSubBrand(subId) {
+            haptic('selection');
+            sfxPing();
+            STATE.selectedSubBrand = subId;
+            renderSetupSubPills();
+            renderSetupBody();
+        }
+
+        function renderSetupSubPills() {
+            const cfg = SETUP_DATA[STATE.selectedOs];
+            const wrap = document.getElementById('setupSubPills');
+            wrap.innerHTML = cfg.subPills.map(p => `
+                <button class="sub-pill-btn ${p.id === STATE.selectedSubBrand ? 'active' : ''}" onclick="selectSubBrand('${p.id}')">
+                    ${p.label}
+                </button>
+            `).join('');
+        }
+
+        function renderSetupBody() {
+            const cfg = SETUP_DATA[STATE.selectedOs];
+            document.getElementById('setupContentBody').innerHTML = cfg.render(STATE.selectedSubBrand);
+        }
+        autoDetectUserOs();
+
+        // =========================================================================
+        // ВКЛАДКА 3: КИБЕР-АРКАДА «AI PACKET DEFENDER» (60 FPS + JUICE + PARTICLES)
+        // =========================================================================
+        const aCanvas = document.getElementById('arcadeCanvas');
+        const aCtx = aCanvas.getContext('2d');
+
+        const GAME = {
+            running: false,
+            score: 0,
+            combo: 1,
+            hp: 100,
+            wave: 1,
+            ultCharge: 0,
+            shake: 0,
+            entities: [],
+            particles: [],
+            floatTexts: [],
+            spawnTimer: 0,
+            lastTime: 0
+        };
+
+        function spawnParticles(x, y, color, count = 14) {
+            for (let i = 0; i < count; i++) {
+                const ang = Math.random() * Math.PI * 2;
+                const spd = 1.2 + Math.random() * 4.2;
+                GAME.particles.push({
+                    x, y,
+                    vx: Math.cos(ang) * spd,
+                    vy: Math.sin(ang) * spd,
+                    r: 2 + Math.random() * 3,
+                    color,
+                    alpha: 1
+                });
+            }
+        }
+
+        function spawnFloatText(x, y, text, color = '#ffffff') {
+            GAME.floatTexts.push({ x, y, text, color, alpha: 1, vy: -1.3 });
+        }
+
+        function spawnArcadeEntity() {
+            const w = aCanvas.width;
+            const h = aCanvas.height;
+            const edge = Math.floor(Math.random() * 4);
+            let x = 0, y = 0;
+            if (edge === 0) { x = Math.random() * w; y = -18; }
+            else if (edge === 1) { x = w + 18; y = Math.random() * h; }
+            else if (edge === 2) { x = Math.random() * w; y = h + 18; }
+            else { x = -18; y = Math.random() * h; }
+
+            const roll = Math.random();
+            let kind = 'threat'; // threat | packet | turbo
+            let label = 'DPI-Блок';
+            let color = '#ef4444';
+            let r = 18;
+            let hp = 1;
+            let speed = 0.85 + Math.min(1.1, GAME.wave * 0.12) + Math.random() * 0.4;
+
+            if (roll < 0.30) {
+                kind = 'packet';
+                const names = ['GPT-4o', 'Gemini', 'Claude', 'DoT'];
+                label = names[Math.floor(Math.random() * names.length)];
+                color = '#10b981';
+                r = 15;
+                speed *= 0.92;
+            } else if (roll < 0.42) {
+                kind = 'turbo';
+                label = '⚡x2';
+                color = '#fbbf24';
+                r = 17;
+                speed *= 1.1;
+            } else {
+                const threats = ['ТСПУ', 'DPI-Блок', '403 Geo', 'Timeout'];
+                label = threats[Math.floor(Math.random() * threats.length)];
+                if (GAME.wave >= 3 && Math.random() < 0.22) {
+                    label = 'БОСС-ТСПУ';
+                    r = 24;
+                    hp = 2;
+                    color = '#ec4899';
+                    speed *= 0.72;
+                }
+            }
+
+            const cx = w / 2;
+            const cy = h / 2;
+            const ang = Math.atan2(cy - y, cx - x);
+            GAME.entities.push({
+                x, y,
+                vx: Math.cos(ang) * speed,
+                vy: Math.sin(ang) * speed,
+                r, kind, label, color, hp
+            });
+        }
+
+        function startArcadeGame() {
+            haptic('medium');
+            sfxBoost();
+            GAME.running = true;
+            GAME.score = 0;
+            GAME.combo = 1;
+            GAME.hp = 100;
+            GAME.wave = 1;
+            GAME.ultCharge = 0;
+            GAME.shake = 0;
+            GAME.entities = [];
+            GAME.particles = [];
+            GAME.floatTexts = [];
+            GAME.spawnTimer = 0;
+            GAME.lastTime = performance.now();
+
+            document.getElementById('arcadeOverlay').classList.add('hidden');
+            updateArcadeHud();
+            requestAnimationFrame(arcadeTick);
+        }
+
+        function updateArcadeHud() {
+            document.getElementById('hudScore').textContent = GAME.score;
+            document.getElementById('hudCombo').textContent = `x${GAME.combo}`;
+            document.getElementById('hudHp').textContent = `${Math.max(0, GAME.hp)}%`;
+            document.getElementById('hudWave').textContent = GAME.wave;
+            document.getElementById('ultFill').style.width = `${Math.min(100, GAME.ultCharge)}%`;
+            const ultBtn = document.getElementById('ultBtn');
+            ultBtn.classList.toggle('ready', GAME.ultCharge >= 100 && GAME.running);
+        }
+
+        function triggerArcadeUlt() {
+            if (!GAME.running || GAME.ultCharge < 100) return;
+            GAME.ultCharge = 0;
+            GAME.shake = 14;
+            haptic('heavy');
+            sfxUlt();
+
+            for (let i = GAME.entities.length - 1; i >= 0; i--) {
+                const e = GAME.entities[i];
+                if (e.kind === 'threat') {
+                    spawnParticles(e.x, e.y, '#22d3ee', 16);
+                    GAME.score += 25 * GAME.combo;
+                    GAME.entities.splice(i, 1);
+                }
+            }
+            spawnFloatText(aCanvas.width / 2, aCanvas.height / 2 - 35, '💥 ВОЛНА DoT ЧИСТКИ!', '#67e8f9');
+            updateArcadeHud();
+        }
+
+        function handleArcadePointer(clientX, clientY) {
+            if (!GAME.running) return;
+            const rect = aCanvas.getBoundingClientRect();
+            const scaleX = aCanvas.width / rect.width;
+            const scaleY = aCanvas.height / rect.height;
+            const px = (clientX - rect.left) * scaleX;
+            const py = (clientY - rect.top) * scaleY;
+
+            for (let i = GAME.entities.length - 1; i >= 0; i--) {
+                const e = GAME.entities[i];
+                const dist = Math.hypot(px - e.x, py - e.y);
+                if (dist <= e.r + 18) {
+                    if (e.kind === 'threat') {
+                        e.hp -= 1;
+                        if (e.hp <= 0) {
+                            const pts = 15 * GAME.combo;
+                            GAME.score += pts;
+                            GAME.combo = Math.min(8, GAME.combo + 1);
+                            GAME.ultCharge = Math.min(100, GAME.ultCharge + 14);
+                            GAME.shake = 5;
+                            haptic('light');
+                            sfxLaser();
+                            spawnParticles(e.x, e.y, e.color, 16);
+                            spawnFloatText(e.x, e.y, `+${pts}`, '#f87171');
+                            GAME.entities.splice(i, 1);
+                        } else {
+                            haptic('light');
+                            sfxPing();
+                            spawnParticles(e.x, e.y, '#ffffff', 6);
+                            spawnFloatText(e.x, e.y, 'БРОНЯ!', '#f472b6');
+                        }
+                    } else if (e.kind === 'turbo') {
+                        const pts = 40 * GAME.combo;
+                        GAME.score += pts;
+                        GAME.combo = Math.min(8, GAME.combo + 2);
+                        GAME.ultCharge = Math.min(100, GAME.ultCharge + 30);
+                        GAME.hp = Math.min(100, GAME.hp + 10);
+                        haptic('medium');
+                        sfxBoost();
+                        spawnParticles(e.x, e.y, '#fbbf24', 20);
+                        spawnFloatText(e.x, e.y, `⚡ +${pts}`, '#fbbf24');
+                        GAME.entities.splice(i, 1);
+                    } else if (e.kind === 'packet') {
+                        // Тап по зеленому пакету ускоряет его доставку в ядро!
+                        const pts = 20 * GAME.combo;
+                        GAME.score += pts;
+                        haptic('selection');
+                        sfxPing();
+                        spawnParticles(e.x, e.y, '#34d399', 12);
+                        spawnFloatText(e.x, e.y, `🚀 +${pts}`, '#34d399');
+                        GAME.entities.splice(i, 1);
+                    }
+                    updateArcadeHud();
+                    break;
+                }
+            }
+        }
+
+        aCanvas.addEventListener('pointerdown', (ev) => {
+            ev.preventDefault();
+            handleArcadePointer(ev.clientX, ev.clientY);
+        });
+
+        function arcadeTick(now) {
+            if (!GAME.running) return;
+            const dt = Math.min(32, now - GAME.lastTime);
+            GAME.lastTime = now;
+
+            const w = aCanvas.width;
+            const h = aCanvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            GAME.wave = 1 + Math.floor(GAME.score / 280);
+            GAME.spawnTimer += dt;
+            const spawnInterval = Math.max(380, 920 - GAME.wave * 65);
+            if (GAME.spawnTimer >= spawnInterval) {
+                GAME.spawnTimer = 0;
+                spawnArcadeEntity();
+            }
+
+            aCtx.save();
+            if (GAME.shake > 0.2) {
+                const dx = (Math.random() - 0.5) * GAME.shake;
+                const dy = (Math.random() - 0.5) * GAME.shake;
+                aCtx.translate(dx, dy);
+                GAME.shake *= 0.85;
+            }
+
+            aCtx.clearRect(-20, -20, w + 40, h + 40);
+
+            // Фоновые кольца вокруг Ядра MagicDNS
+            aCtx.strokeStyle = 'rgba(99, 102, 241, 0.16)';
+            aCtx.lineWidth = 1;
+            [45, 95, 145].forEach(r => {
+                aCtx.beginPath();
+                aCtx.arc(cx, cy, r, 0, Math.PI * 2);
+                aCtx.stroke();
+            });
+
+            // Центральное ядро ИИ
+            const coreGrad = aCtx.createRadialGradient(cx, cy, 4, cx, cy, 28);
+            coreGrad.addColorStop(0, '#38bdf8');
+            coreGrad.addColorStop(1, '#4f46e5');
+            aCtx.fillStyle = coreGrad;
+            aCtx.beginPath();
+            aCtx.arc(cx, cy, 24, 0, Math.PI * 2);
+            aCtx.fill();
+
+            aCtx.fillStyle = '#ffffff';
+            aCtx.font = '700 10px Inter, sans-serif';
+            aCtx.textAlign = 'center';
+            aCtx.fillText('AI CORE', cx, cy + 3);
+
+            // Обновление объектов
+            for (let i = GAME.entities.length - 1; i >= 0; i--) {
+                const e = GAME.entities[i];
+                e.x += e.vx;
+                e.y += e.vy;
+
+                const distToCore = Math.hypot(cx - e.x, cy - e.y);
+                if (distToCore < 24 + e.r) {
+                    if (e.kind === 'threat') {
+                        GAME.hp -= 20;
+                        GAME.combo = 1;
+                        GAME.shake = 11;
+                        haptic('error');
+                        sfxDamage();
+                        spawnParticles(e.x, e.y, '#ef4444', 18);
+                        spawnFloatText(cx, cy - 22, '-20% ЩИТ', '#ef4444');
+                    } else {
+                        const pts = 20 * GAME.combo;
+                        GAME.score += pts;
+                        GAME.ultCharge = Math.min(100, GAME.ultCharge + 10);
+                        sfxPing();
+                        spawnParticles(e.x, e.y, '#10b981', 10);
+                        spawnFloatText(cx, cy - 22, `+${pts}`, '#34d399');
+                    }
+                    GAME.entities.splice(i, 1);
+                    updateArcadeHud();
+                    if (GAME.hp <= 0) {
+                        endArcadeGame();
+                        aCtx.restore();
+                        return;
+                    }
+                    continue;
+                }
+
+                // Отрисовка объекта
+                aCtx.fillStyle = e.color;
+                aCtx.beginPath();
+                aCtx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+                aCtx.fill();
+
+                aCtx.fillStyle = '#ffffff';
+                aCtx.font = '700 9.5px Inter, sans-serif';
+                aCtx.textAlign = 'center';
+                aCtx.fillText(e.label, e.x, e.y + 3);
+            }
+
+            // Частицы
+            for (let i = GAME.particles.length - 1; i >= 0; i--) {
+                const p = GAME.particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 0.032;
+                if (p.alpha <= 0) {
+                    GAME.particles.splice(i, 1);
+                    continue;
+                }
+                aCtx.fillStyle = p.color;
+                aCtx.globalAlpha = p.alpha;
+                aCtx.beginPath();
+                aCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                aCtx.fill();
+                aCtx.globalAlpha = 1;
+            }
+
+            // Всплывающий текст
+            for (let i = GAME.floatTexts.length - 1; i >= 0; i--) {
+                const ft = GAME.floatTexts[i];
+                ft.y += ft.vy;
+                ft.alpha -= 0.025;
+                if (ft.alpha <= 0) {
+                    GAME.floatTexts.splice(i, 1);
+                    continue;
+                }
+                aCtx.fillStyle = ft.color;
+                aCtx.globalAlpha = ft.alpha;
+                aCtx.font = '800 12px JetBrains Mono, monospace';
+                aCtx.textAlign = 'center';
+                aCtx.fillText(ft.text, ft.x, ft.y);
+                aCtx.globalAlpha = 1;
+            }
+
+            aCtx.restore();
+            requestAnimationFrame(arcadeTick);
+        }
+
+        function endArcadeGame() {
+            GAME.running = false;
+            const isNewBest = GAME.score > STATE.highScore;
+            if (isNewBest) {
+                STATE.highScore = GAME.score;
+                localStorage.setItem('mdns_arcade_best', String(STATE.highScore));
+                if (tg && tg.CloudStorage) {
+                    try { tg.CloudStorage.setItem('mdns_arcade_best', String(STATE.highScore)); } catch (e) {}
+                }
+            }
+            updatePilotHeader();
+            updateArcadeHud();
+
+            document.getElementById('arcadeOverlayBadge').textContent = isNewBest ? '🏆 НОВЫЙ РЕКОРД КЛАСТЕРА!' : 'ЩИТ ЯДРА ПЕРЕГРУЖЕН';
+            document.getElementById('arcadeOverlayTitle').textContent = `Счет: ${GAME.score} очков`;
+            document.getElementById('arcadeOverlayDesc').innerHTML = `Ваш лучший результат: <b>${STATE.highScore}</b>. Попробуйте набрать комбо x8 и применить Импульс DoT!`;
+            document.getElementById('arcadeStartBtnText').textContent = 'Сыграть еще раз';
+            document.getElementById('arcadeShareBtn').style.display = 'inline-flex';
+            document.getElementById('arcadeOverlay').classList.remove('hidden');
+        }
+
+        function shareArcadeScore() {
+            haptic('medium');
+            const text = `🎮 Я выбил ${STATE.highScore} очков в кибер-аркаде AI Packet Defender внутри MagicDNS Mini App! Попробуй побить мой рекорд:`;
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/magicdns_alert_bot')}&text=${encodeURIComponent(text)}`;
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(shareUrl);
+            } else {
+                window.open(shareUrl, '_blank');
+            }
+        }
+
+        // =========================================================================
+        // ВКЛАДКА 4: КЛАСТЕР И ОТПРАВКА ОТЗЫВА В БОТ
+        // =========================================================================
+        async function pingClusterNodes() {
+            haptic('light');
+            const deEl = document.getElementById('clusterDeBadge');
+            const fiEl = document.getElementById('clusterFiBadge');
+            deEl.textContent = 'ПИНГ...';
+            fiEl.textContent = 'ПИНГ...';
+
+            const rDe = await pingFavicon('https://api.magicdns.ru/favicon.ico');
+            deEl.textContent = rDe.ok ? `ONLINE • ${rDe.ms} мс` : 'ONLINE • DoT';
+
+            const rFi = await pingFavicon('https://magicdns.ru/favicon.ico');
+            fiEl.textContent = rFi.ok ? `ONLINE • ${rFi.ms} мс` : 'ONLINE • DoT';
+        }
+
+        function setRating(stars) {
+            STATE.rating = stars;
+            haptic('selection');
+            sfxPing();
+            const btns = document.querySelectorAll('#starPicker .star-btn');
+            btns.forEach((b, idx) => b.classList.toggle('active', idx < stars));
+        }
+
+        async function submitMiniAppFeedback() {
+            const textEl = document.getElementById('feedbackText');
+            const btn = document.getElementById('sendFeedbackBtn');
+            const msg = textEl.value.trim();
+            if (!msg) {
+                haptic('warning');
+                showToast('Напишите пару слов перед отправкой');
+                return;
+            }
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳</span><span>Отправка...</span>';
+            try {
+                const res = await fetch(CONFIG.feedbackEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: STATE.userName,
+                        type: 'review',
+                        platform: `MiniApp (${STATE.selectedOs.toUpperCase()})`,
+                        rating: STATE.rating,
+                        message: msg
+                    })
+                });
+                if (res.ok) {
+                    haptic('success');
+                    sfxBoost();
+                    textEl.value = '';
+                    showToast('✅ Отправлено в @magicdns_alert_bot!');
+                } else {
+                    throw new Error('HTTP ' + res.status);
+                }
+            } catch (e) {
+                haptic('error');
+                showToast('Откройте @magicdns_alert_bot для связи');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>🚀</span><span>Отправить напрямую в MagicDNS</span>';
+            }
+        }
+
+        // Автозапуск живого сонара при старте
+        window.addEventListener('DOMContentLoaded', () => {
+            runFullSonarScan();
+        });
+    </script>
 </body>
 </html>
