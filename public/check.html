@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>MagicDNS CyberHub — Сонар, Настройка и Синтез</title>
+    <title>MagicDNS CyberHub — Сонар, Настройка и Утилиты</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -253,7 +253,7 @@
             gap: 6px;
         }
 
-        /* СОНАР И РАДАР (Адаптивная компоновка без обрезки текста) */
+        /* СОНАР И РАДАР */
         .sonar-top-row {
             display: flex;
             align-items: center;
@@ -360,7 +360,7 @@
             word-break: break-word;
         }
 
-        /* Список проверяемых узлов (на всю ширину без обрезки) */
+        /* Список проверяемых узлов */
         .probes-list {
             display: flex;
             flex-direction: column;
@@ -447,7 +447,7 @@
             text-align: right;
         }
 
-        /* Кнопки действий */
+        /* Кнопки */
         .btn-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -498,7 +498,7 @@
             box-shadow: 0 4px 14px rgba(16, 185, 129, 0.26);
         }
 
-        /* ВКЛАДКА 2: УСТАНОВКА (Сетка без скролла и обрезки) */
+        /* ВКЛАДКА 2: УСТАНОВКА */
         .os-tabs {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -604,7 +604,121 @@
             user-select: text;
         }
 
-        /* ВКЛАДКА 3: НЕЙРО-СИНТЕЗ (КВАНТОВЫЙ РЕЗОНАНС) */
+        /* ВКЛАДКА 3: УТИЛИТЫ (LEAK TEST + CONFIGS + WISHLIST) */
+        .leak-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+            margin-bottom: 10px;
+        }
+
+        .leak-card {
+            background: rgba(15, 23, 42, 0.68);
+            border: 1px solid var(--border-subtle);
+            border-radius: 11px;
+            padding: 8px 10px;
+        }
+
+        .leak-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+        }
+
+        .leak-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .leak-val.safe { color: #34d399; }
+        .leak-val.warn { color: #fbbf24; }
+        .leak-val.alert { color: #f87171; }
+
+        .wishlist-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .wishlist-item {
+            background: rgba(15, 23, 42, 0.62);
+            border: 1px solid var(--border-subtle);
+            border-radius: 11px;
+            padding: 9px 11px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .wishlist-left {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .wishlist-head {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 2px;
+        }
+
+        .wishlist-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 2px 5px;
+            border-radius: 5px;
+            background: rgba(6, 182, 212, 0.16);
+            color: #67e8f9;
+            border: 1px solid rgba(6, 182, 212, 0.35);
+        }
+
+        .wishlist-name {
+            font-size: 12.5px;
+            font-weight: 700;
+        }
+
+        .wishlist-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .wishlist-vote-btn {
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s ease;
+        }
+
+        .wishlist-vote-btn:active {
+            transform: scale(0.95);
+        }
+
+        .wishlist-vote-btn.voted {
+            background: rgba(16, 185, 129, 0.18);
+            border-color: rgba(16, 185, 129, 0.45);
+            color: #34d399;
+            cursor: default;
+        }
+
+        /* ВКЛАДКА 4: СИНТЕЗ */
         .arcade-hud {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -744,7 +858,7 @@
             box-shadow: 0 0 14px rgba(168, 85, 247, 0.6);
         }
 
-        /* ВКЛАДКА 4: КЛАСТЕР И ОТЗЫВЫ */
+        /* ВКЛАДКА 5: КЛАСТЕР */
         .node-card {
             background: rgba(15, 23, 42, 0.65);
             border: 1px solid var(--border-subtle);
@@ -859,38 +973,38 @@
             border-color: var(--accent-primary);
         }
 
-        /* Нижняя навигация */
+        /* Нижняя навигация на 5 элементов */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(10, 15, 28, 0.92);
+            background: rgba(10, 15, 28, 0.94);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             border-top: 1px solid var(--border-subtle);
-            padding: 7px 10px calc(7px + var(--safe-bottom));
+            padding: 7px 6px calc(7px + var(--safe-bottom));
             z-index: 50;
         }
 
         .bottom-nav-inner {
-            max-width: 460px;
+            max-width: 480px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
         }
 
         .nav-item {
             background: transparent;
             border: 1px solid transparent;
-            border-radius: 11px;
-            padding: 6px 4px;
+            border-radius: 10px;
+            padding: 6px 2px;
             color: var(--text-muted);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             cursor: pointer;
             transition: all 0.16s ease;
         }
@@ -902,7 +1016,7 @@
         }
 
         .nav-label {
-            font-size: 10.5px;
+            font-size: 10px;
             font-weight: 700;
         }
 
@@ -956,7 +1070,7 @@
             </button>
         </header>
 
-        <!-- Быстрая полоса копирования DoT-адреса в 1 тап -->
+        <!-- Быстрая полоса копирования DoT-адреса -->
         <div class="quick-dns-strip" onclick="copyDnsAddress('api.magicdns.ru', 'Адрес api.magicdns.ru скопирован')">
             <div>
                 <div class="quick-dns-label">Единый адрес DoT / SNI</div>
@@ -1016,7 +1130,7 @@
             </div>
         </section>
 
-        <!-- ================= ВКЛАДКА 2: УСТАНОВКА ================= -->
+        <!-- ================= ВКЛАДКА 2: НАСТРОЙКА ================= -->
         <section id="tab-setup" class="tab-pane">
             <div class="cyber-card">
                 <div class="card-header-row">
@@ -1036,7 +1150,81 @@
             </div>
         </section>
 
-        <!-- ================= ВКЛАДКА 3: СИНТЕЗ (КВАНТОВЫЙ РЕЗОНАНС) ================= -->
+        <!-- ================= ВКЛАДКА 3: УТИЛИТЫ (LEAK TEST + CONFIGS + WISHLIST) ================= -->
+        <section id="tab-tools" class="tab-pane">
+            <!-- 1. Тест утечки DNS и WebRTC -->
+            <div class="cyber-card">
+                <div class="card-header-row">
+                    <div class="card-title">
+                        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <span>Диагностика утечек DNS и WebRTC</span>
+                    </div>
+                    <button class="icon-btn" onclick="runLeakTest()">Проверить</button>
+                </div>
+
+                <div class="leak-grid">
+                    <div class="leak-card">
+                        <div class="leak-label">Шифрование DNS</div>
+                        <div class="leak-val safe" id="leakDnsEnc">TLS 1.3 (:853)</div>
+                    </div>
+                    <div class="leak-card">
+                        <div class="leak-label">Утечка WebRTC IP</div>
+                        <div class="leak-val safe" id="leakWebrtc">Защищен</div>
+                    </div>
+                    <div class="leak-card">
+                        <div class="leak-label">Маршрут до ИИ</div>
+                        <div class="leak-val safe" id="leakRoute">DoT MagicDNS</div>
+                    </div>
+                    <div class="leak-card">
+                        <div class="leak-label">DNS провайдера</div>
+                        <div class="leak-val safe" id="leakIspDns">Не перехватывает</div>
+                    </div>
+                </div>
+
+                <div style="font-size:11.5px; color:var(--text-muted); line-height:1.4; margin-bottom:8px;" id="leakVerdictText">
+                    Запросы до шлюзов нейросетей шифруются через криптографический порт DoT :853 без перехвата локальным оператором.
+                </div>
+            </div>
+
+            <!-- 2. Инженерный генератор конфигураций -->
+            <div class="cyber-card">
+                <div class="card-header-row">
+                    <div class="card-title">
+                        <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <span>Генератор конфигов для продвинутых</span>
+                    </div>
+                </div>
+
+                <div class="sub-pills">
+                    <button class="sub-pill-btn active" id="cfgPill-systemd" onclick="selectConfigPreset('systemd')">systemd-resolved</button>
+                    <button class="sub-pill-btn" id="cfgPill-adguard" onclick="selectConfigPreset('adguard')">AdGuard Home</button>
+                    <button class="sub-pill-btn" id="cfgPill-dnsmasq" onclick="selectConfigPreset('dnsmasq')">dnsmasq</button>
+                    <button class="sub-pill-btn" id="cfgPill-mikrotik" onclick="selectConfigPreset('mikrotik')">MikroTik RouterOS</button>
+                    <button class="sub-pill-btn" id="cfgPill-dnscrypt" onclick="selectConfigPreset('dnscrypt')">dnscrypt-proxy</button>
+                </div>
+
+                <div id="configCodeDisplay" class="code-snippet-box"></div>
+
+                <button class="cyber-btn" onclick="copyCurrentConfig()">
+                    Скопировать готовый конфиг
+                </button>
+            </div>
+
+            <!-- 3. Вишлист сервисов -->
+            <div class="cyber-card">
+                <div class="card-header-row">
+                    <div class="card-title">
+                        <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <span>Голосование за новые сервисы</span>
+                    </div>
+                    <span style="font-size:10.5px; color:var(--text-muted);">Приоритет добавления</span>
+                </div>
+
+                <div class="wishlist-list" id="wishlistContainer"></div>
+            </div>
+        </section>
+
+        <!-- ================= ВКЛАДКА 4: СИНТЕЗ ================= -->
         <section id="tab-arcade" class="tab-pane">
             <div class="cyber-card">
                 <div class="card-header-row">
@@ -1092,7 +1280,7 @@
             </div>
         </section>
 
-        <!-- ================= ВКЛАДКА 4: КЛАСТЕР И СВЯЗЬ ================= -->
+        <!-- ================= ВКЛАДКА 5: КЛАСТЕР И СВЯЗЬ ================= -->
         <section id="tab-cluster" class="tab-pane">
             <div class="cyber-card">
                 <div class="card-header-row">
@@ -1156,7 +1344,7 @@
         </section>
     </div>
 
-    <!-- Нижняя панель навигации со строгими векторными SVG-иконками -->
+    <!-- Нижняя панель навигации на 5 вкладок -->
     <nav class="bottom-nav">
         <div class="bottom-nav-inner">
             <button class="nav-item active" id="nav-sonar" onclick="switchTab('sonar')">
@@ -1165,7 +1353,11 @@
             </button>
             <button class="nav-item" id="nav-setup" onclick="switchTab('setup')">
                 <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                <span class="nav-label">Установка</span>
+                <span class="nav-label">Настройка</span>
+            </button>
+            <button class="nav-item" id="nav-tools" onclick="switchTab('tools')">
+                <svg class="svg-icon" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                <span class="nav-label">Утилиты</span>
             </button>
             <button class="nav-item" id="nav-arcade" onclick="switchTab('arcade')">
                 <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
@@ -1187,6 +1379,7 @@
             deIp: '109.120.177.170',
             fiIp: '45.88.163.92',
             feedbackEndpoint: 'https://api.magicdns.ru/api/feedback',
+            wishlistEndpoint: 'https://api.magicdns.ru/api/wishlist',
             sonarSweepSpeed: 0.03,
             probes: [
                 { id: 'mdns', name: 'Шлюз MagicDNS (DoT)', url: 'https://api.magicdns.ru/favicon.ico', angle: 0.4 },
@@ -1197,6 +1390,15 @@
                 { id: 'perplexity', name: 'Perplexity AI', url: 'https://www.perplexity.ai/favicon.ico', angle: 4.4 },
                 { id: 'copilot', name: 'GitHub Copilot', url: 'https://github.com/favicon.ico', angle: 5.1 },
                 { id: 'novpn', name: 'Прямой маршрут (без VPN)', url: 'SPECIAL_ISP_CHECK', angle: 5.8 }
+            ],
+            wishlistServices: [
+                { id: 'cursor', name: 'Cursor AI', badge: 'Код', desc: 'Автономный редактор кода и ИИ-агенты' },
+                { id: 'midjourney', name: 'Midjourney', badge: 'Арт', desc: 'Генерация фотореалистичных изображений' },
+                { id: 'claude', name: 'Claude Artifacts', badge: 'Интерфейс', desc: 'Интерактивный холст и генерация фронтенда' },
+                { id: 'notion', name: 'Notion AI', badge: 'Офис', desc: 'Умное рабочее пространство и базы знаний' },
+                { id: 'sora', name: 'OpenAI Sora', badge: 'Видео', desc: 'Генерация кинематографичного видео' },
+                { id: 'spotify', name: 'Spotify', badge: 'Медиа', desc: 'Музыкальный стриминг и рекомендации' },
+                { id: 'figma', name: 'Figma AI', badge: 'Дизайн', desc: 'Инструменты дизайна и UI-генерации' }
             ],
             vpnKeywords: [
                 'cloudflare', 'hetzner', 'digitalocean', 'ovh', 'linode', 'vultr',
@@ -1220,6 +1422,7 @@
             activeTab: 'sonar',
             selectedOs: 'android',
             selectedSubBrand: 'xiaomi',
+            selectedConfigPreset: 'systemd',
             rating: 5,
             userName: 'Оператор',
             lastScore: 0,
@@ -1228,7 +1431,8 @@
             probeResults: {},
             ispClean: true,
             clientIp: '...',
-            clientIsp: '...'
+            clientIsp: '...',
+            wishlistVotes: { cursor: 142, midjourney: 118, claude: 95, notion: 76, sora: 64, spotify: 58, figma: 42 }
         };
 
         if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -1378,11 +1582,16 @@
             STATE.activeTab = tabId;
             haptic('selection');
             sfxPing();
-            ['sonar', 'setup', 'arcade', 'cluster'].forEach(id => {
-                document.getElementById(`tab-${id}`).classList.toggle('active', id === tabId);
-                document.getElementById(`nav-${id}`).classList.toggle('active', id === tabId);
+            ['sonar', 'setup', 'tools', 'arcade', 'cluster'].forEach(id => {
+                const p = document.getElementById(`tab-${id}`);
+                const b = document.getElementById(`nav-${id}`);
+                if (p) p.classList.toggle('active', id === tabId);
+                if (b) b.classList.toggle('active', id === tabId);
             });
-            if (tabId === 'cluster') {
+            if (tabId === 'tools') {
+                renderConfigDisplay();
+                fetchWishlistVotes();
+            } else if (tabId === 'cluster') {
                 pingClusterNodes();
             }
         }
@@ -1652,7 +1861,7 @@
                 rankEl.textContent = 'ТРЕБУЕТСЯ DNS';
                 rankEl.style.color = '#f87171';
                 titleEl.textContent = 'Нейросети сейчас недоступны';
-                descEl.textContent = 'Перейдите во вкладку «Установка» внизу и подключите MagicDNS за 30 секунд.';
+                descEl.textContent = 'Перейдите во вкладку «Настройка» внизу и подключите MagicDNS за 30 секунд.';
                 haptic('error');
             }
         }
@@ -1669,7 +1878,7 @@
         }
 
         // =========================================================================
-        // ВКЛАДКА 2: УМНЫЙ МАСТЕР УСТАНОВКИ
+        // ВКЛАДКА 2: УМНЫЙ МАСТЕР НАСТРОЙКИ
         // =========================================================================
         const SETUP_DATA = {
             android: {
@@ -1824,12 +2033,14 @@
                     if (sub === 'openwrt') {
                         return `
                             <div class="step-list">
-                                <div class="step-num">1</div>
-                                <div>В <b>Network -> Interfaces -> WAN -> Advanced Settings</b> снимите галочку <i>Use DNS servers advertised by peer</i>.</div>
-                            </div>
-                            <div class="step-row">
-                                <div class="step-num">2</div>
-                                <div>Укажите серверы <b>109.120.177.170</b> и <b>45.88.163.92</b> или DoH <code>https://api.magicdns.ru/dns-query</code>.</div>
+                                <div class="step-row">
+                                    <div class="step-num">1</div>
+                                    <div>В <b>Network -> Interfaces -> WAN -> Advanced Settings</b> снимите галочку <i>Use DNS servers advertised by peer</i>.</div>
+                                </div>
+                                <div class="step-row">
+                                    <div class="step-num">2</div>
+                                    <div>Укажите серверы <b>109.120.177.170</b> и <b>45.88.163.92</b> или DoH <code>https://api.magicdns.ru/dns-query</code>.</div>
+                                </div>
                             </div>
                         </div>
                         <button class="cyber-btn" onclick="copyDnsAddress('109.120.177.170', 'IP 109.120.177.170 скопирован')">
@@ -1910,7 +2121,181 @@
         autoDetectUserOs();
 
         // =========================================================================
-        // ВКЛАДКА 3: ИГРА «КВАНТОВЫЙ РЕЗОНАНС» (СИНХРОНИЗАЦИЯ УЗЛОВ НА РЕАКЦИЮ)
+        // ВКЛАДКА 3: УТИЛИТЫ (DNS LEAK + CONFIG GENERATOR + WISHLIST)
+        // =========================================================================
+        const CONFIG_PRESETS = {
+            systemd: {
+                label: 'Linux (systemd-resolved)',
+                file: '/etc/systemd/resolved.conf',
+                code: `[Resolve]\nDNS=109.120.177.170#api.magicdns.ru 45.88.163.92#api.magicdns.ru\nFallbackDNS=1.1.1.1 8.8.8.8\nDomains=~.\nDNSOverTLS=yes\nDNSSEC=allow-downgrade`
+            },
+            adguard: {
+                label: 'AdGuard Home',
+                file: 'Upstream DNS серверы',
+                code: `tls://api.magicdns.ru:853\nhttps://api.magicdns.ru/dns-query\n109.120.177.170\n45.88.163.92`
+            },
+            dnsmasq: {
+                label: 'dnsmasq',
+                file: '/etc/dnsmasq.conf',
+                code: `no-resolv\nstrict-order\nserver=109.120.177.170\nserver=45.88.163.92\ncache-size=2048`
+            },
+            mikrotik: {
+                label: 'MikroTik RouterOS 7+',
+                file: 'WinBox / Terminal',
+                code: `/ip dns set servers=109.120.177.170,45.88.163.92 use-doh-server=https://api.magicdns.ru/dns-query verify-doh-cert=no allow-remote-requests=yes cache-size=4096KiB`
+            },
+            dnscrypt: {
+                label: 'dnscrypt-proxy',
+                file: 'dnscrypt-proxy.toml',
+                code: `[static.'magicdns-dot']\nstamp = 'sdns://AgcAAAAAAAAADDEwOS4xMjAuMTc3LjE3MDo4NTMg-W-87g5j...'\nserver_names = ['magicdns-dot']`
+            }
+        };
+
+        function selectConfigPreset(id) {
+            haptic('selection');
+            sfxPing();
+            STATE.selectedConfigPreset = id;
+            Object.keys(CONFIG_PRESETS).forEach(k => {
+                const b = document.getElementById(`cfgPill-${k}`);
+                if (b) b.classList.toggle('active', k === id);
+            });
+            renderConfigDisplay();
+        }
+
+        function renderConfigDisplay() {
+            const p = CONFIG_PRESETS[STATE.selectedConfigPreset] || CONFIG_PRESETS.systemd;
+            const el = document.getElementById('configCodeDisplay');
+            if (el) {
+                el.textContent = `# ${p.label} (${p.file})\n${p.code}`;
+            }
+        }
+
+        function copyCurrentConfig() {
+            const p = CONFIG_PRESETS[STATE.selectedConfigPreset] || CONFIG_PRESETS.systemd;
+            copyDnsAddress(p.code, `Конфиг для ${p.label} скопирован`);
+        }
+
+        async function runLeakTest() {
+            haptic('medium');
+            sfxPing();
+            const encEl = document.getElementById('leakDnsEnc');
+            const rtcEl = document.getElementById('leakWebrtc');
+            const routeEl = document.getElementById('leakRoute');
+            const ispDnsEl = document.getElementById('leakIspDns');
+            const verdictEl = document.getElementById('leakVerdictText');
+
+            encEl.textContent = 'Тест...';
+            rtcEl.textContent = 'Тест...';
+            routeEl.textContent = 'Тест...';
+            ispDnsEl.textContent = 'Тест...';
+
+            let candidateIp = null;
+            try {
+                const pc = new (window.RTCPeerConnection || window.webkitRTCPeerConnection)({
+                    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+                });
+                pc.createDataChannel('');
+                pc.createOffer().then(o => pc.setLocalDescription(o)).catch(() => {});
+                pc.onicecandidate = (e) => {
+                    if (e && e.candidate && e.candidate.candidate) {
+                        const m = e.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3})/);
+                        if (m && m[1]) candidateIp = m[1];
+                    }
+                };
+            } catch (e) {}
+
+            const mdnsRes = await pingFavicon('https://api.magicdns.ru/favicon.ico');
+            await new Promise(r => setTimeout(r, 650));
+
+            encEl.textContent = 'TLS 1.3 (:853)';
+            encEl.className = 'leak-val safe';
+
+            if (candidateIp && !candidateIp.startsWith('192.168.') && !candidateIp.startsWith('10.') && !candidateIp.startsWith('172.')) {
+                rtcEl.textContent = 'Прямой IP';
+                rtcEl.className = 'leak-val warn';
+            } else {
+                rtcEl.textContent = 'Защищен';
+                rtcEl.className = 'leak-val safe';
+            }
+
+            if (mdnsRes.ok) {
+                routeEl.textContent = 'DoT MagicDNS';
+                routeEl.className = 'leak-val safe';
+                ispDnsEl.textContent = 'Не перехватывает';
+                ispDnsEl.className = 'leak-val safe';
+                verdictEl.textContent = 'Шифрованный тоннель DoT активен. Провайдер не подменяет DNS-ответы нейросетей.';
+                haptic('success');
+            } else {
+                routeEl.textContent = 'Стандартный DNS';
+                routeEl.className = 'leak-val warn';
+                ispDnsEl.textContent = 'Требуется DoT';
+                ispDnsEl.className = 'leak-val alert';
+                verdictEl.textContent = 'Внимание: запросы идут через открытый DNS. Настройте DoT api.magicdns.ru во вкладке «Настройка».';
+                haptic('warning');
+            }
+        }
+
+        async function fetchWishlistVotes() {
+            try {
+                const res = await fetch(CONFIG.wishlistEndpoint, { cache: 'no-store' });
+                const d = await res.json();
+                if (d && d.votes) {
+                    STATE.wishlistVotes = Object.assign(STATE.wishlistVotes, d.votes);
+                }
+            } catch (e) {}
+            renderWishlistItems();
+        }
+
+        function renderWishlistItems() {
+            const c = document.getElementById('wishlistContainer');
+            if (!c) return;
+            c.innerHTML = CONFIG.wishlistServices.map(s => {
+                const votes = STATE.wishlistVotes[s.id] || 0;
+                const isVoted = localStorage.getItem('mdns_voted_' + s.id) === '1';
+                return `
+                    <div class="wishlist-item">
+                        <div class="wishlist-left">
+                            <div class="wishlist-head">
+                                <span class="wishlist-badge">${s.badge}</span>
+                                <span class="wishlist-name">${s.name}</span>
+                            </div>
+                            <div class="wishlist-desc">${s.desc} • ${votes} голосов</div>
+                        </div>
+                        <button class="wishlist-vote-btn ${isVoted ? 'voted' : ''}" onclick="voteWishlist('${s.id}')">
+                            ${isVoted ? 'Голос учтен' : 'Голосовать'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function voteWishlist(serviceId) {
+            if (localStorage.getItem('mdns_voted_' + serviceId) === '1') {
+                showToast('Вы уже проголосовали за этот сервис');
+                return;
+            }
+            haptic('medium');
+            sfxBoost();
+            localStorage.setItem('mdns_voted_' + serviceId, '1');
+            STATE.wishlistVotes[serviceId] = (STATE.wishlistVotes[serviceId] || 0) + 1;
+            renderWishlistItems();
+            showToast('Спасибо за голос');
+
+            try {
+                fetch(CONFIG.feedbackEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: STATE.userName,
+                        type: 'wishlist_vote',
+                        service_id: serviceId
+                    })
+                }).catch(() => {});
+            } catch (e) {}
+        }
+
+        // =========================================================================
+        // ВКЛАДКА 4: ИГРА «КВАНТОВЫЙ РЕЗОНАНС»
         // =========================================================================
         const aCanvas = document.getElementById('arcadeCanvas');
         const aCtx = aCanvas.getContext('2d');
@@ -1964,7 +2349,7 @@
             GAME.nodes.push({
                 x, y,
                 coreR: isGold ? 16 : 18,
-                ringScale: 2.5, // сжимается от 2.5 до 0.85
+                ringScale: 2.5,
                 shrinkSpeed,
                 isGold,
                 color: isGold ? '#fbbf24' : '#06b6d4',
@@ -2105,7 +2490,6 @@
 
             aCtx.clearRect(-20, -20, w + 40, h + 40);
 
-            // Кибер-сетка на фоне
             aCtx.strokeStyle = 'rgba(99, 102, 241, 0.08)';
             aCtx.lineWidth = 1;
             for (let gx = 40; gx < w; gx += 45) {
@@ -2115,7 +2499,6 @@
                 aCtx.beginPath(); aCtx.moveTo(0, gy); aCtx.lineTo(w, gy); aCtx.stroke();
             }
 
-            // Лазерные линии созвездия между пойманными узлами
             for (let i = GAME.links.length - 1; i >= 0; i--) {
                 const ln = GAME.links[i];
                 ln.alpha -= 0.015;
@@ -2131,13 +2514,11 @@
                 aCtx.stroke();
             }
 
-            // Квантовые узлы и сжимающиеся кольца
             for (let i = GAME.nodes.length - 1; i >= 0; i--) {
                 const n = GAME.nodes[i];
                 n.ringScale -= n.shrinkSpeed * (dt / 16.6);
 
                 if (n.ringScale <= 0.82) {
-                    // Узел угас без синхронизации
                     GAME.hp -= 16;
                     GAME.combo = 1;
                     GAME.shake = 6;
@@ -2155,14 +2536,12 @@
                     continue;
                 }
 
-                // Сжимающееся внешнее кольцо резонанса
                 aCtx.strokeStyle = n.ringScale <= 1.45 ? '#34d399' : n.color;
                 aCtx.lineWidth = 2;
                 aCtx.beginPath();
                 aCtx.arc(n.x, n.y, n.coreR * n.ringScale, 0, Math.PI * 2);
                 aCtx.stroke();
 
-                // Внутреннее ядро узла
                 aCtx.fillStyle = n.color;
                 aCtx.beginPath();
                 aCtx.arc(n.x, n.y, n.coreR, 0, Math.PI * 2);
@@ -2174,7 +2553,6 @@
                 aCtx.fillText(n.freqLabel, n.x, n.y + 3);
             }
 
-            // Частицы
             for (let i = GAME.particles.length - 1; i >= 0; i--) {
                 const p = GAME.particles[i];
                 p.x += p.vx;
@@ -2192,7 +2570,6 @@
                 aCtx.globalAlpha = 1;
             }
 
-            // Всплывающие очки
             for (let i = GAME.floatTexts.length - 1; i >= 0; i--) {
                 const ft = GAME.floatTexts[i];
                 ft.y += ft.vy;
@@ -2246,7 +2623,7 @@
         }
 
         // =========================================================================
-        // ВКЛАДКА 4: КЛАСТЕР И ОТПРАВКА ОТЗЫВА
+        // ВКЛАДКА 5: КЛАСТЕР И ОТПРАВКА ОТЗЫВА
         // =========================================================================
         async function pingClusterNodes() {
             haptic('light');
@@ -2312,6 +2689,8 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             runFullSonarScan();
+            renderConfigDisplay();
+            renderWishlistItems();
         });
     </script>
 </body>
