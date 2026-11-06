@@ -1204,16 +1204,16 @@
                         <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                         <span>Предложить свой сервис</span>
                     </div>
-                    <span style="font-size:10.5px; color:var(--text-muted);">Заявка в кластер</span>
+                    <span style="font-size:10.5px; color:#34d399; font-weight:700;">100% белый список (149-ФЗ)</span>
                 </div>
 
                 <div style="font-size:11.5px; color:var(--text-muted); line-height:1.45; margin-bottom:11px;">
-                    Нужен доступ к сайту, нейросети или игре через MagicDNS? Напишите название или домен. Инженеры проверят маршрутизацию и добавят в кластер.
+                    Предложите зарубежный сервис, нейросеть или игру с региональными ограничениями (Geo-IP). Каждая заявка проходит обязательную проверку на отсутствие в реестре РКН (149-ФЗ) перед добавлением в кластер.
                 </div>
 
                 <div class="cyber-input-group">
                     <label class="cyber-input-label" for="suggestTitle">Сервис или домен</label>
-                    <input type="text" id="suggestTitle" class="cyber-input" placeholder="Например: notion.so, Spotify, Midjourney" maxlength="80">
+                    <input type="text" id="suggestTitle" class="cyber-input" placeholder="Например: konami.com, cursor.com, genspark.ai" maxlength="80">
                 </div>
 
                 <div class="cyber-input-group">
@@ -2310,7 +2310,7 @@
                     statusBox.style.background = 'rgba(16, 185, 129, 0.12)';
                     statusBox.style.border = '1px solid rgba(16, 185, 129, 0.35)';
                     statusBox.style.color = '#34d399';
-                    statusBox.innerHTML = 'Заявка на добавление <b>' + title + '</b> принята. Проверим доступность и добавим маршруты в ближайшем обновлении кластера.';
+                    statusBox.innerHTML = 'Заявка на <b>' + title + '</b> отправлена на модерацию. Инженеры сверят домен с реестром РКН (149-ФЗ) и протестируют маршрутизацию.';
                 }
             } catch (e) {
                 showToast('Ошибка отправки. Попробуйте еще раз');
