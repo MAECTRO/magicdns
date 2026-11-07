@@ -435,74 +435,53 @@
       box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
       transform: translateY(-1px);
     }
-    .btn-pay-header {
-      background: rgba(168, 85, 247, 0.1);
-      border-color: rgba(168, 85, 247, 0.35);
-      color: #c084fc;
-      box-shadow: 0 0 14px rgba(168, 85, 247, 0.1);
-    }
-
-    .btn-pay-header:hover {
-      background: rgba(168, 85, 247, 0.22);
-      border-color: #c084fc;
-      color: #ffffff;
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
-      transform: translateY(-1px);
-    }
-
     /* Pay Subscriptions Partner Banner */
     .pay-partner-banner {
-      margin-top: 36px;
-      background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(13, 23, 40, 0.9) 100%);
-      border: 1px solid rgba(168, 85, 247, 0.3);
+      margin-top: 32px;
+      background: rgba(13, 23, 40, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 255, 157, 0.22);
       border-radius: var(--radius-md);
-      padding: 24px 28px;
+      padding: 22px 26px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 24px;
+      gap: 20px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-      position: relative;
-      overflow: hidden;
+      transition: border-color var(--transition-smooth);
     }
 
-    .pay-partner-banner::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -20%;
-      width: 250px;
-      height: 250px;
-      background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
-      pointer-events: none;
+    .pay-partner-banner:hover {
+      border-color: rgba(0, 255, 157, 0.4);
     }
 
     .pay-partner-left {
       display: flex;
-      align-items: flex-start;
-      gap: 18px;
+      align-items: center;
+      gap: 16px;
       flex: 1;
     }
 
     .pay-partner-icon {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
-      background: rgba(168, 85, 247, 0.15);
-      border: 1px solid rgba(168, 85, 247, 0.4);
-      color: #c084fc;
+      background: rgba(0, 255, 157, 0.08);
+      border: 1px solid rgba(0, 255, 157, 0.25);
+      color: var(--neon-mint);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 0 18px rgba(168, 85, 247, 0.2);
+      box-shadow: 0 0 14px rgba(0, 255, 157, 0.12);
     }
 
     .pay-partner-badge-wrap {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
+      gap: 8px;
+      margin-bottom: 4px;
       flex-wrap: wrap;
     }
 
@@ -511,12 +490,12 @@
       font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      padding: 3px 8px;
+      letter-spacing: 0.05em;
+      padding: 2px 7px;
       border-radius: var(--radius-pill);
-      background: rgba(168, 85, 247, 0.2);
-      border: 1px solid rgba(168, 85, 247, 0.5);
-      color: #e9d5ff;
+      background: rgba(0, 255, 157, 0.12);
+      border: 1px solid rgba(0, 255, 157, 0.35);
+      color: var(--neon-mint);
     }
 
     .pay-partner-sub {
@@ -525,17 +504,17 @@
     }
 
     .pay-partner-title {
-      font-size: 1.15rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: #ffffff;
-      margin: 0 0 6px 0;
+      margin: 0 0 4px 0;
     }
 
     .pay-partner-desc {
-      font-size: 0.88rem;
+      font-size: 0.84rem;
       color: var(--text-dim);
       margin: 0;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
     .pay-partner-right {
@@ -543,37 +522,42 @@
     }
 
     .pay-partner-btn {
-      background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
-      color: #ffffff !important;
-      border: none;
-      box-shadow: 0 0 20px rgba(168, 85, 247, 0.35);
+      background: rgba(0, 255, 157, 0.12);
+      border: 1px solid rgba(0, 255, 157, 0.45);
+      color: var(--neon-mint) !important;
       white-space: nowrap;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 12px 20px;
+      padding: 10px 18px;
       border-radius: var(--radius-pill);
+      font-size: 0.88rem;
       font-weight: 600;
       text-decoration: none;
       transition: all var(--transition-smooth);
     }
 
     .pay-partner-btn:hover {
-      background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 0 26px rgba(168, 85, 247, 0.5);
+      background: var(--neon-mint);
+      color: #0b1120 !important;
+      box-shadow: 0 0 20px rgba(0, 255, 157, 0.4);
+      transform: translateY(-1px);
     }
 
     @media (max-width: 768px) {
       .pay-partner-banner {
         flex-direction: column;
         align-items: stretch;
-        padding: 20px 16px;
-        gap: 18px;
+        padding: 18px 16px;
+        gap: 16px;
+      }
+      .pay-partner-left {
+        align-items: flex-start;
       }
       .pay-partner-btn {
         width: 100%;
         justify-content: center;
+        box-sizing: border-box;
       }
     }
 
@@ -4944,14 +4928,6 @@
           <span data-i18n="headerTgBtn">Написать админу</span>
         </a>
 
-        <a href="https://telegram.me/WantToPayBot?start=w17851188--CMEFM" target="_blank" rel="noopener noreferrer" class="btn-support-header btn-pay-header" aria-label="Оплата зарубежных подписок">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-            <line x1="1" y1="10" x2="23" y2="10"></line>
-          </svg>
-          <span data-i18n="headerPayBtn">Оплата подписок</span>
-        </a>
-
         <a href="https://pay.cloudtips.ru/p/596a95a5" target="_blank" rel="noopener noreferrer" class="btn-support-header" aria-label="Поддержать автора">
           <svg viewBox="0 0 24 24" class="donate-heart" aria-hidden="true">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -5338,12 +5314,13 @@
           </div>
           <p class="platform-desc" data-i18n="platPsDesc">DNS для PlayStation: устраняет сетевые сбои подключения к PSN, ошибки авторизации в аккаунте Sony и обеспечивает стабильную игру по сети на PS4 и PS5.</p>
         </div>
-      
+      </div>
+
       <!-- Pay Subscriptions Partner Banner -->
       <div class="pay-partner-banner">
         <div class="pay-partner-left">
           <div class="pay-partner-icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
               <line x1="1" y1="10" x2="23" y2="10"></line>
             </svg>
@@ -5354,18 +5331,18 @@
               <span class="pay-partner-sub">ChatGPT Plus • Claude Pro • Midjourney • PS Plus</span>
             </div>
             <h3 class="pay-partner-title" data-i18n="payPartnerTitle">Нужна зарубежная подписка? Оформите виртуальную карту</h3>
-            <p class="pay-partner-desc" data-i18n="payPartnerDesc">Выпуск предоплаченных и пополняемых карт Visa/Mastercard без передачи личного логина и пароля через проверенного партнёра WantToPay прямо в Telegram.</p>
+            <p class="pay-partner-desc" data-i18n="payPartnerDesc">Выпуск карт Visa/Mastercard без передачи личного логина и пароля через проверенного партнёра WantToPay прямо в Telegram.</p>
           </div>
         </div>
         <div class="pay-partner-right">
           <a href="https://telegram.me/WantToPayBot?start=w17851188--CMEFM" target="_blank" rel="noopener noreferrer" class="pay-partner-btn">
             <span data-i18n="payPartnerBtn">Оформить карту в Telegram</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </a>
         </div>
       </div>
-</div>
-    </section>
+    </div>
+  </section>
 
     <!-- 2.8. Compliance & White-list Section -->
     <section class="compliance-section" id="compliance">
