@@ -8196,47 +8196,81 @@ sudo systemctl restart systemd-resolved</code></pre>
         });
       });
 
-      // Wishlist Voting Logic
-      const voteKonamiBtn = document.getElementById('vote-btn-konami');
-      const voteCountEl = document.getElementById('vote-count-konami');
-      const baseVotes = 143;
-      let votedItems = [];
+      // Real-Time Wishlist Voting Logic (Zero Fraud / Authentic API)
+      let votedWishlistItems = [];
       try {
-        votedItems = JSON.parse(localStorage.getItem('magicdns_voted_wishlist') || '[]');
-        if (!Array.isArray(votedItems)) votedItems = [];
+        votedWishlistItems = JSON.parse(localStorage.getItem('magicdns_voted_wishlist') || '[]');
+        if (!Array.isArray(votedWishlistItems)) votedWishlistItems = [];
       } catch(e) {
-        votedItems = [];
+        votedWishlistItems = [];
       }
 
-      function updateVoteButtonState() {
-        if (!voteKonamiBtn) return;
-        const hasVoted = votedItems.indexOf('konami') !== -1;
-        const textSpan = voteKonamiBtn.querySelector('.vote-text');
-        if (hasVoted) {
-          voteKonamiBtn.classList.add('voted');
-          if (textSpan) {
-            textSpan.textContent = (I18N[currentLang] && I18N[currentLang].btnVoted) ? I18N[currentLang].btnVoted : 'Вы поддержали ✓';
-          }
-          if (voteCountEl) {
-            voteCountEl.textContent = String(baseVotes + 1);
-          }
-        } else {
-          voteKonamiBtn.classList.remove('voted');
-          if (textSpan) {
-            textSpan.textContent = (I18N[currentLang] && I18N[currentLang].btnVote) ? I18N[currentLang].btnVote : 'Поддержать';
-          }
-          if (voteCountEl) {
-            voteCountEl.textContent = String(baseVotes);
-          }
+      function updateWishlistVoteButtons(liveVotes, serverUserVoted) {
+        if (serverUserVoted && Array.isArray(serverUserVoted)) {
+          serverUserVoted.forEach(function(id) {
+            if (votedWishlistItems.indexOf(id) === -1) votedWishlistItems.push(id);
+          });
         }
-      }
-      window.updateVoteButtonState = updateVoteButtonState;
-      updateVoteButtonState();
+        document.querySelectorAll('.btn-vote[data-wishlist-id]').forEach(function(btn) {
+          const id = btn.getAttribute('data-wishlist-id');
+          if (!id) return;
+          const hasVoted = votedWishlistItems.indexOf(id) !== -1;
+          const textSpan = btn.querySelector('.vote-text');
+          const countSpan = btn.querySelector('.vote-count');
 
-      if (voteKonamiBtn) {
-        voteKonamiBtn.addEventListener('click', function() {
+          if (hasVoted) {
+            btn.classList.add('voted');
+            if (textSpan && !btn.hasAttribute('data-locked-text')) {
+              textSpan.textContent = (I18N[currentLang] && I18N[currentLang].btnVoted) ? I18N[currentLang].btnVoted : 'Вы поддержали ✓';
+            }
+          } else {
+            btn.classList.remove('voted');
+            if (textSpan && !btn.hasAttribute('data-locked-text')) {
+              textSpan.textContent = (I18N[currentLang] && I18N[currentLang].btnVote) ? I18N[currentLang].btnVote : 'Поддержать';
+            }
+          }
+
+          if (liveVotes && typeof liveVotes[id] !== 'undefined' && countSpan) {
+            countSpan.textContent = String(liveVotes[id]);
+          }
+        });
+      }
+
+      function fetchLiveWishlistVotes() {
+        fetch('https://api.magicdns.ru/api/wishlist', {
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (data && data.ok) {
+            updateWishlistVoteButtons(data.votes, data.user_voted);
+          }
+        })
+        .catch(function() {});
+      }
+
+      window.updateVoteButtonState = function() {
+        updateWishlistVoteButtons();
+      };
+
+      // Initial fetch and auto-refresh on tab visible / interval
+      fetchLiveWishlistVotes();
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') fetchLiveWishlistVotes();
+      });
+      setInterval(fetchLiveWishlistVotes, 60000);
+
+      // Event delegation for wishlist voting
+      const wishlistGridEl = document.getElementById('wishlist-grid');
+      if (wishlistGridEl) {
+        wishlistGridEl.addEventListener('click', function(e) {
+          const btn = e.target.closest('.btn-vote[data-wishlist-id]');
+          if (!btn) return;
+          const id = btn.getAttribute('data-wishlist-id');
+          if (!id) return;
+
           playTactileFeedback(720, 0.08);
-          const hasVoted = votedItems.indexOf('konami') !== -1;
+          const hasVoted = votedWishlistItems.indexOf(id) !== -1;
           const msgAlreadyVoted = (I18N[currentLang] && I18N[currentLang].toastAlreadyVoted) ? I18N[currentLang].toastAlreadyVoted : 'Вы уже поддержали этот запрос 👍';
           const msgVoteSuccess = (I18N[currentLang] && I18N[currentLang].toastVoteSuccess) ? I18N[currentLang].toastVoteSuccess : 'Спасибо! Ваш голос учтён 👍';
 
@@ -8245,33 +8279,35 @@ sudo systemctl restart systemd-resolved</code></pre>
             return;
           }
 
-          votedItems.push('konami');
+          // Optimistic update
+          votedWishlistItems.push(id);
           try {
-            localStorage.setItem('magicdns_voted_wishlist', JSON.stringify(votedItems));
-          } catch(e) {}
+            localStorage.setItem('magicdns_voted_wishlist', JSON.stringify(votedWishlistItems));
+          } catch(err) {}
 
-          if (voteCountEl) {
-            voteCountEl.textContent = String(baseVotes + 1);
-            voteCountEl.style.transform = 'scale(1.25)';
-            setTimeout(function() { voteCountEl.style.transform = ''; }, 200);
+          const countSpan = btn.querySelector('.vote-count');
+          if (countSpan) {
+            const current = parseInt(countSpan.textContent, 10) || 0;
+            countSpan.textContent = String(current + 1);
+            countSpan.style.transform = 'scale(1.25)';
+            setTimeout(function() { countSpan.style.transform = ''; }, 200);
           }
-
-          updateVoteButtonState();
+          updateWishlistVoteButtons();
           showToast(msgVoteSuccess);
 
-          try {
-            fetch('https://api.magicdns.ru/api/feedback', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ type: 'vote', service_id: 'konami' })
-            }).catch(function() {
-              fetch(CF_WORKER_URL + '/feedback', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: 'vote', service_id: 'konami' })
-              }).catch(function(){});
-            });
-          } catch(e) {}
+          // Server sync
+          fetch('https://api.magicdns.ru/api/wishlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'vote', id: id })
+          })
+          .then(function(res) { return res.json(); })
+          .then(function(resData) {
+            if (resData && resData.ok && countSpan && typeof resData.votes !== 'undefined') {
+              countSpan.textContent = String(resData.votes);
+            }
+          })
+          .catch(function() {});
         });
       }
 
