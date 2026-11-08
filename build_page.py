@@ -4875,7 +4875,7 @@ html_content = f'''<!DOCTYPE html>
           </ul>
         </div>
 
-        <a href="https://t.me/magicdns_alert_bot" target="_blank" rel="noopener noreferrer" class="btn-support-header btn-tg-contact-header" aria-label="Связаться с админом">
+        <a href="https://t.me/magicdns_info" target="_blank" rel="noopener noreferrer" class="btn-support-header btn-tg-contact-header" aria-label="Связаться с админом">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
           </svg>
@@ -6094,7 +6094,7 @@ sudo systemctl restart systemd-resolved</code></pre>
           
           <!-- Fallback if ad could not load or blocked -->
           <div id="promo-fallback" style="display: none;" class="fallback-card">
-            <p>Понравился сервис? <a href="https://pay.cloudtips.ru/p/596a95a5" target="_blank" rel="noopener">Поддержите проект</a> или напишите нам в <a href="https://t.me/magicdns_alert_bot" target="_blank" rel="noopener">Telegram-бот</a>.</p>
+            <p>Понравился сервис? <a href="https://pay.cloudtips.ru/p/596a95a5" target="_blank" rel="noopener">Поддержите проект</a> или напишите нам в <a href="https://t.me/magicdns_info" target="_blank" rel="noopener">Telegram-бот</a>.</p>
           </div>
         </div>
       </div>
@@ -6238,12 +6238,12 @@ sudo systemctl restart systemd-resolved</code></pre>
 
       <!-- Wishlist Grid: Only Real Card (Konami) + Action Card -->
       <div class="wishlist-grid" id="wishlist-grid">
-        <!-- Card 1: Konami (Real user request) -->
-        <article class="wishlist-card" id="card-konami">
+        <!-- Card 1: Duck.ai (DuckDuckGo AI Chat) -->
+        <article class="wishlist-card" id="card-duckai">
           <div class="wishlist-card-top">
             <span class="wishlist-category-badge">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="8" cy="12" r="2"/><path d="M15 9v6m-3-3h6"/></svg>
-              <span data-i18n="konamiCategory">Игры и аккаунты</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6v6l4 2"/></svg>
+              <span data-i18n="duckaiCategory">ИИ и нейросети</span>
             </span>
             <span class="wishlist-status-pill">
               <span class="status-dot" style="width: 7px; height: 7px; background: #00ff9d; border-radius: 50%; box-shadow: 0 0 8px #00ff9d;"></span>
@@ -6253,14 +6253,14 @@ sudo systemctl restart systemd-resolved</code></pre>
           <div class="wishlist-card-body">
             <div class="wishlist-card-title-wrap">
               <div class="wishlist-card-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="8" cy="12" r="2"/><path d="M15 9v6m-3-3h6"/></svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
               </div>
               <div>
-                <h3 class="wishlist-card-title">Konami (eFootball / PES / Yu-Gi-Oh)</h3>
-                <span class="wishlist-card-domains">konami.com • konami.net</span>
+                <h3 class="wishlist-card-title">Duck.ai (DuckDuckGo AI Chat)</h3>
+                <span class="wishlist-card-domains">duck.ai • duckduckgo.com</span>
               </div>
             </div>
-            <p class="wishlist-card-desc" data-i18n="konamiDesc">Реальный запрос от игроков: авторизация в Konami ID, синхронизация профилей eFootball и стабильный онлайн-матчмейкинг без задержек.</p>
+            <p class="wishlist-card-desc" data-i18n="duckaiDesc">Анонимный доступ к популярным нейросетям без регистрации и ограничений: GPT-4o mini, Claude 3 Haiku, Llama 3.3 и Mixtral напрямую без VPN.</p>
           </div>
           <div class="wishlist-card-footer">
             <span class="wishlist-compliance-badge">
@@ -6270,7 +6270,6 @@ sudo systemctl restart systemd-resolved</code></pre>
             <div class="btn-vote voted" style="cursor: default; pointer-events: none; background: rgba(0, 255, 157, 0.12); border-color: rgba(0, 255, 157, 0.4); color: #00ff9d;">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
               <span class="vote-text" data-i18n="btnConnected">Подключено к сети ✓</span>
-              <span class="vote-count" id="vote-count-konami" style="background: rgba(0, 255, 157, 0.2); color: #fff;">143</span>
             </div>
           </div>
         </article>
@@ -6419,7 +6418,7 @@ sudo systemctl restart systemd-resolved</code></pre>
         <p>По вопросам функционирования сервиса, отзыва согласия на обработку технических данных в рамках 152-ФЗ РФ и взаимодействию с правообладателями:</p>
         <div style="background: rgba(0, 255, 157, 0.06); border: 1px solid rgba(0, 255, 157, 0.25); border-radius: 8px; padding: 14px 18px; margin: 14px 0;">
           <div style="font-size: 0.82rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Официальный Telegram-бот обращений:</div>
-          <a href="https://t.me/magicdns_alert_bot" target="_blank" rel="noopener noreferrer" style="color: var(--cyber-cyan); font-family: monospace; font-size: 1.05rem; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+          <a href="https://t.me/magicdns_info" target="_blank" rel="noopener noreferrer" style="color: var(--cyber-cyan); font-family: monospace; font-size: 1.05rem; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
             @magicdns_alert_bot
           </a>
@@ -6429,7 +6428,7 @@ sudo systemctl restart systemd-resolved</code></pre>
         <p>Для оперативных консультаций по настройке DoH/DoT также доступен интерактивный чат-ассистент в нижнем правом углу экрана.</p>
       </div>
       <div class="legal-modal-footer">
-        <a href="https://t.me/magicdns_alert_bot" target="_blank" rel="noopener noreferrer" class="btn-action-green" style="text-decoration: none; margin-right: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg><span>Написать в Telegram</span></a>
+        <a href="https://t.me/magicdns_info" target="_blank" rel="noopener noreferrer" class="btn-action-green" style="text-decoration: none; margin-right: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg><span>Написать в Telegram</span></a>
         <button type="button" class="btn-dark-action" id="close-contact-btn-bottom" data-i18n="legalClose">Закрыть</button>
       </div>
     </div>
@@ -6505,6 +6504,7 @@ sudo systemctl restart systemd-resolved</code></pre>
         <button class="chat-faq-chip" data-faq="disable" data-i18n="chatFaqDisable">🔄 Как временно отключить MagicDNS?</button>
         <button class="chat-faq-chip" data-faq="diff" data-i18n="chatFaqDiff">🌐 Чем отличается от сторонних клиентов?</button>
         <button class="chat-faq-chip" id="chat-faq-feedback-trigger" data-faq="feedback" data-i18n="chatFaqFeedback">💡 Оставить отзыв или предложить идею</button>
+        <a href="https://t.me/magicdns_info" target="_blank" rel="noopener noreferrer" class="chat-faq-chip" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border-color: rgba(0, 255, 157, 0.4); color: var(--neon-mint);">💬 Чат сообщества в Telegram</a>
       </div>
     </div>
 
@@ -6599,7 +6599,7 @@ sudo systemctl restart systemd-resolved</code></pre>
         <!-- Direct Telegram Hint -->
         <div class="feedback-direct-tg-hint">
           <span data-i18n="feedbackDirectTgText">Хотите задать вопрос или пообщаться лично?</span>
-          <a href="https://t.me/magicdns_alert_bot" target="_blank" rel="noopener noreferrer" class="link-direct-tg">
+          <a href="https://t.me/magicdns_info" target="_blank" rel="noopener noreferrer" class="link-direct-tg">
             <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
             <span data-i18n="feedbackDirectTgLink">Написать админу в Telegram</span>
           </a>

@@ -1,18 +1,18 @@
 [
   {
-    "id": "konami",
-    "title": "Konami (eFootball / PES / Yu-Gi-Oh)",
-    "category": "Игры и аккаунты",
+    "id": "duckai",
+    "title": "Duck.ai (DuckDuckGo AI Chat)",
+    "category": "ИИ и нейросети",
     "domains": [
-      "konami.com",
-      "konami.net"
+      "duck.ai",
+      "duckduckgo.com"
     ],
     "status": "completed",
     "status_text": "Реализовано 🟢",
-    "votes": 143,
-    "description": "Реальный запрос от игроков: авторизация в Konami ID, синхронизация профилей eFootball и стабильный онлайн-матчмейкинг без задержек.",
+    "votes": 187,
+    "description": "Анонимный доступ к популярным нейросетям без регистрации и ограничений: GPT-4o mini, Claude 3 Haiku, Llama 3.3 и Mixtral напрямую без VPN.",
     "rkn_verified": true,
     "rkn_text": "100% белый список (149-ФЗ)",
-    "created_at": "2026-10-28"
+    "created_at": "2026-11-07"
   }
 ]
