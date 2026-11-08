@@ -1,6 +1,6 @@
 {
-  "active": true,
-  "type": "warning",
-  "message": "ВНИМАНИЕ! ТЕХ. РАБОТЫ! СКОРО ВСЕ ЗАРАБОТАЕТ",
-  "updated_at": 1794168848
+  "active": false,
+  "type": "info",
+  "message": "",
+  "updated_at": 1794173446
 }
