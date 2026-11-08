@@ -4875,11 +4875,18 @@ html_content = f'''<!DOCTYPE html>
           </ul>
         </div>
 
-        <a href="https://t.me/magicdns_info" target="_blank" rel="noopener noreferrer" class="btn-support-header btn-tg-contact-header" aria-label="Связаться с админом">
+        <a href="https://t.me/magicdns_info" target="_blank" rel="noopener noreferrer" class="btn-support-header btn-tg-contact-header" aria-label="Чат сообщества в Telegram">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
           </svg>
-          <span data-i18n="headerTgBtn">Написать админу</span>
+          <span data-i18n="headerTgBtn">Чат сообщества</span>
+        </a>
+
+        <a href="https://t.me/magicdns_alert_bot" target="_blank" rel="noopener noreferrer" class="btn-support-header" style="background: rgba(168, 85, 247, 0.08); border-color: rgba(168, 85, 247, 0.35); color: #c084fc;" aria-label="Бот поддержки">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path>
+          </svg>
+          <span data-i18n="headerBotBtn">Бот поддержки</span>
         </a>
 
         <a href="https://pay.cloudtips.ru/p/596a95a5" target="_blank" rel="noopener noreferrer" class="btn-support-header" aria-label="Поддержать автора">
@@ -6326,6 +6333,14 @@ sudo systemctl restart systemd-resolved</code></pre>
         <button type="button" class="footer-legal-link" id="btn-open-privacy" data-i18n="footerPrivacy">Политика конфиденциальности</button>
         <button type="button" class="footer-legal-link" id="btn-open-terms" data-i18n="footerTerms">Пользовательское соглашение</button>
         <button type="button" class="footer-legal-link" id="btn-open-contact" data-i18n="footerContact">Контакт для обращений</button>
+        <a href="https://t.me/magicdns_info" class="social-btn" target="_blank" rel="noopener noreferrer" aria-label="Чат сообщества в Telegram" style="margin-right: 4px;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+          <span data-i18n="footerChatBtn">Чат сообщества</span>
+        </a>
+        <a href="https://t.me/magicdns_alert_bot" class="social-btn" target="_blank" rel="noopener noreferrer" aria-label="Бот поддержки в Telegram" style="margin-right: 4px;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path></svg>
+          <span data-i18n="footerBotBtn">Бот поддержки</span>
+        </a>
         <a href="https://pay.cloudtips.ru/p/596a95a5" class="social-btn social-btn-donate" target="_blank" rel="noopener noreferrer" aria-label="Поддержать автора">
           <svg viewBox="0 0 24 24" class="donate-heart" aria-hidden="true">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -6504,7 +6519,8 @@ sudo systemctl restart systemd-resolved</code></pre>
         <button class="chat-faq-chip" data-faq="disable" data-i18n="chatFaqDisable">🔄 Как временно отключить MagicDNS?</button>
         <button class="chat-faq-chip" data-faq="diff" data-i18n="chatFaqDiff">🌐 Чем отличается от сторонних клиентов?</button>
         <button class="chat-faq-chip" id="chat-faq-feedback-trigger" data-faq="feedback" data-i18n="chatFaqFeedback">💡 Оставить отзыв или предложить идею</button>
-        <a href="https://t.me/magicdns_info" target="_blank" rel="noopener noreferrer" class="chat-faq-chip" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border-color: rgba(0, 255, 157, 0.4); color: var(--neon-mint);">💬 Чат сообщества в Telegram</a>
+        <a href="https://t.me/magicdns_info" target="_blank" rel="noopener noreferrer" class="chat-faq-chip" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">💬 Чат сообщества</a>
+        <a href="https://t.me/magicdns_alert_bot" target="_blank" rel="noopener noreferrer" class="chat-faq-chip" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc;">🤖 Бот поддержки</a>
       </div>
     </div>
 

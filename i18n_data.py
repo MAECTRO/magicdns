@@ -8,6 +8,9 @@ i18n = {
     "ru": {
         "supportBtn": "Поддержать автора",
         "headerTgBtn": "Чат сообщества",
+        "headerBotBtn": "Бот поддержки",
+        "footerBotBtn": "Бот поддержки",
+        "footerChatBtn": "Чат сообщества",
         "feedbackDirectTgText": "Хотите задать вопрос или пообщаться лично?",
         "feedbackDirectTgLink": "Написать админу в Telegram",
         "statusLabel": "Статус сети: ",
@@ -250,6 +253,9 @@ i18n = {
     "en": {
         "supportBtn": "Support author",
         "headerTgBtn": "Community Chat",
+        "headerBotBtn": "Support Bot",
+        "footerBotBtn": "Support Bot",
+        "footerChatBtn": "Community Chat",
         "feedbackDirectTgText": "Want to ask a question or chat directly?",
         "feedbackDirectTgLink": "Chat with Admin in Telegram",
         "statusLabel": "Network status: ",
@@ -492,6 +498,9 @@ i18n = {
     "zh": {
         "supportBtn": "支持作者",
         "headerTgBtn": "社区群组",
+        "headerBotBtn": "支持机器人",
+        "footerBotBtn": "支持机器人",
+        "footerChatBtn": "社区群组",
         "feedbackDirectTgText": "想直接提问或私聊沟通？",
         "feedbackDirectTgLink": "在 Telegram 中联系管理员",
         "statusLabel": "网络状态：",
@@ -732,6 +741,9 @@ i18n = {
     "tr": {
         "supportBtn": "Yazarı Destekle",
         "headerTgBtn": "Topluluk Sohbeti",
+        "headerBotBtn": "Destek Botu",
+        "footerBotBtn": "Destek Botu",
+        "footerChatBtn": "Topluluk Sohbeti",
         "feedbackDirectTgText": "Doğrudan soru sormak veya görüşmek mi istiyorsunuz?",
         "feedbackDirectTgLink": "Telegram'da Yöneticiyle İletişim",
         "statusLabel": "Ağ durumu: ",
