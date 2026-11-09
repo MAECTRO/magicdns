@@ -5085,13 +5085,6 @@ html_content = f'''<!DOCTYPE html>
           <span data-i18n="headerBotBtn">Бот поддержки</span>
         </a>
 
-        <a href="https://pay.cloudtips.ru/p/596a95a5" target="_blank" rel="noopener noreferrer" class="btn-support-header" aria-label="Поддержать автора">
-          <svg viewBox="0 0 24 24" class="donate-heart" aria-hidden="true">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-          <span data-i18n="supportBtn">Поддержать автора</span>
-        </a>
-
         <!-- Status Badge -->
         <div class="status-badge" role="status" aria-live="polite">
           <div class="status-dot-wrapper">
@@ -6380,7 +6373,7 @@ sudo systemctl restart systemd-resolved</code></pre>
           
           <!-- Fallback if ad could not load or blocked -->
           <div id="promo-fallback" style="display: none;" class="fallback-card">
-            <p>Понравился сервис? <a href="https://pay.cloudtips.ru/p/596a95a5" target="_blank" rel="noopener">Поддержите проект</a> или напишите нам в <a href="https://t.me/magicdns_info" target="_blank" rel="noopener">Telegram-бот</a>.</p>
+            <p>Возникли вопросы или нужна помощь? Напишите нам в <a href="https://t.me/magicdns_info" target="_blank" rel="noopener">Telegram-чат</a> или <a href="https://t.me/magicdns_alert_bot" target="_blank" rel="noopener">бот поддержки</a>.</p>
           </div>
         </div>
       </div>
@@ -6619,12 +6612,6 @@ sudo systemctl restart systemd-resolved</code></pre>
         <a href="https://t.me/magicdns_alert_bot" class="social-btn" target="_blank" rel="noopener noreferrer" aria-label="Бот поддержки в Telegram" style="margin-right: 4px;">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path></svg>
           <span data-i18n="footerBotBtn">Бот поддержки</span>
-        </a>
-        <a href="https://pay.cloudtips.ru/p/596a95a5" class="social-btn social-btn-donate" target="_blank" rel="noopener noreferrer" aria-label="Поддержать автора">
-          <svg viewBox="0 0 24 24" class="donate-heart" aria-hidden="true">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-          <span data-i18n="supportBtn">Поддержать автора</span>
         </a>
       </div>
     </div>
