@@ -187,7 +187,7 @@ html_content = f'''<!DOCTYPE html>
             "name": "Предоставляет ли MagicDNS доступ к ресурсам, ограниченным на территории РФ?",
             "acceptedAnswer": {{
               "@type": "Answer",
-              "text": "Нет. Сервис MagicDNS строго соблюдает Федеральный закон № 149-ФЗ и решения уполномоченных органов РФ. Серверы используют архитектуру закрытого белого списка (Strict Whitelist) и маршрутизируют исключительно адреса платформ искусственного интеллекта (OpenAI ChatGPT, Google Gemini, Anthropic Claude, DeepSeek, Perplexity, Cursor, Midjourney) и зарубежных IT-инструментов, которые сами ограничили доступ для РФ со своей стороны. Запросы к ресурсам, доступ к которым ограничен на территории РФ (Единый реестр Роскомнадзора), серверами не обрабатываются и не перенаправляются."
+              "text": "Нет. Сервис MagicDNS строго соблюдает Федеральный закон № 149-ФЗ и решения уполномоченных органов РФ. Серверы используют архитектуру закрытого белого списка (Strict Whitelist) и маршрутизируют исключительно адреса платформ искусственного интеллекта (OpenAI ChatGPT, Google Gemini, Anthropic Claude, DeepSeek, Perplexity, Midjourney) и зарубежных IT-инструментов, которые сами ограничили доступ для РФ со своей стороны. Запросы к ресурсам, доступ к которым ограничен на территории РФ (Единый реестр Роскомнадзора), серверами не обрабатываются и не перенаправляются."
             }}
           }}
         ]
@@ -5199,7 +5199,7 @@ html_content = f'''<!DOCTYPE html>
             <span data-i18n="drawerTitle">Также работают через MagicDNS без ограничений:</span>
           </div>
           <div class="more-services-grid">
-            <span class="mini-service-tag">Cursor AI</span>
+            <span class="mini-service-tag">Google Antigravity</span>
             <span class="mini-service-tag">Midjourney</span>
             <span class="mini-service-tag">xAI Grok</span>
             <span class="mini-service-tag">v0 by Vercel</span>
@@ -5487,7 +5487,7 @@ html_content = f'''<!DOCTYPE html>
             </div>
             <h3 class="compliance-card-title" data-i18n="complianceColAiTitle">Платформы искусственного интеллекта</h3>
           </div>
-          <p class="compliance-card-desc" data-i18n="complianceColAiDesc">Прямой доступ к ChatGPT, Claude, Google Gemini, Perplexity, Cursor и Midjourney без посредников и задержек.</p>
+          <p class="compliance-card-desc" data-i18n="complianceColAiDesc">Прямой доступ к ChatGPT, Claude, Google Gemini, DeepSeek, Perplexity и Midjourney без посредников и задержек.</p>
         </div>
 
         <div class="compliance-card">
@@ -5497,7 +5497,7 @@ html_content = f'''<!DOCTYPE html>
             </div>
             <h3 class="compliance-card-title" data-i18n="complianceColGamingTitle">Среды разработки и AI-ассистенты</h3>
           </div>
-          <p class="compliance-card-desc" data-i18n="complianceColGamingDesc">Бесперебойная работа Cursor, GitHub Copilot, Windsurf и Antigravity: стабильное автодополнение, вызовы API и синхронизация без VPN.</p>
+          <p class="compliance-card-desc" data-i18n="complianceColGamingDesc">Бесперебойная работа GitHub Copilot, Windsurf и Google Antigravity: стабильное автодополнение, вызовы API и синхронизация без VPN.</p>
         </div>
 
         <div class="compliance-card">
@@ -5731,7 +5731,7 @@ html_content = f'''<!DOCTYPE html>
                 <span class="card-badge" data-i18n="macBadge">Для любых приложений • macOS 11+</span>
               </div>
               <p class="card-instruction" style="margin-bottom: 12px;" data-i18n="macDesc">
-                На Mac можно не ставить профиль, а указать DNS в настройках сети — это работает для всей системы и любых десктопных программ (ChatGPT, Cursor, Claude). Открой: <b>Системные настройки → Сеть → Wi-Fi → Подробнее... → вкладка DNS</b>, нажми «+» и добавь два адреса:
+                На Mac можно не ставить профиль, а указать DNS в настройках сети — это работает для всей системы и любых десктопных программ (ChatGPT, Claude, DeepSeek). Открой: <b>Системные настройки → Сеть → Wi-Fi → Подробнее... → вкладка DNS</b>, нажми «+» и добавь два адреса:
               </p>
               <div class="router-ips-grid win-ips-grid">
                 <div class="input-field-group">
@@ -6304,7 +6304,7 @@ sudo systemctl restart systemd-resolved</code></pre>
             <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
           <div class="faq-answer">
-            <p data-i18n="faqA6">Нет. Сервис MagicDNS строго соблюдает Федеральный закон № 149-ФЗ и решения уполномоченных органов РФ. Серверы используют архитектуру закрытого белого списка (Strict Whitelist) и маршрутизируют исключительно адреса платформ искусственного интеллекта (OpenAI ChatGPT, Google Gemini, Anthropic Claude, DeepSeek, Perplexity, Cursor, Midjourney) и зарубежных IT-инструментов, которые сами ограничили доступ для РФ со своей стороны. Запросы к ресурсам, доступ к которым ограничен на территории РФ (Единый реестр Роскомнадзора), серверами не обрабатываются и не перенаправляются.</p>
+            <p data-i18n="faqA6">Нет. Сервис MagicDNS строго соблюдает Федеральный закон № 149-ФЗ и решения уполномоченных органов РФ. Серверы используют архитектуру закрытого белого списка (Strict Whitelist) и маршрутизируют исключительно адреса платформ искусственного интеллекта (OpenAI ChatGPT, Google Gemini, Anthropic Claude, DeepSeek, Perplexity, Midjourney) и зарубежных IT-инструментов, которые сами ограничили доступ для РФ со своей стороны. Запросы к ресурсам, доступ к которым ограничен на территории РФ (Единый реестр Роскомнадзора), серверами не обрабатываются и не перенаправляются.</p>
           </div>
         </details>
       </div>
@@ -6931,7 +6931,7 @@ sudo systemctl restart systemd-resolved</code></pre>
         <!-- Service / Game Name -->
         <div class="feedback-field">
           <label for="suggest-name" class="feedback-label" data-i18n="suggestNameLabel">Название нейросети или AI-сервиса:</label>
-          <input type="text" id="suggest-name" class="feedback-input ym-record-keys" placeholder="Например: Claude Sonnet, Midjourney, Cursor..." required maxlength="80" data-i18n-placeholder="suggestNamePlaceholder">
+          <input type="text" id="suggest-name" class="feedback-input ym-record-keys" placeholder="Например: Claude Sonnet, Midjourney, Windsurf..." required maxlength="80" data-i18n-placeholder="suggestNamePlaceholder">
         </div>
 
         <!-- Domain (Optional) -->
