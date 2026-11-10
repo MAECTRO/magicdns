@@ -187,7 +187,7 @@ html_content = f'''<!DOCTYPE html>
             "name": "Предоставляет ли MagicDNS доступ к ресурсам, ограниченным на территории РФ?",
             "acceptedAnswer": {{
               "@type": "Answer",
-              "text": "Нет. Сервис MagicDNS строго соблюдает Федеральный закон № 149-ФЗ и решения уполномоченных органов РФ. Серверы используют архитектуру закрытого белого списка (Strict Whitelist) и маршрутизируют исключительно адреса платформ искусственного интеллекта (OpenAI, Google Gemini, Anthropic Claude, Cursor, Midjourney) и игровых экосистем, которые сами ограничили доступ для РФ со своей стороны. Запросы к ресурсам, доступ к которым ограничен на территории РФ (Единый реестр Роскомнадзора), серверами не обрабатываются и не перенаправляются."
+              "text": "Нет. Сервис MagicDNS строго соблюдает Федеральный закон № 149-ФЗ и решения уполномоченных органов РФ. Серверы используют архитектуру закрытого белого списка (Strict Whitelist) и маршрутизируют исключительно адреса платформ искусственного интеллекта (OpenAI ChatGPT, Google Gemini, Anthropic Claude, DeepSeek, Perplexity, Cursor, Midjourney) и зарубежных IT-инструментов, которые сами ограничили доступ для РФ со своей стороны. Запросы к ресурсам, доступ к которым ограничен на территории РФ (Единый реестр Роскомнадзора), серверами не обрабатываются и не перенаправляются."
             }}
           }}
         ]
@@ -4472,8 +4472,9 @@ html_content = f'''<!DOCTYPE html>
     .platform-icon-wrap.claude-icon svg {{ color: #d97706; }}
     .platform-icon-wrap.midjourney-icon svg {{ color: #a855f7; }}
     .platform-icon-wrap.copilot-icon svg {{ color: #06b6d4; }}
-    .platform-icon-wrap.xbox-icon svg {{ color: #22c55e; }}
-    .platform-icon-wrap.ps-icon svg {{ color: #38bdf8; }}
+    .platform-icon-wrap.deepseek-icon svg {{ color: #3b82f6; }}
+    .platform-icon-wrap.perplexity-icon svg {{ color: #20b2aa; }}
+    .compliance-icon-wrap.dev-wrap svg {{ color: var(--cyber-cyan); }}
 
     /* Compliance & White-list Section */
     .compliance-section {{
@@ -5429,40 +5430,40 @@ html_content = f'''<!DOCTYPE html>
           <p class="platform-desc" data-i18n="platCopilotDesc">Copilot DNS: открывает доступ к генерации текста и картинок в Windows 11 и Edge без региональных отказов.</p>
         </div>
 
-        <!-- Card 7: Xbox Live -->
+        <!-- Card 7: DeepSeek -->
         <div class="platform-card">
           <div class="platform-card-header">
-            <div class="platform-icon-wrap xbox-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M6 7c2.5 3 4.5 7 6 12"/><path d="M18 7c-2.5 3-4.5 7-6 12"/><path d="M5 16c3.5-2 6.5-2 14 0"/></svg>
+            <div class="platform-icon-wrap deepseek-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 6v6l4 2"/></svg>
             </div>
             <div>
-              <h3 class="platform-name">Xbox Live</h3>
-              <span class="platform-badge">xbox.com (Microsoft)</span>
+              <h3 class="platform-name">DeepSeek</h3>
+              <span class="platform-badge">deepseek.com (R1 / V3)</span>
             </div>
           </div>
           <div class="platform-error-box">
             <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
-            <code class="error-code">"0x80a40401 / 0x87dd0006"</code>
+            <code class="error-code">"Service Unavailable / Connection Timeout"</code>
           </div>
-          <p class="platform-desc" data-i18n="platXboxDesc">DNS для Xbox: устраняет ошибку входа 0x80a40401, обеспечивает стабильную авторизацию в профиле, работу Game Pass и синхронизацию облачных сохранений.</p>
+          <p class="platform-desc" data-i18n="platDeepseekDesc">DNS для DeepSeek: прямой доступ к чату и API (R1 / V3), устраняет зависания рассуждений, таймауты генерации и сетевые ошибки.</p>
         </div>
 
-        <!-- Card 8: PlayStation Network -->
+        <!-- Card 8: Perplexity & Grok -->
         <div class="platform-card">
           <div class="platform-card-header">
-            <div class="platform-icon-wrap ps-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 17c3-3 6-4 10-4v5l4-2v-8c-4 0-8 2-11 5"/><path d="M12 4v4c3 0 6 1 8 3l2-1c-2-3-6-6-10-6z"/></svg>
+            <div class="platform-icon-wrap perplexity-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="m11 8 3 3-3 3"/></svg>
             </div>
             <div>
-              <h3 class="platform-name">PlayStation Network</h3>
-              <span class="platform-badge">playstation.com (Sony)</span>
+              <h3 class="platform-name">Perplexity & Grok</h3>
+              <span class="platform-badge">perplexity.ai / grok.com (xAI)</span>
             </div>
           </div>
           <div class="platform-error-box">
             <span class="error-label" data-i18n="platErrorLabel">Устраняемая ошибка:</span>
-            <code class="error-code">"WS-116521-6 / Ошибка связи с сервером"</code>
+            <code class="error-code">"Cloudflare Turnstile / Access Denied"</code>
           </div>
-          <p class="platform-desc" data-i18n="platPsDesc">DNS для PlayStation: устраняет сетевые сбои подключения к PSN, ошибки авторизации в аккаунте Sony и обеспечивает стабильную игру по сети на PS4 и PS5.</p>
+          <p class="platform-desc" data-i18n="platPerplexityDesc">DNS для Perplexity и Grok: мгновенная поисковая аналитика и чат без сторонних VPN, решает блокировки Cloudflare и отказы в доступе.</p>
         </div>
       </div>
     </section>
@@ -5491,12 +5492,12 @@ html_content = f'''<!DOCTYPE html>
 
         <div class="compliance-card">
           <div class="compliance-card-header">
-            <div class="compliance-icon-wrap gaming-wrap">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="8" cy="12" r="2"/><path d="M15 9v6m-3-3h6"/></svg>
+            <div class="compliance-icon-wrap dev-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
             </div>
-            <h3 class="compliance-card-title" data-i18n="complianceColGamingTitle">Игровые консоли и экосистемы</h3>
+            <h3 class="compliance-card-title" data-i18n="complianceColGamingTitle">Среды разработки и AI-ассистенты</h3>
           </div>
-          <p class="compliance-card-desc" data-i18n="complianceColGamingDesc">Устранение системных ошибок авторизации 0x80a40401 и WS-116521-6 для стабильной работы Xbox Live и PlayStation Network.</p>
+          <p class="compliance-card-desc" data-i18n="complianceColGamingDesc">Бесперебойная работа Cursor, GitHub Copilot, Windsurf и Antigravity: стабильное автодополнение, вызовы API и синхронизация без VPN.</p>
         </div>
 
         <div class="compliance-card">
@@ -6054,7 +6055,7 @@ sudo systemctl restart systemd-resolved</code></pre>
               <span class="card-badge" data-i18n="routerNoDohBadge">Порт 53 • TP-Link, D-Link, Keenetic, Asus, Zyxel, Tenda</span>
             </div>
             <p class="card-instruction" data-i18n="routerNoDohDesc">
-              Настройка Smart DNS на роутер Keenetic OpenWrt, MikroTik или TP-Link открывает персональный DNS сервер для всех устройств в домашней сети Wi-Fi (Smart TV, консоли, смартфоны) без установки сторонних программ на каждое устройство.
+              Настройка Smart DNS на роутере (Keenetic, OpenWrt, MikroTik, Asus) открывает зашифрованный доступ к AI для всех устройств в домашней сети Wi-Fi (ПК, ноутбуки, планшеты, смартфоны) без установки сторонних программ на каждое устройство.
             </p>
             
             <div class="router-ips-grid">
@@ -6303,7 +6304,7 @@ sudo systemctl restart systemd-resolved</code></pre>
             <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </summary>
           <div class="faq-answer">
-            <p data-i18n="faqA6">Нет. Сервис MagicDNS строго соблюдает Федеральный закон № 149-ФЗ и решения уполномоченных органов РФ. Серверы используют архитектуру закрытого белого списка (Strict Whitelist) и маршрутизируют исключительно адреса платформ искусственного интеллекта (OpenAI, Google Gemini, Anthropic Claude, Cursor, Midjourney) и игровых экосистем, которые сами ограничили доступ для РФ со своей стороны. Запросы к ресурсам, доступ к которым ограничен на территории РФ (Единый реестр Роскомнадзора), серверами не обрабатываются и не перенаправляются.</p>
+            <p data-i18n="faqA6">Нет. Сервис MagicDNS строго соблюдает Федеральный закон № 149-ФЗ и решения уполномоченных органов РФ. Серверы используют архитектуру закрытого белого списка (Strict Whitelist) и маршрутизируют исключительно адреса платформ искусственного интеллекта (OpenAI ChatGPT, Google Gemini, Anthropic Claude, DeepSeek, Perplexity, Cursor, Midjourney) и зарубежных IT-инструментов, которые сами ограничили доступ для РФ со своей стороны. Запросы к ресурсам, доступ к которым ограничен на территории РФ (Единый реестр Роскомнадзора), серверами не обрабатываются и не перенаправляются.</p>
           </div>
         </details>
       </div>
@@ -6462,12 +6463,12 @@ sudo systemctl restart systemd-resolved</code></pre>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <span data-i18n="wishlistTag">ВИШЛИСТ СООБЩЕСТВА</span>
           </div>
-          <h2 data-i18n="wishlistTitle">Голосование за новые сервисы и игры</h2>
+          <h2 data-i18n="wishlistTitle">Голосование за новые AI-сервисы и нейросети</h2>
           <p class="wishlist-subtitle" data-i18n="wishlistSubtitle">Честный вишлист: мы не добавляем фейковые карточки для массовки. Здесь только реальные запросы пользователей. Голосуйте за нужные сервисы или предложите свой.</p>
         </div>
         <button type="button" class="btn-neon-action btn-suggest-trigger" id="open-suggest-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6m-4 4h2M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7z"/></svg>
-          <span data-i18n="btnOpenSuggest">Предложить свой сервис или игру</span>
+          <span data-i18n="btnOpenSuggest">Предложить свой AI-сервис или нейросеть</span>
         </button>
       </div>
 
@@ -6481,7 +6482,7 @@ sudo systemctl restart systemd-resolved</code></pre>
             </span>
           </div>
           <h4 class="step-title" data-i18n="wishlistStep1Title">1. Ваше предложение</h4>
-          <p class="step-desc" data-i18n="wishlistStep1Desc">Вы предлагаете нужный сервис или игру через форму</p>
+          <p class="step-desc" data-i18n="wishlistStep1Desc">Вы предлагаете нужный AI-сервис или инструмент через форму</p>
         </div>
         <div class="pipeline-step">
           <div class="pipeline-step-top">
@@ -6554,18 +6555,18 @@ sudo systemctl restart systemd-resolved</code></pre>
         </article>
 
         <!-- Card 2: Action Card / Предложить свой сервис или игру -->
-        <article class="wishlist-action-card" id="wishlist-action-card" role="button" tabindex="0" aria-label="Предложить свой сервис или игру">
+        <article class="wishlist-action-card" id="wishlist-action-card" role="button" tabindex="0" aria-label="Предложить свой AI-сервис или нейросеть">
           <div class="wishlist-card-body">
             <div class="action-card-header">
               <div class="action-card-icon">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
               </div>
               <div>
-                <h3 class="action-card-title" data-i18n="wishlistActionCardTitle">Предложить свой сервис или игру</h3>
+                <h3 class="action-card-title" data-i18n="wishlistActionCardTitle">Предложить свой AI-сервис или нейросеть</h3>
                 <span class="wishlist-card-domains" style="color: var(--neon-mint);" data-i18n="wishlistActionCardSubtitle">Сбор реальных предложений</span>
               </div>
             </div>
-            <p class="action-card-desc" data-i18n="wishlistActionCardDesc">Не нашли нужный сервис или игру? Отправьте заявку напрямую админу. После проверки на РКН и быстрой модерации она появится здесь для голосования.</p>
+            <p class="action-card-desc" data-i18n="wishlistActionCardDesc">Не нашли нужный AI-инструмент или сервис? Отправьте заявку напрямую админу. После проверки на соответствие белому списку он появится для голосования.</p>
           </div>
           <div class="action-card-footer">
             <button type="button" class="btn-neon-action btn-action-card" id="action-card-suggest-btn">
@@ -6901,7 +6902,7 @@ sudo systemctl restart systemd-resolved</code></pre>
             </svg>
           </div>
           <div>
-            <h3 id="suggest-modal-title" class="feedback-modal-title" data-i18n="suggestModalTitle">Предложить сервис или игру</h3>
+            <h3 id="suggest-modal-title" class="feedback-modal-title" data-i18n="suggestModalTitle">Предложить AI-сервис или нейросеть</h3>
             <p class="feedback-modal-subtitle" data-i18n="suggestModalSubtitle">Каждая заявка проходит проверку на РКН и после модерации публикуется для открытого голосования</p>
           </div>
         </div>
@@ -6913,24 +6914,24 @@ sudo systemctl restart systemd-resolved</code></pre>
       <form id="suggest-form" class="feedback-form" action="javascript:void(0);">
         <!-- Suggestion Type Segmented Chips -->
         <div class="feedback-type-group" role="radiogroup" aria-label="Тип сервиса">
-          <button type="button" class="feedback-type-chip active" data-suggest-type="game" role="radio" aria-checked="true">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="6" width="20" height="12" rx="6"/><circle cx="8" cy="12" r="2"/><path d="M15 9v6m-3-3h6"/></svg>
-            <span data-i18n="suggestTypeGame">Игра</span>
-          </button>
-          <button type="button" class="feedback-type-chip" data-suggest-type="ai" role="radio" aria-checked="false">
+          <button type="button" class="feedback-type-chip active" data-suggest-type="ai" role="radio" aria-checked="true">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a4 4 0 0 1 4 4v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2V6a4 4 0 0 1 4-4z"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/></svg>
             <span data-i18n="suggestTypeAi">ИИ / Нейросеть</span>
           </button>
+          <button type="button" class="feedback-type-chip" data-suggest-type="ide" role="radio" aria-checked="false">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            <span data-i18n="suggestTypeGame">Среда разработки / IDE</span>
+          </button>
           <button type="button" class="feedback-type-chip" data-suggest-type="app" role="radio" aria-checked="false">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            <span data-i18n="suggestTypeApp">Программа / Сайт</span>
+            <span data-i18n="suggestTypeApp">Программа / Web</span>
           </button>
         </div>
 
         <!-- Service / Game Name -->
         <div class="feedback-field">
-          <label for="suggest-name" class="feedback-label" data-i18n="suggestNameLabel">Название сервиса или игры:</label>
-          <input type="text" id="suggest-name" class="feedback-input ym-record-keys" placeholder="Например: Konami ID, EA FC, Cursor..." required maxlength="80" data-i18n-placeholder="suggestNamePlaceholder">
+          <label for="suggest-name" class="feedback-label" data-i18n="suggestNameLabel">Название нейросети или AI-сервиса:</label>
+          <input type="text" id="suggest-name" class="feedback-input ym-record-keys" placeholder="Например: Claude Sonnet, Midjourney, Cursor..." required maxlength="80" data-i18n-placeholder="suggestNamePlaceholder">
         </div>
 
         <!-- Domain (Optional) -->
