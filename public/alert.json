@@ -1,6 +1,6 @@
 {
   "active": true,
   "type": "warning",
-  "message": "⚠️ Внимание: транзитные серверы попали под блокировку, доступ к зарубежным сервисам временно ограничен. Ищем решение и готовим новые узлы. Оперативные новости в чате: <a href=\"https://t.me/magicdns_info\" target=\"_blank\" style=\"color: #00ff9d; text-decoration: underline;\">@magicdns_info</a>",
-  "updated_at": 1794253170
+  "message": "⚠️ Внимание: зафиксированы сбросы ТСПУ на порт 443. Официальные обращения в Роскомнадзор (№ 355871418) и ГРЧЦ / ЦМУ ССОП (инцидент INC-123321) отправлены и взяты дежурной сменой в работу. Ждём решения регулятора. Оперативные новости в чате: <a href=\"https://t.me/magicdns_info\" target=\"_blank\" style=\"color: #00ff9d; text-decoration: underline;\">@magicdns_info</a>",
+  "updated_at": 1794431044
 }
