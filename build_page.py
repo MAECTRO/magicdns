@@ -4990,7 +4990,17 @@ html_content = f'''<!DOCTYPE html>
 
   <!-- Yandex.RTB Loader -->
   <script>window.yaContextCb=window.yaContextCb||[]</script>
-  <script src="/lib/partner-core.js" async></script>
+  <script src="https://yandex.ru/ads/system/context.js" async></script>
+
+  <!-- Yandex.RTB R-A-20315689-12 (topAd) -->
+  <script>
+    window.yaContextCb.push(() => {{
+      Ya.Context.AdvManager.render({{
+        "blockId": "R-A-20315689-12",
+        "type": "topAd"
+      }});
+    }});
+  </script>
 
 </head>
 <body>
