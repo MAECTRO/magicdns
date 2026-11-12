@@ -22,7 +22,7 @@ echo                      Официальный сайт: magicdns.ru
 echo ======================================================================
 echo.
 echo  [1] Настроить MagicDNS (прямой доступ к ChatGPT, Claude, Gemini)
-echo      Пропишет DNS 109.120.177.170 и 45.88.163.92 на активном адаптере
+echo      Пропишет DNS 217.144.190.216 и 109.120.187.249 на активном адаптере
 echo.
 echo  [2] Очистить файл hosts и отключить системный прокси
 echo      Сохранит копию в hosts.bak и уберет старые блокировки от чужих VPN
@@ -52,9 +52,9 @@ goto menu
 :opt1
 echo.
 echo Настраиваем MagicDNS на активных сетевых адаптерах...
-powershell -NoProfile -Command "$ad = @(Get-NetAdapter | Where-Object { $_.Status -eq 'Up' -and $_.InterfaceDescription -notmatch 'VPN|TAP|TUN|WireGuard|Wintun|ZeroTier|Tailscale|Radmin|Hamachi' }); if ($ad.Count -eq 0) { $ad = @(Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }) }; foreach ($a in $ad) { Write-Host (' -> Адаптер: ' + $a.Name + ' (' + $a.InterfaceDescription + ')'); Set-DnsClientServerAddress -InterfaceIndex $a.ifIndex -ServerAddresses @('109.120.177.170','45.88.163.92') -ErrorAction SilentlyContinue }; Clear-DnsClientCache"
+powershell -NoProfile -Command "$ad = @(Get-NetAdapter | Where-Object { $_.Status -eq 'Up' -and $_.InterfaceDescription -notmatch 'VPN|TAP|TUN|WireGuard|Wintun|ZeroTier|Tailscale|Radmin|Hamachi' }); if ($ad.Count -eq 0) { $ad = @(Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }) }; foreach ($a in $ad) { Write-Host (' -> Адаптер: ' + $a.Name + ' (' + $a.InterfaceDescription + ')'); Set-DnsClientServerAddress -InterfaceIndex $a.ifIndex -ServerAddresses @('217.144.190.216','109.120.187.249') -ErrorAction SilentlyContinue }; Clear-DnsClientCache"
 echo.
-echo [OK] Готово! Адреса MagicDNS (109.120.177.170, 45.88.163.92) успешно установлены.
+echo [OK] Готово! Адреса MagicDNS (217.144.190.216, 109.120.187.249) успешно установлены.
 echo.
 pause
 goto menu
@@ -96,21 +96,21 @@ goto menu
 :opt4
 echo.
 echo Проверяем связь с узлами MagicDNS...
-ping -n 2 109.120.177.170 >nul 2>&1
+ping -n 2 217.144.190.216 >nul 2>&1
 if %errorlevel% equ 0 (
-    echo  [OK] Узел 1 (Германия) 109.120.177.170 — доступен
+    echo  [OK] Узел 1 217.144.190.216 — доступен
 ) else (
-    echo  [!] Узел 1 (Германия) 109.120.177.170 — нет ответа
+    echo  [!] Узел 1 217.144.190.216 — нет ответа
 )
-ping -n 2 45.88.163.92 >nul 2>&1
+ping -n 2 109.120.187.249 >nul 2>&1
 if %errorlevel% equ 0 (
-    echo  [OK] Узел 2 (Финляндия) 45.88.163.92 — доступен
+    echo  [OK] Узел 2 109.120.187.249 — доступен
 ) else (
-    echo  [!] Узел 2 (Финляндия) 45.88.163.92 — нет ответа
+    echo  [!] Узел 2 109.120.187.249 — нет ответа
 )
 echo.
 echo Проверяем работу DNS на доменах ChatGPT, Gemini и Claude...
-powershell -NoProfile -Command "foreach ($d in @('chatgpt.com', 'gemini.google.com', 'claude.ai')) { try { $r = Resolve-DnsName $d -Type A -ErrorAction Stop | Where-Object { $_.IPAddress } | Select-Object -First 1; if ($r.IPAddress -in @('109.120.177.170','45.88.163.92')) { Write-Host (' [OK] ' + $d + ' -> ' + $r.IPAddress + ' (маршрут MagicDNS активен)') -ForegroundColor Green } else { Write-Host (' [!] ' + $d + ' -> ' + $r.IPAddress + ' (идет мимо MagicDNS, примените пункт [1])') -ForegroundColor Yellow } } catch { Write-Host (' [!] ' + $d + ' -> ошибка DNS') -ForegroundColor Red } }"
+powershell -NoProfile -Command "foreach ($d in @('chatgpt.com', 'gemini.google.com', 'claude.ai')) { try { $r = Resolve-DnsName $d -Type A -ErrorAction Stop | Where-Object { $_.IPAddress } | Select-Object -First 1; if ($r.IPAddress -in @('217.144.190.216','109.120.187.249')) { Write-Host (' [OK] ' + $d + ' -> ' + $r.IPAddress + ' (маршрут MagicDNS активен)') -ForegroundColor Green } else { Write-Host (' [!] ' + $d + ' -> ' + $r.IPAddress + ' (идет мимо MagicDNS, примените пункт [1])') -ForegroundColor Yellow } } catch { Write-Host (' [!] ' + $d + ' -> ошибка DNS') -ForegroundColor Red } }"
 echo.
 pause
 goto menu

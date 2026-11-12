@@ -34,7 +34,7 @@ function Show-Menu {
     Write-Host '======================================================================' -ForegroundColor Cyan
     Write-Host ''
     Write-Host ' [1] Настроить MagicDNS (прямой доступ к ChatGPT, Claude, Gemini)' -ForegroundColor White
-    Write-Host '     Пропишет DNS 109.120.177.170 и 45.88.163.92 на активном адаптере' -ForegroundColor DarkGray
+    Write-Host '     Пропишет DNS 217.144.190.216 и 109.120.187.249 на активном адаптере' -ForegroundColor DarkGray
     Write-Host ''
     Write-Host ' [2] Очистить файл hosts и отключить системный прокси' -ForegroundColor White
     Write-Host '     Сохранит копию в hosts.bak и уберет старые блокировки от чужих VPN' -ForegroundColor DarkGray
@@ -66,10 +66,10 @@ while ($true) {
             }
             foreach ($a in $adapters) {
                 Write-Host " -> Адаптер: $($a.Name) ($($a.InterfaceDescription))" -ForegroundColor Gray
-                Set-DnsClientServerAddress -InterfaceIndex $a.ifIndex -ServerAddresses @('109.120.177.170','45.88.163.92') -ErrorAction SilentlyContinue
+                Set-DnsClientServerAddress -InterfaceIndex $a.ifIndex -ServerAddresses @('217.144.190.216','109.120.187.249') -ErrorAction SilentlyContinue
             }
             Clear-DnsClientCache -ErrorAction SilentlyContinue
-            Write-Host 'Готово! Адреса MagicDNS (109.120.177.170, 45.88.163.92) успешно установлены.' -ForegroundColor Green
+            Write-Host 'Готово! Адреса MagicDNS (217.144.190.216, 109.120.187.249) успешно установлены.' -ForegroundColor Green
             Write-Host 'Нажмите Enter для возврата в меню...' -ForegroundColor DarkGray
             [void](Read-Host)
         }
@@ -101,7 +101,7 @@ while ($true) {
         '4' {
             Write-Host ''
             Write-Host 'Проверяем связь с серверами MagicDNS...' -ForegroundColor Cyan
-            foreach ($srv in @(@{Name='Узел 1 (Германия)';IP='109.120.177.170'}, @{Name='Узел 2 (Финляндия)';IP='45.88.163.92'})) {
+            foreach ($srv in @(@{Name='Узел 1 (Основной)';IP='217.144.190.216'}, @{Name='Узел 2 (Резервный)';IP='109.120.187.249'})) {
                 $ping = Test-Connection -ComputerName $srv.IP -Count 2 -ErrorAction SilentlyContinue
                 if ($ping) {
                     $avg = [math]::Round(($ping | Measure-Object -Property ResponseTime -Average).Average, 1)
@@ -115,7 +115,7 @@ while ($true) {
             foreach ($dom in @('chatgpt.com', 'gemini.google.com', 'claude.ai')) {
                 try {
                     $res = Resolve-DnsName $dom -Type A -ErrorAction Stop | Where-Object { $_.IPAddress } | Select-Object -First 1
-                    if ($res.IPAddress -in @('109.120.177.170','45.88.163.92')) {
+                    if ($res.IPAddress -in @('217.144.190.216','109.120.187.249')) {
                         Write-Host " [OK] $dom -> $($res.IPAddress) (маршрут MagicDNS активен)" -ForegroundColor Green
                     } else {
                         Write-Host " [!] $dom -> $($res.IPAddress) (идет мимо MagicDNS, выберите пункт [1] или выключите VPN)" -ForegroundColor Yellow

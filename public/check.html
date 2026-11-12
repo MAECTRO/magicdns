@@ -1035,7 +1035,7 @@
     </style>
 </head>
 <body>
-    <div id="cyberToast" class="cyber-toast">Скопировано: api.magicdns.ru</div>
+    <div id="cyberToast" class="cyber-toast">Скопировано: api.magicinfo.art</div>
 
     <div class="app-shell">
         <!-- Верхняя шапка -->
@@ -1058,10 +1058,10 @@
         </header>
 
         <!-- Быстрая полоса копирования DoT-адреса -->
-        <div class="quick-dns-strip" onclick="copyDnsAddress('api.magicdns.ru', 'Адрес api.magicdns.ru скопирован')">
+        <div class="quick-dns-strip" onclick="copyDnsAddress('api.magicinfo.art', 'Адрес api.magicinfo.art скопирован')">
             <div>
                 <div class="quick-dns-label">Единый адрес DoT / SNI</div>
-                <div class="quick-dns-host">api.magicdns.ru</div>
+                <div class="quick-dns-host">api.magicinfo.art</div>
             </div>
             <div class="quick-dns-badge" id="quickCopyBadge">Копировать</div>
         </div>
@@ -1311,7 +1311,7 @@
                             <span class="geo-code">DE</span>
                             <span>Германия (Франкфурт — Основной)</span>
                         </div>
-                        <div class="node-meta" onclick="copyDnsAddress('109.120.177.170', 'IP Германии скопирован')">109.120.177.170 • DoT :853 / DoH :443 [Копировать]</div>
+                        <div class="node-meta" onclick="copyDnsAddress('217.144.190.216', 'IP Германии скопирован')">217.144.190.216 • DoT :853 / DoH :443 [Копировать]</div>
                     </div>
                     <div class="node-status-badge online" id="clusterDeBadge">ONLINE</div>
                 </div>
@@ -1322,7 +1322,7 @@
                             <span class="geo-code">FI</span>
                             <span>Финляндия (Хельсинки — Резерв)</span>
                         </div>
-                        <div class="node-meta" onclick="copyDnsAddress('45.88.163.92', 'IP Финляндии скопирован')">45.88.163.92 • DoT :853 / DoH :443 [Копировать]</div>
+                        <div class="node-meta" onclick="copyDnsAddress('109.120.187.249', 'IP Финляндии скопирован')">109.120.187.249 • DoT :853 / DoH :443 [Копировать]</div>
                     </div>
                     <div class="node-status-badge online" id="clusterFiBadge">ONLINE</div>
                 </div>
@@ -1392,14 +1392,14 @@
         // ГЛАВНЫЙ КОНФИГ ПРИЛОЖЕНИЯ
         // =========================================================================
         const CONFIG = {
-            dnsHost: 'api.magicdns.ru',
-            deIp: '109.120.177.170',
-            fiIp: '45.88.163.92',
-            feedbackEndpoint: 'https://api.magicdns.ru/api/feedback',
-            wishlistEndpoint: 'https://api.magicdns.ru/api/wishlist',
+            dnsHost: 'api.magicinfo.art',
+            deIp: '217.144.190.216',
+            fiIp: '109.120.187.249',
+            feedbackEndpoint: 'https://api.magicinfo.art/api/feedback',
+            wishlistEndpoint: 'https://api.magicinfo.art/api/wishlist',
             sonarSweepSpeed: 0.03,
             probes: [
-                { id: 'mdns', name: 'Шлюз MagicDNS (DoT)', url: 'https://api.magicdns.ru/favicon.ico', angle: 0.4 },
+                { id: 'mdns', name: 'Шлюз MagicDNS (DoT)', url: 'https://api.magicinfo.art/favicon.ico', angle: 0.4 },
                 { id: 'gemini', name: 'Google Gemini', url: 'https://gemini.google.com/favicon.ico', angle: 1.2 },
                 { id: 'chatgpt', name: 'OpenAI ChatGPT', url: 'https://chatgpt.com/favicon.ico', angle: 2.0 },
                 { id: 'claude', name: 'Anthropic Claude', url: 'https://claude.ai/favicon.ico', angle: 2.8 },
@@ -1862,7 +1862,7 @@
                 rankEl.style.color = '#fbbf24';
                 titleEl.textContent = 'Стабильная связь (есть замечания)';
                 descEl.textContent = STATE.ispClean
-                    ? 'Большинство сервисов доступны. Убедитесь, что api.magicdns.ru указан в настройках DNS.'
+                    ? 'Большинство сервисов доступны. Убедитесь, что api.magicinfo.art указан в настройках DNS.'
                     : 'Обнаружен сторонний туннель — отключите его для прямой работы MagicDNS.';
                 haptic('warning');
             } else {
@@ -1912,7 +1912,7 @@
                             <div class="step-row">
                                 <div class="step-num">2</div>
                                 <div>Выберите <b>«Имя хоста провайдера DNS»</b> и вставьте адрес:
-                                    <div class="code-snippet-box">api.magicdns.ru</div>
+                                    <div class="code-snippet-box">api.magicinfo.art</div>
                                 </div>
                             </div>
                             <div class="step-row">
@@ -1920,8 +1920,8 @@
                                 <div>Нажмите <b>Сохранить</b> и отключите сторонние VPN-приложения.</div>
                             </div>
                         </div>
-                        <button class="cyber-btn" onclick="copyDnsAddress('api.magicdns.ru', 'Адрес api.magicdns.ru скопирован')">
-                            Скопировать api.magicdns.ru
+                        <button class="cyber-btn" onclick="copyDnsAddress('api.magicinfo.art', 'Адрес api.magicinfo.art скопирован')">
+                            Скопировать api.magicinfo.art
                         </button>
                     `;
                 }
@@ -1984,16 +1984,16 @@
                             <div class="step-list">
                                 <div class="step-row">
                                     <div class="step-num">1</div>
-                                    <div>Предпочитаемый DNS: <b>109.120.177.170</b><br>Альтернативный DNS: <b>45.88.163.92</b></div>
+                                    <div>Предпочитаемый DNS: <b>217.144.190.216</b><br>Альтернативный DNS: <b>109.120.187.249</b></div>
                                 </div>
                                 <div class="step-row">
                                     <div class="step-num">2</div>
                                     <div>В настройках браузера включите «Безопасный DNS» и укажите:
-                                        <div class="code-snippet-box">https://api.magicdns.ru/dns-query</div>
+                                        <div class="code-snippet-box">https://api.magicinfo.art/rpc</div>
                                     </div>
                                 </div>
                             </div>
-                            <button class="cyber-btn" onclick="copyDnsAddress('https://api.magicdns.ru/dns-query', 'DoH-адрес скопирован')">
+                            <button class="cyber-btn" onclick="copyDnsAddress('https://api.magicinfo.art/rpc', 'DoH-адрес скопирован')">
                                 Скопировать DoH для браузера
                             </button>
                         `;
@@ -2023,7 +2023,7 @@
                 ],
                 render(sub) {
                     if (sub === 'mikrotik') {
-                        const cli = '/ip dns set servers=109.120.177.170,45.88.163.92 use-doh-server=https://api.magicdns.ru/dns-query verify-doh-cert=no allow-remote-requests=yes';
+                        const cli = '/ip dns set servers=217.144.190.216,109.120.187.249 use-doh-server=https://api.magicinfo.art/rpc verify-doh-cert=no allow-remote-requests=yes';
                         return `
                             <div class="step-list">
                                 <div class="step-row">
@@ -2047,11 +2047,11 @@
                                 </div>
                                 <div class="step-row">
                                     <div class="step-num">2</div>
-                                    <div>Укажите серверы <b>109.120.177.170</b> и <b>45.88.163.92</b> или DoH <code>https://api.magicdns.ru/dns-query</code>.</div>
+                                    <div>Укажите серверы <b>217.144.190.216</b> и <b>109.120.187.249</b> или DoH <code>https://api.magicinfo.art/rpc</code>.</div>
                                 </div>
                             </div>
                         </div>
-                        <button class="cyber-btn" onclick="copyDnsAddress('109.120.177.170', 'IP 109.120.177.170 скопирован')">
+                        <button class="cyber-btn" onclick="copyDnsAddress('217.144.190.216', 'IP 217.144.190.216 скопирован')">
                             Скопировать основной IP
                         </button>
                         `;
@@ -2065,12 +2065,12 @@
                             <div class="step-row">
                                 <div class="step-num">2</div>
                                 <div>Добавьте серверы DNS-over-TLS:
-                                    <div class="code-snippet-box">109.120.177.170 (SNI: api.magicdns.ru)\n45.88.163.92 (SNI: api.magicdns.ru)</div>
+                                    <div class="code-snippet-box">217.144.190.216 (SNI: api.magicinfo.art)\n109.120.187.249 (SNI: api.magicinfo.art)</div>
                                 </div>
                             </div>
                         </div>
-                        <button class="cyber-btn" onclick="copyDnsAddress('api.magicdns.ru', 'SNI api.magicdns.ru скопирован')">
-                            Скопировать SNI api.magicdns.ru
+                        <button class="cyber-btn" onclick="copyDnsAddress('api.magicinfo.art', 'SNI api.magicinfo.art скопирован')">
+                            Скопировать SNI api.magicinfo.art
                         </button>
                     `;
                 }
@@ -2135,22 +2135,22 @@
             systemd: {
                 label: 'Linux (systemd-resolved)',
                 file: '/etc/systemd/resolved.conf',
-                code: `[Resolve]\nDNS=109.120.177.170#api.magicdns.ru 45.88.163.92#api.magicdns.ru\nFallbackDNS=1.1.1.1 8.8.8.8\nDomains=~.\nDNSOverTLS=yes\nDNSSEC=allow-downgrade`
+                code: `[Resolve]\nDNS=217.144.190.216#api.magicinfo.art 109.120.187.249#api.magicinfo.art\nFallbackDNS=1.1.1.1 8.8.8.8\nDomains=~.\nDNSOverTLS=yes\nDNSSEC=allow-downgrade`
             },
             adguard: {
                 label: 'AdGuard Home',
                 file: 'Upstream DNS серверы',
-                code: `tls://api.magicdns.ru:853\nhttps://api.magicdns.ru/dns-query\n109.120.177.170\n45.88.163.92`
+                code: `tls://api.magicinfo.art:853\nhttps://api.magicinfo.art/rpc\n217.144.190.216\n109.120.187.249`
             },
             dnsmasq: {
                 label: 'dnsmasq',
                 file: '/etc/dnsmasq.conf',
-                code: `no-resolv\nstrict-order\nserver=109.120.177.170\nserver=45.88.163.92\ncache-size=2048`
+                code: `no-resolv\nstrict-order\nserver=217.144.190.216\nserver=109.120.187.249\ncache-size=2048`
             },
             mikrotik: {
                 label: 'MikroTik RouterOS 7+',
                 file: 'WinBox / Terminal',
-                code: `/ip dns set servers=109.120.177.170,45.88.163.92 use-doh-server=https://api.magicdns.ru/dns-query verify-doh-cert=no allow-remote-requests=yes cache-size=4096KiB`
+                code: `/ip dns set servers=217.144.190.216,109.120.187.249 use-doh-server=https://api.magicinfo.art/rpc verify-doh-cert=no allow-remote-requests=yes cache-size=4096KiB`
             },
             dnscrypt: {
                 label: 'dnscrypt-proxy',
@@ -2212,7 +2212,7 @@
                 };
             } catch (e) {}
 
-            const mdnsRes = await pingFavicon('https://api.magicdns.ru/favicon.ico');
+            const mdnsRes = await pingFavicon('https://api.magicinfo.art/favicon.ico');
             await new Promise(r => setTimeout(r, 650));
 
             encEl.textContent = 'TLS 1.3 (:853)';
@@ -2238,7 +2238,7 @@
                 routeEl.className = 'leak-val warn';
                 ispDnsEl.textContent = 'Требуется DoT';
                 ispDnsEl.className = 'leak-val alert';
-                verdictEl.textContent = 'Внимание: запросы идут через открытый DNS. Настройте DoT api.magicdns.ru во вкладке «Настройка».';
+                verdictEl.textContent = 'Внимание: запросы идут через открытый DNS. Настройте DoT api.magicinfo.art во вкладке «Настройка».';
                 haptic('warning');
             }
         }
@@ -2658,7 +2658,7 @@
             deEl.textContent = 'ТЕСТ...';
             fiEl.textContent = 'ТЕСТ...';
 
-            const rDe = await pingFavicon('https://api.magicdns.ru/favicon.ico');
+            const rDe = await pingFavicon('https://api.magicinfo.art/favicon.ico');
             deEl.textContent = rDe.ok ? `${rDe.ms} мс` : 'ONLINE';
 
             const rFi = await pingFavicon('https://magicdns.ru/favicon.ico');
