@@ -34,7 +34,7 @@ function Show-Menu {
     Write-Host '======================================================================' -ForegroundColor Cyan
     Write-Host ''
     Write-Host ' [1] Настроить MagicDNS (прямой доступ к ChatGPT, Claude, Gemini)' -ForegroundColor White
-    Write-Host '     Пропишет DNS 217.144.190.216 и 109.120.187.249 на активном адаптере' -ForegroundColor DarkGray
+    Write-Host '     Пропишет DNS 217.144.190.216 и 109.120.187.249, очистит hosts и сбросит кэш' -ForegroundColor DarkGray
     Write-Host ''
     Write-Host ' [2] Очистить файл hosts и отключить системный прокси' -ForegroundColor White
     Write-Host '     Сохранит копию в hosts.bak и уберет старые блокировки от чужих VPN' -ForegroundColor DarkGray
@@ -68,8 +68,18 @@ while ($true) {
                 Write-Host " -> Адаптер: $($a.Name) ($($a.InterfaceDescription))" -ForegroundColor Gray
                 Set-DnsClientServerAddress -InterfaceIndex $a.ifIndex -ServerAddresses @('217.144.190.216','109.120.187.249') -ErrorAction SilentlyContinue
             }
+            Write-Host ''
+            Write-Host 'Очищаем файл hosts от старых блокировок чужих VPN...' -ForegroundColor Cyan
+            $hosts = "$env:SystemRoot\System32\drivers\etc\hosts"
+            if (Test-Path $hosts) {
+                Copy-Item $hosts "$hosts.bak" -Force -ErrorAction SilentlyContinue
+                Write-Host " -> Резервная копия сохранена: $hosts.bak" -ForegroundColor Gray
+            }
+            Set-Content -Path $hosts -Value "# Default Windows hosts file (cleaned by MagicDNS Assistant)`r`n127.0.0.1 localhost`r`n::1 localhost" -Encoding Ascii -Force
+            Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings' -Name ProxyEnable -Value 0 -ErrorAction SilentlyContinue
             Clear-DnsClientCache -ErrorAction SilentlyContinue
-            Write-Host 'Готово! Адреса MagicDNS (217.144.190.216, 109.120.187.249) успешно установлены.' -ForegroundColor Green
+            Write-Host ''
+            Write-Host 'Готово! Адреса MagicDNS (217.144.190.216, 109.120.187.249) установлены, файл hosts очищен.' -ForegroundColor Green
             Write-Host 'Нажмите Enter для возврата в меню...' -ForegroundColor DarkGray
             [void](Read-Host)
         }
@@ -101,7 +111,7 @@ while ($true) {
         '4' {
             Write-Host ''
             Write-Host 'Проверяем связь с серверами MagicDNS...' -ForegroundColor Cyan
-            foreach ($srv in @(@{Name='Узел 1 (Основной)';IP='217.144.190.216'}, @{Name='Узел 2 (Резервный)';IP='109.120.187.249'})) {
+            foreach ($srv in @(@{Name='Узел 1 (Германия)';IP='217.144.190.216'}, @{Name='Узел 2 (Финляндия)';IP='109.120.187.249'})) {
                 $ping = Test-Connection -ComputerName $srv.IP -Count 2 -ErrorAction SilentlyContinue
                 if ($ping) {
                     $avg = [math]::Round(($ping | Measure-Object -Property ResponseTime -Average).Average, 1)

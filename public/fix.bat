@@ -22,7 +22,7 @@ echo                      Официальный сайт: magicdns.ru
 echo ======================================================================
 echo.
 echo  [1] Настроить MagicDNS (прямой доступ к ChatGPT, Claude, Gemini)
-echo      Пропишет DNS 217.144.190.216 и 109.120.187.249 на активном адаптере
+echo      Пропишет DNS 217.144.190.216 и 109.120.187.249, очистит hosts и сбросит кэш
 echo.
 echo  [2] Очистить файл hosts и отключить системный прокси
 echo      Сохранит копию в hosts.bak и уберет старые блокировки от чужих VPN
@@ -54,7 +54,21 @@ echo.
 echo Настраиваем MagicDNS на активных сетевых адаптерах...
 powershell -NoProfile -Command "$ad = @(Get-NetAdapter | Where-Object { $_.Status -eq 'Up' -and $_.InterfaceDescription -notmatch 'VPN|TAP|TUN|WireGuard|Wintun|ZeroTier|Tailscale|Radmin|Hamachi' }); if ($ad.Count -eq 0) { $ad = @(Get-NetAdapter | Where-Object { $_.Status -eq 'Up' }) }; foreach ($a in $ad) { Write-Host (' -> Адаптер: ' + $a.Name + ' (' + $a.InterfaceDescription + ')'); Set-DnsClientServerAddress -InterfaceIndex $a.ifIndex -ServerAddresses @('217.144.190.216','109.120.187.249') -ErrorAction SilentlyContinue }; Clear-DnsClientCache"
 echo.
-echo [OK] Готово! Адреса MagicDNS (217.144.190.216, 109.120.187.249) успешно установлены.
+echo Очищаем файл hosts и проверяем системный прокси...
+set "HOSTS_FILE=%SystemRoot%\System32\drivers\etc\hosts"
+if exist "%HOSTS_FILE%" (
+    copy /y "%HOSTS_FILE%" "%HOSTS_FILE%.bak" >nul
+    echo  -^> Резервная копия сохранена: hosts.bak
+)
+(
+echo # Default Windows hosts file (cleaned by MagicDNS Assistant)
+echo 127.0.0.1 localhost
+echo ::1 localhost
+) > "%HOSTS_FILE%"
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f >nul 2>&1
+ipconfig /flushdns >nul 2>&1
+echo.
+echo [OK] Готово! Адреса MagicDNS установлены, файл hosts очищен, кэш сброшен.
 echo.
 pause
 goto menu
