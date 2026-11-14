@@ -8709,8 +8709,8 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
                 <string>HTTPS</string>
                 <key>ServerAddresses</key>
                 <array>
-                    <string>217.144.190.216</string>
                     <string>109.120.187.249</string>
+                    <string>217.144.190.216</string>
                 </array>
                 <key>ServerURL</key>
                 <string>https://api.magicinfo.art/rpc</string>
@@ -8720,11 +8720,11 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
             <key>PayloadDisplayName</key>
             <string>MagicDNS (Двойной узел)</string>
             <key>PayloadIdentifier</key>
-            <string>com.apple.dnsSettings.managed.f9e9d877-285f-4d11-9451-1ae5bdd06ac6</string>
+            <string>com.apple.dnsSettings.managed.a7c4e912-3b8d-4f6a-9c21-8e5d7b0f3a44</string>
             <key>PayloadType</key>
             <string>com.apple.dnsSettings.managed</string>
             <key>PayloadUUID</key>
-            <string>f9e9d877-285f-4d11-9451-1ae5bdd06ac6</string>
+            <string>a7c4e912-3b8d-4f6a-9c21-8e5d7b0f3a44</string>
             <key>PayloadVersion</key>
             <integer>1</integer>
         </dict>
@@ -8737,14 +8737,12 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
     <string>ru.magicdns.profile.dual</string>
     <key>PayloadOrganization</key>
     <string>MagicDNS</string>
-    <key>PayloadScope</key>
-    <string>System</string>
     <key>PayloadRemovalDisallowed</key>
     <false/>
     <key>PayloadType</key>
     <string>Configuration</string>
     <key>PayloadUUID</key>
-    <string>3e421ef8-4e8e-412b-a65d-47ed5a5e480f</string>
+    <string>6d2f81b4-9e3c-4a17-b508-2c94e7d1a630</string>
     <key>PayloadVersion</key>
     <integer>1</integer>
 </dict>
