@@ -22,7 +22,7 @@ def get_svg_qr(data):
 
 # Generate QR codes for the 4 platform configurations
 qr_windows = get_svg_qr('https://api.magicinfo.art/rpc')
-qr_ios = get_svg_qr('https://dns.magicdns.ru/profile.mobileconfig')
+qr_ios = get_svg_qr('https://api.magicinfo.art/profile.mobileconfig')
 qr_android = get_svg_qr('api.magicinfo.art')
 
 # Load news and announcements from news.json
@@ -5729,17 +5729,17 @@ html_content = f'''<!DOCTYPE html>
             <div class="input-field-group">
               <span class="input-field-label" data-i18n="iosUrlLabel">Ссылка на профиль:</span>
               <div class="code-input-box">
-                <code class="code-input-text" id="val-ios-url">https://dns.magicdns.ru/profile.mobileconfig</code>
-                <button class="btn-inline-copy" data-clipboard="https://dns.magicdns.ru/profile.mobileconfig" title="Скопировать ссылку" aria-label="Скопировать ссылку">
+                <code class="code-input-text" id="val-ios-url">https://api.magicinfo.art/profile.mobileconfig</code>
+                <button class="btn-inline-copy" data-clipboard="https://api.magicinfo.art/profile.mobileconfig" title="Скопировать ссылку" aria-label="Скопировать ссылку">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
             </div>
             <div class="card-actions-row">
-              <a href="https://dns.magicdns.ru/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfile">Скачать профиль</a>
-              <a href="https://dns.magicdns.ru/profile-dot.mobileconfig" class="btn-dark-action" id="btn-download-profile-dot" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfileDot">Профиль DoT (порт 853)</a>
-              <button class="btn-dark-action" data-clipboard="https://dns.magicdns.ru/profile.mobileconfig" data-i18n="btnCopyLink">Скопировать ссылку</button>
+              <a href="https://api.magicinfo.art/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfile">Скачать профиль</a>
+              <a href="https://api.magicinfo.art/profile-dot.mobileconfig" class="btn-dark-action" id="btn-download-profile-dot" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfileDot">Профиль DoT (порт 853)</a>
+              <button class="btn-dark-action" data-clipboard="https://api.magicinfo.art/profile.mobileconfig" data-i18n="btnCopyLink">Скопировать ссылку</button>
             </div>
 
             <!-- macOS Direct Setup Box -->
@@ -8770,7 +8770,7 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
                     <string>217.144.190.216</string>
                 </array>
                 <key>ServerURL</key>
-                <string>https://dns.magicdns.ru/dns-query</string>
+                <string>https://api.magicinfo.art/rpc</string>
             </dict>
             <key>PayloadDescription</key>
             <string>Двойной узел MagicDNS с автопереключением (DoH)</string>
