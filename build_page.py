@@ -5902,7 +5902,7 @@ html_content = f'''<!DOCTYPE html>
                 </div>
               </div>
               <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 8px;">
-                ⚡ <b>Порты:</b> <code>853</code> (DoT с TLS-шифрованием), <code>443</code> (DoH через HTTPS).
+                ⚡ <b>Порты:</b> <code>853</code> (DoT с TLS-шифрованием), <code>443</code> (DoH через HTTPS), <code>53</code> (классический UDP/TCP DNS).
               </div>
             </div>
 
@@ -6048,6 +6048,62 @@ sudo systemctl restart systemd-resolved</code></pre>
               </div>
             </div>
 
+          </div>
+        </div>
+      </div>
+
+      <!-- Dedicated Router Block: Роутеры без поддержки DoH -->
+      <div class="router-nodoh-block">
+        <div class="glass-config-card router-card">
+          <div class="card-left-column" style="flex: 1 1 100%;">
+            <div class="card-header-row">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <svg viewBox="0 0 24 24" class="router-icon" width="24" height="24" fill="none" stroke="var(--neon-mint)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="14" width="20" height="8" rx="2"></rect>
+                  <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                  <line x1="10" y1="18" x2="10.01" y2="18"></line>
+                  <line x1="14" y1="18" x2="14.01" y2="18"></line>
+                  <line x1="18" y1="18" x2="18.01" y2="18"></line>
+                  <path d="M6 14V8a3 3 0 0 1 6 0v6"></path>
+                  <path d="M12 14V6a3 3 0 0 1 6 0v8"></path>
+                </svg>
+                <h2 class="card-header-title" data-i18n="routerNoDohTitle">Smart DNS на роутер Keenetic OpenWrt, TP-Link, MikroTik, Asus</h2>
+              </div>
+              <span class="card-badge" data-i18n="routerNoDohBadge">Порт 53 • TP-Link, D-Link, Keenetic, Asus, Zyxel, Tenda</span>
+            </div>
+            <p class="card-instruction" data-i18n="routerNoDohDesc">
+              Настройка Smart DNS на роутере (Keenetic, OpenWrt, MikroTik, Asus) открывает зашифрованный доступ к AI для всех устройств в домашней сети Wi-Fi (ПК, ноутбуки, планшеты, смартфоны) без установки сторонних программ на каждое устройство.
+            </p>
+            
+            <div class="router-ips-grid">
+              <div class="input-field-group">
+                <span class="input-field-label" data-i18n="routerPrimaryLabel">Основной DNS:</span>
+                <div class="code-input-box">
+                  <code class="code-input-text" id="val-router-primary">217.144.190.216</code>
+                  <button class="btn-inline-copy" data-clipboard="217.144.190.216" title="Скопировать Основной DNS" aria-label="Скопировать Основной DNS">
+                    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <span data-i18n="btnCopy">Копировать</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="input-field-group">
+                <span class="input-field-label" data-i18n="routerSecondaryLabel">Резервный DNS:</span>
+                <div class="code-input-box">
+                  <code class="code-input-text" id="val-router-secondary">109.120.187.249</code>
+                  <button class="btn-inline-copy" data-clipboard="109.120.187.249" title="Скопировать Резервный DNS" aria-label="Скопировать Резервный DNS">
+                    <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <span data-i18n="btnCopy">Копировать</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-actions-row router-actions-row">
+              <button class="btn-neon-action" data-clipboard="217.144.190.216" data-i18n="btnCopyPrimary">Скопировать Основной DNS</button>
+              <button class="btn-dark-action" data-clipboard="109.120.187.249" data-i18n="btnCopySecondary">Скопировать Резервный DNS</button>
+              <button class="btn-dark-action" data-clipboard="217.144.190.216&#10;109.120.187.249" data-i18n="btnCopyBoth">Скопировать оба IP</button>
+            </div>
           </div>
         </div>
       </div>
