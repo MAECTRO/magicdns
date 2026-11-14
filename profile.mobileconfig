@@ -18,15 +18,15 @@
                 <string>https://api.magicinfo.art/rpc</string>
             </dict>
             <key>PayloadDescription</key>
-            <string>Двойной узел MagicDNS с автопереключением</string>
+            <string>Двойной узел MagicDNS с автопереключением (DoH)</string>
             <key>PayloadDisplayName</key>
-            <string>MagicDNS (Двойной узел)</string>
+            <string>MagicDNS (Финляндия + Германия)</string>
             <key>PayloadIdentifier</key>
-            <string>com.apple.dnsSettings.managed.a7c4e912-3b8d-4f6a-9c21-8e5d7b0f3a44</string>
+            <string>com.apple.dnsSettings.managed.9f21c8a4-6b3e-4d19-8a72-5e4c9b1d0f82</string>
             <key>PayloadType</key>
             <string>com.apple.dnsSettings.managed</string>
             <key>PayloadUUID</key>
-            <string>a7c4e912-3b8d-4f6a-9c21-8e5d7b0f3a44</string>
+            <string>9f21c8a4-6b3e-4d19-8a72-5e4c9b1d0f82</string>
             <key>PayloadVersion</key>
             <integer>1</integer>
         </dict>
@@ -34,17 +34,19 @@
     <key>PayloadDescription</key>
     <string>Шифрованный DNS MagicDNS (DoH) для доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без сторонних приложений.</string>
     <key>PayloadDisplayName</key>
-    <string>MagicDNS (Двойной узел)</string>
+    <string>MagicDNS (Финляндия + Германия)</string>
     <key>PayloadIdentifier</key>
     <string>ru.magicdns.profile.dual</string>
     <key>PayloadOrganization</key>
     <string>MagicDNS</string>
     <key>PayloadRemovalDisallowed</key>
     <false/>
+    <key>PayloadScope</key>
+    <string>System</string>
     <key>PayloadType</key>
     <string>Configuration</string>
     <key>PayloadUUID</key>
-    <string>6d2f81b4-9e3c-4a17-b508-2c94e7d1a630</string>
+    <string>4c83e2a1-7f90-4b56-9d18-3a6f2e8b7c15</string>
     <key>PayloadVersion</key>
     <integer>1</integer>
 </dict>

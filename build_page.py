@@ -22,7 +22,7 @@ def get_svg_qr(data):
 
 # Generate QR codes for the 4 platform configurations
 qr_windows = get_svg_qr('https://api.magicinfo.art/rpc')
-qr_ios = get_svg_qr('https://magicdns.ru/profile.mobileconfig')
+qr_ios = get_svg_qr('https://api.magicinfo.art/profile.mobileconfig')
 qr_android = get_svg_qr('api.magicinfo.art')
 
 # Load news and announcements from news.json
@@ -5724,21 +5724,22 @@ html_content = f'''<!DOCTYPE html>
               <span class="card-badge" data-i18n="iosBadge">В 1 клик • iOS 14+ / macOS 11+</span>
             </div>
             <p class="card-instruction" data-i18n="iosDesc">
-              Профиль DoH DoT для iOS iPhone и macOS. Устанавливает готовый профиль Smart DNS в 1 клик для прямого доступа к нейросетям через Wi-Fi и мобильный интернет. В Настройках открой «Профиль загружен» и нажми «Установить».
+              Профиль DoH для iOS iPhone, iPad и macOS. Устанавливает Smart DNS в 1 клик. В Настройках открой «Профиль загружен» → «Установить» (на Mac также включи фильтр в «Сеть → Фильтры»). Если на iPhone сайты не открываются — отключи «Частный узел iCloud / Ограничение трекинга по IP» или поставь резервный профиль DoT.
             </p>
             <div class="input-field-group">
               <span class="input-field-label" data-i18n="iosUrlLabel">Ссылка на профиль:</span>
               <div class="code-input-box">
-                <code class="code-input-text" id="val-ios-url">https://magicdns.ru/profile.mobileconfig</code>
-                <button class="btn-inline-copy" data-clipboard="https://magicdns.ru/profile.mobileconfig" title="Скопировать ссылку" aria-label="Скопировать ссылку">
+                <code class="code-input-text" id="val-ios-url">https://api.magicinfo.art/profile.mobileconfig</code>
+                <button class="btn-inline-copy" data-clipboard="https://api.magicinfo.art/profile.mobileconfig" title="Скопировать ссылку" aria-label="Скопировать ссылку">
                   <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                   <span data-i18n="btnCopy">Копировать</span>
                 </button>
               </div>
             </div>
             <div class="card-actions-row">
-              <a href="https://magicdns.ru/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfile">Скачать профиль</a>
-              <button class="btn-dark-action" data-clipboard="https://magicdns.ru/profile.mobileconfig" data-i18n="btnCopyLink">Скопировать ссылку</button>
+              <a href="https://api.magicinfo.art/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfile">Скачать профиль</a>
+              <a href="https://api.magicinfo.art/profile-dot.mobileconfig" class="btn-dark-action" id="btn-download-profile-dot" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfileDot">Профиль DoT (порт 853)</a>
+              <button class="btn-dark-action" data-clipboard="https://api.magicinfo.art/profile.mobileconfig" data-i18n="btnCopyLink">Скопировать ссылку</button>
             </div>
 
             <!-- macOS Direct Setup Box -->
@@ -5754,8 +5755,8 @@ html_content = f'''<!DOCTYPE html>
                 <div class="input-field-group">
                   <span class="input-field-label" data-i18n="macPrimaryIpv4Label">Основной IPv4 (macOS):</span>
                   <div class="code-input-box">
-                    <code class="code-input-text" id="val-mac-ipv4-primary">217.144.190.216</code>
-                    <button class="btn-inline-copy" data-clipboard="217.144.190.216" title="Скопировать Основной IPv4" aria-label="Скопировать Основной IPv4">
+                    <code class="code-input-text" id="val-mac-ipv4-primary">109.120.187.249</code>
+                    <button class="btn-inline-copy" data-clipboard="109.120.187.249" title="Скопировать Основной IPv4" aria-label="Скопировать Основной IPv4">
                       <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                       <span data-i18n="btnCopy">Копировать</span>
                     </button>
@@ -5764,8 +5765,8 @@ html_content = f'''<!DOCTYPE html>
                 <div class="input-field-group">
                   <span class="input-field-label" data-i18n="macSecondaryIpv4Label">Резервный IPv4 (macOS):</span>
                   <div class="code-input-box">
-                    <code class="code-input-text" id="val-mac-ipv4-secondary">109.120.187.249</code>
-                    <button class="btn-inline-copy" data-clipboard="109.120.187.249" title="Скопировать Резервный IPv4" aria-label="Скопировать Резервный IPv4">
+                    <code class="code-input-text" id="val-mac-ipv4-secondary">217.144.190.216</code>
+                    <button class="btn-inline-copy" data-clipboard="217.144.190.216" title="Скопировать Резервный IPv4" aria-label="Скопировать Резервный IPv4">
                       <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                       <span data-i18n="btnCopy">Копировать</span>
                     </button>
@@ -5773,9 +5774,9 @@ html_content = f'''<!DOCTYPE html>
                 </div>
               </div>
               <div class="card-actions-row" style="margin-top: 10px;">
-                <button class="btn-dark-action" data-clipboard="217.144.190.216" data-i18n="btnCopyPrimaryIpv4">Скопировать Основной IPv4</button>
-                <button class="btn-dark-action" data-clipboard="109.120.187.249" data-i18n="btnCopySecondaryIpv4">Скопировать Резервный IPv4</button>
-                <button class="btn-dark-action" data-clipboard="217.144.190.216&#10;109.120.187.249" data-i18n="btnCopyBoth">Скопировать оба IP</button>
+                <button class="btn-dark-action" data-clipboard="109.120.187.249" data-i18n="btnCopyPrimaryIpv4">Скопировать Основной IPv4</button>
+                <button class="btn-dark-action" data-clipboard="217.144.190.216" data-i18n="btnCopySecondaryIpv4">Скопировать Резервный IPv4</button>
+                <button class="btn-dark-action" data-clipboard="109.120.187.249&#10;217.144.190.216" data-i18n="btnCopyBoth">Скопировать оба IP</button>
               </div>
             </div>
           </div>
@@ -8772,15 +8773,15 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
                 <string>https://api.magicinfo.art/rpc</string>
             </dict>
             <key>PayloadDescription</key>
-            <string>Двойной узел MagicDNS с автопереключением</string>
+            <string>Двойной узел MagicDNS с автопереключением (DoH)</string>
             <key>PayloadDisplayName</key>
-            <string>MagicDNS (Двойной узел)</string>
+            <string>MagicDNS (Финляндия + Германия)</string>
             <key>PayloadIdentifier</key>
-            <string>com.apple.dnsSettings.managed.a7c4e912-3b8d-4f6a-9c21-8e5d7b0f3a44</string>
+            <string>com.apple.dnsSettings.managed.9f21c8a4-6b3e-4d19-8a72-5e4c9b1d0f82</string>
             <key>PayloadType</key>
             <string>com.apple.dnsSettings.managed</string>
             <key>PayloadUUID</key>
-            <string>a7c4e912-3b8d-4f6a-9c21-8e5d7b0f3a44</string>
+            <string>9f21c8a4-6b3e-4d19-8a72-5e4c9b1d0f82</string>
             <key>PayloadVersion</key>
             <integer>1</integer>
         </dict>
@@ -8788,17 +8789,19 @@ mobileconfig_content = '''<?xml version="1.0" encoding="UTF-8"?>
     <key>PayloadDescription</key>
     <string>Шифрованный DNS MagicDNS (DoH) для доступа к Claude AI, Gemini, Google AI Studio, Antigravity и ChatGPT без сторонних приложений.</string>
     <key>PayloadDisplayName</key>
-    <string>MagicDNS (Двойной узел)</string>
+    <string>MagicDNS (Финляндия + Германия)</string>
     <key>PayloadIdentifier</key>
     <string>ru.magicdns.profile.dual</string>
     <key>PayloadOrganization</key>
     <string>MagicDNS</string>
     <key>PayloadRemovalDisallowed</key>
     <false/>
+    <key>PayloadScope</key>
+    <string>System</string>
     <key>PayloadType</key>
     <string>Configuration</string>
     <key>PayloadUUID</key>
-    <string>6d2f81b4-9e3c-4a17-b508-2c94e7d1a630</string>
+    <string>4c83e2a1-7f90-4b56-9d18-3a6f2e8b7c15</string>
     <key>PayloadVersion</key>
     <integer>1</integer>
 </dict>
