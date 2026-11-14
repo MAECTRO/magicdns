@@ -876,6 +876,52 @@ html_content = f'''<!DOCTYPE html>
       margin-top: 10px;
     }}
 
+    .ios-routes-drawer {{
+      display: none;
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: rgba(11, 20, 36, 0.72);
+      border: 1px solid rgba(0, 255, 157, 0.22);
+      border-radius: var(--radius-md);
+      animation: fadeIn 0.2s ease-out;
+    }}
+    .ios-routes-drawer.active {{
+      display: block;
+    }}
+    .ios-route-group-label {{
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--neon-mint);
+      margin: 10px 0 8px;
+    }}
+    .ios-route-grid {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }}
+    .ios-route-pill {{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      transition: all var(--transition-fast);
+    }}
+    .ios-route-pill:hover {{
+      background: rgba(0, 255, 157, 0.12);
+      border-color: rgba(0, 255, 157, 0.45);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }}
+
     /* ==========================================================================
        3. Device Configurator (Segmented Bar + Two-Column Glassmorphism Cards)
        ========================================================================== */
@@ -5740,6 +5786,33 @@ html_content = f'''<!DOCTYPE html>
               <a href="https://api.magicinfo.art/profile.mobileconfig" class="btn-action-green" id="btn-download-profile" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfile">Скачать профиль</a>
               <a href="https://api.magicinfo.art/profile-dot.mobileconfig" class="btn-dark-action" id="btn-download-profile-dot" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;" data-i18n="btnDownloadProfileDot">Профиль DoT (порт 853)</a>
               <button class="btn-dark-action" data-clipboard="https://api.magicinfo.art/profile.mobileconfig" data-i18n="btnCopyLink">Скопировать ссылку</button>
+              <button type="button" class="btn-dark-action" id="btn-toggle-ios-routes" aria-expanded="false" data-i18n="btnIosRoutesToggle">Все 10 маршрутов (если основной не грузит)</button>
+            </div>
+
+            <div class="ios-routes-drawer" id="ios-routes-drawer" aria-hidden="true">
+              <p class="card-instruction" style="font-size: 0.85rem; margin-bottom: 8px;" data-i18n="iosRoutesHint">
+                У разных операторов проходят разные домены и пути маскировки DoH. В каждом профиле ниже свой URL и имя — можно поставить 2–3 и переключаться галочкой в Настройки → VPN и управление устройством → DNS:
+              </p>
+              <div class="ios-route-group-label">Шлюз 1 · api.magicinfo.art</div>
+              <div class="ios-route-grid">
+                <a href="https://api.magicinfo.art/profile.mobileconfig" class="ios-route-pill">⚡ api · /rpc</a>
+                <a href="https://api.magicinfo.art/profile-api-sync.mobileconfig" class="ios-route-pill">🔄 api · /sync</a>
+                <a href="https://api.magicinfo.art/profile-api-gateway.mobileconfig" class="ios-route-pill">🌐 api · /gateway</a>
+                <a href="https://api.magicinfo.art/profile-api-telemetry.mobileconfig" class="ios-route-pill">📡 api · /v1/telemetry</a>
+                <a href="https://api.magicinfo.art/profile-api-dnsquery.mobileconfig" class="ios-route-pill">🔹 api · /dns-query</a>
+              </div>
+              <div class="ios-route-group-label">Шлюз 2 · dns.magicdns.ru</div>
+              <div class="ios-route-grid">
+                <a href="https://dns.magicdns.ru/profile-dns-rpc.mobileconfig" class="ios-route-pill">⚡ dns · /rpc</a>
+                <a href="https://dns.magicdns.ru/profile-dns-sync.mobileconfig" class="ios-route-pill">🔄 dns · /sync</a>
+                <a href="https://dns.magicdns.ru/profile-dns-gateway.mobileconfig" class="ios-route-pill">🌐 dns · /gateway</a>
+                <a href="https://dns.magicdns.ru/profile-dns-telemetry.mobileconfig" class="ios-route-pill">📡 dns · /v1/telemetry</a>
+                <a href="https://dns.magicdns.ru/profile-dns-dnsquery.mobileconfig" class="ios-route-pill">🔹 dns · /dns-query</a>
+              </div>
+              <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1); font-size: 0.82rem; color: var(--text-dim);">
+                <span data-i18n="iosMirrorFallback">Не скачивается из-за ТСПУ оператора? Скачать с зеркала сайта (в Файлы):</span>
+                <a href="https://magicdns.ru/profile.mobileconfig" style="color: var(--neon-mint); font-weight: 600; margin-left: 6px;">magicdns.ru/profile.mobileconfig</a>
+              </div>
             </div>
 
             <!-- macOS Direct Setup Box -->
@@ -7310,6 +7383,17 @@ sudo systemctl restart systemd-resolved</code></pre>
       const dlProfileBtn = document.getElementById('btn-download-profile');
       if (dlProfileBtn) {{
         dlProfileBtn.addEventListener('click', function() {{
+          playTactileFeedback();
+        }});
+      }}
+
+      const iosRoutesBtn = document.getElementById('btn-toggle-ios-routes');
+      const iosRoutesDrawer = document.getElementById('ios-routes-drawer');
+      if (iosRoutesBtn && iosRoutesDrawer) {{
+        iosRoutesBtn.addEventListener('click', function() {{
+          const open = iosRoutesDrawer.classList.toggle('active');
+          iosRoutesBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          iosRoutesDrawer.setAttribute('aria-hidden', open ? 'false' : 'true');
           playTactileFeedback();
         }});
       }}
