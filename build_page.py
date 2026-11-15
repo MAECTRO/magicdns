@@ -8556,7 +8556,7 @@ sudo systemctl restart systemd-resolved</code></pre>
               return;
             }}
             if (badge) badge.classList.add('status-degraded');
-            if (statusText) statusText.textContent = 'Внимание: техработы';
+            if (statusText) statusText.textContent = 'Наблюдаются сбои';
             if (banner && textElem) {{
               var cleanMsg = (data.message || '').replace(/^(\\s*⚠️\\s*)+/g, '').replace(/(\\s*⚠️\\s*)+$/g, '').trim();
               textElem.innerHTML = cleanMsg;
