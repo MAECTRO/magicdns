@@ -5052,7 +5052,7 @@ html_content = f'''<!DOCTYPE html>
 <body>
 
   <!-- Site Emergency Alert Banner -->
-  <aside id="site-alert-banner" class="site-alert-banner" style="display: none;" role="alert" aria-live="assertive">
+  <aside id="site-alert-banner" class="site-alert-banner" style="display: block;" role="alert" aria-live="assertive">
     <div class="container site-alert-inner">
       <div class="site-alert-content">
         <svg class="site-alert-icon site-alert-icon-left" width="18" height="18" viewBox="0 0 24 24" fill="rgba(245, 158, 11, 0.2)" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -5060,7 +5060,7 @@ html_content = f'''<!DOCTYPE html>
           <line x1="12" y1="9" x2="12" y2="13"></line>
           <line x1="12" y1="17" x2="12.01" y2="17"></line>
         </svg>
-        <span id="site-alert-text" class="site-alert-text"></span>
+        <span id="site-alert-text" class="site-alert-text">📡 Мониторинг сети. Из-за нестабильности внешних каналов ведем калибровку шлюзов. Все оперативные сводки по работе сервисов и инструкции публикуем в сообществе: <a href="https://t.me/magicdns_info" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: 700;">@magicdns_info</a></span>
         <svg class="site-alert-icon site-alert-icon-right" width="18" height="18" viewBox="0 0 24 24" fill="rgba(245, 158, 11, 0.2)" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
           <line x1="12" y1="9" x2="12" y2="13"></line>
@@ -5150,12 +5150,12 @@ html_content = f'''<!DOCTYPE html>
         </a>
 
         <!-- Status Badge -->
-        <div class="status-badge" role="status" aria-live="polite">
+        <div class="status-badge status-degraded" role="status" aria-live="polite">
           <div class="status-dot-wrapper">
             <div class="status-ping"></div>
             <div class="status-dot"></div>
           </div>
-          <span><span class="status-label" data-i18n="statusLabel">Статус сети: </span><span class="status-text" data-i18n="statusText">Работает стабильно</span></span>
+          <span><span class="status-label" data-i18n="statusLabel">Статус сети: </span><span class="status-text" data-i18n="statusText">Калибровка шлюзов</span></span>
         </div>
       </div>
     </div>
@@ -8556,7 +8556,7 @@ sudo systemctl restart systemd-resolved</code></pre>
               return;
             }}
             if (badge) badge.classList.add('status-degraded');
-            if (statusText) statusText.textContent = 'Наблюдаются сбои';
+            if (statusText) statusText.textContent = data.status_text || 'Калибровка шлюзов';
             if (banner && textElem) {{
               var cleanMsg = (data.message || '').replace(/^(\\s*⚠️\\s*)+/g, '').replace(/(\\s*⚠️\\s*)+$/g, '').trim();
               textElem.innerHTML = cleanMsg;

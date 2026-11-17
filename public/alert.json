@@ -1,6 +1,7 @@
 {
   "active": true,
   "type": "warning",
-  "message": "У части пользователей фиксируются сбои — регулятор снова ограничивает прохождение DNS-запросов. Мы готовим официальное обращение для разблокировки трафика.",
-  "updated_at": 1794726900
+  "message": "📡 Мониторинг сети. Из-за нестабильности внешних каналов ведем калибровку шлюзов. Все оперативные сводки по работе сервисов и инструкции публикуем в сообществе: <a href=\"https://t.me/magicdns_info\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: #38bdf8; text-decoration: underline; font-weight: 700;\">@magicdns_info</a>",
+  "status_text": "Калибровка шлюзов",
+  "updated_at": 1794915000
 }

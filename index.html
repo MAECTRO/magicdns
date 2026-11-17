@@ -4973,7 +4973,7 @@
 <body>
 
   <!-- Site Emergency Alert Banner -->
-  <aside id="site-alert-banner" class="site-alert-banner" style="display: none;" role="alert" aria-live="assertive">
+  <aside id="site-alert-banner" class="site-alert-banner" style="display: block;" role="alert" aria-live="assertive">
     <div class="container site-alert-inner">
       <div class="site-alert-content">
         <svg class="site-alert-icon site-alert-icon-left" width="18" height="18" viewBox="0 0 24 24" fill="rgba(245, 158, 11, 0.2)" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -4981,7 +4981,7 @@
           <line x1="12" y1="9" x2="12" y2="13"></line>
           <line x1="12" y1="17" x2="12.01" y2="17"></line>
         </svg>
-        <span id="site-alert-text" class="site-alert-text"></span>
+        <span id="site-alert-text" class="site-alert-text">📡 Мониторинг сети. Из-за нестабильности внешних каналов ведем калибровку шлюзов. Все оперативные сводки по работе сервисов и инструкции публикуем в сообществе: <a href="https://t.me/magicdns_info" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: 700;">@magicdns_info</a></span>
         <svg class="site-alert-icon site-alert-icon-right" width="18" height="18" viewBox="0 0 24 24" fill="rgba(245, 158, 11, 0.2)" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
           <line x1="12" y1="9" x2="12" y2="13"></line>
@@ -5071,12 +5071,12 @@
         </a>
 
         <!-- Status Badge -->
-        <div class="status-badge" role="status" aria-live="polite">
+        <div class="status-badge status-degraded" role="status" aria-live="polite">
           <div class="status-dot-wrapper">
             <div class="status-ping"></div>
             <div class="status-dot"></div>
           </div>
-          <span><span class="status-label" data-i18n="statusLabel">Статус сети: </span><span class="status-text" data-i18n="statusText">Работает стабильно</span></span>
+          <span><span class="status-label" data-i18n="statusLabel">Статус сети: </span><span class="status-text" data-i18n="statusText">Калибровка шлюзов</span></span>
         </div>
       </div>
     </div>
@@ -6340,6 +6340,14 @@ sudo systemctl restart systemd-resolved</code></pre>
         </button>
         <div class="news-grid" id="news-grid">
 
+        <article class="news-card featured">
+          <div class="news-card-top">
+            <span class="news-tag featured">Инфраструктура</span>
+            <span class="news-date">17 ноября 2026</span>
+          </div>
+          <h3 class="news-card-title">📡 Мониторинг сети: калибровка шлюзов и оптимизация маршрутов</h3>
+          <p class="news-card-text">В связи с нестабильностью внешних магистральных каналов проводим калибровку шлюзов и оптимизацию сетевых маршрутов. Все оперативные сводки по работе узлов, актуальный статус и инструкции публикуем в сообществе: @magicdns_info. Следите за обновлениями в закрепе группы.</p>
+        </article>
         <article class="news-card featured">
           <div class="news-card-top">
             <span class="news-tag featured">Внимание</span>
@@ -8573,7 +8581,7 @@ sudo systemctl restart systemd-resolved</code></pre>
               return;
             }
             if (badge) badge.classList.add('status-degraded');
-            if (statusText) statusText.textContent = 'Наблюдаются сбои';
+            if (statusText) statusText.textContent = data.status_text || 'Калибровка шлюзов';
             if (banner && textElem) {
               var cleanMsg = (data.message || '').replace(/^(\s*⚠️\s*)+/g, '').replace(/(\s*⚠️\s*)+$/g, '').trim();
               textElem.innerHTML = cleanMsg;
