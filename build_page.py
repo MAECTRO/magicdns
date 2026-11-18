@@ -7464,72 +7464,93 @@ sudo systemctl restart systemd-resolved</code></pre>
       const metricGateway = document.getElementById('metric-gateway-status');
       const metricAccess = document.getElementById('metric-access-status');
 
-      const AI_SERVICES_LIST = [
-        {{ id: 'claude', name: 'Claude AI', endpoint: 'https://www.anthropic.com/favicon.ico', fallback: 'https://claude.ai/favicon.ico' }},
-        {{ id: 'gemini', name: 'Gemini', endpoint: 'https://deepmind.google/favicon.ico', fallback: 'https://generativelanguage.googleapis.com/$discovery/rest?version=v1beta' }},
-        {{ id: 'chatgpt', name: 'ChatGPT', endpoint: 'https://chatgpt.com/favicon.ico', fallback: 'https://cdn.oaistatic.com/favicon.ico' }},
-        {{ id: 'perplexity', name: 'Perplexity', endpoint: 'https://www.perplexity.ai/favicon.ico', fallback: 'https://deepmind.google/favicon.ico' }},
-        {{ id: 'aistudio', name: 'Google AI Studio', endpoint: 'https://aistudio.google.com/favicon.ico' }}
+      const GATEWAY_ENDPOINTS = [
+        'https://api.magicinfo.art/rpc',
+        'https://dns.magicdns.ru/rpc'
       ];
 
-      function probeSingle(url, timeoutMs) {{
+      const AI_SERVICES_LIST = [
+        {{ id: 'claude', name: 'Claude AI', endpoint: 'https://www.anthropic.com/images/icons/favicon-32x32.png' }},
+        {{ id: 'gemini', name: 'Gemini', endpoint: 'https://www.gstatic.com/lamda/images/gemini_favicon_f069958c85030456e93de685481c559f160ea06b.png' }},
+        {{ id: 'chatgpt', name: 'ChatGPT', endpoint: 'https://chatgpt.com/cdn/assets/favicon-48x48.7d42b2e65f.png' }},
+        {{ id: 'perplexity', name: 'Perplexity', endpoint: 'https://www.perplexity.ai/favicon.ico' }},
+        {{ id: 'aistudio', name: 'Google AI Studio', endpoint: 'https://www.gstatic.com/aistudio/ai_studio_favicon_2_64x64.png' }}
+      ];
+
+      function probeGateway(timeoutMs) {{
+        function tryOne(url) {{
+          return new Promise(function(resolve) {{
+            const startTime = performance.now();
+            const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+            let finished = false;
+            const timer = setTimeout(function() {{
+              if (!finished) {{
+                finished = true;
+                if (controller) try {{ controller.abort(); }} catch(e) {{}}
+                resolve({{ ok: false, latency: Math.round(performance.now() - startTime) }});
+              }}
+            }}, timeoutMs || 3500);
+            const opts = {{ method: 'HEAD', mode: 'cors', cache: 'no-store', credentials: 'omit' }};
+            if (controller) opts.signal = controller.signal;
+            fetch(url + '?_t=' + Date.now(), opts).then(function(res) {{
+              if (!finished) {{
+                finished = true;
+                clearTimeout(timer);
+                resolve({{ ok: Boolean(res && res.ok), latency: Math.max(10, Math.round(performance.now() - startTime)) }});
+              }}
+            }}).catch(function() {{
+              if (!finished) {{
+                finished = true;
+                clearTimeout(timer);
+                resolve({{ ok: false, latency: Math.round(performance.now() - startTime) }});
+              }}
+            }});
+          }});
+        }}
+        return tryOne(GATEWAY_ENDPOINTS[0]).then(function(r1) {{
+          if (r1.ok) return r1;
+          return tryOne(GATEWAY_ENDPOINTS[1]);
+        }});
+      }}
+
+      function probeImage(url, timeoutMs) {{
         return new Promise(function(resolve) {{
           const startTime = performance.now();
-          const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
           let finished = false;
-
+          const img = new Image();
+          img.referrerPolicy = 'no-referrer';
           const timer = setTimeout(function() {{
             if (!finished) {{
               finished = true;
-              if (controller) {{
-                try {{ controller.abort(); }} catch(e) {{}}
-              }}
+              img.onload = null;
+              img.onerror = null;
+              img.src = '';
               resolve({{ ok: false, error: 'timeout', latency: Math.round(performance.now() - startTime) }});
             }}
           }}, timeoutMs || 3500);
 
-          const testUrl = url + (url.indexOf('?') === -1 ? '?' : '&') + '_t=' + Date.now();
-          const fetchOptions = {{
-            method: 'GET',
-            mode: 'no-cors',
-            cache: 'no-store',
-            credentials: 'omit'
-          }};
-          if (controller) {{
-            fetchOptions.signal = controller.signal;
-          }}
-
-          fetch(testUrl, fetchOptions).then(function() {{
+          img.onload = function() {{
             if (!finished) {{
               finished = true;
               clearTimeout(timer);
               const rawElapsed = Math.max(12, Math.round(performance.now() - startTime));
-              // Cold HTTPS fetch takes 3.5 - 4 RTTs (DNS resolution + TCP handshake + TLS 1.3 Key Exchange + server TTFB).
-              // Normalize to calculate the true physical network RTT (packet round-trip time) to the gateway node.
-              let rtt = rawElapsed;
-              if (rawElapsed > 70) {{
-                rtt = Math.max(24, Math.round(rawElapsed / 3.8) + (Math.floor(Math.random() * 5)));
-              }}
-              resolve({{ ok: true, latency: rtt, rawLatency: rawElapsed }});
+              const valid = (img.naturalWidth > 0);
+              resolve({{ ok: valid, latency: rawElapsed }});
             }}
-          }}).catch(function(err) {{
+          }};
+          img.onerror = function() {{
             if (!finished) {{
               finished = true;
               clearTimeout(timer);
-              resolve({{ ok: false, error: err ? err.name : 'failed', latency: Math.round(performance.now() - startTime) }});
+              resolve({{ ok: false, error: 'blocked', latency: Math.round(performance.now() - startTime) }});
             }}
-          }});
+          }};
+          img.src = url + (url.indexOf('?') === -1 ? '?' : '&') + '_t=' + Date.now();
         }});
       }}
 
       function probeEndpoint(item, timeoutMs) {{
-        return probeSingle(item.endpoint, timeoutMs).then(function(res) {{
-          if (res.ok) return res;
-          if (item.fallback) {{
-            return probeSingle(item.fallback, timeoutMs);
-          }}
-          return res;
-        }});
+        return probeImage(item.endpoint, timeoutMs);
       }}
 
       if (checkBtn) {{
@@ -7540,9 +7561,9 @@ sudo systemctl restart systemd-resolved</code></pre>
           resultBox.style.display = 'none';
           progressWrap.style.display = 'block';
           progressFill.style.width = '10%';
-          progressLog.textContent = (I18N[currentLang] && I18N[currentLang].checkerRunning) ? I18N[currentLang].checkerRunning : 'Опрос DNS-резолвера СКОРО...';
+          progressLog.textContent = 'Проверка прямого доступа к шлюзам MagicDNS (CORS)...';
 
-          // Launch probes
+          const gatewayPromise = probeGateway(3500);
           const probePromises = AI_SERVICES_LIST.map(function(item) {{
             return probeEndpoint(item, 3500).then(function(res) {{
               return {{ id: item.id, item: item, result: res }};
@@ -7551,18 +7572,19 @@ sudo systemctl restart systemd-resolved</code></pre>
 
           setTimeout(function() {{
             progressFill.style.width = '45%';
-            progressLog.textContent = 'Проверка DoH/DoT TLS 1.3 рукопожатия...';
-          }}, 350);
+            progressLog.textContent = 'Проверка загрузки ресурсов Claude AI, ChatGPT, Perplexity...';
+          }}, 400);
 
           setTimeout(function() {{
-            progressFill.style.width = '75%';
-            progressLog.textContent = 'Тестирование прямого доступа к Claude AI, Gemini, ChatGPT...';
-          }}, 750);
+            progressFill.style.width = '80%';
+            progressLog.textContent = 'Сверка ответа шлюза и сервисов...';
+          }}, 900);
 
           const minDelay = new Promise(function(r) {{ setTimeout(r, 1200); }});
 
-          Promise.all([Promise.all(probePromises), minDelay]).then(function(values) {{
-            const probeResults = values[0];
+          Promise.all([gatewayPromise, Promise.all(probePromises), minDelay]).then(function(values) {{
+            const gwRes = values[0];
+            const probeResults = values[1];
             progressFill.style.width = '100%';
             progressLog.textContent = 'Диагностика завершена. Обработка результатов...';
 
@@ -7591,45 +7613,69 @@ sudo systemctl restart systemd-resolved</code></pre>
                 }}
               }});
 
-              if (onlineCount > 0) {{
+              if (gwRes.ok && onlineCount >= 4) {{
                 const avgPing = Math.round(totalLatency / onlineCount);
-                if (metricPing) metricPing.textContent = avgPing + ' мс';
+                if (metricPing) metricPing.textContent = gwRes.latency + ' мс';
                 if (metricGateway) {{
                   metricGateway.className = 'metric-val mint';
-                  metricGateway.textContent = 'Подключено (Онлайн)';
+                  metricGateway.style.color = '';
+                  metricGateway.textContent = 'В сети (Онлайн)';
                 }}
                 if (metricAccess) {{
                   metricAccess.className = 'metric-val mint';
-                  metricAccess.textContent = 'Прямой (Без капчи)';
+                  metricAccess.style.color = '';
+                  metricAccess.textContent = onlineCount + ' из ' + probeResults.length + ' доступны';
                 }}
                 if (resultTitle) {{
-                  resultTitle.textContent = (I18N[currentLang] && I18N[currentLang].checkerSuccess) ? I18N[currentLang].checkerSuccess : 'MagicDNS активен! Сервисы Claude AI, Gemini, Google AI Studio и Antigravity доступны на полной скорости';
+                  resultTitle.textContent = (I18N[currentLang] && I18N[currentLang].checkerSuccess) ? I18N[currentLang].checkerSuccess : 'MagicDNS активен! Сервисы Claude AI, Gemini, Google AI Studio и ChatGPT доступны';
                 }}
                 if (resultIcon) {{
                   resultIcon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
                   resultIcon.style.stroke = 'var(--neon-mint)';
                 }}
-                showToast('MagicDNS активен: ' + onlineCount + ' из ' + probeResults.length + ' ИИ-сервисов доступны (' + avgPing + ' мс)');
+                showToast('Шлюз MagicDNS в сети (' + gwRes.latency + ' мс), доступно ' + onlineCount + ' из ' + probeResults.length);
+              }} else if (gwRes.ok && onlineCount < 4) {{
+                if (metricPing) metricPing.textContent = gwRes.latency + ' мс';
+                if (metricGateway) {{
+                  metricGateway.className = 'metric-val';
+                  metricGateway.style.color = '#fbbf24';
+                  metricGateway.textContent = 'Отвечает (' + gwRes.latency + ' мс)';
+                }}
+                if (metricAccess) {{
+                  metricAccess.className = 'metric-val';
+                  metricAccess.style.color = '#fbbf24';
+                  metricAccess.textContent = 'Частично (' + onlineCount + ' из ' + probeResults.length + ')';
+                }}
+                if (resultTitle) {{
+                  resultTitle.textContent = '⚠️ Шлюз MagicDNS отвечает, но часть сервисов недоступна — проверьте, что DNS настроен на вашем устройстве';
+                }}
+                if (resultIcon) {{
+                  resultIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
+                  resultIcon.style.stroke = '#fbbf24';
+                }}
+                showToast('Шлюз отвечает, но часть сервисов недоступна (' + onlineCount + '/' + probeResults.length + ')');
               }} else {{
                 if (metricPing) metricPing.textContent = '—';
                 if (metricGateway) {{
                   metricGateway.className = 'metric-val';
                   metricGateway.style.color = '#f87171';
-                  metricGateway.textContent = 'Не подключено';
+                  metricGateway.textContent = 'Шлюз недоступен';
                 }}
                 if (metricAccess) {{
                   metricAccess.className = 'metric-val';
                   metricAccess.style.color = '#f87171';
-                  metricAccess.textContent = 'Требуется настройка DNS';
+                  metricAccess.textContent = onlineCount > 0 ? ('Через стороннюю сеть (' + onlineCount + '/' + probeResults.length + ')') : 'Доступа нет';
                 }}
                 if (resultTitle) {{
-                  resultTitle.textContent = '⚠️ Шлюз MagicDNS не обнаружен. Настрой DoH или DoT по инструкции выше';
+                  resultTitle.textContent = onlineCount > 0
+                    ? '⚠️ Шлюзы MagicDNS недоступны с вашей сети (ограничения провайдера / ТСПУ). Доступ идёт через сторонний канал'
+                    : '⚠️ Шлюзы MagicDNS недоступны с вашей сети (ограничения ТСПУ) и сервисы не отвечают';
                 }}
                 if (resultIcon) {{
                   resultIcon.innerHTML = '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>';
                   resultIcon.style.stroke = '#f87171';
                 }}
-                showToast('Шлюз не обнаружен: соединения блокируются провайдером');
+                showToast('Шлюзы MagicDNS недоступны с вашей сети');
               }}
 
               playTactileFeedback();
