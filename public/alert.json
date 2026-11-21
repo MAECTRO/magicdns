@@ -1,7 +1,7 @@
 {
   "active": true,
   "type": "warning",
-  "message": "📡 Мониторинг сети. Из-за нестабильности внешних каналов ведем калибровку шлюзов. Все оперативные сводки по работе сервисов и инструкции публикуем в сообществе: <a href=\"https://t.me/magicdns_info\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: #38bdf8; text-decoration: underline; font-weight: 700;\">@magicdns_info</a>",
-  "status_text": "Калибровка шлюзов",
-  "updated_at": 1794915000
+  "message": "Если на старых настройках сеть начала спотыкаться — загляните в бота: <a href=\"https://t.me/magicdns_alert_bot\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: #38bdf8; text-decoration: underline; font-weight: 700;\">@magicdns_alert_bot</a>",
+  "status_text": "Мониторинг сети",
+  "updated_at": 1794935000
 }
